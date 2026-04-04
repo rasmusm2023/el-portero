@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "../css/design-system.css";
+
+@layer base {
+  html {
+    @apply scroll-smooth antialiased;
+    color-scheme: light;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans text-base font-normal leading-relaxed;
+  }
+
+  ::selection {
+    @apply bg-gold-dim text-ink;
+  }
+
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-gold;
+  }
+}
