@@ -34,7 +34,7 @@ export function ReservePage() {
             min={1}
             max={12}
             defaultValue={2}
-            className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
           />
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
@@ -46,7 +46,7 @@ export function ReservePage() {
               id="date"
               name="date"
               type="date"
-              className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
             />
           </div>
           <div>
@@ -56,7 +56,7 @@ export function ReservePage() {
             <select
               id="time"
               name="time"
-              className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+              className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
               defaultValue=""
             >
               <option value="" disabled>
@@ -81,7 +81,7 @@ export function ReservePage() {
         </p>
         <button
           type="button"
-          className="rounded-md bg-ink px-6 py-3 text-sm font-medium tracking-[0.14em] text-paper uppercase transition-colors hover:bg-ink/90"
+          className="rounded-none bg-ink px-6 py-3 text-sm font-medium tracking-[0.14em] text-paper uppercase transition-colors hover:bg-ink/90"
           disabled
         >
           {locale === "es"

@@ -32,7 +32,18 @@ export type NavKey =
 
 type PageKey =
   | "page.home.title"
+  | "page.home.instagramAria"
+  | "page.home.instagramFollow"
+  | "page.home.instagramShowMore"
+  | "page.home.instagramShowLess"
   | "page.menu.title"
+  | "page.menu.food"
+  | "page.menu.drinks"
+  | "page.menu.foodHeading"
+  | "page.menu.drinksHeading"
+  | "page.menu.drinksIntro"
+  | "page.menu.foodIntro"
+  | "page.menu.seeMenu"
   | "page.events.title"
   | "page.reserve.title"
   | "page.contact.title"
@@ -50,9 +61,12 @@ type HeaderKey =
   | "header.closeNav"
   | "header.openNav"
   | "header.navDialog"
-  | "header.reserveTable";
+  | "header.reserveTable"
+  | "header.reserveNav";
 
-export type MessageKey = NavKey | PageKey | FooterKey | HeaderKey;
+type BrandKey = "brand.dinnerClub";
+
+export type MessageKey = NavKey | PageKey | FooterKey | HeaderKey | BrandKey;
 
 const messages: Record<Locale, Record<MessageKey, string>> = {
   en: {
@@ -65,7 +79,20 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.hours": "Hours",
     "nav.admin": "Admin",
     "page.home.title": "Welcome",
+    "page.home.instagramAria": "Instagram",
+    "page.home.instagramFollow": "Follow us",
+    "page.home.instagramShowMore": "Show more posts",
+    "page.home.instagramShowLess": "Show fewer",
     "page.menu.title": "Menu",
+    "page.menu.food": "Food",
+    "page.menu.drinks": "Drinks",
+    "page.menu.foodHeading": "Food menu",
+    "page.menu.drinksHeading": "Drinks menu",
+    "page.menu.drinksIntro":
+      "Sample list — bottle vintages and pairings will be updated with the cellar.",
+    "page.menu.foodIntro":
+      "Sample menu — dishes and allergens are confirmed by the kitchen before service.",
+    "page.menu.seeMenu": "See menu",
     "page.events.title": "Events",
     "page.reserve.title": "Reservations",
     "page.contact.title": "Contact",
@@ -81,6 +108,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.openNav": "Open menu",
     "header.navDialog": "Site navigation",
     "header.reserveTable": "Reserve table",
+    "header.reserveNav": "Reservation",
+    "brand.dinnerClub": "Dinner Club",
   },
   es: {
     "nav.home": "Inicio",
@@ -92,7 +121,20 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.hours": "Horario",
     "nav.admin": "Admin",
     "page.home.title": "Bienvenidos",
+    "page.home.instagramAria": "Instagram",
+    "page.home.instagramFollow": "Síguenos",
+    "page.home.instagramShowMore": "Ver más publicaciones",
+    "page.home.instagramShowLess": "Ver menos",
     "page.menu.title": "Carta",
+    "page.menu.food": "Comida",
+    "page.menu.drinks": "Bebidas",
+    "page.menu.foodHeading": "Carta de comida",
+    "page.menu.drinksHeading": "Carta de bebidas",
+    "page.menu.drinksIntro":
+      "Lista de ejemplo — añadas y maridajes se actualizarán con la bodega.",
+    "page.menu.foodIntro":
+      "Menú de ejemplo — platos y alérgenos se confirman en sala antes del servicio.",
+    "page.menu.seeMenu": "Ver carta",
     "page.events.title": "Eventos",
     "page.reserve.title": "Reservas",
     "page.contact.title": "Contacto",
@@ -108,6 +150,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.openNav": "Abrir menú",
     "header.navDialog": "Navegación",
     "header.reserveTable": "Reservar mesa",
+    "header.reserveNav": "Reserva",
+    "brand.dinnerClub": "Dinner Club",
   },
   sv: {
     "nav.home": "Hem",
@@ -119,7 +163,20 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.hours": "Öppettider",
     "nav.admin": "Admin",
     "page.home.title": "Välkommen",
+    "page.home.instagramAria": "Instagram",
+    "page.home.instagramFollow": "Följ oss",
+    "page.home.instagramShowMore": "Visa fler inlägg",
+    "page.home.instagramShowLess": "Visa färre",
     "page.menu.title": "Meny",
+    "page.menu.food": "Mat",
+    "page.menu.drinks": "Dryck",
+    "page.menu.foodHeading": "Matmeny",
+    "page.menu.drinksHeading": "Dryckesmeny",
+    "page.menu.drinksIntro":
+      "Exempellista — årgångar och maridage uppdateras med vinkällaren.",
+    "page.menu.foodIntro":
+      "Exempelmeny — rätter och allergener bekräftas av köket före servering.",
+    "page.menu.seeMenu": "Se menyn",
     "page.events.title": "Evenemang",
     "page.reserve.title": "Bokning",
     "page.contact.title": "Kontakt",
@@ -135,6 +192,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.openNav": "Öppna menyn",
     "header.navDialog": "Navigering",
     "header.reserveTable": "Boka bord",
+    "header.reserveNav": "Bokning",
+    "brand.dinnerClub": "Dinner Club",
   },
 };
 

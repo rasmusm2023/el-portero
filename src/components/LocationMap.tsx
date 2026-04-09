@@ -22,7 +22,7 @@ export function LocationMap({ locale, className }: LocationMapProps) {
       <h2 className="font-display text-xl font-medium text-ink">
         {t(locale, "page.hours.map")}
       </h2>
-      <div className="mt-4 overflow-hidden rounded-md border border-border bg-paper-dark/40 shadow-sm ring-1 ring-border/80">
+      <div className="mt-4 overflow-hidden rounded-none border border-border bg-paper-dark/40 shadow-sm ring-1 ring-border/80">
         <div className="relative aspect-[4/3] min-h-[240px] w-full lg:aspect-auto lg:min-h-[320px]">
           <iframe
             title={t(locale, "page.hours.mapIframeTitle")}
@@ -39,7 +39,7 @@ export function LocationMap({ locale, className }: LocationMapProps) {
           href={openHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-gold underline-offset-4 transition-colors hover:text-gold-bright hover:underline"
+          className="text-sm text-ink underline-offset-4 transition-colors hover:text-ink-muted hover:underline"
         >
           {t(locale, "page.hours.openInMaps")}
         </Link>

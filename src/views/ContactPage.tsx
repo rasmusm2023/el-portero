@@ -25,7 +25,7 @@ export function ContactPage() {
             name="name"
             type="text"
             autoComplete="name"
-            className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
           />
         </div>
         <div>
@@ -37,7 +37,7 @@ export function ContactPage() {
             name="email"
             type="email"
             autoComplete="email"
-            className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
           />
         </div>
         <div>
@@ -48,12 +48,12 @@ export function ContactPage() {
             id="message"
             name="message"
             rows={5}
-            className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
           />
         </div>
         <button
           type="button"
-          className="rounded-md bg-ink px-6 py-3 text-sm font-medium tracking-[0.14em] text-paper uppercase transition-colors hover:bg-ink/90"
+          className="rounded-none bg-ink px-6 py-3 text-sm font-medium tracking-[0.14em] text-paper uppercase transition-colors hover:bg-ink/90"
           disabled
         >
           {locale === "es"

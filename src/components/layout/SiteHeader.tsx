@@ -3,9 +3,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { t, type NavKey } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
+import { LogoWordmark } from "@/components/LogoWordmark";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { MenuToggleIcon } from "./MenuToggleIcon";
 
@@ -27,38 +28,59 @@ function overlayLinkClass(pathname: string, href: string) {
       : pathname === href || pathname.startsWith(`${href}/`);
   return [
     "block w-full text-center font-sans text-5xl font-bold tracking-tight transition-colors sm:text-6xl md:text-7xl",
-    isActive ? "text-gold" : "text-paper/90 hover:text-gold",
+    isActive ? "text-paper" : "text-paper/75 hover:text-paper",
   ].join(" ");
 }
 
 const headerInnerMax =
   "mx-auto w-full max-w-[min(100%,112rem)] px-5 sm:px-10 lg:px-14 xl:px-20";
 
-const headerBarClass = `${headerInnerMax} flex h-[var(--header-h)] items-center justify-between gap-4 sm:gap-6`;
+/** Flex + absolutely centered logo so left/right rails can differ in width without shifting the wordmark. */
+const headerBarClass = `${headerInnerMax} relative flex min-h-[var(--header-h)] items-center justify-between gap-3 py-3 sm:gap-6 sm:py-4`;
 
-/** Overlay sits below the sticky bar so the header does not jump or duplicate. */
+/** Overlay sits below the fixed bar so the header does not jump or duplicate. */
 const navOverlayTopClass =
   "top-[calc(var(--header-h)+1px)]";
 
+/**
+ * Lock viewport scroll when the full-screen menu is open.
+ * With `scrollbar-gutter: stable` on `html`, the track is already reserved — do **not**
+ * add `padding-right` equal to the scrollbar width or the page shifts twice (gutter + pad).
+ */
 function lockBodyScroll() {
-  const gap = window.innerWidth - document.documentElement.clientWidth;
+  const root = document.documentElement;
+  root.style.overflow = "hidden";
   document.body.style.overflow = "hidden";
-  if (gap > 0) document.body.style.paddingRight = `${gap}px`;
 }
 
 function unlockBodyScroll() {
+  const root = document.documentElement;
+  root.style.overflow = "";
   document.body.style.overflow = "";
-  document.body.style.paddingRight = "";
 }
+
+/** Treat as “top of page” within this many px to avoid rubber-band flicker. */
+const SCROLL_TOP_EPS = 8;
 
 export function SiteHeader() {
   const { locale } = useLocale();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [atTop, setAtTop] = useState(true);
 
   useEffect(() => {
+    const onScroll = () => {
+      setAtTop(window.scrollY <= SCROLL_TOP_EPS);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [pathname]);
+
+  useLayoutEffect(() => {
     if (!menuOpen) return;
     lockBodyScroll();
+    /* Unlock only in onExitComplete so scroll stays locked during overlay exit. */
   }, [menuOpen]);
 
   useEffect(() => () => unlockBodyScroll(), []);
@@ -74,37 +96,56 @@ export function SiteHeader() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  const headerSurface = menuOpen
-    ? "border-paper/10 bg-ink backdrop-blur-md"
-    : "border-border bg-paper/90 backdrop-blur-md";
+  /** Ink-on-paper chrome (transparent bar): only at top on non-home routes. Scrolled or home hero uses dark-on-glass. */
+  const onLightSurface = menuOpen || (atTop && pathname !== "/");
 
-  const headerInk = menuOpen ? "text-paper" : "text-ink";
+  const headerSurface = menuOpen
+    ? "border-paper/10 bg-ink/85 backdrop-blur-md"
+    : !atTop
+      ? "border-b border-paper/10 bg-ink/65 backdrop-blur-md"
+      : onLightSurface
+        ? "border-b border-border/25 bg-transparent"
+        : "border-b border-transparent bg-transparent";
+
+  const headerInk = menuOpen ? "text-paper" : onLightSurface ? "text-ink" : "text-paper";
+
+  const reserveBtnClass = menuOpen
+    ? "border-2 border-paper/75 bg-paper/12 text-paper shadow-md shadow-black/25 ring-1 ring-white/15 hover:border-paper hover:bg-paper/20"
+    : onLightSurface
+      ? "border-2 border-ink/45 bg-ink/[0.05] text-ink shadow-sm ring-1 ring-ink/10 hover:border-ink hover:bg-ink/10"
+    : "border-2 border-paper/80 bg-paper/10 text-paper shadow-md shadow-black/30 ring-1 ring-white/15 hover:border-paper hover:bg-paper/18";
 
   return (
     <>
       <header
-        className={`sticky top-0 border-b transition-colors duration-300 ease-out ${
+        className={`fixed top-0 right-0 left-0 w-full border-b transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 ease-out ${
           menuOpen ? "z-110" : "z-50"
         } ${headerSurface}`}
       >
         <div className={headerBarClass}>
-          <div className="flex min-w-0 shrink-0 items-center gap-4 md:gap-10">
-            <Link
-              href="/"
-              className={`min-w-0 shrink font-display text-xl font-semibold tracking-[0.02em] transition-colors duration-300 sm:text-2xl ${headerInk}`}
-            >
-              El Portero
-            </Link>
+          <div className="relative z-20 flex min-w-0 min-h-0 flex-1 items-center justify-start">
             <Link
               href="/reserve"
-              className="inline-flex shrink-0 items-center justify-center rounded-md border border-gold bg-gold px-3 py-2 text-[10px] font-semibold tracking-[0.16em] text-ink uppercase shadow-sm transition-colors hover:bg-gold-bright hover:shadow-md sm:px-6 sm:py-2.5 sm:text-xs sm:tracking-[0.2em]"
+              className={`inline-flex max-w-full shrink-0 items-center justify-center rounded-none px-2.5 py-2 text-[9px] font-bold tracking-[0.16em] uppercase transition-[color,background-color,border-color,box-shadow] sm:px-5 sm:py-2.5 sm:text-[11px] sm:tracking-[0.2em] ${reserveBtnClass}`}
             >
-              {t(locale, "header.reserveTable")}
+              {t(locale, "header.reserveNav")}
             </Link>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3 md:gap-5">
-            <LanguageSwitcher variant={menuOpen ? "onDark" : "default"} />
+          <div className="pointer-events-none absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 justify-center px-[clamp(6rem,22vw,12rem)]">
+            <Link
+              href="/"
+              className="pointer-events-auto flex min-w-0 max-w-full justify-center text-center"
+              aria-label="El Portero Dinner Club"
+            >
+              <LogoWordmark size="header" showTagline className={headerInk} />
+            </Link>
+          </div>
+
+          <div className="relative z-20 flex min-w-0 min-h-0 flex-1 items-center justify-end gap-2 sm:gap-4 md:gap-5">
+            <LanguageSwitcher
+              variant={menuOpen || !onLightSurface ? "onDark" : "default"}
+            />
             <button
               type="button"
               className="group flex shrink-0 items-center gap-1.5 sm:gap-2"
@@ -118,19 +159,29 @@ export function SiteHeader() {
               onClick={() => setMenuOpen((v) => !v)}
             >
               <span
-                className="flex h-8 w-9 items-center justify-center sm:h-9 sm:w-10"
+                className="flex h-8 w-9 shrink-0 items-center justify-center sm:h-9 sm:w-10"
                 aria-hidden
               >
                 <span
-                  className={`inline-block -rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.35em] uppercase transition-colors duration-300 group-hover:text-gold sm:text-[10px] sm:tracking-[0.4em] ${headerInk}`}
+                  className={`inline-block -rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.35em] uppercase transition-colors duration-300 sm:text-[10px] sm:tracking-[0.4em] ${headerInk} ${
+                    menuOpen || !onLightSurface
+                      ? "group-hover:text-paper/80"
+                      : "group-hover:text-ink/65"
+                  }`}
                 >
                   {t(locale, "header.menuLabel")}
                 </span>
               </span>
-              <MenuToggleIcon
-                open={menuOpen}
-                className={`transition-colors duration-300 group-hover:text-gold ${headerInk}`}
-              />
+              <span className="relative flex size-7 shrink-0 items-center justify-center overflow-hidden sm:size-8">
+                <MenuToggleIcon
+                  open={menuOpen}
+                  className={`transition-colors duration-300 ${headerInk} ${
+                    menuOpen || !onLightSurface
+                      ? "group-hover:text-paper/80"
+                      : "group-hover:text-ink/65"
+                  }`}
+                />
+              </span>
             </button>
           </div>
         </div>
@@ -208,7 +259,7 @@ export function SiteHeader() {
               >
                 <Link
                   href="/reserve"
-                  className="mx-auto flex w-full max-w-md items-center justify-center rounded-md border border-gold bg-gold px-6 py-3 text-sm font-semibold tracking-[0.2em] text-ink uppercase transition-colors hover:bg-gold-bright"
+                  className="mx-auto flex w-full max-w-md items-center justify-center rounded-none border-2 border-paper/75 bg-paper/12 px-6 py-3 text-sm font-bold tracking-[0.22em] text-paper uppercase shadow-md shadow-black/25 ring-1 ring-white/15 transition-[color,background-color,border-color,box-shadow] hover:border-paper hover:bg-paper/20"
                   onClick={closeMenu}
                 >
                   {t(locale, "header.reserveTable")}

@@ -2,6 +2,7 @@
 
 import { MapPin } from "lucide-react";
 import Link from "next/link";
+import { LogoWordmark } from "@/components/LogoWordmark";
 import { VENUE_ADDRESS, googleMapsSearchUrl } from "@/constants/venue";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -15,8 +16,8 @@ export function SiteFooter() {
     <footer className="border-t border-border bg-ink text-paper">
       <div className="mx-auto grid max-w-[var(--container-max)] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8">
         <div>
-          <p className="font-display text-3xl font-medium tracking-tight">
-            El Portero
+          <p className="text-paper">
+            <LogoWordmark size="footer" showTagline align="start" />
           </p>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-paper/75">
             {locale === "es"
@@ -28,13 +29,13 @@ export function SiteFooter() {
         </div>
         <div className="flex flex-col gap-4 text-sm text-paper/85">
           <div className="flex gap-3">
-            <MapPin className="mt-0.5 size-5 shrink-0 text-gold" strokeWidth={1.5} aria-hidden />
+            <MapPin className="mt-0.5 size-5 shrink-0 text-paper/50" strokeWidth={1.5} aria-hidden />
             <address className="not-italic">
               <a
                 href={mapsHref}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="underline-offset-4 transition-colors hover:text-gold hover:underline"
+                className="underline-offset-4 transition-colors hover:text-paper hover:underline"
               >
                 {VENUE_ADDRESS}
               </a>

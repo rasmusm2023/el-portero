@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="mt-4 text-ink-muted">This page could not be found.</p>
       <Link
         href="/"
-        className="mt-8 inline-block text-sm font-medium tracking-wide text-gold uppercase underline-offset-4 hover:underline"
+        className="mt-8 inline-block text-sm font-medium tracking-wide text-ink uppercase underline-offset-4 hover:underline"
       >
         Home
       </Link>

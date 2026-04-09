@@ -15,7 +15,7 @@ export function EventsPage() {
 
   return (
     <PageShell title={t(locale, "page.events.title")} intro={intro}>
-      <div className="rounded-md border border-dashed border-border-gold bg-gold-dim/40 px-6 py-12 text-center">
+      <div className="rounded-none border border-dashed border-border bg-paper-dark/50 px-6 py-12 text-center">
         <p className="text-ink-muted">
           {locale === "es"
             ? "Sin eventos publicados todavía."
