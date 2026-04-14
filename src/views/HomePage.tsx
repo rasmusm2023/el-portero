@@ -1,13 +1,18 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useRef } from "react";
-import { LogoWordmark } from "@/components/LogoWordmark";
+import { useRef, useState } from "react";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
 import { HoursMapSection } from "@/components/sections/HoursMapSection";
+import { LocationMapSection } from "@/components/sections/LocationMapSection";
+import { WeeklyMenuSection } from "@/components/sections/WeeklyMenuSection";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
-import { MenuSplitSection } from "@/components/sections/MenuSplitSection";
+import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
+import { MenuSplitSection, type MenuSplitKey } from "@/components/sections/MenuSplitSection";
+import { foodMenuCategories } from "@/data/foodMenu";
+import { drinksMenuCategories } from "@/data/drinksMenu";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -18,12 +23,14 @@ type HomePageProps = {
 export function HomePage({ heroImages = [] }: HomePageProps) {
   const { locale } = useLocale();
   const heroSectionRef = useRef<HTMLElement>(null);
+  const [expandedMenu, setExpandedMenu] = useState<MenuSplitKey | null>(null);
+  const menuPreviewRef = useRef<HTMLElement>(null);
 
   return (
     <div>
       <section
         ref={heroSectionRef}
-        className="relative -mt-[var(--header-h)] overflow-hidden border-b border-border bg-ink text-paper"
+        className="relative -mt-[var(--header-h)] overflow-hidden bg-ink text-paper"
       >
         <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
         {heroImages.length > 0 && (
@@ -43,7 +50,12 @@ export function HomePage({ heroImages = [] }: HomePageProps) {
         <div className="relative z-10 flex w-full min-h-[min(88vh,56rem)] flex-col items-center px-5 pb-16 pt-[calc(var(--header-h)+6rem)] sm:px-10 sm:pb-20 sm:pt-[calc(var(--header-h)+7rem)] lg:px-14 xl:px-20">
           <div className="flex flex-1 flex-col items-center justify-center px-2 py-10 sm:py-14 md:py-16">
             <div className="w-full max-w-5xl text-center text-paper">
-              <LogoWordmark size="hero" showTagline />
+              <h1 className="font-hero-title text-6xl font-normal leading-[0.92] tracking-tight text-paper sm:text-7xl md:text-8xl lg:text-9xl">
+                South American & Swedish
+              </h1>
+              <p className="mx-auto mt-5 max-w-3xl font-sans text-sm font-medium tracking-[0.22em] text-paper/85 uppercase sm:mt-6 sm:text-base">
+                Fusion restaurant & dinner club in Torrevieja
+              </p>
             </div>
           </div>
           <div className="flex w-full max-w-2xl flex-col items-center justify-center gap-6 pb-2 sm:pt-2">
@@ -52,20 +64,104 @@ export function HomePage({ heroImages = [] }: HomePageProps) {
                 href="/reserve"
                 className="inline-flex min-w-[min(100%,12rem)] items-center justify-center rounded-none border-2 border-paper/85 bg-paper/12 px-8 py-3.5 text-sm font-bold tracking-[0.22em] text-paper uppercase shadow-md shadow-black/25 ring-1 ring-white/15 transition-[color,background-color,border-color,box-shadow,ring-color] hover:border-white hover:bg-white hover:text-ink hover:shadow-lg hover:shadow-black/20 hover:ring-white/40"
               >
-                {t(locale, "nav.reserve")}
-              </Link>
-              <Link
-                href="/menu"
-                className="inline-flex min-w-[min(100%,10rem)] items-center justify-center rounded-none border border-paper/40 bg-transparent px-6 py-3 text-sm font-medium tracking-[0.16em] text-paper/90 uppercase transition-colors hover:border-paper/65 hover:text-paper"
-              >
-                {t(locale, "nav.menu")}
+                Make Reservation
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <MenuSplitSection />
+      <motion.div layout className="w-full">
+        <MenuSplitSection
+          onSelect={(key) => {
+            setExpandedMenu((prev) => (prev === key ? null : key));
+          }}
+        />
+
+        <AnimatePresence initial={false}>
+          {expandedMenu ? (
+            <motion.section
+              key="menu-preview"
+              ref={menuPreviewRef}
+              aria-label="Menu preview"
+              className={[
+                "w-full border-b border-border px-5 pb-12 pt-0 sm:px-10 sm:pb-16 lg:px-14 xl:px-20",
+                // A warmer, richer surface than plain paper.
+                "bg-[radial-gradient(1200px_600px_at_20%_0%,rgba(114,86,60,0.20)_0%,rgba(250,249,246,0.94)_52%,rgba(250,249,246,0.98)_100%)]",
+              ].join(" ")}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              style={{ overflow: "hidden" }}
+              layout
+            >
+              <div className="mx-auto w-full max-w-[var(--container-max)]">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={expandedMenu}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className={[
+                      "border border-border p-6 sm:p-10",
+                      // Connect to the cards above (feels “drawn out” from them).
+                      "-mt-px",
+                      "bg-[linear-gradient(180deg,rgba(10,10,10,0.06)_0%,rgba(250,249,246,0.78)_16%,rgba(250,249,246,0.88)_100%)]",
+                      "backdrop-blur-[2px]",
+                    ].join(" ")}
+                    layout
+                  >
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                      <div className="min-w-0">
+                        <h2 className="font-display text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+                          {expandedMenu === "food"
+                            ? t(locale, "page.menu.foodHeading")
+                            : t(locale, "page.menu.drinksHeading")}
+                        </h2>
+                        <p className="mt-2 max-w-2xl text-ink-muted leading-relaxed">
+                          {expandedMenu === "food"
+                            ? t(locale, "page.menu.foodIntro")
+                            : t(locale, "page.menu.drinksIntro")}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <button
+                          type="button"
+                          className="inline-flex items-center justify-center rounded-none border border-border bg-paper px-4 py-2 text-xs font-semibold tracking-[0.22em] text-ink uppercase transition-colors hover:border-ink/45"
+                          onClick={() => setExpandedMenu(null)}
+                        >
+                          {locale === "es"
+                            ? "Cerrar"
+                            : locale === "sv"
+                              ? "Stäng"
+                              : "Close"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <motion.div
+                      layout
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                      className="mt-10"
+                    >
+                      <MenuCategoryGrid
+                        categories={
+                          expandedMenu === "food"
+                            ? foodMenuCategories
+                            : drinksMenuCategories
+                        }
+                        locale={locale}
+                      />
+                    </motion.div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.section>
+          ) : null}
+        </AnimatePresence>
+      </motion.div>
 
       <section className="w-full px-5 py-20 sm:px-10 lg:px-14 xl:px-20">
         <div className="grid gap-12 lg:grid-cols-3">
@@ -135,8 +231,10 @@ export function HomePage({ heroImages = [] }: HomePageProps) {
       </section>
 
       <GallerySection />
+      <WeeklyMenuSection />
       <HoursMapSection />
       <InstagramFeedSection />
+      <LocationMapSection />
     </div>
   );
 }

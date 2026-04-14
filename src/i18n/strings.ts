@@ -44,6 +44,16 @@ type PageKey =
   | "page.menu.drinksIntro"
   | "page.menu.foodIntro"
   | "page.menu.seeMenu"
+  | "page.menu.weekly"
+  | "page.menu.weeklyHeading"
+  | "page.menu.weeklyIntro"
+  | "page.menu.weeklyLoading"
+  | "page.menu.weeklyEmpty"
+  | "page.menu.weeklyWeekLabel"
+  | "page.menu.weeklyEffectiveLabel"
+  | "page.menu.weeklyMadridNote"
+  | "page.menu.weeklyViewFull"
+  | "page.menu.subnavAria"
   | "page.events.title"
   | "page.reserve.title"
   | "page.contact.title"
@@ -93,6 +103,18 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.foodIntro":
       "Sample menu — dishes and allergens are confirmed by the kitchen before service.",
     "page.menu.seeMenu": "See menu",
+    "page.menu.weekly": "Weekly",
+    "page.menu.weeklyHeading": "Weekly menu",
+    "page.menu.weeklyIntro":
+      "A short rotating selection that changes with the week. If nothing appears yet, publish the current week in admin.",
+    "page.menu.weeklyLoading": "Loading this week’s menu…",
+    "page.menu.weeklyEmpty":
+      "No weekly menu is published for this week yet. Check back soon — or ask staff to publish it in admin.",
+    "page.menu.weeklyWeekLabel": "Week of",
+    "page.menu.weeklyEffectiveLabel": "Goes live",
+    "page.menu.weeklyMadridNote": "Madrid week start",
+    "page.menu.weeklyViewFull": "View full weekly menu",
+    "page.menu.subnavAria": "Menu sections",
     "page.events.title": "Events",
     "page.reserve.title": "Reservations",
     "page.contact.title": "Contact",
@@ -107,7 +129,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.closeNav": "Close menu",
     "header.openNav": "Open menu",
     "header.navDialog": "Site navigation",
-    "header.reserveTable": "Reserve table",
+    "header.reserveTable": "Make reservation",
     "header.reserveNav": "Reservation",
     "brand.dinnerClub": "Dinner Club",
   },
@@ -135,6 +157,18 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.foodIntro":
       "Menú de ejemplo — platos y alérgenos se confirman en sala antes del servicio.",
     "page.menu.seeMenu": "Ver carta",
+    "page.menu.weekly": "Semanal",
+    "page.menu.weeklyHeading": "Menú semanal",
+    "page.menu.weeklyIntro":
+      "Una selección breve que rota cada semana. Si no aparece nada, publica la semana actual en admin.",
+    "page.menu.weeklyLoading": "Cargando el menú de la semana…",
+    "page.menu.weeklyEmpty":
+      "Aún no hay menú semanal publicado para esta semana. Vuelve pronto — o pide al equipo que lo publique en admin.",
+    "page.menu.weeklyWeekLabel": "Semana del",
+    "page.menu.weeklyEffectiveLabel": "Activo desde",
+    "page.menu.weeklyMadridNote": "Inicio de semana (Madrid)",
+    "page.menu.weeklyViewFull": "Ver menú semanal completo",
+    "page.menu.subnavAria": "Secciones de la carta",
     "page.events.title": "Eventos",
     "page.reserve.title": "Reservas",
     "page.contact.title": "Contacto",
@@ -149,7 +183,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.closeNav": "Cerrar menú",
     "header.openNav": "Abrir menú",
     "header.navDialog": "Navegación",
-    "header.reserveTable": "Reservar mesa",
+    "header.reserveTable": "Hacer reserva",
     "header.reserveNav": "Reserva",
     "brand.dinnerClub": "Dinner Club",
   },
@@ -177,6 +211,18 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.foodIntro":
       "Exempelmeny — rätter och allergener bekräftas av köket före servering.",
     "page.menu.seeMenu": "Se menyn",
+    "page.menu.weekly": "Veckans",
+    "page.menu.weeklyHeading": "Veckans meny",
+    "page.menu.weeklyIntro":
+      "Ett kort roterande urval som byts veckovis. Om inget visas ännu, publicera aktuell vecka i admin.",
+    "page.menu.weeklyLoading": "Laddar veckans meny…",
+    "page.menu.weeklyEmpty":
+      "Ingen veckomeny är publicerad för den här veckan än. Kom tillbaka snart — eller be personalen publicera den i admin.",
+    "page.menu.weeklyWeekLabel": "Vecka från",
+    "page.menu.weeklyEffectiveLabel": "Aktiveras",
+    "page.menu.weeklyMadridNote": "Veckostart (Madrid)",
+    "page.menu.weeklyViewFull": "Se hela veckans meny",
+    "page.menu.subnavAria": "Menydelar",
     "page.events.title": "Evenemang",
     "page.reserve.title": "Bokning",
     "page.contact.title": "Kontakt",
@@ -191,7 +237,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.closeNav": "Stäng meny",
     "header.openNav": "Öppna menyn",
     "header.navDialog": "Navigering",
-    "header.reserveTable": "Boka bord",
+    "header.reserveTable": "Gör bokning",
     "header.reserveNav": "Bokning",
     "brand.dinnerClub": "Dinner Club",
   },

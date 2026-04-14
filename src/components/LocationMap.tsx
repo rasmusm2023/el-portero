@@ -19,11 +19,8 @@ export function LocationMap({ locale, className }: LocationMapProps) {
 
   return (
     <div className={className}>
-      <h2 className="font-display text-xl font-medium text-ink">
-        {t(locale, "page.hours.map")}
-      </h2>
-      <div className="mt-4 overflow-hidden rounded-none border border-border bg-paper-dark/40 shadow-sm ring-1 ring-border/80">
-        <div className="relative aspect-[4/3] min-h-[240px] w-full lg:aspect-auto lg:min-h-[320px]">
+      <div className="overflow-hidden rounded-none border border-border bg-paper-dark/40 shadow-sm ring-1 ring-border/80">
+        <div className="relative aspect-[4/3] min-h-[320px] w-full lg:aspect-auto lg:min-h-[432px]">
           <iframe
             title={t(locale, "page.hours.mapIframeTitle")}
             src={embedSrc}

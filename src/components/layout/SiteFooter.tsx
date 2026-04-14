@@ -17,7 +17,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-[var(--container-max)] gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8">
         <div>
           <p className="text-paper">
-            <LogoWordmark size="footer" showTagline align="start" />
+            <LogoWordmark size="footer" showTagline align="start" tone="onDark" />
           </p>
           <p className="mt-3 max-w-md text-sm leading-relaxed text-paper/75">
             {locale === "es"

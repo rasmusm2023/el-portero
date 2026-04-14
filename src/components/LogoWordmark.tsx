@@ -13,20 +13,22 @@ type LogoWordmarkProps = {
   align?: "center" | "start";
   /** When set, overrides hook locale (e.g. rare static use). */
   locale?: Locale;
+  /** Treat the SVG for the current surface (black logo on light, inverted on dark). */
+  tone?: "onLight" | "onDark";
 };
 
-const wordmarkSizeClasses: Record<LogoWordmarkProps["size"], string> = {
-  header: "text-2xl sm:text-3xl lg:text-4xl xl:text-[2.75rem]",
-  hero: "text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6rem]",
-  footer: "text-3xl",
+const logotypeSizeClasses: Record<LogoWordmarkProps["size"], string> = {
+  header: "h-7 sm:h-8 lg:h-9 xl:h-10",
+  hero: "h-14 sm:h-16 md:h-20 lg:h-24 xl:h-28",
+  footer: "h-10 sm:h-11",
 };
 
 const taglineClasses: Record<LogoWordmarkProps["size"], string> = {
   header:
-    "font-sans text-[10px] font-light uppercase tracking-[0.38em] text-current/75 sm:text-xs sm:tracking-[0.42em]",
-  hero: "font-sans text-base font-light uppercase tracking-[0.32em] text-current/85 sm:text-lg sm:tracking-[0.36em] md:text-xl",
+    "font-sans text-[10px] font-light uppercase tracking-[0.38em] sm:text-xs sm:tracking-[0.42em]",
+  hero: "font-sans text-base font-light uppercase tracking-[0.32em] sm:text-lg sm:tracking-[0.36em] md:text-xl",
   footer:
-    "font-sans text-[10px] font-light uppercase tracking-[0.35em] text-current/70 sm:text-xs",
+    "font-sans text-[10px] font-light uppercase tracking-[0.35em] sm:text-xs",
 };
 
 /**
@@ -38,22 +40,29 @@ export function LogoWordmark({
   showTagline = false,
   align = "center",
   locale: localeProp,
+  tone = "onLight",
 }: LogoWordmarkProps) {
   const { locale: localeHook } = useLocale();
   const locale = localeProp ?? localeHook;
 
   const alignClass = align === "start" ? "items-start" : "items-center";
+  const taglineColorClass =
+    tone === "onDark" ? "text-paper/75" : "text-ink/70";
+  const svgFilterClass = tone === "onDark" ? "invert" : "";
 
   return (
     <span
-      className={`flex flex-col gap-1.5 leading-none transition-colors duration-300 ${alignClass} ${wordmarkSizeClasses[size]} ${className}`}
+      className={`flex flex-col gap-1.5 leading-none ${alignClass} ${className}`}
     >
-      <span className="inline-flex items-baseline gap-x-[0.2em] whitespace-nowrap font-logo">
-        <span className="text-[0.58em] font-normal lowercase">el</span>
-        <span className="font-bold uppercase tracking-[0.09em]">PORTERO</span>
-      </span>
+      <img
+        src="/logos/el-portero-logotype.svg"
+        alt="El Portero"
+        className={`block w-auto max-w-full select-none ${logotypeSizeClasses[size]} ${svgFilterClass}`}
+        draggable={false}
+        decoding="async"
+      />
       {showTagline ? (
-        <span className={taglineClasses[size]}>
+        <span className={`${taglineClasses[size]} ${taglineColorClass}`}>
           {t(locale, "brand.dinnerClub")}
         </span>
       ) : null}

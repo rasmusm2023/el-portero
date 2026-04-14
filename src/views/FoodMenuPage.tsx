@@ -1,5 +1,6 @@
 "use client";
 
+import { MenuPager } from "@/components/menu/MenuPager";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
 import { PageShell } from "@/components/layout/PageShell";
 import { foodMenuCategories } from "@/data/foodMenu";
@@ -11,6 +12,7 @@ export function FoodMenuPage() {
 
   return (
     <PageShell title={t(locale, "page.menu.foodHeading")} intro={t(locale, "page.menu.foodIntro")}>
+      <MenuPager />
       <MenuCategoryGrid categories={foodMenuCategories} locale={locale} />
     </PageShell>
   );

@@ -1,4 +1,9 @@
-import { Cormorant_Garamond, Jaro, Plus_Jakarta_Sans } from "next/font/google";
+import {
+  Cormorant_Garamond,
+  Jaro,
+  Playfair_Display,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
@@ -19,6 +24,13 @@ const fontSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+const fontHeroTitle = Playfair_Display({
+  subsets: ["latin"],
+  style: ["italic"],
+  variable: "--font-playfair-display",
+  display: "swap",
+});
+
 /** Wordmark only — Jaro (Google Fonts), distinct from `font-display` / `font-sans`. */
 const fontLogo = Jaro({
   subsets: ["latin"],
@@ -35,6 +47,9 @@ export const metadata: Metadata = {
   },
   description:
     "El Portero — fine dining in Torrevieja, Alicante. Mediterranean soul and warm hospitality.",
+  icons: {
+    icon: [{ url: "/favicon/el-portero-favicon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({
@@ -45,7 +60,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable}`}
+      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable}`}
     >
       <body>
         <AppProviders>

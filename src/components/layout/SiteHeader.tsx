@@ -28,7 +28,7 @@ function overlayLinkClass(pathname: string, href: string) {
       : pathname === href || pathname.startsWith(`${href}/`);
   return [
     "block w-full text-center font-sans text-5xl font-bold tracking-tight transition-colors sm:text-6xl md:text-7xl",
-    isActive ? "text-paper" : "text-paper/75 hover:text-paper",
+    isActive ? "text-paper" : "text-paper/55 hover:text-paper/85",
   ].join(" ");
 }
 
@@ -136,9 +136,13 @@ export function SiteHeader() {
             <Link
               href="/"
               className="pointer-events-auto flex min-w-0 max-w-full justify-center text-center"
-              aria-label="El Portero Dinner Club"
+              aria-label="El Portero"
             >
-              <LogoWordmark size="header" showTagline className={headerInk} />
+              <LogoWordmark
+                size="header"
+                showTagline={false}
+                tone={menuOpen || !onLightSurface ? "onDark" : "onLight"}
+              />
             </Link>
           </div>
 

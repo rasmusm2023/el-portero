@@ -24,3 +24,6 @@ dist-ssr
 # Env
 .env
 .env.*.local
+
+# Local databases
+*.db

@@ -25,6 +25,11 @@
 }
 
 @layer utilities {
+  .font-hero-title {
+    font-family: var(--font-hero-title);
+    font-style: italic;
+  }
+
   /* Extend solid `bg-paper` with the same texture as body (opacity variants stay color-only). */
   .bg-paper {
     background-image: var(--bg-paper-texture);
