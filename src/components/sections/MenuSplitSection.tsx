@@ -89,7 +89,7 @@ const PANELS: {
 ];
 
 /** Horizontal run of each seam vs panel width — keep small so splits read as a hint, not a wide band. */
-const SPLIT_LEAN_FRAC = 0.03;
+const SPLIT_LEAN_FRAC = 0.05;
 
 function clipPathStyle(
   clipPath: string,

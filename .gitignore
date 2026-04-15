@@ -27,3 +27,7 @@ dist-ssr
 
 # Local databases
 *.db
+
+# .NET build outputs
+**/bin/
+**/obj/
