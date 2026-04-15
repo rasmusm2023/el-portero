@@ -3,41 +3,202 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLocale } from "@/i18n/useLocale";
-import { t } from "@/i18n/strings";
+import { t, type MessageKey } from "@/i18n/strings";
 
-export type MenuSplitKey = "food" | "drinks";
+export type MenuSplitKey = "food" | "drinks" | "brunch" | "alacarte";
 
 type MenuSplitSectionProps = {
   onSelect?: (key: MenuSplitKey) => void;
+  /** When set (e.g. expanded menu on home), that panel’s image renders in black & white. */
+  activeKey?: MenuSplitKey | null;
 };
 
-/** Matches `overlayLinkClass` inactive state in SiteHeader (full-screen nav). */
+/** Matches hero + header horizontal inset. */
+const contentGutterClass =
+  "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
+
+/** Matches hero image card radius; white base so split seams read as light lines between panels. */
+const insetCardShellClass =
+  "overflow-hidden rounded-2xl bg-white shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10 sm:rounded-3xl";
+
 const menuSplitTitleClass =
-  "font-sans text-5xl font-bold tracking-tight text-paper/90 transition-colors duration-300 sm:text-6xl md:text-7xl group-hover:text-paper";
+  "font-sans text-4xl font-bold tracking-tight text-paper/90 transition-colors duration-300 sm:text-5xl md:text-6xl group-hover/panel:text-paper";
 
 const menuSplitSeeMenuClass =
   "font-sans text-xs font-semibold uppercase tracking-[0.28em] text-paper/85 transition-all duration-300 ease-out " +
   "opacity-100 translate-y-0";
 
-/** Fine dining / plated — Unsplash (decorative). */
 const FOOD_BG =
   "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=2400&q=80";
-
-/** Wine & bar — Unsplash (decorative). */
 const DRINKS_BG =
   "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=2400&q=80";
+/** Brunch table — Unsplash */
+const BRUNCH_BG =
+  "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=2400&q=80";
+/** Plated course — Unsplash */
+const ALACARTE_BG =
+  "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2400&q=80";
 
 const panelBaseClass =
-  "group relative flex items-center justify-center overflow-hidden px-4 py-16 transition-[color] duration-300 sm:px-8 " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60";
+  "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color] duration-300 sm:px-5 sm:py-14 md:py-16 " +
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60 " +
+  "isolate";
 
-const panelHeightClass =
-  "min-h-[min(30vh,15rem)] sm:min-h-[min(36vh,21rem)] lg:min-h-[min(40vh,24rem)] xl:min-h-[min(42vh,26rem)]";
+const panelMinHeightClass =
+  "min-h-[min(28vh,13rem)] sm:min-h-[min(30vh,15rem)] md:min-h-[min(34vh,17rem)] lg:min-h-[min(32vh,16rem)]";
 
-// Mobile panels have horizontal padding (`px-4`), so the image is slightly narrower than viewport.
-const mobilePanelSizes = "calc(100vw - 2rem)";
+/** Desktop: one row of four equal columns. */
+const desktopFourColHeightClass =
+  "min-h-[min(28vh,14rem)] sm:min-h-[min(34vh,17rem)] lg:min-h-[min(38vh,20rem)] xl:min-h-[min(40vh,21rem)]";
 
-export function MenuSplitSection({ onSelect }: MenuSplitSectionProps) {
+const PANELS: {
+  key: MenuSplitKey;
+  src: string;
+  href: string;
+  labelKey: MessageKey;
+  srKey: MessageKey;
+}[] = [
+  {
+    key: "food",
+    src: FOOD_BG,
+    href: "/menu/food",
+    labelKey: "page.menu.food",
+    srKey: "page.menu.foodHeading",
+  },
+  {
+    key: "alacarte",
+    src: ALACARTE_BG,
+    href: "/menu/alacarte",
+    labelKey: "page.menu.alacarte",
+    srKey: "page.menu.alacarteHeading",
+  },
+  {
+    key: "brunch",
+    src: BRUNCH_BG,
+    href: "/menu/brunch",
+    labelKey: "page.menu.brunch",
+    srKey: "page.menu.brunchHeading",
+  },
+  {
+    key: "drinks",
+    src: DRINKS_BG,
+    href: "/menu/drinks",
+    labelKey: "page.menu.drinks",
+    srKey: "page.menu.drinksHeading",
+  },
+];
+
+/** Horizontal run of each seam vs panel width — keep small so splits read as a hint, not a wide band. */
+const SPLIT_LEAN_FRAC = 0.03;
+
+function clipPathStyle(
+  clipPath: string,
+  zIndex: number,
+): { clipPath: string; WebkitClipPath: string; zIndex: number } {
+  return { clipPath, WebkitClipPath: clipPath, zIndex };
+}
+
+/** Trapezoid clips for equal-width quarters: first/last only cut one side; middles cut both. */
+function splitLeanPolygon(quarterIndex: number): string {
+  const d = 100 * SPLIT_LEAN_FRAC;
+  const br = 100 - d;
+  if (quarterIndex === 0) {
+    return `polygon(0 0, 100% 0, ${br}% 100%, 0 100%)`;
+  }
+  if (quarterIndex === 3) {
+    return `polygon(${d}% 0, 100% 0, 100% 100%, 0 100%)`;
+  }
+  return `polygon(${d}% 0, 100% 0, ${br}% 100%, 0 100%)`;
+}
+
+/**
+ * Transform scales on an outer wrapper; filter (grayscale) on an inner wrapper so easing stays smooth
+ * (mixing both on one layer often looks stepped in WebKit).
+ */
+function MenuPanelPhoto({
+  src,
+  sizes,
+  priority,
+  active,
+}: {
+  src: string;
+  sizes: string;
+  priority?: boolean;
+  active: boolean;
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+      <div
+        className={[
+          "h-full w-full origin-center scale-100 transform-gpu will-change-transform",
+          "backface-hidden",
+          "transition-transform duration-[1250ms] ease-[cubic-bezier(0.25,0.46,0.45,0.99)]",
+          "motion-reduce:transition-none motion-reduce:duration-0",
+          "group-hover/panel:scale-[1.045] motion-reduce:group-hover/panel:scale-100",
+        ].join(" ")}
+      >
+        <div
+          className={[
+            "relative h-full w-full",
+            "transition-[filter] duration-700 ease-out motion-reduce:transition-none",
+            active ? "grayscale" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          <Image
+            src={src}
+            alt=""
+            fill
+            sizes={sizes}
+            className="object-cover"
+            priority={priority}
+            draggable={false}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PanelContent({
+  labelKey,
+  srKey,
+  seeMenu,
+  titleAlignClass = "",
+}: {
+  labelKey: MessageKey;
+  srKey: MessageKey;
+  seeMenu: string;
+  /** e.g. diagonal seam title nudge */
+  titleAlignClass?: string;
+}) {
+  const { locale } = useLocale();
+  return (
+    <>
+      <div
+        className="absolute inset-0 z-[1] bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-500 ease-out group-hover/panel:from-ink/92 group-hover/panel:via-ink/60"
+        aria-hidden
+      />
+      <span className="relative z-[2] flex max-w-[min(100%,18rem)] flex-col items-center gap-2 px-2 text-center sm:gap-3">
+        <span
+          className={
+            titleAlignClass ? `${menuSplitTitleClass} ${titleAlignClass}` : menuSplitTitleClass
+          }
+        >
+          {t(locale, labelKey)}
+        </span>
+        <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
+        <span className="sr-only">
+          {" "}
+          — {t(locale, srKey)}
+        </span>
+      </span>
+    </>
+  );
+}
+
+export function MenuSplitSection({ onSelect, activeKey = null }: MenuSplitSectionProps) {
   const { locale } = useLocale();
   const seeMenu = t(locale, "page.menu.seeMenu");
   const interactive = Boolean(onSelect);
@@ -46,220 +207,105 @@ export function MenuSplitSection({ onSelect }: MenuSplitSectionProps) {
     <section
       aria-label={
         locale === "es"
-          ? "Elegir carta de comida o bebidas"
+          ? "Elegir tipo de carta"
           : locale === "sv"
-            ? "Välj mat- eller dryckesmeny"
-            : "Choose food or drinks menu"
+            ? "Välj meny"
+            : "Choose a menu"
       }
-      className="border-b border-border bg-ink"
+      className="border-b border-border bg-paper"
     >
-      {/* Mobile: stacked. Desktop: horizontal panels with a diagonal seam. */}
-      <div className="w-full">
-        <div className="grid w-full grid-cols-1 sm:hidden">
-          {interactive ? (
-            <button
-              type="button"
-              className={`${panelBaseClass} ${panelHeightClass} w-full`}
-              onClick={() => onSelect?.("food")}
-            >
-              <Image
-                src={FOOD_BG}
-                alt=""
-                fill
-                sizes={mobilePanelSizes}
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                priority
-              />
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-                aria-hidden
-              />
-              <span className="relative z-10 flex flex-col items-center gap-3 text-center">
-                <span className={menuSplitTitleClass}>{t(locale, "page.menu.food")}</span>
-                <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-                <span className="sr-only"> — {t(locale, "page.menu.foodHeading")}</span>
-              </span>
-            </button>
-          ) : (
-            <Link href="/menu/food" className={`${panelBaseClass} ${panelHeightClass}`}>
-            <Image
-              src={FOOD_BG}
-              alt=""
-              fill
-              sizes={mobilePanelSizes}
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              priority
-            />
-            <div
-              className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-              aria-hidden
-            />
-            <span className="relative z-10 flex flex-col items-center gap-3 text-center">
-              <span className={menuSplitTitleClass}>{t(locale, "page.menu.food")}</span>
-              <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-              <span className="sr-only"> — {t(locale, "page.menu.foodHeading")}</span>
-            </span>
-            </Link>
-          )}
+      <div className={`${contentGutterClass} py-6 sm:py-8`}>
+        <div className={insetCardShellClass}>
+          <div className="flex flex-col gap-px bg-white sm:gap-0">
+            <div className="flex flex-col gap-px sm:hidden">
+              {PANELS.map((panel, index) => {
+                const active = activeKey === panel.key;
+                const sizes =
+                  "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1279px) 50vw, 25vw";
 
-          {interactive ? (
-            <button
-              type="button"
-              className={`${panelBaseClass} ${panelHeightClass} w-full`}
-              onClick={() => onSelect?.("drinks")}
-            >
-              <Image
-                src={DRINKS_BG}
-                alt=""
-                fill
-                sizes={mobilePanelSizes}
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-                aria-hidden
-              />
-              <span className="relative z-10 flex flex-col items-center gap-3 text-center">
-                <span className={menuSplitTitleClass}>{t(locale, "page.menu.drinks")}</span>
-                <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-                <span className="sr-only"> — {t(locale, "page.menu.drinksHeading")}</span>
-              </span>
-            </button>
-          ) : (
-            <Link href="/menu/drinks" className={`${panelBaseClass} ${panelHeightClass}`}>
-            <Image
-              src={DRINKS_BG}
-              alt=""
-              fill
-              sizes={mobilePanelSizes}
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-            />
-            <div
-              className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-              aria-hidden
-            />
-            <span className="relative z-10 flex flex-col items-center gap-3 text-center">
-              <span className={menuSplitTitleClass}>{t(locale, "page.menu.drinks")}</span>
-              <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-              <span className="sr-only"> — {t(locale, "page.menu.drinksHeading")}</span>
-            </span>
-            </Link>
-          )}
-        </div>
+                const inner = (
+                  <>
+                    <MenuPanelPhoto
+                      src={panel.src}
+                      sizes={sizes}
+                      priority={index === 0}
+                      active={active}
+                    />
+                    <PanelContent labelKey={panel.labelKey} srKey={panel.srKey} seeMenu={seeMenu} />
+                  </>
+                );
 
-        <div className="relative hidden w-full overflow-hidden bg-ink sm:block">
-          <div className="relative flex w-full">
-            {interactive ? (
-              <button
-                type="button"
-                className={[
-                  panelBaseClass,
-                  `z-10 w-[56%] ${panelHeightClass}`,
-                  "[clip-path:polygon(0_0,100%_0,82%_100%,0_100%)]",
-                ].join(" ")}
-                onClick={() => onSelect?.("food")}
-              >
-                <Image
-                  src={FOOD_BG}
-                  alt=""
-                  fill
-                  sizes="60vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  priority
-                />
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-                  aria-hidden
-                />
-                <span className="relative z-10 flex w-full max-w-[26rem] flex-col items-center gap-3 text-center [transform:translateX(-8%)]">
-                  <span className={menuSplitTitleClass}>{t(locale, "page.menu.food")}</span>
-                  <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-                  <span className="sr-only"> — {t(locale, "page.menu.foodHeading")}</span>
-                </span>
-              </button>
-            ) : (
-              <Link
-                href="/menu/food"
-                className={[
-                  panelBaseClass,
-                  `z-10 w-[56%] ${panelHeightClass}`,
-                  "[clip-path:polygon(0_0,100%_0,82%_100%,0_100%)]",
-                ].join(" ")}
-              >
-              <Image
-                src={FOOD_BG}
-                alt=""
-                fill
-                sizes="60vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                priority
-              />
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-                aria-hidden
-              />
-              <span className="relative z-10 flex w-full max-w-[26rem] flex-col items-center gap-3 text-center [transform:translateX(-8%)]">
-                <span className={menuSplitTitleClass}>{t(locale, "page.menu.food")}</span>
-                <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-                <span className="sr-only"> — {t(locale, "page.menu.foodHeading")}</span>
-              </span>
-              </Link>
-            )}
+                return interactive ? (
+                  <button
+                    key={panel.key}
+                    type="button"
+                    className={`${panelBaseClass} ${panelMinHeightClass} w-full bg-ink`}
+                    onClick={() => onSelect?.(panel.key)}
+                  >
+                    {inner}
+                  </button>
+                ) : (
+                  <Link
+                    key={panel.key}
+                    href={panel.href}
+                    className={`${panelBaseClass} ${panelMinHeightClass} bg-ink`}
+                  >
+                    {inner}
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="hidden w-full grid-cols-4 gap-0 bg-white sm:grid">
+              {PANELS.map((panel, index) => {
+                const active = activeKey === panel.key;
+                const sizes =
+                  "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1023px) 25vw, 25vw";
 
-            {interactive ? (
-              <button
-                type="button"
-                className={[
-                  panelBaseClass,
-                  `z-20 w-[56%] -ml-[12%] ${panelHeightClass}`,
-                  "[clip-path:polygon(18%_0,100%_0,100%_100%,0_100%)]",
-                ].join(" ")}
-                onClick={() => onSelect?.("drinks")}
-              >
-                <Image
-                  src={DRINKS_BG}
-                  alt=""
-                  fill
-                  sizes="60vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                <div
-                  className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-                  aria-hidden
-                />
-                <span className="relative z-10 flex w-full max-w-[26rem] flex-col items-center gap-3 text-center [transform:translateX(8%)]">
-                  <span className={menuSplitTitleClass}>{t(locale, "page.menu.drinks")}</span>
-                  <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-                  <span className="sr-only"> — {t(locale, "page.menu.drinksHeading")}</span>
-                </span>
-              </button>
-            ) : (
-              <Link
-                href="/menu/drinks"
-                className={[
-                  panelBaseClass,
-                  `z-20 w-[56%] -ml-[12%] ${panelHeightClass}`,
-                  "[clip-path:polygon(18%_0,100%_0,100%_100%,0_100%)]",
-                ].join(" ")}
-              >
-              <Image
-                src={DRINKS_BG}
-                alt=""
-                fill
-                sizes="60vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-300 group-hover:from-ink/92 group-hover:via-ink/60"
-                aria-hidden
-              />
-              <span className="relative z-10 flex w-full max-w-[26rem] flex-col items-center gap-3 text-center [transform:translateX(8%)]">
-                <span className={menuSplitTitleClass}>{t(locale, "page.menu.drinks")}</span>
-                <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
-                <span className="sr-only"> — {t(locale, "page.menu.drinksHeading")}</span>
-              </span>
-              </Link>
-            )}
+                const titleNudge =
+                  index === 0
+                    ? "[transform:translateX(-1.5%)]"
+                    : index === 3
+                      ? "[transform:translateX(1.5%)]"
+                      : "";
+
+                const inner = (
+                  <>
+                    <MenuPanelPhoto
+                      src={panel.src}
+                      sizes={sizes}
+                      priority={index === 0}
+                      active={active}
+                    />
+                    <PanelContent
+                      labelKey={panel.labelKey}
+                      srKey={panel.srKey}
+                      seeMenu={seeMenu}
+                      titleAlignClass={titleNudge}
+                    />
+                  </>
+                );
+
+                const cellClass = `${panelBaseClass} ${desktopFourColHeightClass} min-w-0 bg-ink`;
+
+                const leanStyle = clipPathStyle(splitLeanPolygon(index), index);
+
+                return interactive ? (
+                  <button
+                    key={panel.key}
+                    type="button"
+                    className={cellClass}
+                    style={leanStyle}
+                    onClick={() => onSelect?.(panel.key)}
+                  >
+                    {inner}
+                  </button>
+                ) : (
+                  <Link key={panel.key} href={panel.href} className={cellClass} style={leanStyle}>
+                    {inner}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

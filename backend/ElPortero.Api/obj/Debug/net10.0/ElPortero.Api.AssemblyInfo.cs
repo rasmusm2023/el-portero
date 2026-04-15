@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ElPortero.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d5c3cb04825fd87e924d4356692b79f6d7a07f49")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4fcfda20a53525367d5c1a6e8bbc54db51c56626")]
 [assembly: System.Reflection.AssemblyProductAttribute("ElPortero.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ElPortero.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

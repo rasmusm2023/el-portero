@@ -15,6 +15,7 @@ const primaryNavItems: { href: string; labelKey: NavKey }[] = [
   { href: "/", labelKey: "nav.home" },
   { href: "/menu", labelKey: "nav.menu" },
   { href: "/events", labelKey: "nav.events" },
+  { href: "/story", labelKey: "nav.story" },
   { href: "/contact", labelKey: "nav.contact" },
 ];
 
@@ -32,8 +33,9 @@ function overlayLinkClass(pathname: string, href: string) {
   ].join(" ");
 }
 
+/** Matches hero / footer horizontal gutters (`px-4 sm:px-6 lg:px-8`). */
 const headerInnerMax =
-  "mx-auto w-full max-w-[min(100%,112rem)] px-5 sm:px-10 lg:px-14 xl:px-20";
+  "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
 /** Flex + absolutely centered logo so left/right rails can differ in width without shifting the wordmark. */
 const headerBarClass = `${headerInnerMax} relative flex min-h-[var(--header-h)] items-center justify-between gap-3 py-3 sm:gap-6 sm:py-4`;
@@ -96,16 +98,14 @@ export function SiteHeader() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  /** Ink-on-paper chrome (transparent bar): only at top on non-home routes. Scrolled or home hero uses dark-on-glass. */
-  const onLightSurface = menuOpen || (atTop && pathname !== "/");
+  /** At top: frosted paper bar so nav stays readable over light page edges (e.g. inset hero). Scrolled: dark glass. */
+  const onLightSurface = menuOpen || atTop;
 
   const headerSurface = menuOpen
     ? "border-paper/10 bg-ink/85 backdrop-blur-md"
     : !atTop
       ? "border-b border-paper/10 bg-ink/65 backdrop-blur-md"
-      : onLightSurface
-        ? "border-b border-border/25 bg-transparent"
-        : "border-b border-transparent bg-transparent";
+      : "border-b border-border/40 bg-paper/90 backdrop-blur-md";
 
   const headerInk = menuOpen ? "text-paper" : onLightSurface ? "text-ink" : "text-paper";
 

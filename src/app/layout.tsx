@@ -1,7 +1,7 @@
 import {
+  Caramel,
   Cormorant_Garamond,
   Jaro,
-  Playfair_Display,
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import type { Metadata } from "next";
@@ -24,10 +24,10 @@ const fontSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const fontHeroTitle = Playfair_Display({
+const fontHeroTitle = Caramel({
   subsets: ["latin"],
-  style: ["italic"],
-  variable: "--font-playfair-display",
+  weight: "400",
+  variable: "--font-caramel",
   display: "swap",
 });
 

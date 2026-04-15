@@ -11,7 +11,7 @@ export function FoodMenuPage() {
   const { locale } = useLocale();
 
   return (
-    <PageShell title={t(locale, "page.menu.foodHeading")} intro={t(locale, "page.menu.foodIntro")}>
+    <PageShell title={t(locale, "page.menu.title")} intro={t(locale, "page.menu.foodIntro")}>
       <MenuPager />
       <MenuCategoryGrid categories={foodMenuCategories} locale={locale} />
     </PageShell>

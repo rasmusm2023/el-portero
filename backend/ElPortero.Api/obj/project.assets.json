@@ -2837,19 +2837,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\devra\\.nuget\\packages\\": {}
+    "/Users/rasmus/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Code\\el-portero\\backend\\Elportero.Api\\ElPortero.Api.csproj",
+      "projectUniqueName": "/Users/rasmus/Documents/Code/el-portero/el-portero/backend/ElPortero.Api/ElPortero.Api.csproj",
       "projectName": "ElPortero.Api",
-      "projectPath": "D:\\Code\\el-portero\\backend\\Elportero.Api\\ElPortero.Api.csproj",
-      "packagesPath": "C:\\Users\\devra\\.nuget\\packages\\",
-      "outputPath": "D:\\Code\\el-portero\\backend\\Elportero.Api\\obj\\",
+      "projectPath": "/Users/rasmus/Documents/Code/el-portero/el-portero/backend/ElPortero.Api/ElPortero.Api.csproj",
+      "packagesPath": "/Users/rasmus/.nuget/packages/",
+      "outputPath": "/Users/rasmus/Documents/Code/el-portero/el-portero/backend/ElPortero.Api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\devra\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/rasmus/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -2921,7 +2921,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.202/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

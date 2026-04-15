@@ -22,6 +22,7 @@ export const localeFlagSrc: Record<Locale, string> = {
 
 export type NavKey =
   | "nav.home"
+  | "nav.story"
   | "nav.menu"
   | "nav.events"
   | "nav.reserve"
@@ -39,10 +40,16 @@ type PageKey =
   | "page.menu.title"
   | "page.menu.food"
   | "page.menu.drinks"
+  | "page.menu.brunch"
+  | "page.menu.alacarte"
   | "page.menu.foodHeading"
   | "page.menu.drinksHeading"
+  | "page.menu.brunchHeading"
+  | "page.menu.alacarteHeading"
   | "page.menu.drinksIntro"
   | "page.menu.foodIntro"
+  | "page.menu.brunchIntro"
+  | "page.menu.alacarteIntro"
   | "page.menu.seeMenu"
   | "page.menu.weekly"
   | "page.menu.weeklyHeading"
@@ -55,6 +62,8 @@ type PageKey =
   | "page.menu.weeklyViewFull"
   | "page.menu.subnavAria"
   | "page.events.title"
+  | "page.story.title"
+  | "page.story.intro"
   | "page.reserve.title"
   | "page.contact.title"
   | "page.gallery.title"
@@ -81,7 +90,8 @@ export type MessageKey = NavKey | PageKey | FooterKey | HeaderKey | BrandKey;
 const messages: Record<Locale, Record<MessageKey, string>> = {
   en: {
     "nav.home": "Home",
-    "nav.menu": "Menu",
+    "nav.story": "Our story",
+    "nav.menu": "Menus",
     "nav.events": "Events",
     "nav.reserve": "Reserve",
     "nav.contact": "Contact",
@@ -93,15 +103,23 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.instagramFollow": "Follow us",
     "page.home.instagramShowMore": "Show more posts",
     "page.home.instagramShowLess": "Show fewer",
-    "page.menu.title": "Menu",
-    "page.menu.food": "Food",
+    "page.menu.title": "Our menus",
+    "page.menu.food": "Lunch",
     "page.menu.drinks": "Drinks",
-    "page.menu.foodHeading": "Food menu",
+    "page.menu.brunch": "Brunch",
+    "page.menu.alacarte": "À la carte",
+    "page.menu.foodHeading": "Lunch menu",
     "page.menu.drinksHeading": "Drinks menu",
+    "page.menu.brunchHeading": "Brunch menu",
+    "page.menu.alacarteHeading": "À la carte",
     "page.menu.drinksIntro":
       "Sample list — bottle vintages and pairings will be updated with the cellar.",
     "page.menu.foodIntro":
-      "Sample menu — dishes and allergens are confirmed by the kitchen before service.",
+      "Sample lunch menu — dishes and allergens are confirmed by the kitchen before service.",
+    "page.menu.brunchIntro":
+      "Weekend brunch — pastries, eggs, and lighter plates. Times and dishes may change with the season.",
+    "page.menu.alacarteIntro":
+      "Order by course or choose the chef’s tasting — ingredients follow the market and the kitchen’s daily prep.",
     "page.menu.seeMenu": "See menu",
     "page.menu.weekly": "Weekly",
     "page.menu.weeklyHeading": "Weekly menu",
@@ -116,6 +134,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyViewFull": "View full weekly menu",
     "page.menu.subnavAria": "Menu sections",
     "page.events.title": "Events",
+    "page.story.title": "Our story",
+    "page.story.intro":
+      "El Portero is where South American warmth meets Scandinavian clarity — fine dining and a dinner club spirit on the Mediterranean coast. This page is ready for your full narrative, milestones, and the people behind the stoves.",
     "page.reserve.title": "Reservations",
     "page.contact.title": "Contact",
     "page.gallery.title": "Gallery",
@@ -135,7 +156,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
   },
   es: {
     "nav.home": "Inicio",
-    "nav.menu": "Carta",
+    "nav.story": "Nuestra historia",
+    "nav.menu": "Cartas",
     "nav.events": "Eventos",
     "nav.reserve": "Reservar",
     "nav.contact": "Contacto",
@@ -147,15 +169,23 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.instagramFollow": "Síguenos",
     "page.home.instagramShowMore": "Ver más publicaciones",
     "page.home.instagramShowLess": "Ver menos",
-    "page.menu.title": "Carta",
-    "page.menu.food": "Comida",
+    "page.menu.title": "Nuestras cartas",
+    "page.menu.food": "Almuerzo",
     "page.menu.drinks": "Bebidas",
-    "page.menu.foodHeading": "Carta de comida",
+    "page.menu.brunch": "Brunch",
+    "page.menu.alacarte": "A la carta",
+    "page.menu.foodHeading": "Menú de almuerzo",
     "page.menu.drinksHeading": "Carta de bebidas",
+    "page.menu.brunchHeading": "Brunch",
+    "page.menu.alacarteHeading": "A la carta",
     "page.menu.drinksIntro":
       "Lista de ejemplo — añadas y maridajes se actualizarán con la bodega.",
     "page.menu.foodIntro":
-      "Menú de ejemplo — platos y alérgenos se confirman en sala antes del servicio.",
+      "Menú de ejemplo de almuerzo — platos y alérgenos se confirman en sala antes del servicio.",
+    "page.menu.brunchIntro":
+      "Brunch de fin de semana — bollería, huevos y platos ligeros. Horarios y carta pueden variar con la temporada.",
+    "page.menu.alacarteIntro":
+      "Elige por platos o el menú degustación del chef — el producto sigue el mercado y el día a día de cocina.",
     "page.menu.seeMenu": "Ver carta",
     "page.menu.weekly": "Semanal",
     "page.menu.weeklyHeading": "Menú semanal",
@@ -170,6 +200,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyViewFull": "Ver menú semanal completo",
     "page.menu.subnavAria": "Secciones de la carta",
     "page.events.title": "Eventos",
+    "page.story.title": "Nuestra historia",
+    "page.story.intro":
+      "El Portero es el encuentro entre la calidez sudamericana y la claridad nórdica — alta cocina y espíritu de cena club en la costa mediterránea. Esta página está lista para vuestro relato, hitos y el equipo detrás de los fogones.",
     "page.reserve.title": "Reservas",
     "page.contact.title": "Contacto",
     "page.gallery.title": "Galería",
@@ -189,7 +222,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
   },
   sv: {
     "nav.home": "Hem",
-    "nav.menu": "Meny",
+    "nav.story": "Vår historia",
+    "nav.menu": "Menyer",
     "nav.events": "Evenemang",
     "nav.reserve": "Boka",
     "nav.contact": "Kontakt",
@@ -201,15 +235,23 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.instagramFollow": "Följ oss",
     "page.home.instagramShowMore": "Visa fler inlägg",
     "page.home.instagramShowLess": "Visa färre",
-    "page.menu.title": "Meny",
-    "page.menu.food": "Mat",
+    "page.menu.title": "Våra menyer",
+    "page.menu.food": "Lunch",
     "page.menu.drinks": "Dryck",
-    "page.menu.foodHeading": "Matmeny",
+    "page.menu.brunch": "Brunch",
+    "page.menu.alacarte": "À la carte",
+    "page.menu.foodHeading": "Lunchmeny",
     "page.menu.drinksHeading": "Dryckesmeny",
+    "page.menu.brunchHeading": "Brunchmeny",
+    "page.menu.alacarteHeading": "À la carte",
     "page.menu.drinksIntro":
       "Exempellista — årgångar och maridage uppdateras med vinkällaren.",
     "page.menu.foodIntro":
-      "Exempelmeny — rätter och allergener bekräftas av köket före servering.",
+      "Exempellunchmeny — rätter och allergener bekräftas av köket före servering.",
+    "page.menu.brunchIntro":
+      "Helgbrunch — bakverk, ägg och lättare rätter. Tider och utbud kan ändras med säsongen.",
+    "page.menu.alacarteIntro":
+      "Välj rätter fristående eller kockens avsmakning — råvaror följer marknad och kökets dagsform.",
     "page.menu.seeMenu": "Se menyn",
     "page.menu.weekly": "Veckans",
     "page.menu.weeklyHeading": "Veckans meny",
@@ -224,6 +266,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyViewFull": "Se hela veckans meny",
     "page.menu.subnavAria": "Menydelar",
     "page.events.title": "Evenemang",
+    "page.story.title": "Vår historia",
+    "page.story.intro":
+      "El Portero är mötet mellan sydamerikansk värme och skandinavisk tydlighet — finare matlagning och dinner club vid Medelhavet. Sidan är redo för er berättelse, milstolpar och köket bakom grytorna.",
     "page.reserve.title": "Bokning",
     "page.contact.title": "Kontakt",
     "page.gallery.title": "Galleri",

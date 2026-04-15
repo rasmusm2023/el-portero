@@ -7,6 +7,8 @@ import { t } from "@/i18n/strings";
 
 const items = [
   { href: "/menu/food", labelKey: "page.menu.food" as const },
+  { href: "/menu/alacarte", labelKey: "page.menu.alacarte" as const },
+  { href: "/menu/brunch", labelKey: "page.menu.brunch" as const },
   { href: "/menu/drinks", labelKey: "page.menu.drinks" as const },
   { href: "/menu/weekly", labelKey: "page.menu.weekly" as const },
 ];
