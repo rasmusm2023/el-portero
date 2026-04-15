@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  /** Browsers request `/favicon.ico` by default; we only ship an SVG under `/favicon/`. */
+  async rewrites() {
+    return [
+      {
+        source: "/favicon.ico",
+        destination: "/favicon/el-portero-favicon.svg",
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

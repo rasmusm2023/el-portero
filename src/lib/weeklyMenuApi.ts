@@ -8,7 +8,7 @@ export async function fetchWeeklyMenuCurrent(): Promise<WeeklyMenu | null> {
   });
   if (r.status === 404) return null;
   if (!r.ok) {
-    throw new Error(`Weekly menu request failed (${r.status}).`);
+    throw new Error(`Lunch menu request failed (${r.status}).`);
   }
   return (await r.json()) as WeeklyMenu;
 }

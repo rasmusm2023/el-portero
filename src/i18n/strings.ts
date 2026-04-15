@@ -37,6 +37,11 @@ type PageKey =
   | "page.home.instagramFollow"
   | "page.home.instagramShowMore"
   | "page.home.instagramShowLess"
+  | "page.home.eventsHeading"
+  | "page.home.eventsIntro"
+  | "page.home.eventsViewAll"
+  | "page.home.eventsCta"
+  | "page.home.eventsScrollHint"
   | "page.menu.title"
   | "page.menu.food"
   | "page.menu.drinks"
@@ -103,35 +108,41 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.instagramFollow": "Follow us",
     "page.home.instagramShowMore": "Show more posts",
     "page.home.instagramShowLess": "Show fewer",
+    "page.home.eventsHeading": "Upcoming events",
+    "page.home.eventsIntro":
+      "Evenings worth reserving — tastings, collaborations, and one-off menus at the table.",
+    "page.home.eventsViewAll": "All events",
+    "page.home.eventsCta": "Details",
+    "page.home.eventsScrollHint": "Scroll sideways for more",
     "page.menu.title": "Our menus",
-    "page.menu.food": "Lunch",
+    "page.menu.food": "Sample",
     "page.menu.drinks": "Drinks",
     "page.menu.brunch": "Brunch",
     "page.menu.alacarte": "À la carte",
-    "page.menu.foodHeading": "Lunch menu",
+    "page.menu.foodHeading": "Sample menu",
     "page.menu.drinksHeading": "Drinks menu",
     "page.menu.brunchHeading": "Brunch menu",
     "page.menu.alacarteHeading": "À la carte",
     "page.menu.drinksIntro":
       "Sample list — bottle vintages and pairings will be updated with the cellar.",
     "page.menu.foodIntro":
-      "Sample lunch menu — dishes and allergens are confirmed by the kitchen before service.",
+      "Placeholder dishes for layout — for this week’s real lunch, open Lunch.",
     "page.menu.brunchIntro":
       "Weekend brunch — pastries, eggs, and lighter plates. Times and dishes may change with the season.",
     "page.menu.alacarteIntro":
       "Order by course or choose the chef’s tasting — ingredients follow the market and the kitchen’s daily prep.",
     "page.menu.seeMenu": "See menu",
-    "page.menu.weekly": "Weekly",
-    "page.menu.weeklyHeading": "Weekly menu",
+    "page.menu.weekly": "Lunch",
+    "page.menu.weeklyHeading": "Lunch",
     "page.menu.weeklyIntro":
-      "A short rotating selection that changes with the week. If nothing appears yet, publish the current week in admin.",
-    "page.menu.weeklyLoading": "Loading this week’s menu…",
+      "What we serve for lunch through the week changes regularly. If nothing appears yet, publish the current week in admin.",
+    "page.menu.weeklyLoading": "Loading lunch…",
     "page.menu.weeklyEmpty":
-      "No weekly menu is published for this week yet. Check back soon — or ask staff to publish it in admin.",
+      "No lunch menu is published for this week yet. Check back soon — or ask staff to publish it in admin.",
     "page.menu.weeklyWeekLabel": "Week of",
     "page.menu.weeklyEffectiveLabel": "Goes live",
     "page.menu.weeklyMadridNote": "Madrid week start",
-    "page.menu.weeklyViewFull": "View full weekly menu",
+    "page.menu.weeklyViewFull": "View full lunch menu",
     "page.menu.subnavAria": "Menu sections",
     "page.events.title": "Events",
     "page.story.title": "Our story",
@@ -169,35 +180,41 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.instagramFollow": "Síguenos",
     "page.home.instagramShowMore": "Ver más publicaciones",
     "page.home.instagramShowLess": "Ver menos",
+    "page.home.eventsHeading": "Próximos eventos",
+    "page.home.eventsIntro":
+      "Noches para reservar — catas, colaboraciones y menús únicos en la mesa.",
+    "page.home.eventsViewAll": "Todos los eventos",
+    "page.home.eventsCta": "Detalles",
+    "page.home.eventsScrollHint": "Desplázate horizontalmente para ver más",
     "page.menu.title": "Nuestras cartas",
-    "page.menu.food": "Almuerzo",
+    "page.menu.food": "Ejemplo",
     "page.menu.drinks": "Bebidas",
     "page.menu.brunch": "Brunch",
     "page.menu.alacarte": "A la carta",
-    "page.menu.foodHeading": "Menú de almuerzo",
+    "page.menu.foodHeading": "Carta de ejemplo",
     "page.menu.drinksHeading": "Carta de bebidas",
     "page.menu.brunchHeading": "Brunch",
     "page.menu.alacarteHeading": "A la carta",
     "page.menu.drinksIntro":
       "Lista de ejemplo — añadas y maridajes se actualizarán con la bodega.",
     "page.menu.foodIntro":
-      "Menú de ejemplo de almuerzo — platos y alérgenos se confirman en sala antes del servicio.",
+      "Platos de ejemplo para maquetación — el almuerzo real de la semana está en Almuerzo.",
     "page.menu.brunchIntro":
       "Brunch de fin de semana — bollería, huevos y platos ligeros. Horarios y carta pueden variar con la temporada.",
     "page.menu.alacarteIntro":
       "Elige por platos o el menú degustación del chef — el producto sigue el mercado y el día a día de cocina.",
     "page.menu.seeMenu": "Ver carta",
-    "page.menu.weekly": "Semanal",
-    "page.menu.weeklyHeading": "Menú semanal",
+    "page.menu.weekly": "Almuerzo",
+    "page.menu.weeklyHeading": "Almuerzo",
     "page.menu.weeklyIntro":
-      "Una selección breve que rota cada semana. Si no aparece nada, publica la semana actual en admin.",
-    "page.menu.weeklyLoading": "Cargando el menú de la semana…",
+      "El almuerzo a lo largo de la semana cambia con frecuencia. Si no aparece nada, publica la semana actual en admin.",
+    "page.menu.weeklyLoading": "Cargando almuerzo…",
     "page.menu.weeklyEmpty":
-      "Aún no hay menú semanal publicado para esta semana. Vuelve pronto — o pide al equipo que lo publique en admin.",
+      "Aún no hay carta de almuerzo publicada para esta semana. Vuelve pronto — o pide al equipo que la publique en admin.",
     "page.menu.weeklyWeekLabel": "Semana del",
     "page.menu.weeklyEffectiveLabel": "Activo desde",
     "page.menu.weeklyMadridNote": "Inicio de semana (Madrid)",
-    "page.menu.weeklyViewFull": "Ver menú semanal completo",
+    "page.menu.weeklyViewFull": "Ver carta de almuerzo completa",
     "page.menu.subnavAria": "Secciones de la carta",
     "page.events.title": "Eventos",
     "page.story.title": "Nuestra historia",
@@ -235,35 +252,41 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.instagramFollow": "Följ oss",
     "page.home.instagramShowMore": "Visa fler inlägg",
     "page.home.instagramShowLess": "Visa färre",
+    "page.home.eventsHeading": "Kommande evenemang",
+    "page.home.eventsIntro":
+      "Kvällar värda att boka — provningar, samarbeten och unika menyer vid bordet.",
+    "page.home.eventsViewAll": "Alla evenemang",
+    "page.home.eventsCta": "Läs mer",
+    "page.home.eventsScrollHint": "Scrolla åt sidan för fler",
     "page.menu.title": "Våra menyer",
-    "page.menu.food": "Lunch",
+    "page.menu.food": "Exempel",
     "page.menu.drinks": "Dryck",
     "page.menu.brunch": "Brunch",
     "page.menu.alacarte": "À la carte",
-    "page.menu.foodHeading": "Lunchmeny",
+    "page.menu.foodHeading": "Exempelmeny",
     "page.menu.drinksHeading": "Dryckesmeny",
     "page.menu.brunchHeading": "Brunchmeny",
     "page.menu.alacarteHeading": "À la carte",
     "page.menu.drinksIntro":
       "Exempellista — årgångar och maridage uppdateras med vinkällaren.",
     "page.menu.foodIntro":
-      "Exempellunchmeny — rätter och allergener bekräftas av köket före servering.",
+      "Exempelrätter för layout — veckans riktiga lunch finns under Lunch.",
     "page.menu.brunchIntro":
       "Helgbrunch — bakverk, ägg och lättare rätter. Tider och utbud kan ändras med säsongen.",
     "page.menu.alacarteIntro":
       "Välj rätter fristående eller kockens avsmakning — råvaror följer marknad och kökets dagsform.",
     "page.menu.seeMenu": "Se menyn",
-    "page.menu.weekly": "Veckans",
-    "page.menu.weeklyHeading": "Veckans meny",
+    "page.menu.weekly": "Lunch",
+    "page.menu.weeklyHeading": "Lunch",
     "page.menu.weeklyIntro":
-      "Ett kort roterande urval som byts veckovis. Om inget visas ännu, publicera aktuell vecka i admin.",
-    "page.menu.weeklyLoading": "Laddar veckans meny…",
+      "Lunchen under veckan växlar ofta. Om inget visas ännu, publicera aktuell vecka i admin.",
+    "page.menu.weeklyLoading": "Laddar lunch…",
     "page.menu.weeklyEmpty":
-      "Ingen veckomeny är publicerad för den här veckan än. Kom tillbaka snart — eller be personalen publicera den i admin.",
+      "Ingen lunchmeny är publicerad för den här veckan än. Kom tillbaka snart — eller be personalen publicera den i admin.",
     "page.menu.weeklyWeekLabel": "Vecka från",
     "page.menu.weeklyEffectiveLabel": "Aktiveras",
     "page.menu.weeklyMadridNote": "Veckostart (Madrid)",
-    "page.menu.weeklyViewFull": "Se hela veckans meny",
+    "page.menu.weeklyViewFull": "Se hela lunchmenyn",
     "page.menu.subnavAria": "Menydelar",
     "page.events.title": "Evenemang",
     "page.story.title": "Vår historia",

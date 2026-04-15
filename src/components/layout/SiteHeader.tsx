@@ -29,7 +29,7 @@ function overlayLinkClass(pathname: string, href: string) {
       : pathname === href || pathname.startsWith(`${href}/`);
   return [
     "block w-full text-center font-sans text-5xl font-bold tracking-tight transition-colors sm:text-6xl md:text-7xl",
-    isActive ? "text-paper" : "text-paper/55 hover:text-paper/85",
+    isActive ? "text-ink" : "text-ink/40 hover:text-ink/75",
   ].join(" ");
 }
 
@@ -102,18 +102,17 @@ export function SiteHeader() {
   const onLightSurface = menuOpen || atTop;
 
   const headerSurface = menuOpen
-    ? "border-paper/10 bg-ink/85 backdrop-blur-md"
+    ? "border-border/50 bg-paper/95 backdrop-blur-md"
     : !atTop
       ? "border-b border-paper/10 bg-ink/65 backdrop-blur-md"
       : "border-b border-border/40 bg-paper/90 backdrop-blur-md";
 
-  const headerInk = menuOpen ? "text-paper" : onLightSurface ? "text-ink" : "text-paper";
+  const headerInk = menuOpen ? "text-ink" : onLightSurface ? "text-ink" : "text-paper";
 
-  const reserveBtnClass = menuOpen
-    ? "border-2 border-paper/75 bg-paper/12 text-paper shadow-md shadow-black/25 ring-1 ring-white/15 hover:border-paper hover:bg-paper/20"
-    : onLightSurface
+  const reserveBtnClass =
+    menuOpen || onLightSurface
       ? "border-2 border-ink/45 bg-ink/[0.05] text-ink shadow-sm ring-1 ring-ink/10 hover:border-ink hover:bg-ink/10"
-    : "border-2 border-paper/80 bg-paper/10 text-paper shadow-md shadow-black/30 ring-1 ring-white/15 hover:border-paper hover:bg-paper/18";
+      : "border-2 border-paper/80 bg-paper/10 text-paper shadow-md shadow-black/30 ring-1 ring-white/15 hover:border-paper hover:bg-paper/18";
 
   return (
     <>
@@ -141,14 +140,14 @@ export function SiteHeader() {
               <LogoWordmark
                 size="header"
                 showTagline={false}
-                tone={menuOpen || !onLightSurface ? "onDark" : "onLight"}
+                tone={menuOpen || onLightSurface ? "onLight" : "onDark"}
               />
             </Link>
           </div>
 
           <div className="relative z-20 flex min-w-0 min-h-0 flex-1 items-center justify-end gap-2 sm:gap-4 md:gap-5">
             <LanguageSwitcher
-              variant={menuOpen || !onLightSurface ? "onDark" : "default"}
+              variant={menuOpen || onLightSurface ? "default" : "onDark"}
             />
             <button
               type="button"
@@ -168,9 +167,9 @@ export function SiteHeader() {
               >
                 <span
                   className={`inline-block -rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.35em] uppercase transition-colors duration-300 sm:text-[10px] sm:tracking-[0.4em] ${headerInk} ${
-                    menuOpen || !onLightSurface
-                      ? "group-hover:text-paper/80"
-                      : "group-hover:text-ink/65"
+                    menuOpen || onLightSurface
+                      ? "group-hover:text-ink/65"
+                      : "group-hover:text-paper/80"
                   }`}
                 >
                   {t(locale, "header.menuLabel")}
@@ -180,9 +179,9 @@ export function SiteHeader() {
                 <MenuToggleIcon
                   open={menuOpen}
                   className={`transition-colors duration-300 ${headerInk} ${
-                    menuOpen || !onLightSurface
-                      ? "group-hover:text-paper/80"
-                      : "group-hover:text-ink/65"
+                    menuOpen || onLightSurface
+                      ? "group-hover:text-ink/65"
+                      : "group-hover:text-paper/80"
                   }`}
                 />
               </span>
@@ -208,7 +207,7 @@ export function SiteHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.26, ease: easeIn } }}
             transition={{ duration: 0.34, ease: easeOut }}
-            className={`fixed right-0 bottom-0 left-0 z-100 flex flex-col bg-ink text-paper ${navOverlayTopClass}`}
+            className={`fixed right-0 bottom-0 left-0 z-100 flex flex-col border-t border-border/60 bg-paper text-ink ${navOverlayTopClass}`}
           >
             <motion.div
               className="flex min-h-0 flex-1 flex-col"
@@ -256,14 +255,14 @@ export function SiteHeader() {
               </motion.nav>
 
               <motion.div
-                className={`${headerInnerMax} flex shrink-0 items-center justify-center border-t border-paper/10 py-8 sm:py-10`}
+                className={`${headerInnerMax} flex shrink-0 items-center justify-center border-t border-border py-8 sm:py-10`}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: easeOut, delay: 0.35 }}
               >
                 <Link
                   href="/reserve"
-                  className="mx-auto flex w-full max-w-md items-center justify-center rounded-none border-2 border-paper/75 bg-paper/12 px-6 py-3 text-sm font-bold tracking-[0.22em] text-paper uppercase shadow-md shadow-black/25 ring-1 ring-white/15 transition-[color,background-color,border-color,box-shadow] hover:border-paper hover:bg-paper/20"
+                  className="mx-auto flex w-full max-w-md items-center justify-center rounded-none border-2 border-ink bg-ink px-6 py-3 text-sm font-bold tracking-[0.22em] text-paper uppercase shadow-md shadow-black/15 ring-1 ring-ink/20 transition-[color,background-color,border-color,box-shadow] hover:border-ink hover:bg-ink/92"
                   onClick={closeMenu}
                 >
                   {t(locale, "header.reserveTable")}

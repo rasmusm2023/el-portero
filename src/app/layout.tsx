@@ -1,5 +1,5 @@
 import {
-  Caramel,
+  Bricolage_Grotesque,
   Cormorant_Garamond,
   Jaro,
   Plus_Jakarta_Sans,
@@ -24,10 +24,10 @@ const fontSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const fontHeroTitle = Caramel({
+const fontHeroTitle = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-caramel",
+  weight: "variable",
+  variable: "--font-bricolage-grotesque",
   display: "swap",
 });
 

@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -19,9 +20,16 @@ function readStoredLocale(): Locale | null {
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    return readStoredLocale() ?? "en";
-  });
+  /** Must match server render — never read `localStorage` in the initial state or SSR and client diverge (React #418). */
+  const [locale, setLocaleState] = useState<Locale>("en");
+
+  useEffect(() => {
+    const stored = readStoredLocale();
+    if (!stored) return;
+    setLocaleState(stored);
+    document.documentElement.lang =
+      stored === "en" ? "en" : stored === "es" ? "es" : "sv";
+  }, []);
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);

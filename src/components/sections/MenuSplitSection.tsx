@@ -1,16 +1,19 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
-export type MenuSplitKey = "food" | "drinks" | "brunch" | "alacarte";
+export type MenuSplitKey = "lunch" | "drinks" | "brunch" | "alacarte";
 
 type MenuSplitSectionProps = {
   onSelect?: (key: MenuSplitKey) => void;
   /** When set (e.g. expanded menu on home), that panel’s image renders in black & white. */
   activeKey?: MenuSplitKey | null;
+  /** Renders below the menu cards, inside the same section (e.g. expanded menu preview on home). */
+  children?: ReactNode;
 };
 
 /** Matches hero + header horizontal inset. */
@@ -59,11 +62,11 @@ const PANELS: {
   srKey: MessageKey;
 }[] = [
   {
-    key: "food",
+    key: "lunch",
     src: FOOD_BG,
-    href: "/menu/food",
-    labelKey: "page.menu.food",
-    srKey: "page.menu.foodHeading",
+    href: "/menu/weekly",
+    labelKey: "page.menu.weekly",
+    srKey: "page.menu.weeklyHeading",
   },
   {
     key: "alacarte",
@@ -198,7 +201,7 @@ function PanelContent({
   );
 }
 
-export function MenuSplitSection({ onSelect, activeKey = null }: MenuSplitSectionProps) {
+export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuSplitSectionProps) {
   const { locale } = useLocale();
   const seeMenu = t(locale, "page.menu.seeMenu");
   const interactive = Boolean(onSelect);
@@ -308,6 +311,7 @@ export function MenuSplitSection({ onSelect, activeKey = null }: MenuSplitSectio
             </div>
           </div>
         </div>
+        {children}
       </div>
     </section>
   );

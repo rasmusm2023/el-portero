@@ -26,7 +26,7 @@ export function WeeklyMenuBrowsePage() {
         if (!cancelled) setMenu(data);
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : "Failed to load weekly menu.");
+          setError(e instanceof Error ? e.message : "Failed to load lunch menu.");
         }
       } finally {
         if (!cancelled) setBusy(false);
@@ -40,7 +40,7 @@ export function WeeklyMenuBrowsePage() {
   const madridWeekStart = getMadridWeekStartYmd();
 
   return (
-    <PageShell title={t(locale, "page.menu.title")} intro={t(locale, "page.menu.weeklyIntro")}>
+    <PageShell title={t(locale, "page.menu.weeklyHeading")} intro={t(locale, "page.menu.weeklyIntro")}>
       <MenuPager />
 
       {busy ? (

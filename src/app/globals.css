@@ -27,7 +27,9 @@
 @layer utilities {
   .font-hero-title {
     font-family: var(--font-hero-title);
-    font-style: italic;
+    font-style: normal;
+    /* Between semibold (600) and bold (700) — Bricolage variable supports intermediate weights */
+    font-weight: 650;
   }
 
   /* Extend solid `bg-paper` with the same texture as body (opacity variants stay color-only). */

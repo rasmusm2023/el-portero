@@ -56,7 +56,7 @@ export function AdminDashboardPage() {
         >
           <p className="text-xs font-semibold tracking-[0.22em] text-emerald-900 uppercase">Menu</p>
           <h2 className="mt-2 font-display text-2xl font-medium text-ink">Lunch menu</h2>
-          <p className="mt-1 text-xs font-medium tracking-wide text-ink-muted">Weekly menu</p>
+          <p className="mt-1 text-xs font-medium tracking-wide text-ink-muted">This week’s dishes</p>
           <p className="mt-3 text-sm text-ink-muted leading-relaxed">
             Update the 5 dishes and publish.
           </p>
