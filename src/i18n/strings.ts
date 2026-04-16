@@ -106,7 +106,11 @@ type HeaderKey =
   | "header.openNav"
   | "header.navDialog"
   | "header.reserveTable"
-  | "header.reserveNav";
+  | "header.reserveNav"
+  | "header.bookingCall"
+  | "header.bookingWhatsApp"
+  | "header.bookingCallAria"
+  | "header.bookingWhatsAppAria";
 
 type BrandKey = "brand.dinnerClub";
 
@@ -209,6 +213,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.navDialog": "Site navigation",
     "header.reserveTable": "Make reservation",
     "header.reserveNav": "Reservation",
+    "header.bookingCall": "Call",
+    "header.bookingWhatsApp": "WhatsApp",
+    "header.bookingCallAria": "Call to reserve a table",
+    "header.bookingWhatsAppAria": "Reserve via WhatsApp",
     "brand.dinnerClub": "Dinner Club",
   },
   es: {
@@ -307,6 +315,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.navDialog": "Navegación",
     "header.reserveTable": "Hacer reserva",
     "header.reserveNav": "Reserva",
+    "header.bookingCall": "Llamar",
+    "header.bookingWhatsApp": "WhatsApp",
+    "header.bookingCallAria": "Llamar para reservar mesa",
+    "header.bookingWhatsAppAria": "Reservar por WhatsApp",
     "brand.dinnerClub": "Dinner Club",
   },
   sv: {
@@ -405,6 +417,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.navDialog": "Navigering",
     "header.reserveTable": "Gör bokning",
     "header.reserveNav": "Bokning",
+    "header.bookingCall": "Ring",
+    "header.bookingWhatsApp": "WhatsApp",
+    "header.bookingCallAria": "Ring och boka bord",
+    "header.bookingWhatsAppAria": "Boka via WhatsApp",
     "brand.dinnerClub": "Dinner Club",
   },
 };

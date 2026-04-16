@@ -9,6 +9,7 @@ import { useLocale } from "@/i18n/useLocale";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { MenuToggleIcon } from "./MenuToggleIcon";
+import { ReservationContactLinks } from "./ReservationContactLinks";
 
 /** Full-screen menu: all pages except Reserve (Reserve is the header CTA). */
 const primaryNavItems: { href: string; labelKey: NavKey }[] = [
@@ -137,6 +138,10 @@ export function SiteHeader() {
             <LanguageSwitcher
               variant={menuOpen || onLightSurface ? "default" : "onDark"}
             />
+            <ReservationContactLinks
+              locale={locale}
+              variant={menuOpen || onLightSurface ? "headerLight" : "headerDark"}
+            />
             <Link
               href="/reserve"
               className={`inline-flex max-w-full shrink-0 items-center justify-center rounded-none px-2.5 py-2 text-[9px] font-bold tracking-[0.16em] uppercase transition-[color,background-color,border-color,box-shadow] sm:px-5 sm:py-2.5 sm:text-[11px] sm:tracking-[0.2em] ${reserveBtnClass}`}
@@ -249,11 +254,12 @@ export function SiteHeader() {
               </motion.nav>
 
               <motion.div
-                className={`${headerInnerMax} flex shrink-0 items-center justify-center border-t border-border py-8 sm:py-10`}
+                className={`${headerInnerMax} flex shrink-0 flex-col items-center justify-center gap-5 border-t border-border py-8 sm:gap-6 sm:py-10`}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: easeOut, delay: 0.35 }}
               >
+                <ReservationContactLinks locale={locale} variant="navFooter" />
                 <Link
                   href="/reserve"
                   className="mx-auto flex w-full max-w-md items-center justify-center rounded-none border-2 border-ink bg-ink px-6 py-3 text-sm font-bold tracking-[0.22em] text-paper uppercase shadow-md shadow-black/15 ring-1 ring-ink/20 transition-[color,background-color,border-color,box-shadow] hover:border-ink hover:bg-ink/92"
