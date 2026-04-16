@@ -20,7 +20,7 @@
   }
 
   :focus-visible {
-    @apply outline outline-2 outline-offset-2 outline-ink/35;
+    @apply outline-solid outline-2 outline-offset-2 outline-ink/35;
   }
 }
 

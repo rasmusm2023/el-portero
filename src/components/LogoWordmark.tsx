@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { t } from "@/i18n/strings";
 import type { Locale } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
@@ -54,12 +55,14 @@ export function LogoWordmark({
     <span
       className={`flex flex-col gap-1.5 leading-none ${alignClass} ${className}`}
     >
-      <img
+      <Image
         src="/logos/el-portero-logotype.svg"
         alt="El Portero"
-        className={`block w-auto max-w-full select-none ${logotypeSizeClasses[size]} ${svgFilterClass}`}
+        width={640}
+        height={160}
+        className={`block h-auto w-auto max-w-full select-none ${logotypeSizeClasses[size]} ${svgFilterClass}`}
         draggable={false}
-        decoding="async"
+        unoptimized
       />
       {showTagline ? (
         <span className={`${taglineClasses[size]} ${taglineColorClass}`}>

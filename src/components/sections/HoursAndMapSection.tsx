@@ -1,8 +1,10 @@
 "use client";
 
-import { Clock } from "lucide-react";
-import { LocationMap } from "@/components/LocationMap";
-import { useEffect, useMemo, useState } from "react";
+import {
+  LocationMapEmbed,
+  MapsFooterLink,
+} from "@/components/LocationMap";
+import { useEffect, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -107,7 +109,6 @@ function getVenueStatus(locale: string): VenueStatus {
 
 export function HoursAndMapSection() {
   const { locale } = useLocale();
-  const intro = "Subtitle example";
 
   const rows = [
     { day: "Mon", hours: "18:00 – 23:00" },
@@ -119,13 +120,13 @@ export function HoursAndMapSection() {
     { day: "Sun", hours: "Closed" },
   ];
 
-  const [tick, setTick] = useState(0);
+  const [, setTick] = useState(0);
   useEffect(() => {
     const id = window.setInterval(() => setTick((v) => v + 1), 30_000);
     return () => window.clearInterval(id);
   }, []);
 
-  const status = useMemo(() => getVenueStatus(locale), [locale, tick]);
+  const status = getVenueStatus(locale);
 
   return (
     <section
@@ -135,43 +136,40 @@ export function HoursAndMapSection() {
     >
       <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
         <div className="mx-auto w-full max-w-[min(100%,112rem)]">
-          <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
-            <div className="min-w-0">
-              <h2
-                id="hours-heading"
-                className="font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl"
-              >
-                {t(locale, "page.hours.title")}
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg text-ink-muted leading-relaxed">
-                {intro}
-              </p>
+          <div className="grid grid-cols-12 gap-8 lg:items-stretch lg:gap-x-10 lg:gap-y-4 xl:gap-x-12">
+            <div className="col-span-12 min-w-0 lg:col-span-4 lg:row-start-1 lg:flex lg:min-h-0 lg:flex-col">
+              <div className="flex flex-1 flex-col rounded-2xl bg-paper/75 px-6 py-6 shadow-[0_4px_28px_-8px_rgba(10,10,10,0.08)] ring-1 ring-ink/6 sm:px-7 sm:py-7 lg:min-h-0">
+                <h2
+                  id="hours-heading"
+                  className="font-display text-3xl font-semibold tracking-tight text-ink/95 sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
+                >
+                  {t(locale, "page.hours.title")}
+                </h2>
 
-              <div className="mt-10 max-w-xl rounded-none border border-border bg-paper-dark/50 p-8">
-                <div className="flex items-center gap-3 text-ink">
-                  <Clock className="size-6" strokeWidth={1.5} aria-hidden />
-                </div>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
+                <p
+                  className="mt-5 font-sans text-sm leading-relaxed text-ink-muted sm:text-[15px] lg:mt-6"
+                  role="status"
+                >
                   <span
-                    className={[
-                      "inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold tracking-[0.18em] uppercase",
-                      status.isOpen
-                        ? "border-emerald-600/25 bg-emerald-600/10 text-emerald-900"
-                        : "border-rose-600/25 bg-rose-600/10 text-rose-900",
-                    ].join(" ")}
-                  >
-                    {status.label}
-                  </span>
-                  <span className="text-sm text-ink-muted">{status.detail}</span>
-                </div>
-                <ul className="mt-8 space-y-4">
+                    className={`mr-2 inline-block size-2 translate-y-px rounded-full ${
+                      status.isOpen ? "bg-emerald-600/80" : "bg-rose-500/75"
+                    }`}
+                    aria-hidden
+                  />
+                  <span className="font-medium text-ink">{status.label}</span>
+                  <span className="font-normal"> — {status.detail}</span>
+                </p>
+
+                <ul className="mt-6 space-y-2.5 font-sans sm:space-y-3">
                   {rows.map((row) => (
                     <li
                       key={row.day}
-                      className="flex items-baseline justify-between gap-4 border-b border-border pb-4 last:border-0 last:pb-0"
+                      className="flex items-baseline justify-between gap-4"
                     >
-                      <span className="text-ink-muted">{row.day}</span>
-                      <span className="font-medium tabular-nums text-ink">
+                      <span className="min-w-11 text-[15px] font-normal text-ink-muted">
+                        {row.day}
+                      </span>
+                      <span className="text-[15px] tabular-nums font-medium text-ink sm:text-base">
                         {row.hours}
                       </span>
                     </li>
@@ -180,8 +178,20 @@ export function HoursAndMapSection() {
               </div>
             </div>
 
-            <div className="min-w-0">
-              <LocationMap locale={locale} />
+            <div className="col-span-12 min-w-0 lg:col-span-8 lg:row-start-1 lg:flex lg:min-h-0 lg:flex-col">
+              <LocationMapEmbed
+                locale={locale}
+                className="h-full min-h-0 flex-1 lg:flex lg:flex-col"
+              />
+            </div>
+
+            <div
+              className="hidden lg:col-span-4 lg:row-start-2"
+              aria-hidden
+            />
+
+            <div className="col-span-12 lg:col-span-8 lg:row-start-2">
+              <MapsFooterLink locale={locale} className="mt-0" />
             </div>
           </div>
         </div>

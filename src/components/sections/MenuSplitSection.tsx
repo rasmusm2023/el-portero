@@ -128,13 +128,11 @@ function MenuPanelPhoto({
   sizes,
   priority,
   dimmed,
-  selected,
 }: {
   src: string;
   sizes: string;
   priority?: boolean;
   dimmed: boolean;
-  selected: boolean;
 }) {
   return (
     <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
@@ -254,7 +252,6 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       sizes={sizes}
                       priority={index === 0}
                       dimmed={dimmed}
-                      selected={isSelected}
                     />
                     <PanelContent
                       labelKey={panel.labelKey}
@@ -310,7 +307,6 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       sizes={sizes}
                       priority={index === 0}
                       dimmed={dimmed}
-                      selected={isSelected}
                     />
                     <PanelContent
                       labelKey={panel.labelKey}

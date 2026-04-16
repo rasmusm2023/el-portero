@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import {
   adminBtnBlue,
@@ -33,11 +33,11 @@ export function MediaAdminPage() {
 
   const canUpload = useMemo(() => auth.status === "logged_in" && file, [auth.status, file]);
 
-  async function refreshRecent() {
+  const refreshRecent = useCallback(async () => {
     const r = await fetch(`${apiBase}/api/admin/media/recent`, { credentials: "include" });
     if (!r.ok) return;
     setRecent((await r.json()) as MediaAssetDto[]);
-  }
+  }, [apiBase]);
 
   useEffect(() => {
     (async () => {
@@ -53,7 +53,7 @@ export function MediaAdminPage() {
         setAuth({ status: "logged_out" });
       }
     })();
-  }, [apiBase]);
+  }, [apiBase, refreshRecent]);
 
   async function onLogin() {
     setError(null);

@@ -86,7 +86,7 @@ export function HomePage({ heroImages = [] }: HomePageProps) {
               <div className="absolute inset-x-5 bottom-8 z-20 flex items-end justify-between gap-6 sm:inset-x-10 sm:bottom-10 lg:inset-x-14 xl:inset-x-20">
                 <Link
                   href="/reserve"
-                  className="inline-flex min-w-[10.5rem] items-center justify-center rounded-none border-2 border-paper/85 bg-paper/12 px-7 py-3.5 text-sm font-bold tracking-[0.22em] text-paper uppercase shadow-md shadow-black/25 ring-1 ring-white/15 transition-[color,background-color,border-color,box-shadow,ring-color] hover:border-white hover:bg-white hover:text-ink hover:shadow-lg hover:shadow-black/20 hover:ring-white/40"
+                  className="inline-flex min-w-[10.5rem] items-center justify-center rounded-none border-0 bg-[#8b6f52] px-7 py-3.5 text-sm font-bold tracking-[0.22em] text-white uppercase shadow-md shadow-black/30 transition-[background-color,box-shadow] hover:bg-[#7a6047] hover:shadow-lg hover:shadow-black/35"
                 >
                   Make Reservation
                 </Link>
