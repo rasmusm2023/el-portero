@@ -13,6 +13,13 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 
+// Render, Fly.io, Railway, etc. assign a dynamic HTTP port via PORT.
+var portEnv = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(portEnv) && int.TryParse(portEnv, out _))
+{
+  builder.WebHost.UseUrls($"http://0.0.0.0:{portEnv}");
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
   var cs = builder.Configuration.GetConnectionString("Sqlite") ?? "Data Source=elportero.db";
@@ -136,14 +143,16 @@ app.MapPost("/api/auth/login", async Task<Results<Ok<AuthResponse>, Unauthorized
 
   var token = AuthToken.CreateJwt(config, user);
 
+  // Cross-origin admin (e.g. Netlify → API host) needs SameSite=None + Secure over HTTPS.
+  var dev = env.IsDevelopment();
   http.Response.Cookies.Append(
     AuthToken.CookieName,
     token,
     new CookieOptions
     {
       HttpOnly = true,
-      Secure = false, // set true behind HTTPS
-      SameSite = SameSiteMode.Lax,
+      Secure = !dev,
+      SameSite = dev ? SameSiteMode.Lax : SameSiteMode.None,
       Expires = DateTimeOffset.UtcNow.AddDays(7),
       Path = "/",
     });
@@ -154,7 +163,15 @@ app.MapPost("/api/auth/login", async Task<Results<Ok<AuthResponse>, Unauthorized
 
 app.MapPost("/api/auth/logout", (HttpContext http) =>
 {
-  http.Response.Cookies.Delete(AuthToken.CookieName, new CookieOptions { Path = "/" });
+  var dev = env.IsDevelopment();
+  http.Response.Cookies.Delete(
+    AuthToken.CookieName,
+    new CookieOptions
+    {
+      Path = "/",
+      Secure = !dev,
+      SameSite = dev ? SameSiteMode.Lax : SameSiteMode.None,
+    });
   return Results.Ok(new { ok = true });
 })
 .WithTags("Auth");
