@@ -1,5 +1,7 @@
 import { HomePage } from "@/views/HomePage";
+import { getHeroSlideImages } from "@/lib/heroImages";
 
-export default function Page() {
-  return <HomePage />;
+export default async function Page() {
+  const heroImages = getHeroSlideImages();
+  return <HomePage heroImages={heroImages} />;
 }

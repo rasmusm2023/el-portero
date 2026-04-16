@@ -1,125 +1,199 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import { useRef, useState } from "react";
 import { GallerySection } from "@/components/sections/GallerySection";
-import { HoursMapSection } from "@/components/sections/HoursMapSection";
+import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
+import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
+import { HoursAndMapSection } from "@/components/sections/HoursAndMapSection";
+import { HeroSlideshow } from "@/components/HeroSlideshow";
+import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
+import { LogoWordmark } from "@/components/LogoWordmark";
+import {
+  MenuSplitSection,
+  type MenuSplitKey,
+} from "@/components/sections/MenuSplitSection";
+import { alacarteMenuCategories } from "@/data/alacarteMenu";
+import { brunchMenuCategories } from "@/data/brunchMenu";
+import { drinksMenuCategories } from "@/data/drinksMenu";
+import { LunchMenuExpandedPreview } from "@/components/menu/LunchMenuExpandedPreview";
+import type { MenuCategoryData } from "@/data/menuTypes";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
-export function HomePage() {
-  const { locale } = useLocale();
+type HomePageProps = {
+  heroImages?: string[];
+};
 
-  const heroCopy =
-    locale === "es"
-      ? "Una cocina con alma mediterránea y un servicio impecable frente al mar."
-      : locale === "sv"
-        ? "Medelhavskänsla, precision och värme — i hjärtat av Torrevieja."
-        : "Mediterranean soul, precise execution, and warm hospitality — in the heart of Torrevieja.";
+const MENU_SPLIT_KEYS: MenuSplitKey[] = [
+  "lunch",
+  "alacarte",
+  "brunch",
+  "drinks",
+];
+
+const previewCategories: Record<
+  Exclude<MenuSplitKey, "lunch">,
+  MenuCategoryData[]
+> = {
+  drinks: drinksMenuCategories,
+  brunch: brunchMenuCategories,
+  alacarte: alacarteMenuCategories,
+};
+
+export function HomePage({ heroImages = [] }: HomePageProps) {
+  const { locale } = useLocale();
+  const heroSectionRef = useRef<HTMLElement>(null);
+  const [expandedMenu, setExpandedMenu] = useState<MenuSplitKey | null>(null);
+  const menuPreviewRef = useRef<HTMLDivElement>(null);
 
   return (
     <div>
-      <section className="relative overflow-hidden border-b border-border bg-ink text-paper">
-        <div
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: `radial-gradient(ellipse at 30% 20%, rgba(184,146,74,0.35) 0%, transparent 55%),
-              radial-gradient(ellipse at 70% 80%, rgba(184,146,74,0.2) 0%, transparent 50%)`,
-          }}
-          aria-hidden
-        />
-        <div className="relative mx-auto flex min-h-[min(78vh,52rem)] max-w-[var(--container-max)] flex-col justify-end gap-8 px-4 pb-20 pt-28 sm:px-6 lg:px-8">
-          <p className="max-w-xl font-display text-4xl font-medium leading-[1.15] tracking-tight sm:text-5xl lg:text-6xl">
-            El Portero
-          </p>
-          <p className="max-w-xl text-lg text-paper/85 leading-relaxed sm:text-xl">
-            {heroCopy}
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="/reserve"
-              className="inline-flex items-center justify-center rounded-md bg-gold px-6 py-3 text-sm font-medium tracking-[0.14em] text-ink uppercase transition-colors hover:bg-gold-bright"
-            >
-              {t(locale, "nav.reserve")}
-            </Link>
-            <Link
-              href="/menu"
-              className="inline-flex items-center justify-center rounded-md border border-paper/35 px-6 py-3 text-sm font-medium tracking-[0.14em] text-paper uppercase transition-colors hover:border-gold hover:text-gold"
-            >
-              {t(locale, "nav.menu")}
-            </Link>
+      <section
+        ref={heroSectionRef}
+        className="relative bg-paper pb-6 pt-4 text-ink sm:pb-8 sm:pt-5"
+      >
+        <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-2xl bg-ink text-paper shadow-[0_28px_64px_-18px_rgba(10,10,10,0.18)] ring-1 ring-ink/10 sm:rounded-3xl">
+            <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
+            {heroImages.length > 0 && (
+              <div className="absolute inset-0 z-[1] bg-ink/50" aria-hidden />
+            )}
+            <div
+              className="absolute inset-0 z-[2] opacity-40"
+              style={{
+                backgroundImage: `radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.06) 0%, transparent 55%),
+              radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.04) 0%, transparent 50%)`,
+              }}
+              aria-hidden
+            />
+            <div className="relative z-10 flex w-full min-h-[min(82vh,54rem)] flex-col items-center px-5 pb-14 pt-10 sm:px-10 sm:pb-20 sm:pt-12 md:pt-14 lg:px-14 xl:px-20">
+              <div className="flex flex-1 flex-col items-center justify-center px-2 py-10 sm:py-14 md:py-16">
+                <div className="w-full max-w-5xl text-center text-paper">
+                  <div className="mx-auto flex w-full max-w-[46rem] flex-col items-center">
+                    <LogoWordmark
+                      size="hero"
+                      showTagline={false}
+                      tone="onDark"
+                      className="scale-[1.35] sm:scale-[1.5] md:scale-[1.65] mb-5 sm:mb-6 md:mb-7"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom actions: reservation left, tagline right */}
+              <div className="absolute inset-x-5 bottom-8 z-20 flex items-end justify-between gap-6 sm:inset-x-10 sm:bottom-10 lg:inset-x-14 xl:inset-x-20">
+                <Link
+                  href="/reserve"
+                  className="inline-flex min-w-[10.5rem] items-center justify-center rounded-none border-0 bg-[#8b6f52] px-7 py-3.5 text-sm font-bold tracking-[0.22em] text-white uppercase shadow-md shadow-black/30 transition-[background-color,box-shadow] hover:bg-[#7a6047] hover:shadow-lg hover:shadow-black/35"
+                >
+                  Make Reservation
+                </Link>
+                <p className="max-w-[28rem] text-left font-sans text-xs font-medium tracking-[0.22em] text-paper/85 uppercase sm:text-sm">
+                  South American cuisine fused with Swedish classics — dinner
+                  club nights in Torrevieja
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[var(--container-max)] px-4 py-20 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-3">
-          <article className="border border-border bg-paper-dark/60 p-8">
-            <h2 className="font-display text-2xl font-medium text-ink">
-              {locale === "es"
-                ? "La mesa"
-                : locale === "sv"
-                  ? "Bordet"
-                  : "The table"}
-            </h2>
-            <p className="mt-3 text-ink-muted leading-relaxed">
-              {locale === "es"
-                ? "Menú de temporada, vinos seleccionados y un ambiente cuidado al detalle."
-                : locale === "sv"
-                  ? "Säsongens rätter, utvalda viner och en detaljerad atmosfär."
-                  : "Seasonal plates, a considered wine list, and a room finished in gold and shadow."}
-            </p>
-            <Link
-              href="/menu"
-              className="mt-6 inline-block text-sm font-medium tracking-wide text-gold uppercase underline-offset-4 hover:underline"
+      <MenuSplitSection
+        activeKey={expandedMenu}
+        onSelect={(key) => {
+          if (!MENU_SPLIT_KEYS.includes(key)) return;
+          setExpandedMenu((prev) => (prev === key ? null : key));
+        }}
+      >
+        <AnimatePresence initial={false}>
+          {expandedMenu ? (
+            <motion.div
+              key="menu-preview"
+              ref={menuPreviewRef}
+              role="region"
+              aria-label="Menu preview"
+              className="pt-6 pb-2 sm:pt-8"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              style={{ overflow: "hidden" }}
             >
-              {t(locale, "nav.menu")}
-            </Link>
-          </article>
-          <article className="border border-border bg-paper-dark/60 p-8">
-            <h2 className="font-display text-2xl font-medium text-ink">
-              {locale === "es"
-                ? "Eventos"
-                : locale === "sv"
-                  ? "Evenemang"
-                  : "Occasions"}
-            </h2>
-            <p className="mt-3 text-ink-muted leading-relaxed">
-              {locale === "es"
-                ? "Cenas privadas y celebraciones — consulte fechas próximas."
-                : locale === "sv"
-                  ? "Privata middagar och firanden — se kommande datum."
-                  : "Private dining and celebrations — see what is coming up."}
-            </p>
-            <Link
-              href="/events"
-              className="mt-6 inline-block text-sm font-medium tracking-wide text-gold uppercase underline-offset-4 hover:underline"
-            >
-              {t(locale, "nav.events")}
-            </Link>
-          </article>
-          <article className="border border-border bg-paper-dark/60 p-8">
-            <h2 className="font-display text-2xl font-medium text-ink">
-              {locale === "es"
-                ? "Visítanos"
-                : locale === "sv"
-                  ? "Besök oss"
-                  : "Visit us"}
-            </h2>
-            <p className="mt-3 text-ink-muted leading-relaxed">
-              C. Ulpiano, 28 — Torrevieja, Alicante.
-            </p>
-            <Link
-              href="/#hours"
-              className="mt-6 inline-block text-sm font-medium tracking-wide text-gold uppercase underline-offset-4 hover:underline"
-            >
-              {t(locale, "nav.hours")}
-            </Link>
-          </article>
-        </div>
-      </section>
+              <div className="mx-auto w-full max-w-[var(--container-max)]">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={expandedMenu}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                      <div className="min-w-0">
+                        <h2 className="font-display text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+                          {expandedMenu === "lunch" &&
+                            t(locale, "page.menu.weeklyHeading")}
+                          {expandedMenu === "drinks" &&
+                            t(locale, "page.menu.drinksHeading")}
+                          {expandedMenu === "brunch" &&
+                            t(locale, "page.menu.brunchHeading")}
+                          {expandedMenu === "alacarte" &&
+                            t(locale, "page.menu.alacarteHeading")}
+                        </h2>
+                        <p className="mt-2 max-w-2xl text-ink-muted leading-relaxed">
+                          {expandedMenu === "lunch" &&
+                            t(locale, "page.menu.weeklyIntro")}
+                          {expandedMenu === "drinks" &&
+                            t(locale, "page.menu.drinksIntro")}
+                          {expandedMenu === "brunch" &&
+                            t(locale, "page.menu.brunchIntro")}
+                          {expandedMenu === "alacarte" &&
+                            t(locale, "page.menu.alacarteIntro")}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <button
+                          type="button"
+                          className="inline-flex items-center justify-center rounded-none px-2 py-2 text-xs font-semibold tracking-[0.22em] text-ink/75 uppercase underline-offset-[0.2em] transition-colors hover:text-ink hover:underline"
+                          onClick={() => setExpandedMenu(null)}
+                        >
+                          {locale === "es"
+                            ? "Cerrar"
+                            : locale === "sv"
+                              ? "Stäng"
+                              : "Close"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <motion.div
+                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                      className="mt-10"
+                    >
+                      {expandedMenu === "lunch" ? (
+                        <LunchMenuExpandedPreview />
+                      ) : (
+                        <MenuCategoryGrid
+                          categories={previewCategories[expandedMenu]}
+                          locale={locale}
+                        />
+                      )}
+                    </motion.div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </MenuSplitSection>
+
+      <HomeEventsSection />
 
       <GallerySection />
-      <HoursMapSection />
+      <InstagramFeedSection />
+      <HoursAndMapSection />
     </div>
   );
 }

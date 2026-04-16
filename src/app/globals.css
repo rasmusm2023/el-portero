@@ -5,10 +5,14 @@
   html {
     @apply scroll-smooth antialiased;
     color-scheme: light;
+    /* Avoid horizontal jump when scrollbars appear/disappear (e.g. menu open). */
+    scrollbar-gutter: stable;
   }
 
   body {
-    @apply bg-paper text-ink font-sans text-base font-normal leading-relaxed;
+    @apply text-ink font-sans text-base font-normal leading-relaxed;
+    background-color: var(--color-paper);
+    background-image: var(--bg-paper-texture);
   }
 
   ::selection {
@@ -16,6 +20,20 @@
   }
 
   :focus-visible {
-    @apply outline outline-2 outline-offset-2 outline-gold;
+    @apply outline-solid outline-2 outline-offset-2 outline-ink/35;
+  }
+}
+
+@layer utilities {
+  .font-hero-title {
+    font-family: var(--font-hero-title);
+    font-style: normal;
+    /* Between semibold (600) and bold (700) — Bricolage variable supports intermediate weights */
+    font-weight: 650;
+  }
+
+  /* Extend solid `bg-paper` with the same texture as body (opacity variants stay color-only). */
+  .bg-paper {
+    background-image: var(--bg-paper-texture);
   }
 }

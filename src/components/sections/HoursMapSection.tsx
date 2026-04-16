@@ -1,7 +1,6 @@
 "use client";
 
 import { Clock } from "lucide-react";
-import { LocationMap } from "@/components/LocationMap";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -26,7 +25,7 @@ export function HoursMapSection() {
       aria-labelledby="hours-heading"
       className="scroll-mt-[calc(var(--header-h)+1px)] border-t border-border bg-paper-dark/35"
     >
-      <div className="mx-auto max-w-[var(--container-max)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+      <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
         <h2
           id="hours-heading"
           className="font-display text-3xl font-medium tracking-tight text-ink sm:text-4xl"
@@ -37,37 +36,33 @@ export function HoursMapSection() {
           {intro}
         </p>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-12">
-          <div className="max-w-xl rounded-md border border-border bg-paper-dark/50 p-8 lg:max-w-none">
-            <div className="flex items-center gap-3 text-gold">
-              <Clock className="size-6" strokeWidth={1.5} aria-hidden />
-              <p className="text-sm font-medium tracking-[0.2em] text-ink uppercase">
-                Europe/Madrid
-              </p>
-            </div>
-            <ul className="mt-8 space-y-4">
-              {rows.map((row) => (
-                <li
-                  key={row.day}
-                  className="flex items-baseline justify-between gap-4 border-b border-border pb-4 last:border-0 last:pb-0"
-                >
-                  <span className="text-ink-muted">{row.day}</span>
-                  <span className="font-medium tabular-nums text-ink">
-                    {row.hours}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-8 text-sm text-ink-muted">
-              {locale === "es"
-                ? "Indicador abierto/cerrado en tiempo real: en construcción."
-                : locale === "sv"
-                  ? "Live öppet/stängt: under utveckling."
-                  : "Live open/closed indicator: coming with backend integration."}
+        <div className="mt-10 max-w-xl rounded-none border border-border bg-paper-dark/50 p-8">
+          <div className="flex items-center gap-3 text-ink">
+            <Clock className="size-6" strokeWidth={1.5} aria-hidden />
+            <p className="text-sm font-medium tracking-[0.2em] text-ink uppercase">
+              Europe/Madrid
             </p>
           </div>
-
-          <LocationMap locale={locale} className="lg:pt-1" />
+          <ul className="mt-8 space-y-4">
+            {rows.map((row) => (
+              <li
+                key={row.day}
+                className="flex items-baseline justify-between gap-4 border-b border-border pb-4 last:border-0 last:pb-0"
+              >
+                <span className="text-ink-muted">{row.day}</span>
+                <span className="font-medium tabular-nums text-ink">
+                  {row.hours}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-8 text-sm text-ink-muted">
+            {locale === "es"
+              ? "Indicador abierto/cerrado en tiempo real: en construcción."
+              : locale === "sv"
+                ? "Live öppet/stängt: under utveckling."
+                : "Live open/closed indicator: coming with backend integration."}
+          </p>
         </div>
       </div>
     </section>

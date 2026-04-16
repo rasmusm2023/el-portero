@@ -1,31 +1,106 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
 import { PageShell } from "@/components/layout/PageShell";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
+import { getApiBaseUrl } from "@/lib/apiBase";
+import { adminBtnBlue, adminCalloutInfo } from "@/lib/adminUiStyles";
 
 export function AdminLoginPage() {
   const { locale } = useLocale();
+  const router = useRouter();
+  const apiBase = getApiBaseUrl();
+
   const intro =
     locale === "es"
-      ? "Acceso restringido para el equipo. Autenticación con Supabase o Firebase en una fase posterior."
+      ? "Acceso restringido para el equipo."
       : locale === "sv"
-        ? "Begränsad åtkomst. Inloggning via Supabase eller Firebase senare."
-        : "Restricted access for staff. Authentication will plug into Supabase or Firebase later.";
+        ? "Begränsad åtkomst."
+        : "Restricted access for staff.";
+
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("admin");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setBusy(true);
+    try {
+      const r = await fetch(`${apiBase}/api/auth/login`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      });
+      if (!r.ok) {
+        setError(
+          locale === "es"
+            ? "Credenciales inválidas."
+            : locale === "sv"
+              ? "Ogiltiga inloggningsuppgifter."
+              : "Invalid credentials.",
+        );
+        return;
+      }
+
+      router.push("/admin/dashboard");
+    } catch (err) {
+      const detail =
+        err instanceof Error && err.message ? ` (${err.message})` : "";
+      setError(
+        locale === "es"
+          ? `No se pudo conectar con el servidor${detail}. ¿Está el API en marcha y la URL correcta?`
+          : locale === "sv"
+            ? `Kunde inte nå servern${detail}. Körs API:et och är adressen rätt?`
+            : `Could not reach the server${detail}. Is the API running at the URL shown above?`,
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <PageShell title={t(locale, "page.admin.title")} intro={intro}>
-      <form className="max-w-sm space-y-6">
+      <div className={`mb-8 max-w-sm space-y-3 text-sm ${adminCalloutInfo}`}>
+        <p className="font-mono text-xs break-all text-sky-950">{apiBase}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link
+            href="/admin/lunch-menu"
+            className="inline-flex rounded-none border border-emerald-300 bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-950 hover:bg-emerald-200"
+          >
+            Lunch menu
+          </Link>
+          <Link
+            href="/admin/media"
+            className="inline-flex rounded-none border border-sky-300 bg-sky-100 px-3 py-1.5 text-xs font-semibold text-sky-950 hover:bg-sky-200"
+          >
+            Media
+          </Link>
+        </div>
+      </div>
+
+      <form className="max-w-sm space-y-6" onSubmit={onSubmit}>
         <div>
-          <label htmlFor="admin-email" className="block text-sm font-medium text-ink">
-            Email
+          <label htmlFor="admin-username" className="block text-sm font-medium text-ink">
+            {locale === "es"
+              ? "Usuario"
+              : locale === "sv"
+                ? "Användarnamn"
+                : "Username"}
           </label>
           <input
-            id="admin-email"
-            name="email"
-            type="email"
+            id="admin-username"
+            name="username"
+            type="text"
             autoComplete="username"
-            className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
           />
         </div>
         <div>
@@ -41,21 +116,25 @@ export function AdminLoginPage() {
             name="password"
             type="password"
             autoComplete="current-password"
-            className="mt-2 w-full rounded-md border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
           />
         </div>
-        <button
-          type="button"
-          className="w-full rounded-md bg-gold px-6 py-3 text-sm font-medium tracking-[0.14em] text-ink uppercase transition-colors hover:bg-gold-bright"
-          disabled
-        >
+        <button type="submit" className={`w-full ${adminBtnBlue}`} disabled={busy}>
           {locale === "es"
-            ? "Entrar (pronto)"
+            ? "Entrar"
             : locale === "sv"
-              ? "Logga in (snart)"
-              : "Sign in (soon)"}
+              ? "Logga in"
+              : "Sign in"}
         </button>
       </form>
+
+      {error ? (
+        <div className="mt-6 max-w-sm rounded-none border border-red-500/30 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      ) : null}
     </PageShell>
   );
 }

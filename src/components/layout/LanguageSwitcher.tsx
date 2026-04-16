@@ -22,20 +22,21 @@ export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps)
 
   const isDark = variant === "onDark";
 
+  /* Fixed box so border/bg changes never change width when variant flips. */
   const triggerClass = isDark
-    ? "inline-flex items-center justify-center rounded-md border border-paper/30 bg-paper/5 p-1.5 text-paper/90 transition-colors hover:border-gold hover:text-gold"
-    : "inline-flex items-center justify-center rounded-md border border-border p-1.5 text-ink transition-colors hover:border-gold hover:text-gold";
+    ? "inline-flex size-11 shrink-0 items-center justify-center rounded-none border border-paper/30 bg-paper/5 text-paper/90 transition-colors hover:border-paper/50 hover:text-paper"
+    : "inline-flex size-11 shrink-0 items-center justify-center rounded-none border border-border text-ink transition-colors hover:border-ink/25 hover:text-ink";
 
   const listClass = isDark
-    ? "absolute right-0 z-[70] mt-1 min-w-[12.5rem] rounded-md border border-paper/20 bg-ink py-1 shadow-lg shadow-black/40"
-    : "absolute right-0 z-[70] mt-1 min-w-[12.5rem] rounded-md border border-border bg-paper py-1 shadow-lg";
+    ? "absolute right-0 z-[70] mt-1 min-w-[12.5rem] rounded-none border border-paper/20 bg-ink py-1 shadow-lg shadow-black/40"
+    : "absolute right-0 z-[70] mt-1 min-w-[12.5rem] rounded-none border border-border bg-paper py-1 shadow-lg";
 
   const itemBase =
     "flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm";
 
   const itemActive = isDark
-    ? `${itemBase} bg-paper/5 text-gold`
-    : `${itemBase} bg-gold-dim/80 text-gold`;
+    ? `${itemBase} bg-paper/5 text-paper`
+    : `${itemBase} bg-gold-dim/80 text-ink`;
 
   const itemIdle = isDark
     ? `${itemBase} text-paper/90 hover:bg-paper/10`
@@ -77,7 +78,11 @@ export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps)
                   <LocaleFlag locale={code} variant={flagVariant} />
                   <span className="min-w-0 flex-1 text-left">{localeLabels[code]}</span>
                   {selected ? (
-                    <Check className="size-4 shrink-0 text-gold" strokeWidth={2.5} aria-hidden />
+                    <Check
+                      className={`size-4 shrink-0 ${isDark ? "text-paper" : "text-ink"}`}
+                      strokeWidth={2.5}
+                      aria-hidden
+                    />
                   ) : null}
                 </button>
               </li>

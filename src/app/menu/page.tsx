@@ -1,5 +1,6 @@
-import { MenuPage } from "@/views/MenuPage";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  return <MenuPage />;
+/** Default “Menu” URL sends guests to lunch (weekly menu). */
+export default function MenuIndexPage() {
+  redirect("/menu/weekly");
 }
