@@ -1,9 +1,9 @@
 import {
-  Bricolage_Grotesque,
   Cormorant_Garamond,
   Jaro,
   Plus_Jakarta_Sans,
 } from "next/font/google";
+import localFont from "next/font/local";
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
@@ -24,9 +24,8 @@ const fontSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const fontHeroTitle = Bricolage_Grotesque({
-  subsets: ["latin"],
-  weight: "variable",
+const fontHeroTitle = localFont({
+  src: "../assets/fonts/Sweetest Goods - Celesse Regular.otf",
   variable: "--font-bricolage-grotesque",
   display: "swap",
 });

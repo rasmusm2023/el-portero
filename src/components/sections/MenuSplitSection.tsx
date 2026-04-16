@@ -22,14 +22,15 @@ const contentGutterClass =
 
 /** Matches hero image card radius; white base so split seams read as light lines between panels. */
 const insetCardShellClass =
-  "overflow-hidden rounded-2xl bg-white shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10 sm:rounded-3xl";
+  "relative overflow-visible rounded-2xl bg-white shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10 sm:rounded-3xl";
 
 const menuSplitTitleClass =
   "font-sans text-4xl font-bold tracking-tight text-paper/90 transition-colors duration-300 sm:text-5xl md:text-6xl group-hover/panel:text-paper";
 
 const menuSplitSeeMenuClass =
   "font-sans text-xs font-semibold uppercase tracking-[0.28em] text-paper/85 transition-all duration-300 ease-out " +
-  "opacity-100 translate-y-0";
+  "opacity-100 translate-y-0 underline underline-offset-[0.35em] decoration-paper/35 " +
+  "group-hover/panel:decoration-paper/75 group-hover/panel:translate-x-0.5";
 
 const FOOD_BG =
   "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=2400&q=80";
@@ -43,7 +44,11 @@ const ALACARTE_BG =
   "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2400&q=80";
 
 const panelBaseClass =
-  "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color] duration-300 sm:px-5 sm:py-14 md:py-16 " +
+  "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color,transform] duration-300 sm:px-5 sm:py-14 md:py-16 " +
+  "cursor-pointer select-none " +
+  "hover:brightness-[1.06] active:brightness-[1.02] " +
+  "ring-2 ring-white/0 hover:ring-white/25 " +
+  "transform-gpu will-change-transform " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60 " +
   "isolate";
 
@@ -122,29 +127,32 @@ function MenuPanelPhoto({
   src,
   sizes,
   priority,
-  active,
+  dimmed,
+  selected,
 }: {
   src: string;
   sizes: string;
   priority?: boolean;
-  active: boolean;
+  dimmed: boolean;
+  selected: boolean;
 }) {
   return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+    <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
       <div
         className={[
           "h-full w-full origin-center scale-100 transform-gpu will-change-transform",
           "backface-hidden",
           "transition-transform duration-[1250ms] ease-[cubic-bezier(0.25,0.46,0.45,0.99)]",
           "motion-reduce:transition-none motion-reduce:duration-0",
-          "group-hover/panel:scale-[1.045] motion-reduce:group-hover/panel:scale-100",
+          "group-hover/panel:scale-[1.045]",
+          "motion-reduce:group-hover/panel:scale-100",
         ].join(" ")}
       >
         <div
           className={[
             "relative h-full w-full",
             "transition-[filter] duration-700 ease-out motion-reduce:transition-none",
-            active ? "grayscale" : "",
+            dimmed ? "grayscale" : "",
           ]
             .filter(Boolean)
             .join(" ")}
@@ -169,12 +177,14 @@ function PanelContent({
   srKey,
   seeMenu,
   titleAlignClass = "",
+  selected,
 }: {
   labelKey: MessageKey;
   srKey: MessageKey;
   seeMenu: string;
   /** e.g. diagonal seam title nudge */
   titleAlignClass?: string;
+  selected: boolean;
 }) {
   const { locale } = useLocale();
   return (
@@ -183,7 +193,15 @@ function PanelContent({
         className="absolute inset-0 z-[1] bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-500 ease-out group-hover/panel:from-ink/92 group-hover/panel:via-ink/60"
         aria-hidden
       />
-      <span className="relative z-[2] flex max-w-[min(100%,18rem)] flex-col items-center gap-2 px-2 text-center sm:gap-3">
+      <span
+        className={[
+          "relative z-[2] flex h-full w-full flex-col items-center px-2 text-center transform-gpu will-change-transform",
+          "gap-2 sm:gap-3",
+          "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+          "justify-end pb-7 sm:pb-9",
+          selected ? "translate-y-0" : "-translate-y-10 sm:-translate-y-12",
+        ].join(" ")}
+      >
         <span
           className={
             titleAlignClass ? `${menuSplitTitleClass} ${titleAlignClass}` : menuSplitTitleClass
@@ -219,10 +237,13 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
     >
       <div className={`${contentGutterClass} py-6 sm:py-8`}>
         <div className={insetCardShellClass}>
-          <div className="flex flex-col gap-px bg-white sm:gap-0">
-            <div className="flex flex-col gap-px sm:hidden">
+          <div className="overflow-hidden rounded-2xl bg-white sm:rounded-3xl">
+            <div className="flex flex-col gap-px bg-white sm:gap-0">
+              <div className="flex flex-col gap-px sm:hidden">
               {PANELS.map((panel, index) => {
-                const active = activeKey === panel.key;
+                const isSelected = activeKey === panel.key;
+                const hasSelection = activeKey != null;
+                const dimmed = hasSelection && !isSelected;
                 const sizes =
                   "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1279px) 50vw, 25vw";
 
@@ -232,17 +253,26 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       src={panel.src}
                       sizes={sizes}
                       priority={index === 0}
-                      active={active}
+                      dimmed={dimmed}
+                      selected={isSelected}
                     />
-                    <PanelContent labelKey={panel.labelKey} srKey={panel.srKey} seeMenu={seeMenu} />
+                    <PanelContent
+                      labelKey={panel.labelKey}
+                      srKey={panel.srKey}
+                      seeMenu={seeMenu}
+                      selected={isSelected}
+                    />
                   </>
                 );
+
+                const selectedClass = hasSelection && isSelected ? "z-[2] ring-white/40" : "";
+                const unselectedClass = hasSelection && !isSelected ? "z-[1] opacity-95" : "";
 
                 return interactive ? (
                   <button
                     key={panel.key}
                     type="button"
-                    className={`${panelBaseClass} ${panelMinHeightClass} w-full bg-ink`}
+                    className={`${panelBaseClass} ${panelMinHeightClass} w-full bg-ink ${selectedClass} ${unselectedClass}`}
                     onClick={() => onSelect?.(panel.key)}
                   >
                     {inner}
@@ -258,9 +288,11 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 );
               })}
             </div>
-            <div className="hidden w-full grid-cols-4 gap-0 bg-white sm:grid">
-              {PANELS.map((panel, index) => {
-                const active = activeKey === panel.key;
+              <div className="hidden w-full grid-cols-4 gap-0 bg-white sm:grid">
+                {PANELS.map((panel, index) => {
+                const isSelected = activeKey === panel.key;
+                const hasSelection = activeKey != null;
+                const dimmed = hasSelection && !isSelected;
                 const sizes =
                   "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1023px) 25vw, 25vw";
 
@@ -277,18 +309,23 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       src={panel.src}
                       sizes={sizes}
                       priority={index === 0}
-                      active={active}
+                      dimmed={dimmed}
+                      selected={isSelected}
                     />
                     <PanelContent
                       labelKey={panel.labelKey}
                       srKey={panel.srKey}
                       seeMenu={seeMenu}
                       titleAlignClass={titleNudge}
+                      selected={isSelected}
                     />
                   </>
                 );
 
-                const cellClass = `${panelBaseClass} ${desktopFourColHeightClass} min-w-0 bg-ink`;
+                const selectedClass = hasSelection && isSelected ? "z-[2] ring-white/40" : "";
+                const unselectedClass = hasSelection && !isSelected ? "z-[1] opacity-95" : "";
+
+                const cellClass = `${panelBaseClass} ${desktopFourColHeightClass} min-w-0 bg-ink ${selectedClass} ${unselectedClass}`;
 
                 const leanStyle = clipPathStyle(splitLeanPolygon(index), index);
 
@@ -309,6 +346,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 );
               })}
             </div>
+          </div>
           </div>
         </div>
         {children}

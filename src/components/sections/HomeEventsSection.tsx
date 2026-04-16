@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { homeEvents } from "@/data/homeEvents";
@@ -9,6 +10,8 @@ import { t } from "@/i18n/strings";
 export function HomeEventsSection() {
   const { locale } = useLocale();
   const sorted = [...homeEvents].sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useMemo(() => new Map<string, HTMLLIElement>(), []);
 
   if (sorted.length === 0) return null;
 
@@ -17,74 +20,72 @@ export function HomeEventsSection() {
       aria-labelledby="home-events-heading"
       className="border-t border-border bg-paper"
     >
-      <div className="mx-auto w-full max-w-[var(--container-max)] px-5 pt-20 pb-0 sm:px-10 sm:pt-24 lg:px-14 xl:px-20">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-          <div className="min-w-0">
+      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-5 py-20 sm:px-10 sm:py-24 lg:px-14 xl:px-20">
+        <div className="flex flex-col items-start gap-10 md:flex-row md:gap-12 lg:gap-14">
+          <div className="min-w-0 md:w-1/2 md:max-w-[50%]">
             <h2
               id="home-events-heading"
-              className="font-display text-3xl font-medium tracking-tight text-ink sm:text-4xl"
+              className="font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl"
             >
               {t(locale, "page.home.eventsHeading")}
             </h2>
-            <p className="mt-3 max-w-2xl text-lg text-ink-muted leading-relaxed">
+            <p className="mt-3 text-lg text-ink-muted leading-relaxed">
               {t(locale, "page.home.eventsIntro")}
             </p>
+            <div className="mt-6 flex flex-col items-start gap-2">
+              <Link
+                href="/events"
+                className="text-sm font-semibold tracking-[0.2em] text-ink uppercase underline-offset-[0.35em] transition-colors hover:text-ink-muted"
+              >
+                {t(locale, "page.home.eventsViewAll")}
+              </Link>
+            </div>
           </div>
-          <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
-            <p className="text-xs font-medium tracking-[0.18em] text-ink-muted uppercase sm:text-right">
-              {t(locale, "page.home.eventsScrollHint")}
-            </p>
-            <Link
-              href="/events"
-              className="text-sm font-semibold tracking-[0.2em] text-ink uppercase underline-offset-[0.35em] transition-colors hover:text-ink-muted"
-            >
-              {t(locale, "page.home.eventsViewAll")}
-            </Link>
-          </div>
-        </div>
-      </div>
 
-      {/* Full-bleed strip: wider than site container so the timeline uses horizontal space */}
-      <div className="relative mt-12 w-screen max-w-[100vw] left-1/2 -translate-x-1/2">
-        <div className="mx-auto w-full max-w-[min(100vw,112rem)] px-4 pb-20 pt-0 sm:px-6 sm:pb-24 lg:px-10 xl:px-16 2xl:px-20">
-          <div
-            className={[
-              "overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth pb-3 pt-2",
-              "snap-x snap-mandatory",
-              "[scrollbar-width:thin]",
-              "[&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-paper-dark/50 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-ink/25",
-            ].join(" ")}
-            tabIndex={0}
-            role="region"
-            aria-label={t(locale, "page.home.eventsHeading")}
-          >
-            <div className="relative inline-flex min-h-[min(26rem,58vh)] w-max max-w-none gap-10 pr-4 sm:gap-12 sm:pr-6 lg:gap-14 lg:pr-10">
-              {/* Timeline spine — spans full scroll content width */}
+          <div className="relative min-w-0 md:ml-auto md:w-1/2 md:max-w-[50%]">
+            <div className="relative w-full max-w-[44rem]">
               <div
-                className="pointer-events-none absolute left-0 right-0 top-[13px] z-0 h-px bg-gradient-to-r from-transparent via-ink/25 to-transparent"
-                aria-hidden
-              />
-
-              <ol className="relative z-10 m-0 flex list-none gap-10 p-0 sm:gap-12 lg:gap-14">
+                className={[
+                  "relative w-full max-h-[min(72vh,46rem)] overflow-y-auto overscroll-y-contain scroll-smooth pr-2 pt-0",
+                  "snap-y snap-mandatory",
+                  "touch-pan-y",
+                  "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+                ].join(" ")}
+                ref={viewportRef}
+                tabIndex={0}
+                role="region"
+                aria-label={t(locale, "page.home.eventsHeading")}
+              >
+                <ol className="relative z-10 m-0 flex list-none flex-col gap-10 pb-2 pt-0">
+                {/* Vertical timeline spine (spans full content height) */}
+                <div
+                  className="pointer-events-none absolute left-4 top-0 bottom-0 z-0 w-px bg-[linear-gradient(to_bottom,transparent_0%,rgba(10,10,10,0.20)_10%,rgba(10,10,10,0.20)_90%,transparent_100%)]"
+                  aria-hidden
+                />
                 {sorted.map((ev) => (
                   <li
                     key={ev.id}
-                    className="w-[min(92vw,38rem)] shrink-0 snap-center sm:w-[46rem] lg:w-[52rem] xl:w-[min(90vw,58rem)]"
+                    className="relative w-full snap-start pl-10"
+                    ref={(node) => {
+                      if (!node) {
+                        itemRefs.delete(ev.id);
+                        return;
+                      }
+                      itemRefs.set(ev.id, node);
+                    }}
                   >
-                    <div className="flex flex-col items-center pb-3">
-                      <span
-                        className="relative z-10 flex h-3.5 w-3.5 shrink-0 rounded-full border-2 border-ink bg-paper shadow-[0_0_0_5px_rgb(250,249,246)] ring-1 ring-ink/10"
-                        aria-hidden
-                      />
-                      <time
-                        className="mt-3 max-w-[20rem] text-center text-[10px] font-semibold leading-snug tracking-[0.2em] text-ink-muted uppercase sm:text-[11px]"
-                        dateTime={ev.sortDate}
-                      >
-                        {ev.weekdayDate[locale]}
-                      </time>
-                    </div>
+                    <span
+                      className="absolute left-[0.875rem] top-0 z-10 flex h-3.5 w-3.5 -translate-x-1/2 shrink-0 rounded-full border-2 border-ink bg-paper shadow-[0_0_0_5px_rgb(250,249,246)] ring-1 ring-ink/10"
+                      aria-hidden
+                    />
+                    <time
+                      className="mb-3 block text-left text-[10px] font-semibold leading-snug tracking-[0.2em] text-ink-muted uppercase sm:text-[11px]"
+                      dateTime={ev.sortDate}
+                    >
+                      {ev.weekdayDate[locale]}
+                    </time>
 
-                    <article className="group flex min-h-[13.5rem] flex-row overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:min-h-[15rem] sm:rounded-3xl">
+                    <article className="group flex w-full min-h-[13.5rem] flex-row overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:min-h-[15rem] sm:rounded-3xl">
                       <div className="relative w-[44%] min-w-[9rem] max-w-[18rem] shrink-0 self-stretch bg-ink/5 sm:w-[46%] sm:min-w-[11rem] sm:max-w-[22rem] xl:max-w-[26rem]">
                         <Image
                           src={ev.imageSrc}
@@ -128,7 +129,11 @@ export function HomeEventsSection() {
                     </article>
                   </li>
                 ))}
-              </ol>
+                </ol>
+              </div>
+
+              {/* Scroll fade (top/bottom) so cards don't hard-cut */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-12 bg-gradient-to-t from-paper to-transparent" aria-hidden />
             </div>
           </div>
         </div>

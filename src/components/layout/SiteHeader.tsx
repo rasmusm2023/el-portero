@@ -37,7 +37,7 @@ function overlayLinkClass(pathname: string, href: string) {
 const headerInnerMax =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
-/** Flex + absolutely centered logo so left/right rails can differ in width without shifting the wordmark. */
+/** Simple 2-rail header: logo left, controls right. */
 const headerBarClass = `${headerInnerMax} relative flex min-h-[var(--header-h)] items-center justify-between gap-3 py-3 sm:gap-6 sm:py-4`;
 
 /** Overlay sits below the fixed bar so the header does not jump or duplicate. */
@@ -122,33 +122,27 @@ export function SiteHeader() {
         } ${headerSurface}`}
       >
         <div className={headerBarClass}>
-          <div className="relative z-20 flex min-w-0 min-h-0 flex-1 items-center justify-start">
+          <div className="relative z-20 flex min-w-0 items-center justify-start">
+            <Link href="/" className="flex min-w-0 max-w-full" aria-label="El Portero">
+              <LogoWordmark
+                size="header"
+                showTagline={false}
+                align="start"
+                tone={menuOpen || onLightSurface ? "onLight" : "onDark"}
+              />
+            </Link>
+          </div>
+
+          <div className="relative z-20 flex min-w-0 items-center justify-end gap-2 sm:gap-4 md:gap-5">
+            <LanguageSwitcher
+              variant={menuOpen || onLightSurface ? "default" : "onDark"}
+            />
             <Link
               href="/reserve"
               className={`inline-flex max-w-full shrink-0 items-center justify-center rounded-none px-2.5 py-2 text-[9px] font-bold tracking-[0.16em] uppercase transition-[color,background-color,border-color,box-shadow] sm:px-5 sm:py-2.5 sm:text-[11px] sm:tracking-[0.2em] ${reserveBtnClass}`}
             >
               {t(locale, "header.reserveNav")}
             </Link>
-          </div>
-
-          <div className="pointer-events-none absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 justify-center px-[clamp(6rem,22vw,12rem)]">
-            <Link
-              href="/"
-              className="pointer-events-auto flex min-w-0 max-w-full justify-center text-center"
-              aria-label="El Portero"
-            >
-              <LogoWordmark
-                size="header"
-                showTagline={false}
-                tone={menuOpen || onLightSurface ? "onLight" : "onDark"}
-              />
-            </Link>
-          </div>
-
-          <div className="relative z-20 flex min-w-0 min-h-0 flex-1 items-center justify-end gap-2 sm:gap-4 md:gap-5">
-            <LanguageSwitcher
-              variant={menuOpen || onLightSurface ? "default" : "onDark"}
-            />
             <button
               type="button"
               className="group flex shrink-0 items-center gap-1.5 sm:gap-2"
