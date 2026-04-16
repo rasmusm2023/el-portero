@@ -90,6 +90,12 @@ type PageKey =
   | "page.reserve.newsletterEmailPlaceholder"
   | "page.reserve.newsletterSubmit"
   | "page.reserve.newsletterThanks"
+  | "page.reserve.altBookingTitle"
+  | "page.reserve.altBookingBody"
+  | "page.reserve.altCall"
+  | "page.reserve.altWhatsApp"
+  | "page.reserve.altCallAria"
+  | "page.reserve.altWhatsAppAria"
   | "page.contact.title"
   | "page.gallery.title"
   | "page.hours.title"
@@ -98,7 +104,7 @@ type PageKey =
   | "page.hours.openInMaps"
   | "page.admin.title";
 
-type FooterKey = "footer.staff";
+type FooterKey = "footer.staff" | "footer.whatsapp" | "footer.whatsappAria";
 
 type HeaderKey =
   | "header.menuLabel"
@@ -106,11 +112,7 @@ type HeaderKey =
   | "header.openNav"
   | "header.navDialog"
   | "header.reserveTable"
-  | "header.reserveNav"
-  | "header.bookingCall"
-  | "header.bookingWhatsApp"
-  | "header.bookingCallAria"
-  | "header.bookingWhatsAppAria";
+  | "header.reserveNav";
 
 type BrandKey = "brand.dinnerClub";
 
@@ -213,10 +215,15 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.navDialog": "Site navigation",
     "header.reserveTable": "Make reservation",
     "header.reserveNav": "Reservation",
-    "header.bookingCall": "Call",
-    "header.bookingWhatsApp": "WhatsApp",
-    "header.bookingCallAria": "Call to reserve a table",
-    "header.bookingWhatsAppAria": "Reserve via WhatsApp",
+    "page.reserve.altBookingTitle": "Book by phone or WhatsApp",
+    "page.reserve.altBookingBody":
+      "Many guests in Spain reserve this way — you’re welcome to reach us directly.",
+    "page.reserve.altCall": "Call",
+    "page.reserve.altWhatsApp": "WhatsApp",
+    "page.reserve.altCallAria": "Call to reserve a table",
+    "page.reserve.altWhatsAppAria": "Reserve via WhatsApp",
+    "footer.whatsapp": "WhatsApp",
+    "footer.whatsappAria": "Open WhatsApp chat with El Portero",
     "brand.dinnerClub": "Dinner Club",
   },
   es: {
@@ -301,6 +308,13 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.newsletterEmailPlaceholder": "Correo electrónico",
     "page.reserve.newsletterSubmit": "Suscribirse",
     "page.reserve.newsletterThanks": "¡Gracias!",
+    "page.reserve.altBookingTitle": "Reservar por teléfono o WhatsApp",
+    "page.reserve.altBookingBody":
+      "Muchos huéspedes reservan así — encantados de atenderos directamente.",
+    "page.reserve.altCall": "Llamar",
+    "page.reserve.altWhatsApp": "WhatsApp",
+    "page.reserve.altCallAria": "Llamar para reservar mesa",
+    "page.reserve.altWhatsAppAria": "Reservar por WhatsApp",
     "page.contact.title": "Contacto",
     "page.gallery.title": "Galería",
     "page.hours.title": "Horario",
@@ -309,16 +323,14 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.openInMaps": "Abrir en Google Maps",
     "page.admin.title": "Acceso admin",
     "footer.staff": "Personal",
+    "footer.whatsapp": "WhatsApp",
+    "footer.whatsappAria": "Abrir chat de WhatsApp con El Portero",
     "header.menuLabel": "MENÚ",
     "header.closeNav": "Cerrar menú",
     "header.openNav": "Abrir menú",
     "header.navDialog": "Navegación",
     "header.reserveTable": "Hacer reserva",
     "header.reserveNav": "Reserva",
-    "header.bookingCall": "Llamar",
-    "header.bookingWhatsApp": "WhatsApp",
-    "header.bookingCallAria": "Llamar para reservar mesa",
-    "header.bookingWhatsAppAria": "Reservar por WhatsApp",
     "brand.dinnerClub": "Dinner Club",
   },
   sv: {
@@ -403,6 +415,13 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.newsletterEmailPlaceholder": "E-postadress",
     "page.reserve.newsletterSubmit": "Skicka",
     "page.reserve.newsletterThanks": "Tack!",
+    "page.reserve.altBookingTitle": "Boka via telefon eller WhatsApp",
+    "page.reserve.altBookingBody":
+      "Många gäster bokar så här — vi hjälper gärna till direkt.",
+    "page.reserve.altCall": "Ring",
+    "page.reserve.altWhatsApp": "WhatsApp",
+    "page.reserve.altCallAria": "Ring och boka bord",
+    "page.reserve.altWhatsAppAria": "Boka via WhatsApp",
     "page.contact.title": "Kontakt",
     "page.gallery.title": "Galleri",
     "page.hours.title": "Öppettider",
@@ -411,16 +430,14 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.openInMaps": "Öppna i Google Maps",
     "page.admin.title": "Admininloggning",
     "footer.staff": "Personal",
+    "footer.whatsapp": "WhatsApp",
+    "footer.whatsappAria": "Öppna WhatsApp-chatt med El Portero",
     "header.menuLabel": "MENY",
     "header.closeNav": "Stäng meny",
     "header.openNav": "Öppna menyn",
     "header.navDialog": "Navigering",
     "header.reserveTable": "Gör bokning",
     "header.reserveNav": "Bokning",
-    "header.bookingCall": "Ring",
-    "header.bookingWhatsApp": "WhatsApp",
-    "header.bookingCallAria": "Ring och boka bord",
-    "header.bookingWhatsAppAria": "Boka via WhatsApp",
     "brand.dinnerClub": "Dinner Club",
   },
 };

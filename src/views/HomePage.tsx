@@ -19,7 +19,6 @@ import { brunchMenuCategories } from "@/data/brunchMenu";
 import { drinksMenuCategories } from "@/data/drinksMenu";
 import { LunchMenuExpandedPreview } from "@/components/menu/LunchMenuExpandedPreview";
 import type { MenuCategoryData } from "@/data/menuTypes";
-import { ReservationContactLinks } from "@/components/layout/ReservationContactLinks";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -83,17 +82,14 @@ export function HomePage({ heroImages = [] }: HomePageProps) {
                 </div>
               </div>
 
-              {/* Bottom actions: call / WhatsApp / reservation, tagline */}
-              <div className="absolute inset-x-5 bottom-8 z-20 flex flex-col gap-6 sm:inset-x-10 sm:bottom-10 sm:flex-row sm:items-end sm:justify-between sm:gap-8 lg:inset-x-14 xl:inset-x-20">
-                <div className="flex max-w-full flex-col gap-3 sm:max-w-[min(100%,28rem)]">
-                  <ReservationContactLinks locale={locale} variant="hero" />
-                  <Link
-                    href="/reserve"
-                    className="inline-flex w-fit min-w-[10.5rem] items-center justify-center rounded-none border-0 bg-[#8b6f52] px-7 py-3.5 text-sm font-bold tracking-[0.22em] text-white uppercase shadow-md shadow-black/30 transition-[background-color,box-shadow] hover:bg-[#7a6047] hover:shadow-lg hover:shadow-black/35"
-                  >
-                    {t(locale, "header.reserveTable")}
-                  </Link>
-                </div>
+              {/* Bottom actions: reservation left, tagline right */}
+              <div className="absolute inset-x-5 bottom-8 z-20 flex items-end justify-between gap-6 sm:inset-x-10 sm:bottom-10 lg:inset-x-14 xl:inset-x-20">
+                <Link
+                  href="/reserve"
+                  className="inline-flex min-w-[10.5rem] items-center justify-center rounded-none border-0 bg-[#8b6f52] px-7 py-3.5 text-sm font-bold tracking-[0.22em] text-white uppercase shadow-md shadow-black/30 transition-[background-color,box-shadow] hover:bg-[#7a6047] hover:shadow-lg hover:shadow-black/35"
+                >
+                  {t(locale, "header.reserveTable")}
+                </Link>
                 <p className="max-w-[28rem] text-left font-sans text-xs font-medium tracking-[0.22em] text-paper/85 uppercase sm:text-sm">
                   South American cuisine fused with Swedish classics — dinner
                   club nights in Torrevieja
