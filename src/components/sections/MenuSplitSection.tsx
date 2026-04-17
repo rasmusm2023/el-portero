@@ -3,10 +3,11 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { MENU_SPLIT_PANELS, type MenuSplitKey } from "@/data/menuSplitPanels";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
-export type MenuSplitKey = "lunch" | "drinks" | "brunch" | "alacarte";
+export type { MenuSplitKey } from "@/data/menuSplitPanels";
 
 type MenuSplitSectionProps = {
   onSelect?: (key: MenuSplitKey) => void;
@@ -34,17 +35,6 @@ const menuSplitSeeMenuClass =
   "opacity-100 translate-y-0 underline underline-offset-[0.35em] decoration-paper/35 " +
   "group-hover/panel:decoration-paper/75 group-hover/panel:translate-x-0.5";
 
-const FOOD_BG =
-  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=2400&q=80";
-const DRINKS_BG =
-  "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=2400&q=80";
-/** Brunch table — Unsplash */
-const BRUNCH_BG =
-  "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=2400&q=80";
-/** Plated course — Unsplash */
-const ALACARTE_BG =
-  "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2400&q=80";
-
 const panelBaseClass =
   "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color,transform] duration-300 sm:px-5 sm:py-14 md:py-16 " +
   "cursor-pointer select-none " +
@@ -60,43 +50,6 @@ const panelMinHeightClass =
 /** Desktop: one row of four equal columns. */
 const desktopFourColHeightClass =
   "min-h-[min(28vh,14rem)] sm:min-h-[min(34vh,17rem)] lg:min-h-[min(38vh,20rem)] xl:min-h-[min(40vh,21rem)]";
-
-const PANELS: {
-  key: MenuSplitKey;
-  src: string;
-  href: string;
-  labelKey: MessageKey;
-  srKey: MessageKey;
-}[] = [
-  {
-    key: "lunch",
-    src: FOOD_BG,
-    href: "/menu/weekly",
-    labelKey: "page.menu.weekly",
-    srKey: "page.menu.weeklyHeading",
-  },
-  {
-    key: "alacarte",
-    src: ALACARTE_BG,
-    href: "/menu/alacarte",
-    labelKey: "page.menu.alacarte",
-    srKey: "page.menu.alacarteHeading",
-  },
-  {
-    key: "brunch",
-    src: BRUNCH_BG,
-    href: "/menu/brunch",
-    labelKey: "page.menu.brunch",
-    srKey: "page.menu.brunchHeading",
-  },
-  {
-    key: "drinks",
-    src: DRINKS_BG,
-    href: "/menu/drinks",
-    labelKey: "page.menu.drinks",
-    srKey: "page.menu.drinksHeading",
-  },
-];
 
 /** Horizontal run of each seam vs panel width — keep small so splits read as a hint, not a wide band. */
 const SPLIT_LEAN_FRAC = 0.05;
@@ -241,7 +194,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
           <div className="overflow-hidden rounded-2xl bg-paper sm:rounded-3xl">
             <div className="flex flex-col gap-0 bg-paper">
               <div className="flex flex-col gap-0 sm:hidden">
-              {PANELS.map((panel, index) => {
+              {MENU_SPLIT_PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
@@ -289,7 +242,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
               })}
             </div>
               <div className="hidden w-full grid-cols-4 gap-0 bg-paper sm:grid">
-                {PANELS.map((panel, index) => {
+                {MENU_SPLIT_PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
