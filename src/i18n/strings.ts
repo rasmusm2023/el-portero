@@ -67,6 +67,16 @@ type PageKey =
   | "page.menu.weeklyViewFull"
   | "page.menu.subnavAria"
   | "page.events.title"
+  | "page.events.heroSubtitle"
+  | "page.events.heroInquiryCta"
+  | "page.events.heroInquiryAria"
+  | "page.events.explainPublicTitle"
+  | "page.events.explainPublicBody"
+  | "page.events.explainPrivateTitle"
+  | "page.events.explainPrivateBody"
+  | "page.events.listHeading"
+  | "page.events.listEmpty"
+  | "page.events.sectionOverviewLabel"
   | "page.story.title"
   | "page.story.intro"
   | "page.reserve.title"
@@ -91,9 +101,10 @@ type PageKey =
   | "page.reserve.newsletterSubmit"
   | "page.reserve.newsletterThanks"
   | "page.reserve.altBookingTitle"
-  | "page.reserve.altBookingBody"
+  | "page.reserve.altBookingOr"
   | "page.reserve.altCall"
   | "page.reserve.altWhatsApp"
+  | "page.reserve.altWhatsAppHint"
   | "page.reserve.altCallAria"
   | "page.reserve.altWhatsAppAria"
   | "page.contact.title"
@@ -101,10 +112,9 @@ type PageKey =
   | "page.hours.title"
   | "page.hours.map"
   | "page.hours.mapIframeTitle"
-  | "page.hours.openInMaps"
   | "page.admin.title";
 
-type FooterKey = "footer.staff" | "footer.whatsapp" | "footer.whatsappAria";
+type FooterKey = "footer.whatsapp" | "footer.whatsappAria";
 
 type HeaderKey =
   | "header.menuLabel"
@@ -124,7 +134,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.story": "Our story",
     "nav.menu": "Menus",
     "nav.events": "Events",
-    "nav.reserve": "Reserve",
+    "nav.reserve": "Reservations",
     "nav.contact": "Contact",
     "nav.gallery": "Gallery",
     "nav.hours": "Hours",
@@ -171,6 +181,19 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyViewFull": "View full lunch menu",
     "page.menu.subnavAria": "Menu sections",
     "page.events.title": "Events",
+    "page.events.heroSubtitle":
+      "We host our own open nights at the restaurant — think themed dinners, big-match screenings, and one-off collaborations. You can also work with us to host yours: weddings, business dinners, and private parties.",
+    "page.events.heroInquiryCta": "Request a quote",
+    "page.events.heroInquiryAria": "Go to contact — request a quote for private events",
+    "page.events.explainPublicTitle": "Our public events",
+    "page.events.explainPublicBody":
+      "These are evenings we put on for everyone: special menus, guest chefs, football and sports nights on the big screen, and seasonal ideas as we go. Grab a table like any other visit — dates and details are below when something is live.",
+    "page.events.explainPrivateTitle": "Your event here",
+    "page.events.explainPrivateBody":
+      "Hire the restaurant for your crowd — weddings, company dinners, birthdays, tastings, or a fully private celebration. Tell us your date, group size, and mood; we’ll come back with menus, pacing, and a clear way forward.",
+    "page.events.listHeading": "Coming up",
+    "page.events.listEmpty": "No published events yet — check back soon.",
+    "page.events.sectionOverviewLabel": "Public nights and private events",
     "page.story.title": "Our story",
     "page.story.intro":
       "El Portero is where South American warmth meets Scandinavian clarity — fine dining and a dinner club spirit on the Mediterranean coast. This page is ready for your full narrative, milestones, and the people behind the stoves.",
@@ -206,9 +229,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.title": "Opening hours",
     "page.hours.map": "Location",
     "page.hours.mapIframeTitle": "Map: El Portero, Torrevieja",
-    "page.hours.openInMaps": "Open in Google Maps",
     "page.admin.title": "Admin sign-in",
-    "footer.staff": "Staff",
     "header.menuLabel": "MENU",
     "header.closeNav": "Close menu",
     "header.openNav": "Open menu",
@@ -216,10 +237,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.reserveTable": "Make reservation",
     "header.reserveNav": "Reservation",
     "page.reserve.altBookingTitle": "Book by phone or WhatsApp",
-    "page.reserve.altBookingBody":
-      "Many guests in Spain reserve this way — you’re welcome to reach us directly.",
+    "page.reserve.altBookingOr": "Or",
     "page.reserve.altCall": "Call",
     "page.reserve.altWhatsApp": "WhatsApp",
+    "page.reserve.altWhatsAppHint":
+      "Message us with your date, time, and party size.",
     "page.reserve.altCallAria": "Call to reserve a table",
     "page.reserve.altWhatsAppAria": "Reserve via WhatsApp",
     "footer.whatsapp": "WhatsApp",
@@ -231,7 +253,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.story": "Nuestra historia",
     "nav.menu": "Cartas",
     "nav.events": "Eventos",
-    "nav.reserve": "Reservar",
+    "nav.reserve": "Reservas",
     "nav.contact": "Contacto",
     "nav.gallery": "Galería",
     "nav.hours": "Horario",
@@ -278,6 +300,19 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyViewFull": "Ver carta de almuerzo completa",
     "page.menu.subnavAria": "Secciones de la carta",
     "page.events.title": "Eventos",
+    "page.events.heroSubtitle":
+      "Organizamos nuestras propias veladas abiertas — cenas temáticas, grandes partidos en pantalla y colaboraciones puntuales. También podéis confiar en nosotros para el vuestro: bodas, empresas y celebraciones privadas.",
+    "page.events.heroInquiryCta": "Solicitar presupuesto",
+    "page.events.heroInquiryAria": "Ir a contacto — solicitar presupuesto para eventos privados",
+    "page.events.explainPublicTitle": "Eventos abiertos",
+    "page.events.explainPublicBody":
+      "Son noches que montamos para todo el mundo: menús especiales, chefs invitados, noches de fútbol y deporte en pantalla grande, y propuestas de temporada. Reservad mesa como en cualquier otra visita — abajo tenéis fechas y detalles cuando haya cartel.",
+    "page.events.explainPrivateTitle": "Vuestra celebración aquí",
+    "page.events.explainPrivateBody":
+      "Reservad el restaurante para vuestro grupo — bodas, cenas de empresa, cumpleaños, catas o una celebración a puerta cerrada. Decidnos fecha, tamaño del grupo y ambición; volveremos con menús, ritmo y siguientes pasos claros.",
+    "page.events.listHeading": "Próximas fechas",
+    "page.events.listEmpty": "Aún no hay eventos publicados — pronto habrá novedades.",
+    "page.events.sectionOverviewLabel": "Eventos abiertos y celebraciones privadas",
     "page.story.title": "Nuestra historia",
     "page.story.intro":
       "El Portero es el encuentro entre la calidez sudamericana y la claridad nórdica — alta cocina y espíritu de cena club en la costa mediterránea. Esta página está lista para vuestro relato, hitos y el equipo detrás de los fogones.",
@@ -309,10 +344,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.newsletterSubmit": "Suscribirse",
     "page.reserve.newsletterThanks": "¡Gracias!",
     "page.reserve.altBookingTitle": "Reservar por teléfono o WhatsApp",
-    "page.reserve.altBookingBody":
-      "Muchos huéspedes reservan así — encantados de atenderos directamente.",
+    "page.reserve.altBookingOr": "O",
     "page.reserve.altCall": "Llamar",
     "page.reserve.altWhatsApp": "WhatsApp",
+    "page.reserve.altWhatsAppHint":
+      "Escribidnos con fecha, hora y comensales.",
     "page.reserve.altCallAria": "Llamar para reservar mesa",
     "page.reserve.altWhatsAppAria": "Reservar por WhatsApp",
     "page.contact.title": "Contacto",
@@ -320,9 +356,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.title": "Horario",
     "page.hours.map": "Ubicación",
     "page.hours.mapIframeTitle": "Mapa: El Portero, Torrevieja",
-    "page.hours.openInMaps": "Abrir en Google Maps",
     "page.admin.title": "Acceso admin",
-    "footer.staff": "Personal",
     "footer.whatsapp": "WhatsApp",
     "footer.whatsappAria": "Abrir chat de WhatsApp con El Portero",
     "header.menuLabel": "MENÚ",
@@ -337,8 +371,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.home": "Hem",
     "nav.story": "Vår historia",
     "nav.menu": "Menyer",
-    "nav.events": "Evenemang",
-    "nav.reserve": "Boka",
+    "nav.events": "Events",
+    "nav.reserve": "Bokningar",
     "nav.contact": "Kontakt",
     "nav.gallery": "Galleri",
     "nav.hours": "Öppettider",
@@ -384,7 +418,20 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyMadridNote": "Veckostart (Madrid)",
     "page.menu.weeklyViewFull": "Se hela lunchmenyn",
     "page.menu.subnavAria": "Menydelar",
-    "page.events.title": "Evenemang",
+    "page.events.title": "Events",
+    "page.events.heroSubtitle":
+      "Vi kör egna öppna kvällar på restaurangen — temamiddagar, stora matcher på duk och gästspel i köket. Ni kan också låta oss värd för ert event: bröllop, företag och privata fester.",
+    "page.events.heroInquiryCta": "Offertförfrågan",
+    "page.events.heroInquiryAria": "Gå till kontakt — offertförfrågan för privata event",
+    "page.events.explainPublicTitle": "Våra publika kvällar",
+    "page.events.explainPublicBody":
+      "Det här är kvällar vi lägger för alla gäster: specialmenyer, kockar på besök, sport och fotboll på storbild, och säsongsidéer längs vägen. Boka bord som vanligt — datum och info finns nedan när något är publicerat.",
+    "page.events.explainPrivateTitle": "Ert event hos oss",
+    "page.events.explainPrivateBody":
+      "Ta över restaurangen för er skara — bröllop, företagsmiddagar, födelsedagar, provningar eller en helt privat fest. Berätta om datum, antal gäster och känsla; vi återkom med meny, upplägg och nästa steg.",
+    "page.events.listHeading": "Kommande",
+    "page.events.listEmpty": "Inga publicerade event ännu — kika snart igen.",
+    "page.events.sectionOverviewLabel": "Publika kvällar och privata event",
     "page.story.title": "Vår historia",
     "page.story.intro":
       "El Portero är mötet mellan sydamerikansk värme och skandinavisk tydlighet — finare matlagning och dinner club vid Medelhavet. Sidan är redo för er berättelse, milstolpar och köket bakom grytorna.",
@@ -416,10 +463,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.newsletterSubmit": "Skicka",
     "page.reserve.newsletterThanks": "Tack!",
     "page.reserve.altBookingTitle": "Boka via telefon eller WhatsApp",
-    "page.reserve.altBookingBody":
-      "Många gäster bokar så här — vi hjälper gärna till direkt.",
+    "page.reserve.altBookingOr": "Eller",
     "page.reserve.altCall": "Ring",
     "page.reserve.altWhatsApp": "WhatsApp",
+    "page.reserve.altWhatsAppHint":
+      "Skriv datum, tid och antal gäster.",
     "page.reserve.altCallAria": "Ring och boka bord",
     "page.reserve.altWhatsAppAria": "Boka via WhatsApp",
     "page.contact.title": "Kontakt",
@@ -427,9 +475,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.title": "Öppettider",
     "page.hours.map": "Plats",
     "page.hours.mapIframeTitle": "Karta: El Portero, Torrevieja",
-    "page.hours.openInMaps": "Öppna i Google Maps",
     "page.admin.title": "Admininloggning",
-    "footer.staff": "Personal",
     "footer.whatsapp": "WhatsApp",
     "footer.whatsappAria": "Öppna WhatsApp-chatt med El Portero",
     "header.menuLabel": "MENY",

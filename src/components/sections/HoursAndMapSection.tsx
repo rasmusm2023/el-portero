@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  LocationMapEmbed,
-  MapsFooterLink,
-} from "@/components/LocationMap";
+import { LocationMapEmbed } from "@/components/LocationMap";
 import { useEffect, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -132,71 +129,52 @@ export function HoursAndMapSection() {
     <section
       id="hours"
       aria-labelledby="hours-heading"
-      className="scroll-mt-[calc(var(--header-h)+1px)] border-t border-border bg-paper-dark/35"
+      className="flex min-h-0 flex-1 flex-col scroll-mt-[calc(var(--header-h)+1px)] border-t border-border bg-paper-dark/35"
     >
-      <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
-        <div className="mx-auto w-full max-w-[min(100%,112rem)]">
-          <div className="grid grid-cols-12 gap-8 lg:items-stretch lg:gap-x-10 lg:gap-y-4 xl:gap-x-12">
-            <div className="col-span-12 min-w-0 lg:col-span-4 lg:row-start-1 lg:flex lg:min-h-0 lg:flex-col">
-              <div className="flex flex-1 flex-col rounded-2xl bg-paper/75 px-6 py-6 shadow-[0_4px_28px_-8px_rgba(10,10,10,0.08)] ring-1 ring-ink/6 sm:px-7 sm:py-7 lg:min-h-0">
-                <h2
-                  id="hours-heading"
-                  className="font-display text-3xl font-semibold tracking-tight text-ink/95 sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
-                >
-                  {t(locale, "page.hours.title")}
-                </h2>
+      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-5 pt-16 pb-12 sm:px-10 sm:pt-20 sm:pb-14 lg:px-14 xl:px-20">
+        <div className="max-w-xl rounded-2xl bg-paper/75 px-6 py-6 shadow-[0_4px_28px_-8px_rgba(10,10,10,0.08)] ring-1 ring-ink/6 sm:px-7 sm:py-7">
+          <h2
+            id="hours-heading"
+            className="font-display text-3xl font-semibold tracking-tight text-ink/95 sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
+          >
+            {t(locale, "page.hours.title")}
+          </h2>
 
-                <p
-                  className="mt-5 font-sans text-sm leading-relaxed text-ink-muted sm:text-[15px] lg:mt-6"
-                  role="status"
-                >
-                  <span
-                    className={`mr-2 inline-block size-2 translate-y-px rounded-full ${
-                      status.isOpen ? "bg-emerald-600/80" : "bg-rose-500/75"
-                    }`}
-                    aria-hidden
-                  />
-                  <span className="font-medium text-ink">{status.label}</span>
-                  <span className="font-normal"> — {status.detail}</span>
-                </p>
-
-                <ul className="mt-6 space-y-2.5 font-sans sm:space-y-3">
-                  {rows.map((row) => (
-                    <li
-                      key={row.day}
-                      className="flex items-baseline justify-between gap-4"
-                    >
-                      <span className="min-w-11 text-[15px] font-normal text-ink-muted">
-                        {row.day}
-                      </span>
-                      <span className="text-[15px] tabular-nums font-medium text-ink sm:text-base">
-                        {row.hours}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="col-span-12 min-w-0 lg:col-span-8 lg:row-start-1 lg:flex lg:min-h-0 lg:flex-col">
-              <LocationMapEmbed
-                locale={locale}
-                className="h-full min-h-0 flex-1 lg:flex lg:flex-col"
-              />
-            </div>
-
-            <div
-              className="hidden lg:col-span-4 lg:row-start-2"
+          <p
+            className="mt-5 font-sans text-sm leading-relaxed text-ink-muted sm:text-[15px] lg:mt-6"
+            role="status"
+          >
+            <span
+              className={`mr-2 inline-block size-2 translate-y-px rounded-full ${
+                status.isOpen ? "bg-emerald-600/80" : "bg-rose-500/75"
+              }`}
               aria-hidden
             />
+            <span className="font-medium text-ink">{status.label}</span>
+            <span className="font-normal"> — {status.detail}</span>
+          </p>
 
-            <div className="col-span-12 lg:col-span-8 lg:row-start-2">
-              <MapsFooterLink locale={locale} className="mt-0" />
-            </div>
-          </div>
+          <ul className="mt-6 space-y-2.5 font-sans sm:space-y-3">
+            {rows.map((row) => (
+              <li
+                key={row.day}
+                className="flex items-baseline justify-between gap-4"
+              >
+                <span className="min-w-11 text-[15px] font-normal text-ink-muted">
+                  {row.day}
+                </span>
+                <span className="text-[15px] tabular-nums font-medium text-ink sm:text-base">
+                  {row.hours}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
+      </div>
+
+      <div className="w-full shrink-0">
+        <LocationMapEmbed locale={locale} />
       </div>
     </section>
   );
 }
-

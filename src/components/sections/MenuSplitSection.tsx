@@ -20,12 +20,14 @@ type MenuSplitSectionProps = {
 const contentGutterClass =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
-/** Matches hero image card radius; white base so split seams read as light lines between panels. */
+/** Matches hero image card radius; paper base so split seams match section (`bg-paper`). */
 const insetCardShellClass =
-  "relative overflow-visible rounded-2xl bg-white shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10 sm:rounded-3xl";
+  "relative overflow-visible rounded-2xl bg-paper shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] sm:rounded-3xl";
 
+/** Same display face + uppercase tracking as `page.reserve.heroTitle` (Reserve hero). */
 const menuSplitTitleClass =
-  "font-sans text-4xl font-bold tracking-tight text-paper/90 transition-colors duration-300 sm:text-5xl md:text-6xl group-hover/panel:text-paper";
+  "font-hero-title font-normal uppercase leading-[1.05] tracking-[0.14em] text-paper/90 " +
+  "text-[clamp(1.5rem,4vw,3.25rem)] transition-colors duration-300 group-hover/panel:text-paper";
 
 const menuSplitSeeMenuClass =
   "font-sans text-xs font-semibold uppercase tracking-[0.28em] text-paper/85 transition-all duration-300 ease-out " +
@@ -47,9 +49,9 @@ const panelBaseClass =
   "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color,transform] duration-300 sm:px-5 sm:py-14 md:py-16 " +
   "cursor-pointer select-none " +
   "hover:brightness-[1.06] active:brightness-[1.02] " +
-  "ring-2 ring-white/0 hover:ring-white/25 " +
+  "ring-2 ring-paper/0 hover:ring-paper/25 " +
   "transform-gpu will-change-transform " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60 " +
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper/60 " +
   "isolate";
 
 const panelMinHeightClass =
@@ -224,6 +226,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
 
   return (
     <section
+      id="menus"
       aria-label={
         locale === "es"
           ? "Elegir tipo de carta"
@@ -231,13 +234,13 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
             ? "Välj meny"
             : "Choose a menu"
       }
-      className="border-b border-border bg-paper"
+      className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-paper"
     >
       <div className={`${contentGutterClass} py-6 sm:py-8`}>
         <div className={insetCardShellClass}>
-          <div className="overflow-hidden rounded-2xl bg-white sm:rounded-3xl">
-            <div className="flex flex-col gap-px bg-white sm:gap-0">
-              <div className="flex flex-col gap-px sm:hidden">
+          <div className="overflow-hidden rounded-2xl bg-paper sm:rounded-3xl">
+            <div className="flex flex-col gap-0 bg-paper">
+              <div className="flex flex-col gap-0 sm:hidden">
               {PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
@@ -262,7 +265,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                   </>
                 );
 
-                const selectedClass = hasSelection && isSelected ? "z-[2] ring-white/40" : "";
+                const selectedClass = hasSelection && isSelected ? "z-[2] ring-paper/40" : "";
                 const unselectedClass = hasSelection && !isSelected ? "z-[1] opacity-95" : "";
 
                 return interactive ? (
@@ -285,7 +288,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 );
               })}
             </div>
-              <div className="hidden w-full grid-cols-4 gap-0 bg-white sm:grid">
+              <div className="hidden w-full grid-cols-4 gap-0 bg-paper sm:grid">
                 {PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
@@ -318,7 +321,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                   </>
                 );
 
-                const selectedClass = hasSelection && isSelected ? "z-[2] ring-white/40" : "";
+                const selectedClass = hasSelection && isSelected ? "z-[2] ring-paper/40" : "";
                 const unselectedClass = hasSelection && !isSelected ? "z-[1] opacity-95" : "";
 
                 const cellClass = `${panelBaseClass} ${desktopFourColHeightClass} min-w-0 bg-ink ${selectedClass} ${unselectedClass}`;

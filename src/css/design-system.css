@@ -40,8 +40,16 @@
 
   /* Layout */
   --container-max: 72rem;
-  /* Taller bar: centered logo + “Dinner Club” tagline */
-  --header-h: 6rem;
+  /* Mobile: single bar. lg+: two-tier header — used for scroll-margin / anchors. */
+  /* Single bar + faded rule under it (see SiteHeader mobile layout). */
+  --header-h: calc(4.5rem + 1px);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    /* Two-tier header + faded rule + nav row — keep in sync with SiteHeader layout */
+    --header-h: calc(7.5rem + 1px);
+  }
 }
 
 /* Warm paper texture — fine grid + diagonal grain + neutral wash (no image assets). */
