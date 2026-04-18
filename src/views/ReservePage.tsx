@@ -281,16 +281,16 @@ export function ReservePage() {
         <div className="mt-10 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:gap-8">
           <a
             href={bookingTelHref()}
-            className="group flex flex-col items-center border border-ink/12 bg-linear-to-b from-paper to-paper-dark/60 px-6 py-10 text-center shadow-[0_16px_44px_-22px_rgba(10,10,10,0.14)] ring-1 ring-ink/[0.07] transition-[transform,box-shadow,border-color] hover:-translate-y-1 hover:border-ink/25 hover:shadow-[0_22px_48px_-20px_rgba(10,10,10,0.2)]"
+            className="group flex flex-col items-center rounded-2xl border border-ink/12 bg-linear-to-b from-paper to-paper-dark/60 px-6 py-10 text-center shadow-[0_16px_44px_-22px_rgba(10,10,10,0.14)] ring-1 ring-ink/[0.07] outline-none transition-[border-color,box-shadow,ring-color] duration-200 ease-out hover:border-ink/30 hover:shadow-[0_16px_44px_-20px_rgba(10,10,10,0.18)] hover:ring-ink/15 active:border-ink/18 active:shadow-[0_12px_36px_-22px_rgba(10,10,10,0.12)] focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:ring-offset-2 focus-visible:ring-offset-paper sm:rounded-3xl"
             aria-label={t(locale, "page.reserve.altCallAria")}
           >
-            <span className="flex size-16 items-center justify-center rounded-full bg-ink/6 ring-1 ring-ink/10 transition-[background-color,transform] group-hover:scale-[1.03] group-hover:bg-ink/10">
+            <span className="flex size-16 items-center justify-center rounded-full bg-ink/6 ring-1 ring-ink/10 transition-colors duration-200 ease-out group-hover:bg-ink/12">
               <Phone className="size-7 text-ink" strokeWidth={1.5} aria-hidden />
             </span>
             <p className="mt-7 font-mono text-xl font-medium tracking-[0.12em] text-ink sm:text-2xl">
               {BOOKING_PHONE_DISPLAY}
             </p>
-            <span className="mt-9 inline-flex min-h-11 items-center justify-center border border-ink/30 bg-ink px-8 py-2.5 font-sans text-[11px] font-semibold tracking-[0.24em] text-paper uppercase transition-colors group-hover:border-gold group-hover:bg-gold">
+            <span className="mt-9 inline-flex min-h-11 min-w-[8.5rem] items-center justify-center rounded-full border border-ink/25 bg-ink px-8 py-2.5 font-sans text-[11px] font-semibold tracking-[0.24em] text-paper uppercase shadow-sm transition-[background-color,border-color] duration-200 ease-out group-hover:border-gold group-hover:bg-gold">
               {t(locale, "page.reserve.altCall")}
             </span>
           </a>
@@ -298,10 +298,10 @@ export function ReservePage() {
             href={bookingWhatsAppHref()}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex flex-col items-center border border-[#128C7E]/28 bg-linear-to-b from-paper to-[#e8f7f3]/90 px-6 py-10 text-center shadow-[0_16px_44px_-22px_rgba(18,140,126,0.12)] ring-1 ring-[#128C7E]/12 transition-[transform,box-shadow,border-color] hover:-translate-y-1 hover:border-[#128C7E]/45 hover:shadow-[0_22px_48px_-18px_rgba(18,140,126,0.22)]"
+            className="group flex flex-col items-center rounded-2xl border border-[#128C7E]/28 bg-linear-to-b from-paper to-[#e8f7f3]/90 px-6 py-10 text-center shadow-[0_16px_44px_-22px_rgba(18,140,126,0.12)] ring-1 ring-[#128C7E]/12 outline-none transition-[border-color,box-shadow,ring-color] duration-200 ease-out hover:border-[#128C7E]/45 hover:shadow-[0_16px_44px_-18px_rgba(18,140,126,0.18)] hover:ring-[#128C7E]/22 active:border-[#128C7E]/30 active:shadow-[0_12px_36px_-20px_rgba(18,140,126,0.12)] focus-visible:ring-2 focus-visible:ring-[#128C7E]/35 focus-visible:ring-offset-2 focus-visible:ring-offset-paper sm:rounded-3xl"
             aria-label={t(locale, "page.reserve.altWhatsAppAria")}
           >
-            <span className="flex size-16 items-center justify-center rounded-full bg-[#128C7E]/12 ring-1 ring-[#128C7E]/25 transition-[background-color,transform] group-hover:scale-[1.03] group-hover:bg-[#128C7E]/18">
+            <span className="flex size-16 items-center justify-center rounded-full bg-[#128C7E]/12 ring-1 ring-[#128C7E]/25 transition-colors duration-200 ease-out group-hover:bg-[#128C7E]/20">
               <svg
                 className="size-8 text-[#075E54]"
                 viewBox="0 0 24 24"
@@ -316,7 +316,7 @@ export function ReservePage() {
             <p className="mt-7 max-w-[14rem] font-sans text-sm leading-relaxed text-[#0d4f47]/90">
               {t(locale, "page.reserve.altWhatsAppHint")}
             </p>
-            <span className="mt-9 inline-flex min-h-11 items-center justify-center border border-[#128C7E]/45 bg-[#128C7E] px-8 py-2.5 font-sans text-[11px] font-semibold tracking-[0.24em] text-white uppercase transition-colors group-hover:bg-[#0f7a6e] group-hover:border-[#0f7a6e]">
+            <span className="mt-9 inline-flex min-h-11 min-w-[8.5rem] items-center justify-center rounded-full border border-[#128C7E]/50 bg-[#128C7E] px-8 py-2.5 font-sans text-[11px] font-semibold tracking-[0.24em] text-white uppercase shadow-sm transition-[background-color,border-color] duration-200 ease-out group-hover:border-[#0f7a6e] group-hover:bg-[#0f7a6e]">
               {t(locale, "page.reserve.altWhatsApp")}
             </span>
           </a>

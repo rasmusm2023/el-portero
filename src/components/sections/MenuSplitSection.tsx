@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { MENU_SPLIT_PANELS, type MenuSplitKey } from "@/data/menuSplitPanels";
@@ -31,9 +32,12 @@ const menuSplitTitleClass =
   "text-[clamp(1.5rem,4vw,3.25rem)] transition-colors duration-300 group-hover/panel:text-paper";
 
 const menuSplitSeeMenuClass =
-  "font-sans text-xs font-semibold uppercase tracking-[0.28em] text-paper/85 transition-all duration-300 ease-out " +
-  "opacity-100 translate-y-0 underline underline-offset-[0.35em] decoration-paper/35 " +
+  "font-sans text-xs font-semibold uppercase tracking-[0.28em] text-paper/85 " +
+  "underline underline-offset-[0.35em] decoration-paper/35 " +
   "group-hover/panel:decoration-paper/75 group-hover/panel:translate-x-0.5";
+
+/** Smooth deceleration — used for title layout + footer height/opacity. */
+const panelEase: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
 const panelBaseClass =
   "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color,transform] duration-300 sm:px-5 sm:py-14 md:py-16 " +
@@ -129,45 +133,88 @@ function PanelContent({
   labelKey,
   srKey,
   seeMenu,
-  titleAlignClass = "",
+  titleSingleLine,
   selected,
 }: {
   labelKey: MessageKey;
   srKey: MessageKey;
   seeMenu: string;
-  /** e.g. diagonal seam title nudge */
-  titleAlignClass?: string;
+  /** Keep label on one line (e.g. “A la carte”). */
+  titleSingleLine?: boolean;
   selected: boolean;
 }) {
   const { locale } = useLocale();
+  const reduceMotion = useReducedMotion();
+  const dur = reduceMotion ? 0.01 : 1.28;
+  const titleClass = [
+    menuSplitTitleClass,
+    titleSingleLine ? "whitespace-nowrap" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const layoutAnim = {
+    duration: dur,
+    ease: panelEase,
+  };
+
   return (
     <>
       <div
         className="absolute inset-0 z-[1] bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-500 ease-out group-hover/panel:from-ink/92 group-hover/panel:via-ink/60"
         aria-hidden
       />
-      <span
-        className={[
-          "relative z-[2] flex h-full w-full flex-col items-center px-2 text-center transform-gpu will-change-transform",
-          "gap-2 sm:gap-3",
-          "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          "justify-end pb-7 sm:pb-9",
-          selected ? "translate-y-0" : "-translate-y-10 sm:-translate-y-12",
-        ].join(" ")}
-      >
-        <span
-          className={
-            titleAlignClass ? `${menuSplitTitleClass} ${titleAlignClass}` : menuSplitTitleClass
-          }
+      <div className="relative z-[2] flex h-full min-h-0 w-full flex-col">
+        {/*
+          Single subtree so the title stays mounted: `layout` animates it sliding down/up when
+          `justify-center` ↔ `justify-end` and the footer height changes.
+        */}
+        <div
+          className={[
+            "flex min-h-0 flex-1 flex-col items-center px-2 text-center",
+            selected ? "justify-end pb-7 sm:pb-9" : "justify-center",
+          ].join(" ")}
         >
-          {t(locale, labelKey)}
-        </span>
-        <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
+          <motion.span
+            layout
+            className={titleClass}
+            transition={{ layout: layoutAnim }}
+          >
+            {t(locale, labelKey)}
+          </motion.span>
+        </div>
+        <motion.div
+          initial={false}
+          animate={{ height: selected ? 0 : "auto" }}
+          transition={{ duration: dur, ease: panelEase }}
+          className="shrink-0 overflow-hidden text-center"
+          aria-hidden={selected}
+          style={{ pointerEvents: selected ? "none" : undefined }}
+        >
+          <motion.div
+            initial={false}
+            animate={{
+              y: selected ? 6 : 0,
+              opacity: selected ? 0 : 1,
+            }}
+            transition={{
+              y: { duration: dur * 0.52, ease: panelEase },
+              opacity: {
+                duration: dur * 0.58,
+                ease: panelEase,
+                delay: selected ? 0 : dur * 0.16,
+              },
+            }}
+            className="pb-7 pt-2 sm:pb-9"
+          >
+            <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
+          </motion.div>
+        </motion.div>
         <span className="sr-only">
           {" "}
           — {t(locale, srKey)}
         </span>
-      </span>
+      </div>
     </>
   );
 }
@@ -213,6 +260,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       labelKey={panel.labelKey}
                       srKey={panel.srKey}
                       seeMenu={seeMenu}
+                      titleSingleLine={panel.key === "alacarte"}
                       selected={isSelected}
                     />
                   </>
@@ -249,13 +297,6 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 const sizes =
                   "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1023px) 25vw, 25vw";
 
-                const titleNudge =
-                  index === 0
-                    ? "[transform:translateX(-1.5%)]"
-                    : index === 3
-                      ? "[transform:translateX(1.5%)]"
-                      : "";
-
                 const inner = (
                   <>
                     <MenuPanelPhoto
@@ -268,7 +309,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       labelKey={panel.labelKey}
                       srKey={panel.srKey}
                       seeMenu={seeMenu}
-                      titleAlignClass={titleNudge}
+                      titleSingleLine={panel.key === "alacarte"}
                       selected={isSelected}
                     />
                   </>

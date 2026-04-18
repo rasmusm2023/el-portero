@@ -15,8 +15,8 @@ export function SiteFooter() {
 
   return (
     <footer className="border-t border-border bg-ink text-paper">
-      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-3">
+      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-8 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <LogoWordmark size="footer" align="start" tone="onDark" />
             <p className="mt-3 max-w-md text-sm leading-relaxed text-paper/75">
@@ -77,7 +77,7 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link className="hover:text-paper" href="/#menus">
+                <Link className="hover:text-paper" href="/menu">
                   {t(locale, "nav.menu")}
                 </Link>
               </li>
@@ -93,7 +93,7 @@ export function SiteFooter() {
               </li>
             </ul>
 
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="mt-5 flex flex-col gap-3">
               <a
                 href={INSTAGRAM_PROFILE_URL}
                 target="_blank"
@@ -126,11 +126,9 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-paper/10 pt-8">
-          <p className="text-xs tracking-wide text-paper/55 uppercase">
-            © {new Date().getFullYear()} El Portero
-          </p>
-        </div>
+        <p className="mt-8 text-xs tracking-wide text-paper/55 uppercase">
+          © {new Date().getFullYear()} El Portero
+        </p>
       </div>
     </footer>
   );

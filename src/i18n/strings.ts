@@ -58,13 +58,14 @@ type PageKey =
   | "page.menu.seeMenu"
   | "page.menu.weekly"
   | "page.menu.weeklyHeading"
+  | "page.menu.weeklyWeekTitle"
   | "page.menu.weeklyIntro"
+  | "page.menu.weeklyServiceLine"
   | "page.menu.weeklyLoading"
   | "page.menu.weeklyEmpty"
   | "page.menu.weeklyWeekLabel"
   | "page.menu.weeklyEffectiveLabel"
   | "page.menu.weeklyMadridNote"
-  | "page.menu.weeklyViewFull"
   | "page.menu.subnavAria"
   | "page.events.title"
   | "page.events.heroSubtitle"
@@ -79,6 +80,24 @@ type PageKey =
   | "page.events.sectionOverviewLabel"
   | "page.story.title"
   | "page.story.intro"
+  | "page.story.sectionOriginTitle"
+  | "page.story.sectionOriginP1"
+  | "page.story.sectionOriginP2"
+  | "page.story.sectionMagnusTitle"
+  | "page.story.sectionMagnusP1"
+  | "page.story.sectionMagnusP2"
+  | "page.story.sectionPhilosophyTitle"
+  | "page.story.sectionPhilosophyBody"
+  | "page.story.sectionCoastTitle"
+  | "page.story.sectionCoastBody"
+  | "page.story.ctaReserve"
+  | "page.story.ctaReserveAria"
+  | "page.story.photoAltOrigin"
+  | "page.story.photoAltMagnus"
+  | "page.story.photoAltTileA"
+  | "page.story.photoAltTileB"
+  | "page.story.photoAltTileC"
+  | "page.story.photoAltCoast"
   | "page.reserve.title"
   | "page.reserve.heroTitle"
   | "page.reserve.heroBody"
@@ -108,6 +127,45 @@ type PageKey =
   | "page.reserve.altCallAria"
   | "page.reserve.altWhatsAppAria"
   | "page.contact.title"
+  | "page.contact.heroTitle"
+  | "page.contact.heroBody"
+  | "page.contact.labelName"
+  | "page.contact.labelEmail"
+  | "page.contact.labelSubject"
+  | "page.contact.labelMessage"
+  | "page.contact.subjectPlaceholder"
+  | "page.contact.submitSoon"
+  | "page.contact.policyNote"
+  | "page.contact.validationName"
+  | "page.contact.validationEmail"
+  | "page.contact.validationEmailFormat"
+  | "page.contact.validationSubject"
+  | "page.contact.validationMessage"
+  | "page.contact.validationOkNotSent"
+  | "page.contact.validationSummary"
+  | "page.contact.validationTooFast"
+  | "page.contact.placeholderName"
+  | "page.contact.placeholderEmail"
+  | "page.contact.placeholderMessage"
+  | "page.contact.spamNote"
+  | "page.contact.subject.general"
+  | "page.contact.subject.reservation"
+  | "page.contact.subject.privateEvent"
+  | "page.contact.subject.feedbackVisit"
+  | "page.contact.subject.dietaryAllergies"
+  | "page.contact.subject.largeGroup"
+  | "page.contact.subject.giftCard"
+  | "page.contact.subject.pressMedia"
+  | "page.contact.subject.partnership"
+  | "page.contact.subject.careers"
+  | "page.contact.subject.lostProperty"
+  | "page.contact.subject.accessibility"
+  | "page.contact.subject.wineCellar"
+  | "page.contact.subject.hoursLocation"
+  | "page.contact.subject.billing"
+  | "page.contact.subject.privateDining"
+  | "page.contact.subject.specialOccasion"
+  | "page.contact.subject.other"
   | "page.gallery.title"
   | "page.hours.title"
   | "page.hours.map"
@@ -170,15 +228,15 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.seeMenu": "See menu",
     "page.menu.weekly": "Lunch",
     "page.menu.weeklyHeading": "Lunch",
-    "page.menu.weeklyIntro":
-      "What we serve for lunch through the week changes regularly. If nothing appears yet, publish the current week in admin.",
+    "page.menu.weeklyWeekTitle": "Lunch week {week}",
+    "page.menu.weeklyIntro": "Lunch is served Monday–Friday, 11:00–15:00.",
+    "page.menu.weeklyServiceLine": "Monday–Friday, 11:00–15:00.",
     "page.menu.weeklyLoading": "Loading lunch…",
     "page.menu.weeklyEmpty":
       "No lunch menu is published for this week yet. Check back soon — or ask staff to publish it in admin.",
     "page.menu.weeklyWeekLabel": "Week of",
     "page.menu.weeklyEffectiveLabel": "Goes live",
     "page.menu.weeklyMadridNote": "Madrid week start",
-    "page.menu.weeklyViewFull": "View full lunch menu",
     "page.menu.subnavAria": "Menu sections",
     "page.events.title": "Events",
     "page.events.heroSubtitle":
@@ -196,7 +254,32 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.events.sectionOverviewLabel": "Public nights and private events",
     "page.story.title": "Our story",
     "page.story.intro":
-      "El Portero is where South American warmth meets Scandinavian clarity — fine dining and a dinner club spirit on the Mediterranean coast. This page is ready for your full narrative, milestones, and the people behind the stoves.",
+      "Fine dining with a dinner club spirit on the Costa Blanca — where South American warmth meets Scandinavian clarity. El Portero is our invitation to slow down and eat well by the sea.",
+    "page.story.sectionOriginTitle": "What brings us together",
+    "page.story.sectionOriginP1":
+      "El Portero began with a simple idea: a restaurant that feels both celebratory and precise. Our cooking follows Mediterranean seasons and the convivial tables of Latin America, filtered through Nordic directness — generous flavour, honest sourcing, and service that stays in step with the room.",
+    "page.story.sectionOriginP2":
+      "We chose Torrevieja because the light, the produce, and the sea set the tone. Whether you are here for a long tasting menu or a lively evening with friends, we want every visit to feel intentional.",
+    "page.story.sectionMagnusTitle": "The keeper of the house",
+    "page.story.sectionMagnusP1":
+      "El Portero is led by Magnus Hedman — former professional goalkeeper, capped for Sweden, and trusted between the posts at the highest level of the game. A career spent reading the room, holding the line, and delivering under pressure translates naturally to hospitality: calm pacing, trust at the table, and a team that moves as one.",
+    "page.story.sectionMagnusP2":
+      "Today Magnus brings that same focus to welcoming guests, shaping the room, and keeping the restaurant’s character: warm, disciplined, and never ordinary.",
+    "page.story.sectionPhilosophyTitle": "How we cook & host",
+    "page.story.sectionPhilosophyBody":
+      "We build menus around seasonal ingredients, thoughtful wines, and the moment you are in — from tasting journeys to generous plates meant to share. Big-match nights, private celebrations, and quiet midweek dinners all belong here; the through-line is care you can taste.",
+    "page.story.sectionCoastTitle": "On the Mediterranean",
+    "page.story.sectionCoastBody":
+      "A short walk from the water in Torrevieja, Alicante, El Portero welcomes travellers and locals alike. Book ahead when you can, and tell us if you are celebrating — we will do our best to make it memorable.",
+    "page.story.ctaReserve": "Reserve a table",
+    "page.story.ctaReserveAria": "Go to reservations — book a table at El Portero",
+    "page.story.photoAltOrigin": "Cooking at the pass — energy in the kitchen",
+    "page.story.photoAltMagnus":
+      "A football pitch from above — focus, lines, and teamwork",
+    "page.story.photoAltTileA": "Wine glasses and candlelight on the table",
+    "page.story.photoAltTileB": "A carefully plated dish",
+    "page.story.photoAltTileC": "Mediterranean ingredients spread for sharing",
+    "page.story.photoAltCoast": "Mediterranean shoreline and open water",
     "page.reserve.title": "Reservations",
     "page.reserve.heroTitle": "Dine with us",
     "page.reserve.heroBody":
@@ -225,6 +308,51 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.newsletterSubmit": "Sign up",
     "page.reserve.newsletterThanks": "Thank you!",
     "page.contact.title": "Contact",
+    "page.contact.heroTitle": "Get in touch",
+    "page.contact.heroBody":
+      "Questions about reservations, events, dietary needs, or anything else — send us a note. Submission and email routing will connect to the backend soon; for now this form is a preview of the experience.",
+    "page.contact.labelName": "Name",
+    "page.contact.labelEmail": "Email",
+    "page.contact.labelSubject": "Subject",
+    "page.contact.labelMessage": "Message",
+    "page.contact.subjectPlaceholder": "Choose a topic",
+    "page.contact.submitSoon": "Send message (coming soon)",
+    "page.contact.policyNote":
+      "We read every message. Replies typically arrive within a few business days. No payment or booking is confirmed through this form yet.",
+    "page.contact.validationName": "Please enter your name.",
+    "page.contact.validationEmail": "Please enter your email address.",
+    "page.contact.validationEmailFormat": "That doesn’t look like a valid email address.",
+    "page.contact.validationSubject": "Please choose a subject.",
+    "page.contact.validationMessage": "Please enter a message.",
+    "page.contact.validationOkNotSent":
+      "Your message looks ready to send — online delivery isn’t enabled yet, so nothing was transmitted.",
+    "page.contact.validationSummary": "Please correct the highlighted fields.",
+    "page.contact.validationTooFast":
+      "Please wait a moment before sending — this helps us block automated submissions.",
+    "page.contact.placeholderName": "Your name",
+    "page.contact.placeholderEmail": "example@example.com",
+    "page.contact.placeholderMessage":
+      "Tell us what you need — dates, party size, dietary notes…",
+    "page.contact.spamNote":
+      "Protected against spam: please don’t fill in any hidden fields and wait a second after the page loads before submitting.",
+    "page.contact.subject.general": "General inquiry",
+    "page.contact.subject.reservation": "Reservation question",
+    "page.contact.subject.privateEvent": "Private event or catering",
+    "page.contact.subject.feedbackVisit": "Feedback on a recent visit",
+    "page.contact.subject.dietaryAllergies": "Dietary needs or allergies",
+    "page.contact.subject.largeGroup": "Large group / party size",
+    "page.contact.subject.giftCard": "Gift card or voucher",
+    "page.contact.subject.pressMedia": "Press & media",
+    "page.contact.subject.partnership": "Collaboration or partnership",
+    "page.contact.subject.careers": "Jobs & careers",
+    "page.contact.subject.lostProperty": "Lost & found",
+    "page.contact.subject.accessibility": "Accessibility",
+    "page.contact.subject.wineCellar": "Wine list or cellar",
+    "page.contact.subject.hoursLocation": "Hours, parking, or directions",
+    "page.contact.subject.billing": "Invoice, receipt, or billing",
+    "page.contact.subject.privateDining": "Private dining room",
+    "page.contact.subject.specialOccasion": "Birthday or celebration",
+    "page.contact.subject.other": "Something else",
     "page.gallery.title": "Gallery",
     "page.hours.title": "Opening hours",
     "page.hours.map": "Location",
@@ -289,15 +417,15 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.seeMenu": "Ver carta",
     "page.menu.weekly": "Almuerzo",
     "page.menu.weeklyHeading": "Almuerzo",
-    "page.menu.weeklyIntro":
-      "El almuerzo a lo largo de la semana cambia con frecuencia. Si no aparece nada, publica la semana actual en admin.",
+    "page.menu.weeklyWeekTitle": "Almuerzo semana {week}",
+    "page.menu.weeklyIntro": "Almuerzo de lunes a viernes, 11:00–15:00.",
+    "page.menu.weeklyServiceLine": "De lunes a viernes, 11:00–15:00.",
     "page.menu.weeklyLoading": "Cargando almuerzo…",
     "page.menu.weeklyEmpty":
       "Aún no hay carta de almuerzo publicada para esta semana. Vuelve pronto — o pide al equipo que la publique en admin.",
     "page.menu.weeklyWeekLabel": "Semana del",
     "page.menu.weeklyEffectiveLabel": "Activo desde",
     "page.menu.weeklyMadridNote": "Inicio de semana (Madrid)",
-    "page.menu.weeklyViewFull": "Ver carta de almuerzo completa",
     "page.menu.subnavAria": "Secciones de la carta",
     "page.events.title": "Eventos",
     "page.events.heroSubtitle":
@@ -315,7 +443,32 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.events.sectionOverviewLabel": "Eventos abiertos y celebraciones privadas",
     "page.story.title": "Nuestra historia",
     "page.story.intro":
-      "El Portero es el encuentro entre la calidez sudamericana y la claridad nórdica — alta cocina y espíritu de cena club en la costa mediterránea. Esta página está lista para vuestro relato, hitos y el equipo detrás de los fogones.",
+      "Alta cocina con espíritu de cena club en la Costa Blanca — donde la calidez sudamericana se encuentra con la claridad escandinava. El Portero es nuestra invitación a tomarse tiempo y comer bien junto al mar.",
+    "page.story.sectionOriginTitle": "Lo que nos une",
+    "page.story.sectionOriginP1":
+      "El Portero nació de una idea sencilla: un restaurante que sea a la vez festivo y preciso. Cocinamos con las estaciones mediterráneas y la generosidad de mesa latina, con la franqueza nórdica — sabor abundante, producto honesto y servicio al ritmo de la sala.",
+    "page.story.sectionOriginP2":
+      "Estamos en Torrevieja porque la luz, el producto y el mar marcan el tono. Vengáis para un menú degustación largo o una velada animada con amigos, queremos que cada visita se sienta intencionada.",
+    "page.story.sectionMagnusTitle": "El portero de la casa",
+    "page.story.sectionMagnusP1":
+      "El Portero lo dirige Magnus Hedman — ex portero profesional, internacional con Suecia y habituado a la exigencia bajo palos al máximo nivel. Una carrera leyendo la sala, cerrando línea y respondiendo bajo presión encaja con la hospitalidad: ritmo sereno, confianza en la mesa y un equipo que juega como uno.",
+    "page.story.sectionMagnusP2":
+      "Hoy Magnus lleva esa misma exigencia a acoger a los invitados, marcar el ambiente y conservar el carácter del restaurante: cálido, disciplinado y nunca ordinario.",
+    "page.story.sectionPhilosophyTitle": "Cómo cocinamos y recibimos",
+    "page.story.sectionPhilosophyBody":
+      "Montamos cartas alrededor de ingredientes de temporada, vinos con criterio y el momento que vivís — desde recorridos de degustación hasta platos generosos para compartir. Noches de partido, celebraciones privadas y cenas tranquilas de entre semana tienen cabida; el hilo conductor es el cuidado que se nota en el plato.",
+    "page.story.sectionCoastTitle": "Frente al Mediterráneo",
+    "page.story.sectionCoastBody":
+      "A un paso del mar en Torrevieja, Alicante, El Portero recibe a viajeros y vecinos. Reservad con antelación cuando podáis y contadnos si celebráis algo especial — haremos lo posible para que sea memorable.",
+    "page.story.ctaReserve": "Reservar mesa",
+    "page.story.ctaReserveAria": "Ir a reservas — reservar mesa en El Portero",
+    "page.story.photoAltOrigin": "Cocina al paso — energía detrás del fuego",
+    "page.story.photoAltMagnus":
+      "Campo de fútbol visto desde arriba — foco, líneas y trabajo en equipo",
+    "page.story.photoAltTileA": "Copas y luz de vela sobre la mesa",
+    "page.story.photoAltTileB": "Un plato servido con mimo",
+    "page.story.photoAltTileC": "Ingredientes mediterráneos para compartir",
+    "page.story.photoAltCoast": "Costa mediterránea y mar abierto",
     "page.reserve.title": "Reservas",
     "page.reserve.heroTitle": "Cena con nosotros",
     "page.reserve.heroBody":
@@ -352,6 +505,51 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.altCallAria": "Llamar para reservar mesa",
     "page.reserve.altWhatsAppAria": "Reservar por WhatsApp",
     "page.contact.title": "Contacto",
+    "page.contact.heroTitle": "Escríbenos",
+    "page.contact.heroBody":
+      "Dudas sobre reservas, eventos, alimentación o cualquier otra cosa — déjanos un mensaje. El envío y el correo se conectarán al backend pronto; por ahora el formulario es una vista previa.",
+    "page.contact.labelName": "Nombre",
+    "page.contact.labelEmail": "Correo electrónico",
+    "page.contact.labelSubject": "Asunto",
+    "page.contact.labelMessage": "Mensaje",
+    "page.contact.subjectPlaceholder": "Elige un tema",
+    "page.contact.submitSoon": "Enviar mensaje (pronto)",
+    "page.contact.policyNote":
+      "Leemos todos los mensajes. Las respuestas suelen tardar unos días laborables. Aún no se confirma pago ni reserva por este formulario.",
+    "page.contact.validationName": "Indica tu nombre.",
+    "page.contact.validationEmail": "Indica tu correo electrónico.",
+    "page.contact.validationEmailFormat": "Ese correo no parece válido.",
+    "page.contact.validationSubject": "Elige un asunto.",
+    "page.contact.validationMessage": "Escribe un mensaje.",
+    "page.contact.validationOkNotSent":
+      "El mensaje está listo para enviar — el envío online aún no está activo, no se ha enviado nada.",
+    "page.contact.validationSummary": "Revisa los campos marcados.",
+    "page.contact.validationTooFast":
+      "Espera un momento antes de enviar — nos ayuda a frenar envíos automáticos.",
+    "page.contact.placeholderName": "Tu nombre",
+    "page.contact.placeholderEmail": "ejemplo@ejemplo.com",
+    "page.contact.placeholderMessage":
+      "Cuéntanos qué necesitas — fechas, comensales, alimentación…",
+    "page.contact.spamNote":
+      "Protección antispam: no rellenes campos ocultos y espera un instante tras cargar la página antes de enviar.",
+    "page.contact.subject.general": "Consulta general",
+    "page.contact.subject.reservation": "Pregunta sobre reserva",
+    "page.contact.subject.privateEvent": "Evento privado o catering",
+    "page.contact.subject.feedbackVisit": "Opinión sobre una visita reciente",
+    "page.contact.subject.dietaryAllergies": "Dieta o alergias",
+    "page.contact.subject.largeGroup": "Grupo grande / comensales",
+    "page.contact.subject.giftCard": "Tarjeta regalo o vale",
+    "page.contact.subject.pressMedia": "Prensa y medios",
+    "page.contact.subject.partnership": "Colaboración o partnership",
+    "page.contact.subject.careers": "Empleo y prácticas",
+    "page.contact.subject.lostProperty": "Objetos perdidos",
+    "page.contact.subject.accessibility": "Accesibilidad",
+    "page.contact.subject.wineCellar": "Carta de vinos o bodega",
+    "page.contact.subject.hoursLocation": "Horario, parking o cómo llegar",
+    "page.contact.subject.billing": "Factura, ticket o pagos",
+    "page.contact.subject.privateDining": "Comedor privado",
+    "page.contact.subject.specialOccasion": "Cumpleaños o celebración",
+    "page.contact.subject.other": "Otro tema",
     "page.gallery.title": "Galería",
     "page.hours.title": "Horario",
     "page.hours.map": "Ubicación",
@@ -408,15 +606,15 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.seeMenu": "Se menyn",
     "page.menu.weekly": "Lunch",
     "page.menu.weeklyHeading": "Lunch",
-    "page.menu.weeklyIntro":
-      "Lunchen under veckan växlar ofta. Om inget visas ännu, publicera aktuell vecka i admin.",
+    "page.menu.weeklyWeekTitle": "Lunch vecka {week}",
+    "page.menu.weeklyIntro": "Lunch serveras måndag–fredag 11:00–15:00.",
+    "page.menu.weeklyServiceLine": "Måndag–fredag 11:00–15:00.",
     "page.menu.weeklyLoading": "Laddar lunch…",
     "page.menu.weeklyEmpty":
       "Ingen lunchmeny är publicerad för den här veckan än. Kom tillbaka snart — eller be personalen publicera den i admin.",
     "page.menu.weeklyWeekLabel": "Vecka från",
     "page.menu.weeklyEffectiveLabel": "Aktiveras",
     "page.menu.weeklyMadridNote": "Veckostart (Madrid)",
-    "page.menu.weeklyViewFull": "Se hela lunchmenyn",
     "page.menu.subnavAria": "Menydelar",
     "page.events.title": "Events",
     "page.events.heroSubtitle":
@@ -434,7 +632,32 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.events.sectionOverviewLabel": "Publika kvällar och privata event",
     "page.story.title": "Vår historia",
     "page.story.intro":
-      "El Portero är mötet mellan sydamerikansk värme och skandinavisk tydlighet — finare matlagning och dinner club vid Medelhavet. Sidan är redo för er berättelse, milstolpar och köket bakom grytorna.",
+      "Fin mat med dinner club-känsla på Costa Blanca — där sydamerikansk värme möter skandinavisk tydlighet. El Portero är vår inbjudan att ta tid och äta gott vid havet.",
+    "page.story.sectionOriginTitle": "Det som förenar oss",
+    "page.story.sectionOriginP1":
+      "El Portero växte ur en enkel tanke: en restaurang som känns både festlig och precis. Vi lagar utifrån medelhavssäsonger och latinamerikansk generositet vid bordet, filtrerat genom nordisk rakhet — smakrikedom, ärliga råvaror och service som följer rummet.",
+    "page.story.sectionOriginP2":
+      "Vi finns i Torrevieja för att ljuset, råvarorna och havet sätter stämningen. Oavsett om du kommer för en lång avsmakningsmeny eller en livlig kväll med vänner vill vi att varje besök ska kännas genomtänkt.",
+    "page.story.sectionMagnusTitle": "Husets målvakt",
+    "page.story.sectionMagnusP1":
+      "El Portero leds av Magnus Hedman — före detta professionell målvakt, landslagsman för Sverige och van vid trycket mellan stolparna på högsta nivå. Ett liv av att läsa spelet, hålla linjen och leverera när det gäller översätter väl till gästfrihet: lugnt tempo, förtroende vid bordet och ett lag som rör sig som ett.",
+    "page.story.sectionMagnusP2":
+      "I dag kanaliserar Magnus samma fokus till att välkomna gäster, forma salongen och bevara restaurangens särprägel — varm, tydlig och alltid mer än vardag.",
+    "page.story.sectionPhilosophyTitle": "Hur vi lagar och värdskapar",
+    "page.story.sectionPhilosophyBody":
+      "Vi bygger menyer kring säsong, viner med omsorg och stunden du är i — från smakresor till generösa rätter att dela. Stora matcher, privata firanden och tysta vardagskvällar får plats här; den röda tråden är omsorg du känner på tallriken.",
+    "page.story.sectionCoastTitle": "Vid Medelhavet",
+    "page.story.sectionCoastBody":
+      "På promenadavstånd från vattnet i Torrevieja, Alicante, välkomnar El Portero både resenärer och grannar. Boka gärna i förväg och berätta om ni firar något särskilt — vi gör vårt bästa för att göra kvällen minnesvärd.",
+    "page.story.ctaReserve": "Boka bord",
+    "page.story.ctaReserveAria": "Gå till bokning — boka bord på El Portero",
+    "page.story.photoAltOrigin": "Tillagning vid pass — energi i köket",
+    "page.story.photoAltMagnus":
+      "Fotbollsplan ovanifrån — fokus, linjer och lagarbete",
+    "page.story.photoAltTileA": "Vinglas och stämningsljus vid bordet",
+    "page.story.photoAltTileB": "En varsamt komponerad rätt",
+    "page.story.photoAltTileC": "Medelhavsråvaror att dela",
+    "page.story.photoAltCoast": "Medelhavskust och öppet vatten",
     "page.reserve.title": "Bokning",
     "page.reserve.heroTitle": "Ät med oss",
     "page.reserve.heroBody":
@@ -471,6 +694,51 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.altCallAria": "Ring och boka bord",
     "page.reserve.altWhatsAppAria": "Boka via WhatsApp",
     "page.contact.title": "Kontakt",
+    "page.contact.heroTitle": "Hör av dig",
+    "page.contact.heroBody":
+      "Frågor om bokningar, event, allergier eller annat — skriv en rad. Sändning och e-post kopplas snart till backend; formuläret är ännu en förhandsvisning.",
+    "page.contact.labelName": "Namn",
+    "page.contact.labelEmail": "E-post",
+    "page.contact.labelSubject": "Ämne",
+    "page.contact.labelMessage": "Meddelande",
+    "page.contact.subjectPlaceholder": "Välj ett ämne",
+    "page.contact.submitSoon": "Skicka meddelande (snart)",
+    "page.contact.policyNote":
+      "Vi läser allt. Svar brukar komma inom några vardagar. Ingen betalning eller bokning bekräftas via formuläret ännu.",
+    "page.contact.validationName": "Ange ditt namn.",
+    "page.contact.validationEmail": "Ange din e-postadress.",
+    "page.contact.validationEmailFormat": "E-postadressen verkar ogiltig.",
+    "page.contact.validationSubject": "Välj ett ämne.",
+    "page.contact.validationMessage": "Skriv ett meddelande.",
+    "page.contact.validationOkNotSent":
+      "Meddelandet ser redo ut — onlineutskick är inte aktiverat än, inget skickades.",
+    "page.contact.validationSummary": "Korrigera de markerade fälten.",
+    "page.contact.validationTooFast":
+      "Vänta lite innan du skickar — det hjälper oss stoppa automatiska inskick.",
+    "page.contact.placeholderName": "Ditt namn",
+    "page.contact.placeholderEmail": "exempel@exempel.se",
+    "page.contact.placeholderMessage":
+      "Skriv vad du behöver — datum, antal gäster, allergier…",
+    "page.contact.spamNote":
+      "Skydd mot skräppost: fyll inte i dolda fält och vänta en kort stund efter att sidan laddats innan du skickar.",
+    "page.contact.subject.general": "Allmän fråga",
+    "page.contact.subject.reservation": "Fråga om bokning",
+    "page.contact.subject.privateEvent": "Privat event eller catering",
+    "page.contact.subject.feedbackVisit": "Synpunkter efter besök",
+    "page.contact.subject.dietaryAllergies": "Kost eller allergier",
+    "page.contact.subject.largeGroup": "Större sällskap",
+    "page.contact.subject.giftCard": "Presentkort eller värdebevis",
+    "page.contact.subject.pressMedia": "Press och media",
+    "page.contact.subject.partnership": "Samarbete eller partnerskap",
+    "page.contact.subject.careers": "Jobb och karriär",
+    "page.contact.subject.lostProperty": "Hittegods",
+    "page.contact.subject.accessibility": "Tillgänglighet",
+    "page.contact.subject.wineCellar": "Vinlista eller källare",
+    "page.contact.subject.hoursLocation": "Tider, parkering eller vägbeskrivning",
+    "page.contact.subject.billing": "Faktura, kvitto eller betalning",
+    "page.contact.subject.privateDining": "Privat matsal",
+    "page.contact.subject.specialOccasion": "Födelsedag eller firande",
+    "page.contact.subject.other": "Annat",
     "page.gallery.title": "Galleri",
     "page.hours.title": "Öppettider",
     "page.hours.map": "Plats",
@@ -490,4 +758,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
 
 export function t(locale: Locale, key: MessageKey): string {
   return messages[locale][key];
+}
+
+/** e.g. "Lunch week 16" — pair with `uppercase` + tracking classes for "LUNCH WEEK 16". */
+export function weeklyMenuWeekTitle(locale: Locale, isoWeek: number): string {
+  return messages[locale]["page.menu.weeklyWeekTitle"].replace("{week}", String(isoWeek));
 }

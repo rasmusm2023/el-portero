@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { LunchMenuItemsList } from "@/components/menu/LunchMenuItemsList";
 import { getApiBaseUrl } from "@/lib/apiBase";
-import { lunchDishSlotLabel } from "@/lib/lunchDishSlots";
+import { getIsoWeekNumberFromYmd } from "@/lib/isoWeek";
+import { getMadridWeekStartYmd } from "@/lib/madridWeek";
 import type { WeeklyMenu } from "@/lib/weeklyMenuTypes";
 import { useLocale } from "@/i18n/useLocale";
-import { t } from "@/i18n/strings";
+import { t, weeklyMenuWeekTitle } from "@/i18n/strings";
 
 /** Home split-panel expansion: live lunch (weekly API), aligned with `/menu/weekly`. */
 export function LunchMenuExpandedPreview() {
@@ -46,59 +47,35 @@ export function LunchMenuExpandedPreview() {
     };
   }, [apiBase]);
 
-  if (busy) {
-    return (
-      <p className="text-sm text-ink-muted">{t(locale, "page.menu.weeklyLoading")}</p>
-    );
-  }
-
-  if (!menu?.items?.length) {
-    return (
-      <div className="rounded-none border border-border bg-paper-dark/40 px-4 py-3 text-sm text-ink-muted">
-        {t(locale, "page.menu.weeklyEmpty")}
-      </div>
-    );
-  }
+  const weekYmd =
+    menu?.effectiveWeekStartDate || menu?.weekStartDate || getMadridWeekStartYmd();
+  const isoWeek = getIsoWeekNumberFromYmd(weekYmd);
 
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {menu.items.map((it) => (
-          <article
-            key={it.position}
-            className="border border-border bg-paper-dark/40 p-6"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-xs font-semibold tracking-[0.2em] text-ink-muted uppercase">
-                  {lunchDishSlotLabel(it.position)}
-                </p>
-                <h3 className="mt-1 font-display text-xl font-medium text-ink">{it.name}</h3>
-              </div>
-              {it.price ? (
-                <p className="shrink-0 font-sans text-sm font-semibold text-ink tabular-nums">
-                  {it.price}
-                </p>
-              ) : null}
-            </div>
-            {it.description ? (
-              <p className="mt-3 text-ink-muted leading-relaxed">{it.description}</p>
-            ) : null}
-            {it.dietaryTags ? (
-              <p className="mt-4 text-xs font-semibold tracking-[0.18em] text-ink-muted uppercase">
-                {it.dietaryTags}
-              </p>
-            ) : null}
-          </article>
-        ))}
+      <div className="min-w-0">
+        <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-ink uppercase">
+          {weeklyMenuWeekTitle(locale, isoWeek)}
+        </h2>
+        <p className="mt-4 max-w-4xl font-display text-2xl text-ink leading-relaxed">
+          {t(locale, "page.menu.weeklyIntro")}
+        </p>
       </div>
-      <div className="mt-8 flex justify-center">
-        <Link
-          href="/menu/weekly"
-          className="inline-flex items-center justify-center rounded-none border border-border bg-paper px-6 py-3 text-sm font-semibold tracking-[0.18em] text-ink uppercase transition-colors hover:border-ink/35"
-        >
-          {t(locale, "page.menu.weeklyViewFull")}
-        </Link>
+
+      <div className="mt-10">
+        {busy ? (
+          <p className="text-sm text-ink-muted">{t(locale, "page.menu.weeklyLoading")}</p>
+        ) : !menu?.items?.length ? (
+          <div className="rounded-none border border-border bg-paper-dark/40 px-4 py-3 text-sm text-ink-muted">
+            {t(locale, "page.menu.weeklyEmpty")}
+          </div>
+        ) : (
+          <div className="grid gap-14 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-16">
+            <section className="min-w-0">
+              <LunchMenuItemsList items={menu.items} className="mt-0" />
+            </section>
+          </div>
+        )}
       </div>
     </>
   );

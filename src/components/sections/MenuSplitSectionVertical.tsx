@@ -23,7 +23,7 @@ const stripTransition =
   `transition-[flex-grow,flex-basis,min-height,opacity,box-shadow] duration-700 ${stripEase} motion-reduce:transition-none`;
 
 const panelStripBase =
-  `group/panel relative flex min-h-0 w-full flex-col overflow-hidden rounded-lg bg-ink ${stripTransition} ` +
+  `group/panel relative flex min-h-0 w-full flex-col overflow-hidden rounded-2xl bg-ink sm:rounded-3xl ${stripTransition} ` +
   "hover:brightness-[1.05] active:brightness-[0.98] " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper/60 " +
   "isolate";
@@ -90,16 +90,16 @@ function StripContent({
 }) {
   const { locale } = useLocale();
   const titleClass = [
-    "min-w-0 flex-1 pr-2 text-left font-hero-title uppercase leading-[1.05] tracking-[0.1em] text-paper transition-[color,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+    "block min-w-0 font-hero-title uppercase leading-[1.05] tracking-[0.1em] text-paper transition-[color,opacity,font-size] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
     isActive
-      ? "text-[clamp(1.45rem,3.4vw,2.35rem)]"
+      ? "text-[clamp(1.95rem,5.8vw,3.65rem)]"
       : isDimmed
         ? "text-[clamp(1.2rem,2.75vw,1.85rem)] text-paper/82"
         : "text-[clamp(1.35rem,3vw,2.1rem)] text-paper/95",
   ].join(" ");
 
   const seeClass = [
-    "shrink-0 self-center text-right font-sans text-[11px] font-semibold uppercase tracking-[0.22em] underline underline-offset-[0.3em] transition-[color,opacity,text-decoration-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none sm:text-xs md:text-sm",
+    "font-sans text-[11px] font-semibold uppercase tracking-[0.22em] underline underline-offset-[0.3em] sm:text-xs md:text-sm",
     isDimmed
       ? "text-paper/50 decoration-paper/20"
       : isActive
@@ -113,9 +113,31 @@ function StripContent({
         className="absolute inset-0 z-[1] bg-gradient-to-r from-ink/92 via-ink/55 to-ink/28 transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none group-hover/panel:from-ink/94 group-hover/panel:via-ink/58"
         aria-hidden
       />
-      <div className="relative z-[2] flex h-full min-h-0 w-full flex-row items-center justify-between gap-3 px-3.5 py-2.5 sm:gap-4 sm:px-4 sm:py-3 md:py-3.5">
-        <span className={titleClass}>{t(locale, labelKey)}</span>
-        <span className={seeClass}>{seeMenu}</span>
+      <div className="relative z-[2] h-full min-h-0 w-full overflow-hidden">
+        <span
+          className={[
+            "absolute top-1/2 z-[3] min-w-0 transition-[left,transform,font-size,color,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+            isActive
+              ? "left-1/2 max-w-[min(92%,32rem)] -translate-x-1/2 -translate-y-1/2 text-center"
+              : "left-3.5 max-w-[calc(100%-5rem)] -translate-y-1/2 translate-x-0 text-left sm:left-4 sm:max-w-[calc(100%-5.5rem)] md:max-w-[calc(100%-6rem)]",
+            titleClass,
+          ].join(" ")}
+        >
+          {t(locale, labelKey)}
+        </span>
+        <span
+          className={[
+            "absolute top-1/2 right-3.5 z-[3] -translate-y-1/2 sm:right-4",
+            "transition-[opacity,transform,color,text-decoration-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+            isActive
+              ? "pointer-events-none opacity-0 translate-x-3"
+              : "opacity-100 translate-x-0",
+            seeClass,
+          ].join(" ")}
+          aria-hidden={isActive}
+        >
+          {seeMenu}
+        </span>
         <span className="sr-only">
           {" "}
           — {t(locale, srKey)}

@@ -1,6 +1,7 @@
 import { readdirSync } from "fs";
 import { join } from "path";
 import { EVENTS_HERO_FALLBACK_URLS } from "@/data/eventsHeroFallback";
+import { STORY_HERO_FALLBACK_URLS } from "@/data/storyHeroFallback";
 
 const IMAGE_EXT = /\.(jpe?g|png|webp|gif)$/i;
 
@@ -30,4 +31,10 @@ export function getHeroSlideImages(): string[] {
 export function getEventsHeroSlideImages(): string[] {
   const local = readImageDir("images", "events");
   return local.length > 0 ? local : EVENTS_HERO_FALLBACK_URLS;
+}
+
+/** Story page hero: `public/images/story/` when present, otherwise curated fallbacks. */
+export function getStoryHeroSlideImages(): string[] {
+  const local = readImageDir("images", "story");
+  return local.length > 0 ? local : STORY_HERO_FALLBACK_URLS;
 }

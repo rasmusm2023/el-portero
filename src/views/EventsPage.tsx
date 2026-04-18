@@ -29,7 +29,7 @@ export function EventsPage({ heroImages }: EventsPageProps) {
         <div className="mt-10 flex justify-center sm:mt-12">
           <Link
             href="/contact"
-            className="inline-flex min-h-12 items-center justify-center rounded-none border-0 bg-paper px-10 py-3.5 font-sans text-xs font-bold tracking-[0.22em] text-ink uppercase shadow-[0_12px_36px_-12px_rgba(0,0,0,0.45)] transition-[background-color,box-shadow,transform] hover:-translate-y-0.5 hover:bg-paper/92 hover:shadow-[0_18px_40px_-14px_rgba(0,0,0,0.5)] sm:min-h-13 sm:px-12 sm:text-sm sm:tracking-[0.24em]"
+            className="inline-flex min-h-12 items-center justify-center rounded-md border border-white/25 bg-paper px-10 py-3.5 font-sans text-xs font-bold tracking-[0.22em] text-ink uppercase shadow-[0_12px_36px_-12px_rgba(0,0,0,0.45)] outline-none transition-[background-color,box-shadow,border-color] duration-200 ease-out hover:border-white/50 hover:bg-paper hover:shadow-[0_14px_44px_-12px_rgba(0,0,0,0.38)] active:bg-paper/95 active:shadow-[0_10px_32px_-14px_rgba(0,0,0,0.42)] focus-visible:ring-2 focus-visible:ring-paper/55 focus-visible:ring-offset-2 focus-visible:ring-offset-ink/40 sm:min-h-13 sm:rounded-lg sm:px-12 sm:text-sm sm:tracking-[0.24em]"
             aria-label={t(locale, "page.events.heroInquiryAria")}
           >
             {t(locale, "page.events.heroInquiryCta")}
@@ -101,9 +101,16 @@ export function EventsPage({ heroImages }: EventsPageProps) {
                         <p className="text-xs font-semibold tracking-[0.22em] text-ink-muted uppercase">
                           {ev.weekdayDate[locale]}
                         </p>
-                        <p className="mt-2 text-xs font-semibold tracking-[0.18em] text-ink-muted/90 uppercase">
-                          {ev.timeDetail[locale]}
-                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <p className="text-xs font-semibold tracking-[0.18em] text-ink-muted/90 uppercase">
+                            {ev.timeDetail[locale]}
+                          </p>
+                          {ev.fullyBooked ? (
+                            <span className="inline-flex items-center rounded-full border border-border bg-paper px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.18em] text-ink uppercase">
+                              {t(locale, "page.reserve.fullyBooked")}
+                            </span>
+                          ) : null}
+                        </div>
                         <h2 className="mt-3 font-display text-2xl font-medium text-ink sm:text-3xl">
                           {ev.title[locale]}
                         </h2>

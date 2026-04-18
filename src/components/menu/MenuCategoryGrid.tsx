@@ -23,11 +23,11 @@ export function MenuCategoryGrid({ categories, locale }: Props) {
               >
                 <div className="min-w-0">
                   <p className="font-medium text-ink">{item.name[locale]}</p>
-                  <p className="mt-1 text-sm text-ink-muted leading-relaxed">
+                  <p className="mt-1 text-sm italic text-ink-muted leading-relaxed">
                     {item.description[locale]}
                   </p>
                 </div>
-                <p className="shrink-0 text-ink tabular-nums">
+                <p className="shrink-0 text-ink-muted tabular-nums">
                   {formatEur(locale, item.priceEur)}
                 </p>
               </li>

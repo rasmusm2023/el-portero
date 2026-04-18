@@ -2,26 +2,18 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
-import { GallerySection } from "@/components/sections/GallerySection";
-import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
-import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
-import { HoursAndMapSection } from "@/components/sections/HoursAndMapSection";
-import { MenuSplitSectionVertical } from "@/components/sections/MenuSplitSectionVertical";
-import { PageHeroSection } from "@/components/PageHeroSection";
+import { LunchMenuExpandedPreview } from "@/components/menu/LunchMenuExpandedPreview";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
-import { LogoWordmark } from "@/components/LogoWordmark";
-import type { MenuSplitKey } from "@/data/menuSplitPanels";
+import {
+  MenuSplitSection,
+  type MenuSplitKey,
+} from "@/components/sections/MenuSplitSection";
 import { alacarteMenuCategories } from "@/data/alacarteMenu";
 import { brunchMenuCategories } from "@/data/brunchMenu";
 import { drinksMenuCategories } from "@/data/drinksMenu";
-import { LunchMenuExpandedPreview } from "@/components/menu/LunchMenuExpandedPreview";
 import type { MenuCategoryData } from "@/data/menuTypes";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
-
-type DemoHomePageProps = {
-  heroImages?: string[];
-};
 
 const MENU_SPLIT_KEYS: MenuSplitKey[] = [
   "lunch",
@@ -40,42 +32,30 @@ const previewCategories: Record<
 };
 
 /**
- * Experimental home layout: vertical left rail for menu strips (`/demo` only).
- * Production menus live on `/menu` (`MenusHubPage`).
+ * Full-width menu cards + inline previews — no hero; first content below the site header.
  */
-export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
+export function MenusHubPage() {
   const { locale } = useLocale();
   const [expandedMenu, setExpandedMenu] = useState<MenuSplitKey | null>(null);
   const menuPreviewRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <PageHeroSection
-        heroImages={heroImages}
-        bottomAside={
-          <p className="max-w-[28rem] text-right font-sans text-xs font-medium tracking-[0.22em] text-paper/85 uppercase sm:text-sm">
-            South American cuisine fused with Swedish classics — dinner club
-            nights in Torrevieja
-          </p>
-        }
-      >
-        <div className="mx-auto flex w-full max-w-[46rem] flex-col items-center">
-          <LogoWordmark
-            size="hero"
-            showTagline={false}
-            tone="onDark"
-            className="mb-5 scale-[1.35] sm:mb-6 sm:scale-[1.5] md:mb-7 md:scale-[1.65]"
-          />
-        </div>
-      </PageHeroSection>
-
-      <MenuSplitSectionVertical
+      <MenuSplitSection
         activeKey={expandedMenu}
         onSelect={(key) => {
           if (!MENU_SPLIT_KEYS.includes(key)) return;
           setExpandedMenu((prev) => (prev === key ? null : key));
         }}
       >
+        {!expandedMenu ? (
+          <div className="mx-auto w-full max-w-[var(--container-max)] pb-2 pt-6 sm:pt-8">
+            <p className="max-w-2xl text-lg text-ink-muted leading-relaxed">
+              Choose a menu above to preview it here — or open it to see the full
+              list.
+            </p>
+          </div>
+        ) : null}
         <AnimatePresence initial={false}>
           {expandedMenu ? (
             <motion.div
@@ -83,21 +63,21 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
               ref={menuPreviewRef}
               role="region"
               aria-label="Menu preview"
-              className="pt-2 pb-2 sm:pt-0 lg:pt-1"
+              className="pt-6 pb-2 sm:pt-8"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
               style={{ overflow: "hidden" }}
             >
-              <div className="mx-auto w-full max-w-[var(--container-max)] lg:mx-0">
+              <div className="mx-auto w-full max-w-[var(--container-max)]">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={expandedMenu}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   >
                     {expandedMenu === "lunch" ? (
                       <LunchMenuExpandedPreview />
@@ -115,7 +95,7 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
                         </div>
 
                         <motion.div
-                          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+                          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                           className="mt-10"
                         >
                           <MenuCategoryGrid
@@ -131,13 +111,7 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
             </motion.div>
           ) : null}
         </AnimatePresence>
-      </MenuSplitSectionVertical>
-
-      <HomeEventsSection />
-
-      <GallerySection />
-      <InstagramFeedSection />
-      <HoursAndMapSection />
+      </MenuSplitSection>
     </div>
   );
 }

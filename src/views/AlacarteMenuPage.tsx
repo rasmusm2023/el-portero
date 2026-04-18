@@ -11,7 +11,7 @@ export function AlacarteMenuPage() {
   const { locale } = useLocale();
 
   return (
-    <PageShell title={t(locale, "page.menu.title")} intro={t(locale, "page.menu.alacarteIntro")}>
+    <PageShell title={t(locale, "page.menu.title")} titleVariant="hero">
       <MenuPager />
       <MenuCategoryGrid categories={alacarteMenuCategories} locale={locale} />
     </PageShell>

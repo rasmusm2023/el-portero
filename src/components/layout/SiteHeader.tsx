@@ -15,7 +15,7 @@ import { MenuToggleIcon } from "./MenuToggleIcon";
 /** Legacy split (used only to build {@link primaryNavItems} order). */
 const navLeftItems: { href: string; labelKey: NavKey }[] = [
   { href: "/", labelKey: "nav.home" },
-  { href: "/#menus", labelKey: "nav.menu" },
+  { href: "/menu", labelKey: "nav.menu" },
   { href: "/events", labelKey: "nav.events" },
 ];
 
@@ -52,7 +52,7 @@ function isActivePath(pathname: string, href: string, locationHash: string) {
     return locationHash === expectedHash;
   }
   if (href === "/") {
-    return pathname === "/" && locationHash !== "#menus";
+    return pathname === "/";
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
