@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  /**
+   * Tree-shake `lucide-react` imports — smaller, more stable chunks (helps avoid stale
+   * webpack chunk refs like missing `./611.js` after hot reload / mixed dev+start runs).
+   */
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
   /** Browsers request `/favicon.ico` by default; we only ship an SVG under `/favicon/`. */
   async rewrites() {
     return [

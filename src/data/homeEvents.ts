@@ -4,6 +4,8 @@ export type HomeEvent = {
   id: string;
   /** ISO date for ordering (chronological). */
   sortDate: string;
+  /** When true, show a "Fully booked" indicator (and avoid implying seats are available). */
+  fullyBooked?: boolean;
   /** Weekday + calendar date — shown on the home timeline. */
   weekdayDate: Record<Locale, string>;
   /** Time and optional context (venue, format) — shown inside the home event card. */
@@ -22,6 +24,7 @@ export const homeEvents: HomeEvent[] = [
   {
     id: "mock-coastal-tasting-2026",
     sortDate: "2026-05-24",
+    fullyBooked: true,
     weekdayDate: {
       en: "Saturday 24 May",
       es: "Sábado 24 de mayo",
@@ -260,6 +263,7 @@ export const homeEvents: HomeEvent[] = [
   {
     id: "mock-world-cup-final-2026",
     sortDate: "2026-07-19",
+    fullyBooked: true,
     weekdayDate: {
       en: "Sunday 19 July",
       es: "Domingo 19 de julio",

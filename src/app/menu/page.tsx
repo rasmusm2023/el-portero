@@ -1,6 +1,12 @@
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { MenusHubPage } from "@/views/MenusHubPage";
 
-/** Default “Menu” URL sends guests to lunch (weekly menu). */
-export default function MenuIndexPage() {
-  redirect("/menu/weekly");
+export const metadata: Metadata = {
+  title: "Menus",
+  description:
+    "Lunch, à la carte, brunch, and drinks at El Portero — Torrevieja.",
+};
+
+export default function Page() {
+  return <MenusHubPage />;
 }

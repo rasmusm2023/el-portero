@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import { useClickAway } from "@/hooks/useClickAway";
 import { localeLabels, locales } from "@/i18n/strings";
@@ -22,14 +22,14 @@ export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps)
 
   const isDark = variant === "onDark";
 
-  /* Fixed box so border/bg changes never change width when variant flips. */
+  /** No border; soft fill vs page/header bg; chevron hints at dropdown. */
   const triggerClass = isDark
-    ? "inline-flex size-11 shrink-0 items-center justify-center rounded-none border border-paper/30 bg-paper/5 text-paper/90 transition-colors hover:border-paper/50 hover:text-paper"
-    : "inline-flex size-11 shrink-0 items-center justify-center rounded-none border border-border text-ink transition-colors hover:border-ink/25 hover:text-ink";
+    ? "inline-flex h-10 shrink-0 items-center gap-1 rounded-md bg-paper/12 px-2.5 py-2 text-paper/90 transition-[background-color,color] hover:bg-paper/20"
+    : "inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md bg-paper-dark/90 px-2.5 py-2 text-ink transition-[background-color,color] hover:bg-paper-dark";
 
   const listClass = isDark
-    ? "absolute right-0 z-[70] mt-1 min-w-[12.5rem] rounded-none border border-paper/20 bg-ink py-1 shadow-lg shadow-black/40"
-    : "absolute right-0 z-[70] mt-1 min-w-[12.5rem] rounded-none border border-border bg-paper py-1 shadow-lg";
+    ? "absolute right-0 z-[70] mt-1 min-w-[12.5rem] overflow-hidden rounded-md border border-paper/20 bg-ink shadow-lg shadow-black/40"
+    : "absolute right-0 z-[70] mt-1 min-w-[12.5rem] overflow-hidden rounded-md border border-border bg-paper shadow-lg";
 
   const itemBase =
     "flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm";
@@ -56,6 +56,13 @@ export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps)
         onClick={() => setOpen((v) => !v)}
       >
         <LocaleFlag locale={locale} variant={flagVariant} />
+        <ChevronDown
+          className={`size-3.5 shrink-0 opacity-50 transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          } ${isDark ? "text-paper" : "text-ink"}`}
+          strokeWidth={2.25}
+          aria-hidden
+        />
       </button>
       {open ? (
         <ul

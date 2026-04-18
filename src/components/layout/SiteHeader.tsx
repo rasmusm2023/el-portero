@@ -1,54 +1,115 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { Instagram } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
+import { INSTAGRAM_PROFILE_URL } from "@/config/site";
 import { t, type NavKey } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { MenuToggleIcon } from "./MenuToggleIcon";
 
-/** Full-screen menu: all pages except Reserve (Reserve is the header CTA). */
-const primaryNavItems: { href: string; labelKey: NavKey }[] = [
+/** Legacy split (used only to build {@link primaryNavItems} order). */
+const navLeftItems: { href: string; labelKey: NavKey }[] = [
   { href: "/", labelKey: "nav.home" },
   { href: "/menu", labelKey: "nav.menu" },
   { href: "/events", labelKey: "nav.events" },
+];
+
+const navReserveItem = {
+  href: "/reserve",
+  labelKey: "nav.reserve" as const,
+};
+
+const navRightItems: { href: string; labelKey: NavKey }[] = [
   { href: "/story", labelKey: "nav.story" },
   { href: "/contact", labelKey: "nav.contact" },
+];
+
+/** Mobile / overlay: Home … Events, Reservations, Story, Contact */
+const primaryNavItems: { href: string; labelKey: NavKey }[] = [
+  ...navLeftItems,
+  navReserveItem,
+  ...navRightItems,
 ];
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 const easeIn = [0.4, 0, 1, 1] as const;
 
-function overlayLinkClass(pathname: string, href: string) {
-  const isActive =
-    href === "/"
-      ? pathname === "/"
-      : pathname === href || pathname.startsWith(`${href}/`);
+/** Nav link hover: soft ease + long enough duration for text + gradient bar (see navTopAccentBar). */
+const navLinkTransition =
+  "transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]";
+
+function isActivePath(pathname: string, href: string, locationHash: string) {
+  const hashIdx = href.indexOf("#");
+  if (hashIdx !== -1) {
+    const path = href.slice(0, hashIdx) || "/";
+    const expectedHash = href.slice(hashIdx);
+    if (pathname !== path) return false;
+    return locationHash === expectedHash;
+  }
+  if (href === "/") {
+    return pathname === "/";
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/** Top nav accent: same `gold` as borders, but soft fade at left/right (not a solid stripe). */
+const navTopAccentBar =
+  "relative before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-0.5 before:content-[''] " +
+  "before:bg-[linear-gradient(90deg,transparent_0%,rgba(42,42,42,0)_6%,rgba(42,42,42,0.55)_18%,var(--color-gold)_32%,var(--color-gold)_68%,rgba(42,42,42,0.55)_82%,rgba(42,42,42,0)_94%,transparent_100%)] " +
+  "before:opacity-0 before:transition-opacity before:duration-700 before:ease-[cubic-bezier(0.22,1,0.36,1)] hover:before:opacity-100";
+
+/** Horizontal rule: solid in the center, fades to transparent at both ends. */
+function HeaderFadedRule() {
+  return (
+    <div
+      className="pointer-events-none h-px w-full shrink-0 bg-linear-to-r from-transparent via-ink/12 to-transparent"
+      aria-hidden
+    />
+  );
+}
+
+/** Desktop nav: top accent = gradient bar (see {@link navTopAccentBar}). */
+function desktopNavLinkClass(
+  pathname: string,
+  href: string,
+  locationHash: string,
+) {
+  const active = isActivePath(pathname, href, locationHash);
   return [
-    "block w-full text-center font-sans text-5xl font-bold tracking-tight transition-colors sm:text-6xl md:text-7xl",
-    isActive ? "text-ink" : "text-ink/40 hover:text-ink/75",
+    `inline-flex min-h-14 items-center px-6 font-sans text-base tracking-[0.02em] sm:px-7 ${navLinkTransition}`,
+    navTopAccentBar,
+    active
+      ? "font-bold text-ink before:opacity-100"
+      : "font-normal text-ink/62 hover:text-ink",
   ].join(" ");
 }
 
-/** Matches hero / footer horizontal gutters (`px-4 sm:px-6 lg:px-8`). */
+function overlayNavLinkClass(
+  pathname: string,
+  href: string,
+  locationHash: string,
+) {
+  const active = isActivePath(pathname, href, locationHash);
+  return [
+    `mx-auto block w-fit px-8 py-4 text-center font-sans text-5xl tracking-tight sm:px-10 sm:py-5 sm:text-6xl md:text-7xl ${navLinkTransition}`,
+    navTopAccentBar,
+    active
+      ? "font-bold text-ink before:opacity-100"
+      : "font-medium text-ink/40 hover:text-ink",
+  ].join(" ");
+}
+
 const headerInnerMax =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
-/** Simple 2-rail header: logo left, controls right. */
-const headerBarClass = `${headerInnerMax} relative flex min-h-[var(--header-h)] items-center justify-between gap-3 py-3 sm:gap-6 sm:py-4`;
+/** Below fixed header bar (see `--header-h` in design-system.css, includes faded rule). */
+const navOverlayTopClass = "top-[var(--header-h)]";
 
-/** Overlay sits below the fixed bar so the header does not jump or duplicate. */
-const navOverlayTopClass =
-  "top-[calc(var(--header-h)+1px)]";
-
-/**
- * Lock viewport scroll when the full-screen menu is open.
- * With `scrollbar-gutter: stable` on `html`, the track is already reserved — do **not**
- * add `padding-right` equal to the scrollbar width or the page shifts twice (gutter + pad).
- */
 function lockBodyScroll() {
   const root = document.documentElement;
   root.style.overflow = "hidden";
@@ -61,28 +122,41 @@ function unlockBodyScroll() {
   document.body.style.overflow = "";
 }
 
-/** Treat as “top of page” within this many px to avoid rubber-band flicker. */
-const SCROLL_TOP_EPS = 8;
-
 export function SiteHeader() {
   const { locale } = useLocale();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [atTop, setAtTop] = useState(true);
+  const [locationHash, setLocationHash] = useState("");
+
+  useEffect(() => {
+    const syncHash = () => setLocationHash(window.location.hash);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => {
-      setAtTop(window.scrollY <= SCROLL_TOP_EPS);
+      setAtTop(window.scrollY <= 8);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
+  /** Client navigations can interrupt Framer exit — always clear scroll lock + overlay state. */
   useLayoutEffect(() => {
-    if (!menuOpen) return;
-    lockBodyScroll();
-    /* Unlock only in onExitComplete so scroll stays locked during overlay exit. */
+    unlockBodyScroll();
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useLayoutEffect(() => {
+    if (menuOpen) {
+      lockBodyScroll();
+    } else {
+      unlockBodyScroll();
+    }
   }, [menuOpen]);
 
   useEffect(() => () => unlockBodyScroll(), []);
@@ -98,54 +172,40 @@ export function SiteHeader() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  /** At top: frosted paper bar so nav stays readable over light page edges (e.g. inset hero). Scrolled: dark glass. */
-  const onLightSurface = menuOpen || atTop;
+  /** Bottom edge uses {@link HeaderFadedRule} on desktop; mobile adds its own. */
+  const headerSurface = [
+    "bg-paper",
+    atTop ? "" : "shadow-[0_1px_0_rgba(10,10,10,0.05)]",
+    menuOpen ? "z-110" : "z-50",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  const headerSurface = menuOpen
-    ? "border-border/50 bg-paper/95 backdrop-blur-md"
-    : !atTop
-      ? "border-b border-paper/10 bg-ink/65 backdrop-blur-md"
-      : "border-b border-border/40 bg-paper/90 backdrop-blur-md";
-
-  const headerInk = menuOpen ? "text-ink" : onLightSurface ? "text-ink" : "text-paper";
-
-  const reserveBtnClass =
-    menuOpen || onLightSurface
-      ? "border-2 border-ink/45 bg-ink/[0.05] text-ink shadow-sm ring-1 ring-ink/10 hover:border-ink hover:bg-ink/10"
-      : "border-2 border-paper/80 bg-paper/10 text-paper shadow-md shadow-black/30 ring-1 ring-white/15 hover:border-paper hover:bg-paper/18";
+  const headerInk = "text-ink";
 
   return (
     <>
       <header
-        className={`fixed top-0 right-0 left-0 w-full border-b transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 ease-out ${
-          menuOpen ? "z-110" : "z-50"
-        } ${headerSurface}`}
+        className={`fixed top-0 right-0 left-0 w-full transition-shadow duration-300 ease-out ${headerSurface}`}
       >
-        <div className={headerBarClass}>
-          <div className="relative z-20 flex min-w-0 items-center justify-start">
-            <Link href="/" className="flex min-w-0 max-w-full" aria-label="El Portero">
-              <LogoWordmark
-                size="header"
-                showTagline={false}
-                align="start"
-                tone={menuOpen || onLightSurface ? "onLight" : "onDark"}
-              />
-            </Link>
-          </div>
-
-          <div className="relative z-20 flex min-w-0 items-center justify-end gap-2 sm:gap-4 md:gap-5">
-            <LanguageSwitcher
-              variant={menuOpen || onLightSurface ? "default" : "onDark"}
+        {/* —— Mobile / tablet: single row —— */}
+        <div className="lg:hidden">
+          <div
+            className={`flex min-h-18 items-center justify-between gap-3 py-2.5 ${headerInnerMax}`}
+          >
+          <Link href="/" className="flex min-w-0 max-w-[55%]" aria-label="El Portero">
+            <LogoWordmark
+              size="header"
+              showTagline={false}
+              align="start"
+              tone="onLight"
             />
-            <Link
-              href="/reserve"
-              className={`inline-flex max-w-full shrink-0 items-center justify-center rounded-none px-2.5 py-2 text-[9px] font-bold tracking-[0.16em] uppercase transition-[color,background-color,border-color,box-shadow] sm:px-5 sm:py-2.5 sm:text-[11px] sm:tracking-[0.2em] ${reserveBtnClass}`}
-            >
-              {t(locale, "header.reserveNav")}
-            </Link>
+          </Link>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <LanguageSwitcher variant="default" />
             <button
               type="button"
-              className="group flex shrink-0 items-center gap-1.5 sm:gap-2"
+              className="group flex shrink-0 items-center gap-1.5"
               aria-expanded={menuOpen}
               aria-controls="fullpage-nav"
               aria-label={
@@ -160,11 +220,7 @@ export function SiteHeader() {
                 aria-hidden
               >
                 <span
-                  className={`inline-block -rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.35em] uppercase transition-colors duration-300 sm:text-[10px] sm:tracking-[0.4em] ${headerInk} ${
-                    menuOpen || onLightSurface
-                      ? "group-hover:text-ink/65"
-                      : "group-hover:text-paper/80"
-                  }`}
+                  className={`inline-block -rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.35em] uppercase transition-colors duration-300 sm:text-[10px] sm:tracking-[0.4em] ${headerInk} group-hover:text-ink/65`}
                 >
                   {t(locale, "header.menuLabel")}
                 </span>
@@ -172,15 +228,62 @@ export function SiteHeader() {
               <span className="relative flex size-7 shrink-0 items-center justify-center overflow-hidden sm:size-8">
                 <MenuToggleIcon
                   open={menuOpen}
-                  className={`transition-colors duration-300 ${headerInk} ${
-                    menuOpen || onLightSurface
-                      ? "group-hover:text-ink/65"
-                      : "group-hover:text-paper/80"
-                  }`}
+                  className={`transition-colors duration-300 ${headerInk} group-hover:text-ink/65`}
                 />
               </span>
             </button>
           </div>
+        </div>
+          <HeaderFadedRule />
+        </div>
+
+        {/* —— Desktop: two tiers (reference: logo band + centered text nav) —— */}
+        <div className="hidden lg:block">
+          <div
+            className={`grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-3 ${headerInnerMax}`}
+          >
+            <div className="flex min-h-10 items-center justify-start">
+              <a
+                href={INSTAGRAM_PROFILE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex size-10 items-center justify-center text-ink/40 transition-colors hover:text-ink/75"
+                aria-label={t(locale, "page.home.instagramAria")}
+              >
+                <Instagram className="size-[1.35rem]" strokeWidth={1.5} />
+              </a>
+            </div>
+            <div className="flex justify-center">
+              <Link href="/" className="flex" aria-label="El Portero">
+                <LogoWordmark
+                  size="header"
+                  showTagline={false}
+                  align="center"
+                  tone="onLight"
+                />
+              </Link>
+            </div>
+            <div className="flex items-center justify-end">
+              <LanguageSwitcher variant="default" />
+            </div>
+          </div>
+
+          <HeaderFadedRule />
+
+          <nav
+            className={`flex flex-wrap items-stretch justify-center gap-x-16 gap-y-0 py-0 sm:gap-x-20 ${headerInnerMax}`}
+            aria-label="Primary"
+          >
+            {primaryNavItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={desktopNavLinkClass(pathname, item.href, locationHash)}
+              >
+                {t(locale, item.labelKey)}
+              </Link>
+            ))}
+          </nav>
         </div>
       </header>
 
@@ -201,7 +304,7 @@ export function SiteHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.26, ease: easeIn } }}
             transition={{ duration: 0.34, ease: easeOut }}
-            className={`fixed right-0 bottom-0 left-0 z-100 flex flex-col border-t border-border/60 bg-paper text-ink ${navOverlayTopClass}`}
+            className={`fixed right-0 bottom-0 left-0 z-100 flex flex-col border-t border-border/60 bg-paper text-ink lg:hidden ${navOverlayTopClass}`}
           >
             <motion.div
               className="flex min-h-0 flex-1 flex-col"
@@ -239,7 +342,11 @@ export function SiteHeader() {
                   >
                     <Link
                       href={item.href}
-                      className={overlayLinkClass(pathname, item.href)}
+                      className={overlayNavLinkClass(
+                        pathname,
+                        item.href,
+                        locationHash,
+                      )}
                       onClick={closeMenu}
                     >
                       {t(locale, item.labelKey)}
@@ -247,21 +354,6 @@ export function SiteHeader() {
                   </motion.div>
                 ))}
               </motion.nav>
-
-              <motion.div
-                className={`${headerInnerMax} flex shrink-0 items-center justify-center border-t border-border py-8 sm:py-10`}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: easeOut, delay: 0.35 }}
-              >
-                <Link
-                  href="/reserve"
-                  className="mx-auto flex w-full max-w-md items-center justify-center rounded-none border-2 border-ink bg-ink px-6 py-3 text-sm font-bold tracking-[0.22em] text-paper uppercase shadow-md shadow-black/15 ring-1 ring-ink/20 transition-[color,background-color,border-color,box-shadow] hover:border-ink hover:bg-ink/92"
-                  onClick={closeMenu}
-                >
-                  {t(locale, "header.reserveTable")}
-                </Link>
-              </motion.div>
             </motion.div>
           </motion.div>
         ) : null}

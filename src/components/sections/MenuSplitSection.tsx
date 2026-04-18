@@ -1,12 +1,14 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { MENU_SPLIT_PANELS, type MenuSplitKey } from "@/data/menuSplitPanels";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
-export type MenuSplitKey = "lunch" | "drinks" | "brunch" | "alacarte";
+export type { MenuSplitKey } from "@/data/menuSplitPanels";
 
 type MenuSplitSectionProps = {
   onSelect?: (key: MenuSplitKey) => void;
@@ -20,36 +22,30 @@ type MenuSplitSectionProps = {
 const contentGutterClass =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
-/** Matches hero image card radius; white base so split seams read as light lines between panels. */
+/** Matches hero image card radius; paper base so split seams match section (`bg-paper`). */
 const insetCardShellClass =
-  "relative overflow-visible rounded-2xl bg-white shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10 sm:rounded-3xl";
+  "relative overflow-visible rounded-2xl bg-paper shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] sm:rounded-3xl";
 
+/** Same display face + uppercase tracking as `page.reserve.heroTitle` (Reserve hero). */
 const menuSplitTitleClass =
-  "font-sans text-4xl font-bold tracking-tight text-paper/90 transition-colors duration-300 sm:text-5xl md:text-6xl group-hover/panel:text-paper";
+  "font-hero-title font-normal uppercase leading-[1.05] tracking-[0.14em] text-paper/90 " +
+  "text-[clamp(1.5rem,4vw,3.25rem)] transition-colors duration-300 group-hover/panel:text-paper";
 
 const menuSplitSeeMenuClass =
-  "font-sans text-xs font-semibold uppercase tracking-[0.28em] text-paper/85 transition-all duration-300 ease-out " +
-  "opacity-100 translate-y-0 underline underline-offset-[0.35em] decoration-paper/35 " +
+  "font-sans text-xs font-semibold uppercase tracking-[0.28em] text-paper/85 " +
+  "underline underline-offset-[0.35em] decoration-paper/35 " +
   "group-hover/panel:decoration-paper/75 group-hover/panel:translate-x-0.5";
 
-const FOOD_BG =
-  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=2400&q=80";
-const DRINKS_BG =
-  "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=2400&q=80";
-/** Brunch table — Unsplash */
-const BRUNCH_BG =
-  "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=2400&q=80";
-/** Plated course — Unsplash */
-const ALACARTE_BG =
-  "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2400&q=80";
+/** Smooth deceleration — used for title layout + footer height/opacity. */
+const panelEase: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
 const panelBaseClass =
   "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color,transform] duration-300 sm:px-5 sm:py-14 md:py-16 " +
   "cursor-pointer select-none " +
   "hover:brightness-[1.06] active:brightness-[1.02] " +
-  "ring-2 ring-white/0 hover:ring-white/25 " +
+  "ring-2 ring-paper/0 hover:ring-paper/25 " +
   "transform-gpu will-change-transform " +
-  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60 " +
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper/60 " +
   "isolate";
 
 const panelMinHeightClass =
@@ -58,43 +54,6 @@ const panelMinHeightClass =
 /** Desktop: one row of four equal columns. */
 const desktopFourColHeightClass =
   "min-h-[min(28vh,14rem)] sm:min-h-[min(34vh,17rem)] lg:min-h-[min(38vh,20rem)] xl:min-h-[min(40vh,21rem)]";
-
-const PANELS: {
-  key: MenuSplitKey;
-  src: string;
-  href: string;
-  labelKey: MessageKey;
-  srKey: MessageKey;
-}[] = [
-  {
-    key: "lunch",
-    src: FOOD_BG,
-    href: "/menu/weekly",
-    labelKey: "page.menu.weekly",
-    srKey: "page.menu.weeklyHeading",
-  },
-  {
-    key: "alacarte",
-    src: ALACARTE_BG,
-    href: "/menu/alacarte",
-    labelKey: "page.menu.alacarte",
-    srKey: "page.menu.alacarteHeading",
-  },
-  {
-    key: "brunch",
-    src: BRUNCH_BG,
-    href: "/menu/brunch",
-    labelKey: "page.menu.brunch",
-    srKey: "page.menu.brunchHeading",
-  },
-  {
-    key: "drinks",
-    src: DRINKS_BG,
-    href: "/menu/drinks",
-    labelKey: "page.menu.drinks",
-    srKey: "page.menu.drinksHeading",
-  },
-];
 
 /** Horizontal run of each seam vs panel width — keep small so splits read as a hint, not a wide band. */
 const SPLIT_LEAN_FRAC = 0.05;
@@ -174,45 +133,88 @@ function PanelContent({
   labelKey,
   srKey,
   seeMenu,
-  titleAlignClass = "",
+  titleSingleLine,
   selected,
 }: {
   labelKey: MessageKey;
   srKey: MessageKey;
   seeMenu: string;
-  /** e.g. diagonal seam title nudge */
-  titleAlignClass?: string;
+  /** Keep label on one line (e.g. “A la carte”). */
+  titleSingleLine?: boolean;
   selected: boolean;
 }) {
   const { locale } = useLocale();
+  const reduceMotion = useReducedMotion();
+  const dur = reduceMotion ? 0.01 : 1.28;
+  const titleClass = [
+    menuSplitTitleClass,
+    titleSingleLine ? "whitespace-nowrap" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const layoutAnim = {
+    duration: dur,
+    ease: panelEase,
+  };
+
   return (
     <>
       <div
         className="absolute inset-0 z-[1] bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-500 ease-out group-hover/panel:from-ink/92 group-hover/panel:via-ink/60"
         aria-hidden
       />
-      <span
-        className={[
-          "relative z-[2] flex h-full w-full flex-col items-center px-2 text-center transform-gpu will-change-transform",
-          "gap-2 sm:gap-3",
-          "transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-          "justify-end pb-7 sm:pb-9",
-          selected ? "translate-y-0" : "-translate-y-10 sm:-translate-y-12",
-        ].join(" ")}
-      >
-        <span
-          className={
-            titleAlignClass ? `${menuSplitTitleClass} ${titleAlignClass}` : menuSplitTitleClass
-          }
+      <div className="relative z-[2] flex h-full min-h-0 w-full flex-col">
+        {/*
+          Single subtree so the title stays mounted: `layout` animates it sliding down/up when
+          `justify-center` ↔ `justify-end` and the footer height changes.
+        */}
+        <div
+          className={[
+            "flex min-h-0 flex-1 flex-col items-center px-2 text-center",
+            selected ? "justify-end pb-7 sm:pb-9" : "justify-center",
+          ].join(" ")}
         >
-          {t(locale, labelKey)}
-        </span>
-        <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
+          <motion.span
+            layout
+            className={titleClass}
+            transition={{ layout: layoutAnim }}
+          >
+            {t(locale, labelKey)}
+          </motion.span>
+        </div>
+        <motion.div
+          initial={false}
+          animate={{ height: selected ? 0 : "auto" }}
+          transition={{ duration: dur, ease: panelEase }}
+          className="shrink-0 overflow-hidden text-center"
+          aria-hidden={selected}
+          style={{ pointerEvents: selected ? "none" : undefined }}
+        >
+          <motion.div
+            initial={false}
+            animate={{
+              y: selected ? 6 : 0,
+              opacity: selected ? 0 : 1,
+            }}
+            transition={{
+              y: { duration: dur * 0.52, ease: panelEase },
+              opacity: {
+                duration: dur * 0.58,
+                ease: panelEase,
+                delay: selected ? 0 : dur * 0.16,
+              },
+            }}
+            className="pb-7 pt-2 sm:pb-9"
+          >
+            <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
+          </motion.div>
+        </motion.div>
         <span className="sr-only">
           {" "}
           — {t(locale, srKey)}
         </span>
-      </span>
+      </div>
     </>
   );
 }
@@ -224,6 +226,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
 
   return (
     <section
+      id="menus"
       aria-label={
         locale === "es"
           ? "Elegir tipo de carta"
@@ -231,14 +234,14 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
             ? "Välj meny"
             : "Choose a menu"
       }
-      className="border-b border-border bg-paper"
+      className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-paper"
     >
       <div className={`${contentGutterClass} py-6 sm:py-8`}>
         <div className={insetCardShellClass}>
-          <div className="overflow-hidden rounded-2xl bg-white sm:rounded-3xl">
-            <div className="flex flex-col gap-px bg-white sm:gap-0">
-              <div className="flex flex-col gap-px sm:hidden">
-              {PANELS.map((panel, index) => {
+          <div className="overflow-hidden rounded-2xl bg-paper sm:rounded-3xl">
+            <div className="flex flex-col gap-0 bg-paper">
+              <div className="flex flex-col gap-0 sm:hidden">
+              {MENU_SPLIT_PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
@@ -257,12 +260,13 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       labelKey={panel.labelKey}
                       srKey={panel.srKey}
                       seeMenu={seeMenu}
+                      titleSingleLine={panel.key === "alacarte"}
                       selected={isSelected}
                     />
                   </>
                 );
 
-                const selectedClass = hasSelection && isSelected ? "z-[2] ring-white/40" : "";
+                const selectedClass = hasSelection && isSelected ? "z-[2] ring-paper/40" : "";
                 const unselectedClass = hasSelection && !isSelected ? "z-[1] opacity-95" : "";
 
                 return interactive ? (
@@ -285,20 +289,13 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 );
               })}
             </div>
-              <div className="hidden w-full grid-cols-4 gap-0 bg-white sm:grid">
-                {PANELS.map((panel, index) => {
+              <div className="hidden w-full grid-cols-4 gap-0 bg-paper sm:grid">
+                {MENU_SPLIT_PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
                 const sizes =
                   "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1023px) 25vw, 25vw";
-
-                const titleNudge =
-                  index === 0
-                    ? "[transform:translateX(-1.5%)]"
-                    : index === 3
-                      ? "[transform:translateX(1.5%)]"
-                      : "";
 
                 const inner = (
                   <>
@@ -312,13 +309,13 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       labelKey={panel.labelKey}
                       srKey={panel.srKey}
                       seeMenu={seeMenu}
-                      titleAlignClass={titleNudge}
+                      titleSingleLine={panel.key === "alacarte"}
                       selected={isSelected}
                     />
                   </>
                 );
 
-                const selectedClass = hasSelection && isSelected ? "z-[2] ring-white/40" : "";
+                const selectedClass = hasSelection && isSelected ? "z-[2] ring-paper/40" : "";
                 const unselectedClass = hasSelection && !isSelected ? "z-[1] opacity-95" : "";
 
                 const cellClass = `${panelBaseClass} ${desktopFourColHeightClass} min-w-0 bg-ink ${selectedClass} ${unselectedClass}`;

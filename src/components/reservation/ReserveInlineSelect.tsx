@@ -25,6 +25,10 @@ type ReserveInlineSelectProps = {
   isOpen: boolean;
   onOpenToggle: () => void;
   onClose: () => void;
+  /** Optional id(s) of error/description elements (e.g. validation). */
+  ariaDescribedBy?: string;
+  /** When true, exposes invalid state to assistive tech. */
+  ariaInvalid?: boolean;
 };
 
 /**
@@ -41,6 +45,8 @@ export function ReserveInlineSelect({
   isOpen,
   onOpenToggle,
   onClose,
+  ariaDescribedBy,
+  ariaInvalid,
 }: ReserveInlineSelectProps) {
   const listId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,6 +85,8 @@ export function ReserveInlineSelect({
         aria-expanded={isOpen}
         aria-controls={isOpen ? listId : undefined}
         aria-labelledby={labelId}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={ariaInvalid || undefined}
         className="flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-sm py-0.5 text-left font-sans text-sm font-medium text-ink outline-none transition-colors hover:text-ink/90 focus-visible:ring-2 focus-visible:ring-[#2563eb]/35 focus-visible:ring-offset-1"
         onClick={(e) => {
           e.preventDefault();

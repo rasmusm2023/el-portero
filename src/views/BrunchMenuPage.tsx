@@ -11,7 +11,7 @@ export function BrunchMenuPage() {
   const { locale } = useLocale();
 
   return (
-    <PageShell title={t(locale, "page.menu.title")} intro={t(locale, "page.menu.brunchIntro")}>
+    <PageShell title={t(locale, "page.menu.title")} titleVariant="hero">
       <MenuPager />
       <MenuCategoryGrid categories={brunchMenuCategories} locale={locale} />
     </PageShell>

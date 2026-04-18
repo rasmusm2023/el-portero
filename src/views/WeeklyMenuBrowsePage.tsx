@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { LunchMenuItemsList } from "@/components/menu/LunchMenuItemsList";
 import { MenuPager } from "@/components/menu/MenuPager";
 import { PageShell } from "@/components/layout/PageShell";
 import { fetchWeeklyMenuCurrent } from "@/lib/weeklyMenuApi";
+import { getIsoWeekNumberFromYmd } from "@/lib/isoWeek";
 import { getMadridWeekStartYmd } from "@/lib/madridWeek";
-import { lunchDishSlotLabel } from "@/lib/lunchDishSlots";
 import type { WeeklyMenu } from "@/lib/weeklyMenuTypes";
 import { useLocale } from "@/i18n/useLocale";
-import { t } from "@/i18n/strings";
+import { t, weeklyMenuWeekTitle } from "@/i18n/strings";
 
 export function WeeklyMenuBrowsePage() {
   const { locale } = useLocale();
@@ -40,7 +41,12 @@ export function WeeklyMenuBrowsePage() {
   const madridWeekStart = getMadridWeekStartYmd();
 
   return (
-    <PageShell title={t(locale, "page.menu.weeklyHeading")} intro={t(locale, "page.menu.weeklyIntro")}>
+    <PageShell
+      title={t(locale, "page.menu.title")}
+      intro={t(locale, "page.menu.weeklyIntro")}
+      introVariant="display"
+      titleVariant="hero"
+    >
       <MenuPager />
 
       {busy ? (
@@ -54,49 +60,28 @@ export function WeeklyMenuBrowsePage() {
           {t(locale, "page.menu.weeklyEmpty")}
         </div>
       ) : (
-        <div className="space-y-8">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div className="min-w-0">
-              {menu.title ? (
-                <p className="text-lg text-ink-muted leading-relaxed">{menu.title}</p>
-              ) : null}
+        <div className="grid gap-14 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-16">
+          <section className="min-w-0">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <h2 className="font-display text-2xl font-medium tracking-tight text-ink uppercase">
+                {weeklyMenuWeekTitle(
+                  locale,
+                  getIsoWeekNumberFromYmd(menu.effectiveWeekStartDate || menu.weekStartDate),
+                )}
+              </h2>
+              <p className="shrink-0 text-xs font-semibold tracking-[0.22em] text-ink-muted uppercase">
+                {t(locale, "page.menu.weeklyEffectiveLabel")}:{" "}
+                {menu.effectiveWeekStartDate || menu.weekStartDate}{" "}
+                <span className="normal-case tracking-normal text-ink-muted/70">
+                  ({t(locale, "page.menu.weeklyMadridNote")}: {madridWeekStart})
+                </span>
+              </p>
             </div>
-            <p className="text-xs font-semibold tracking-[0.22em] text-ink-muted uppercase">
-              {t(locale, "page.menu.weeklyEffectiveLabel")}:{" "}
-              {menu.effectiveWeekStartDate || menu.weekStartDate}{" "}
-              <span className="normal-case tracking-normal text-ink-muted/70">
-                ({t(locale, "page.menu.weeklyMadridNote")}: {madridWeekStart})
-              </span>
+            <p className="mt-2 text-lg text-ink-muted leading-relaxed">
+              {menu.title ?? t(locale, "page.menu.weeklyServiceLine")}
             </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {menu.items.map((it) => (
-              <article key={it.position} className="border border-border bg-paper-dark/40 p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold tracking-[0.2em] text-ink-muted uppercase">
-                      {lunchDishSlotLabel(it.position)}
-                    </p>
-                    <h2 className="mt-1 font-display text-2xl font-medium text-ink">{it.name}</h2>
-                  </div>
-                  {it.price ? (
-                    <p className="shrink-0 font-sans text-sm font-semibold text-ink tabular-nums">
-                      {it.price}
-                    </p>
-                  ) : null}
-                </div>
-                {it.description ? (
-                  <p className="mt-3 text-ink-muted leading-relaxed">{it.description}</p>
-                ) : null}
-                {it.dietaryTags ? (
-                  <p className="mt-4 text-xs font-semibold tracking-[0.18em] text-ink-muted uppercase">
-                    {it.dietaryTags}
-                  </p>
-                ) : null}
-              </article>
-            ))}
-          </div>
+            <LunchMenuItemsList items={menu.items} />
+          </section>
         </div>
       )}
     </PageShell>
