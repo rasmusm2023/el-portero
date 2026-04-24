@@ -90,4 +90,41 @@ public static class SchemaPatch
       """,
       ct).ConfigureAwait(false);
   }
+
+  public static async Task EnsurePublicEventsTableAsync(AppDbContext db, CancellationToken ct = default)
+  {
+    await db.Database.ExecuteSqlRawAsync(
+      """
+      CREATE TABLE IF NOT EXISTS "PublicEvents" (
+        "Id" TEXT NOT NULL PRIMARY KEY,
+        "SortDate" TEXT NOT NULL,
+        "FullyBooked" INTEGER NOT NULL,
+        "WeekdayDateEn" TEXT NOT NULL,
+        "WeekdayDateEs" TEXT NOT NULL,
+        "WeekdayDateSv" TEXT NOT NULL,
+        "TimeDetailEn" TEXT NOT NULL,
+        "TimeDetailEs" TEXT NOT NULL,
+        "TimeDetailSv" TEXT NOT NULL,
+        "TitleEn" TEXT NOT NULL,
+        "TitleEs" TEXT NOT NULL,
+        "TitleSv" TEXT NOT NULL,
+        "ExcerptEn" TEXT NOT NULL,
+        "ExcerptEs" TEXT NOT NULL,
+        "ExcerptSv" TEXT NOT NULL,
+        "ImageSrc" TEXT NOT NULL,
+        "ImageAltEn" TEXT NOT NULL,
+        "ImageAltEs" TEXT NOT NULL,
+        "ImageAltSv" TEXT NOT NULL,
+        "CreatedAtUtc" TEXT NOT NULL,
+        "UpdatedAtUtc" TEXT NOT NULL
+      );
+      """,
+      ct).ConfigureAwait(false);
+
+    await db.Database.ExecuteSqlRawAsync(
+      """
+      CREATE INDEX IF NOT EXISTS "IX_PublicEvents_SortDate" ON "PublicEvents" ("SortDate");
+      """,
+      ct).ConfigureAwait(false);
+  }
 }

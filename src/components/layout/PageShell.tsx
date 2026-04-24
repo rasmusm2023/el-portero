@@ -11,6 +11,11 @@ type PageShellProps = {
   showDocumentHeader?: boolean;
   /** Match {@link PageHeroSection} / reserve-style page titles (`font-hero-title`). */
   titleVariant?: "default" | "hero";
+  /**
+   * Override the outer `max-w-*` (default: site 72rem container). Wider for admin or data-dense UIs.
+   * Example: `max-w-[min(100%,112rem)]` or `max-w-7xl`.
+   */
+  maxWidthClassName?: string;
   children: ReactNode;
 };
 
@@ -20,6 +25,7 @@ export function PageShell({
   introVariant = "default",
   showDocumentHeader = true,
   titleVariant = "default",
+  maxWidthClassName,
   children,
 }: PageShellProps) {
   const titleClassName =
@@ -33,10 +39,16 @@ export function PageShell({
       : "mt-4 text-lg text-ink-muted leading-relaxed";
 
   const headerMaxClass =
-    intro && introVariant === "display" ? "max-w-4xl" : "max-w-3xl";
+    intro && introVariant === "display"
+      ? "max-w-4xl"
+      : maxWidthClassName
+        ? "max-w-5xl"
+        : "max-w-3xl";
 
   return (
-    <div className="mx-auto max-w-[var(--container-max)] px-4 py-16 sm:px-6 lg:px-8">
+    <div
+      className={["mx-auto px-4 py-16 sm:px-6 lg:px-8", maxWidthClassName ?? "max-w-[var(--container-max)]"].join(" ")}
+    >
       {showDocumentHeader && title ? (
         <header className={["mb-12", headerMaxClass].join(" ")}>
           <h1 className={titleClassName}>{title}</h1>

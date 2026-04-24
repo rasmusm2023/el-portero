@@ -56,6 +56,10 @@ type PageKey =
   | "page.menu.brunchIntro"
   | "page.menu.alacarteIntro"
   | "page.menu.seeMenu"
+  | "page.menu.scheduleLunch"
+  | "page.menu.scheduleAlacarte"
+  | "page.menu.scheduleBrunch"
+  | "page.menu.scheduleDrinks"
   | "page.menu.weekly"
   | "page.menu.weeklyHeading"
   | "page.menu.weeklyWeekTitle"
@@ -226,6 +230,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.alacarteIntro":
       "Order by course or choose the chef’s tasting — ingredients follow the market and the kitchen’s daily prep.",
     "page.menu.seeMenu": "See menu",
+    "page.menu.scheduleLunch": "Mon–Fri · 11:00–15:00",
+    "page.menu.scheduleAlacarte": "Mon–Sat · 15:00–22:00",
+    "page.menu.scheduleBrunch": "Sat–Sun · 10:00–14:00",
+    "page.menu.scheduleDrinks": "Daily · 12:00–00:00",
     "page.menu.weekly": "Lunch",
     "page.menu.weeklyHeading": "Lunch",
     "page.menu.weeklyWeekTitle": "Lunch week {week}",
@@ -415,6 +423,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.alacarteIntro":
       "Elige por platos o el menú degustación del chef — el producto sigue el mercado y el día a día de cocina.",
     "page.menu.seeMenu": "Ver carta",
+    "page.menu.scheduleLunch": "Lun–Vie · 11:00–15:00",
+    "page.menu.scheduleAlacarte": "Lun–Sáb · 15:00–22:00",
+    "page.menu.scheduleBrunch": "Sáb–Dom · 10:00–14:00",
+    "page.menu.scheduleDrinks": "Diario · 12:00–00:00",
     "page.menu.weekly": "Almuerzo",
     "page.menu.weeklyHeading": "Almuerzo",
     "page.menu.weeklyWeekTitle": "Almuerzo semana {week}",
@@ -604,6 +616,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.alacarteIntro":
       "Välj rätter fristående eller kockens avsmakning — råvaror följer marknad och kökets dagsform.",
     "page.menu.seeMenu": "Se menyn",
+    "page.menu.scheduleLunch": "Mån–Fre · 11:00–15:00",
+    "page.menu.scheduleAlacarte": "Mån–Lör · 15:00–22:00",
+    "page.menu.scheduleBrunch": "Lör–Sön · 10:00–14:00",
+    "page.menu.scheduleDrinks": "Dagligen · 12:00–00:00",
     "page.menu.weekly": "Lunch",
     "page.menu.weeklyHeading": "Lunch",
     "page.menu.weeklyWeekTitle": "Lunch vecka {week}",

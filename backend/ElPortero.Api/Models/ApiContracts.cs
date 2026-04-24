@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ElPortero.Api.Models;
 
 public sealed record LoginRequest(string Username, string Password);
@@ -63,4 +65,48 @@ public sealed record MediaAssetDto(
   string? PublicUrl,
   string CreatedByUsername,
   DateTimeOffset CreatedAtUtc);
+
+public sealed record LocaleTrio(
+  [property: JsonPropertyName("en")] string En,
+  [property: JsonPropertyName("es")] string Es,
+  [property: JsonPropertyName("sv")] string Sv);
+
+public sealed record PublicEventDto(
+  string Id,
+  string SortDate,
+  bool FullyBooked,
+  LocaleTrio WeekdayDate,
+  LocaleTrio TimeDetail,
+  LocaleTrio Title,
+  LocaleTrio Excerpt,
+  string ImageSrc,
+  LocaleTrio ImageAlt,
+  DateTimeOffset UpdatedAtUtc)
+{
+  public static PublicEventDto From(PublicEvent e)
+  {
+    return new PublicEventDto(
+      e.Id,
+      e.SortDate,
+      e.FullyBooked,
+      new LocaleTrio(e.WeekdayDateEn, e.WeekdayDateEs, e.WeekdayDateSv),
+      new LocaleTrio(e.TimeDetailEn, e.TimeDetailEs, e.TimeDetailSv),
+      new LocaleTrio(e.TitleEn, e.TitleEs, e.TitleSv),
+      new LocaleTrio(e.ExcerptEn, e.ExcerptEs, e.ExcerptSv),
+      e.ImageSrc,
+      new LocaleTrio(e.ImageAltEn, e.ImageAltEs, e.ImageAltSv),
+      e.UpdatedAtUtc);
+  }
+}
+
+public sealed record UpsertPublicEventRequest(
+  [property: JsonPropertyName("id")] string? Id,
+  [property: JsonPropertyName("sortDate")] string? SortDate,
+  [property: JsonPropertyName("fullyBooked")] bool? FullyBooked,
+  [property: JsonPropertyName("weekdayDate")] LocaleTrio? WeekdayDate,
+  [property: JsonPropertyName("timeDetail")] LocaleTrio? TimeDetail,
+  [property: JsonPropertyName("title")] LocaleTrio? Title,
+  [property: JsonPropertyName("excerpt")] LocaleTrio? Excerpt,
+  [property: JsonPropertyName("imageSrc")] string? ImageSrc,
+  [property: JsonPropertyName("imageAlt")] LocaleTrio? ImageAlt);
 

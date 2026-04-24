@@ -1,18 +1,39 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import Image from "next/image";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { homeEvents } from "@/data/homeEvents";
+import { EventImage } from "@/components/events/EventImage";
+import { publicEventFromDto, type HomeEvent, type PublicEventApiDto } from "@/lib/publicEventTypes";
+import { getApiBaseUrl } from "@/lib/apiBase";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
 export function HomeEventsSection() {
   const { locale } = useLocale();
-  const sorted = [...homeEvents].sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+  const [homeEvents, setHomeEvents] = useState<HomeEvent[] | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useMemo(() => new Map<string, HTMLLIElement>(), []);
 
+  const apiBase = getApiBaseUrl();
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await fetch(`${apiBase}/api/events`, { method: "GET" });
+        if (!r.ok) {
+          setHomeEvents([]);
+          return;
+        }
+        const data = (await r.json()) as PublicEventApiDto[];
+        setHomeEvents(data.map(publicEventFromDto));
+      } catch {
+        setHomeEvents([]);
+      }
+    })();
+  }, [apiBase]);
+
+  if (homeEvents === null) return null;
+
+  const sorted = [...homeEvents].sort((a, b) => a.sortDate.localeCompare(b.sortDate));
   if (sorted.length === 0) return null;
 
   return (
@@ -87,7 +108,7 @@ export function HomeEventsSection() {
 
                     <article className="group flex w-full min-h-[13.5rem] flex-row overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:min-h-[15rem] sm:rounded-3xl">
                       <div className="relative w-[44%] min-w-[9rem] max-w-[18rem] shrink-0 self-stretch bg-ink/5 sm:w-[46%] sm:min-w-[11rem] sm:max-w-[22rem] xl:max-w-[26rem]">
-                        <Image
+                        <EventImage
                           src={ev.imageSrc}
                           alt={ev.imageAlt[locale]}
                           fill

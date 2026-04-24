@@ -8,6 +8,8 @@ export type MenuSplitPanel = {
   href: string;
   labelKey: MessageKey;
   srKey: MessageKey;
+  /** Short line: days + hours (shown between title and “See menu”). */
+  scheduleKey: MessageKey;
 };
 
 const FOOD_BG =
@@ -27,6 +29,7 @@ export const MENU_SPLIT_PANELS: MenuSplitPanel[] = [
     href: "/menu/weekly",
     labelKey: "page.menu.weekly",
     srKey: "page.menu.weeklyHeading",
+    scheduleKey: "page.menu.scheduleLunch",
   },
   {
     key: "alacarte",
@@ -34,6 +37,7 @@ export const MENU_SPLIT_PANELS: MenuSplitPanel[] = [
     href: "/menu/alacarte",
     labelKey: "page.menu.alacarte",
     srKey: "page.menu.alacarteHeading",
+    scheduleKey: "page.menu.scheduleAlacarte",
   },
   {
     key: "brunch",
@@ -41,6 +45,7 @@ export const MENU_SPLIT_PANELS: MenuSplitPanel[] = [
     href: "/menu/brunch",
     labelKey: "page.menu.brunch",
     srKey: "page.menu.brunchHeading",
+    scheduleKey: "page.menu.scheduleBrunch",
   },
   {
     key: "drinks",
@@ -48,5 +53,6 @@ export const MENU_SPLIT_PANELS: MenuSplitPanel[] = [
     href: "/menu/drinks",
     labelKey: "page.menu.drinks",
     srKey: "page.menu.drinksHeading",
+    scheduleKey: "page.menu.scheduleDrinks",
   },
 ];

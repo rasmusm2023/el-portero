@@ -75,13 +75,17 @@ export function AdminDashboardPage() {
           <p className="mt-5 text-sm font-semibold text-sky-800 group-hover:underline">Open media →</p>
         </Link>
 
-        <div className="rounded-none border border-dashed border-slate-300 border-l-[6px] border-l-slate-400 bg-slate-50/60 p-6">
-          <p className="text-xs font-semibold tracking-[0.22em] text-slate-600 uppercase">Soon</p>
-          <h2 className="mt-2 font-display text-2xl font-medium text-ink">More tools</h2>
+        <Link
+          href="/admin/events"
+          className="group rounded-none border border-violet-200 border-l-[6px] border-l-violet-600 bg-gradient-to-br from-violet-50/90 to-paper p-6 shadow-sm transition-colors hover:border-violet-400"
+        >
+          <p className="text-xs font-semibold tracking-[0.22em] text-violet-900 uppercase">Events</p>
+          <h2 className="mt-2 font-display text-2xl font-medium text-ink">Public events</h2>
           <p className="mt-3 text-sm text-ink-muted leading-relaxed">
-            We’ll add more admin tasks here as the site grows.
+            Create, edit, or remove events on the home page and the events list.
           </p>
-        </div>
+          <p className="mt-5 text-sm font-semibold text-violet-800 group-hover:underline">Open events →</p>
+        </Link>
       </div>
     </PageShell>
   );

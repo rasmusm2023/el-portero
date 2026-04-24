@@ -11,6 +11,7 @@ public sealed class AppDbContext : DbContext
   public DbSet<WeeklyMenu> WeeklyMenus => Set<WeeklyMenu>();
   public DbSet<WeeklyMenuItem> WeeklyMenuItems => Set<WeeklyMenuItem>();
   public DbSet<MediaAsset> MediaAssets => Set<MediaAsset>();
+  public DbSet<PublicEvent> PublicEvents => Set<PublicEvent>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -50,6 +51,30 @@ public sealed class AppDbContext : DbContext
       e.Property(x => x.ContentType).HasMaxLength(128).IsRequired();
       e.Property(x => x.PublicUrl).HasMaxLength(1024);
       e.Property(x => x.CreatedByUsername).HasMaxLength(64).IsRequired();
+    });
+
+    modelBuilder.Entity<PublicEvent>(e =>
+    {
+      e.HasKey(x => x.Id);
+      e.Property(x => x.Id).HasMaxLength(64);
+      e.HasIndex(x => x.SortDate);
+      e.Property(x => x.SortDate).HasMaxLength(16).IsRequired();
+      e.Property(x => x.WeekdayDateEn).HasMaxLength(200).IsRequired();
+      e.Property(x => x.WeekdayDateEs).HasMaxLength(200).IsRequired();
+      e.Property(x => x.WeekdayDateSv).HasMaxLength(200).IsRequired();
+      e.Property(x => x.TimeDetailEn).HasMaxLength(200).IsRequired();
+      e.Property(x => x.TimeDetailEs).HasMaxLength(200).IsRequired();
+      e.Property(x => x.TimeDetailSv).HasMaxLength(200).IsRequired();
+      e.Property(x => x.TitleEn).HasMaxLength(200).IsRequired();
+      e.Property(x => x.TitleEs).HasMaxLength(200).IsRequired();
+      e.Property(x => x.TitleSv).HasMaxLength(200).IsRequired();
+      e.Property(x => x.ExcerptEn).HasMaxLength(2000);
+      e.Property(x => x.ExcerptEs).HasMaxLength(2000);
+      e.Property(x => x.ExcerptSv).HasMaxLength(2000);
+      e.Property(x => x.ImageSrc).HasMaxLength(2000).IsRequired();
+      e.Property(x => x.ImageAltEn).HasMaxLength(200).IsRequired();
+      e.Property(x => x.ImageAltEs).HasMaxLength(200).IsRequired();
+      e.Property(x => x.ImageAltSv).HasMaxLength(200).IsRequired();
     });
   }
 }
