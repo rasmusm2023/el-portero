@@ -108,12 +108,21 @@ using (var scope = app.Services.CreateScope())
   {
     await SchemaPatch.EnsureWeeklyMenuEffectiveWeekColumnAsync(db);
     await SchemaPatch.EnsureWeeklyMenuIndexesAsync(db);
+    await SchemaPatch.EnsurePublicEventsTableAsync(db);
   }
   catch
   {
     // If patching fails (unexpected DB state), continue booting — endpoints will surface errors if needed.
   }
   await Seed.EnsureAdminUserAsync(db, builder.Configuration);
+  try
+  {
+    await Seed.EnsurePublicEventsFromSeedFileAsync(db);
+  }
+  catch
+  {
+    // Ignore seed file issues (e.g. missing in some deploys).
+  }
 }
 
 app.UseAuthentication();
@@ -395,6 +404,79 @@ admin.MapGet("/media/recent", async (AppDbContext db) =>
   return Results.Ok(rows);
 })
 .WithTags("AdminMedia");
+
+// ---- Public events (site) ----
+app.MapGet("/api/events", async (AppDbContext db) =>
+{
+  var rows = await db.PublicEvents
+    .AsNoTracking()
+    .OrderBy(e => e.SortDate)
+    .ToListAsync();
+  return Results.Ok(rows.ConvertAll(PublicEventDto.From));
+})
+.WithTags("Events");
+
+// ---- Admin: events CRUD ----
+admin.MapGet("/events", async (AppDbContext db) =>
+{
+  var rows = await db.PublicEvents
+    .AsNoTracking()
+    .OrderBy(e => e.SortDate)
+    .ToListAsync();
+  return Results.Ok(rows.ConvertAll(PublicEventDto.From));
+})
+.WithTags("AdminEvents");
+
+admin.MapPost("/events", async Task<IResult> (UpsertPublicEventRequest body, AppDbContext db) =>
+{
+  if (!PublicEventApiHelpers.TryNormalizeEventId(body.Id, out var id))
+  {
+    return Results.BadRequest(
+      "id is required: use a short slug (lowercase letters, digits, hyphens; max 64 characters).");
+  }
+  if (!PublicEventApiHelpers.TryValidateEventPayload(body, out var err)) return err!;
+  if (await db.PublicEvents.AnyAsync(e => e.Id == id)) return Results.Conflict("An event with this id already exists.");
+
+  var now = DateTimeOffset.UtcNow;
+  var row = new PublicEvent { Id = id };
+  PublicEventApiHelpers.ApplyBody(row, body, isNew: true, now);
+  db.PublicEvents.Add(row);
+  await db.SaveChangesAsync();
+  return Results.Created($"/api/admin/events/{id}", PublicEventDto.From(row));
+})
+.WithTags("AdminEvents");
+
+admin.MapPut("/events/{id}", async Task<IResult> (string id, UpsertPublicEventRequest body, AppDbContext db) =>
+{
+  if (!PublicEventApiHelpers.TryNormalizeEventId(id, out var routeId)) return Results.BadRequest("Invalid id.");
+  if (body.Id is not null
+      && PublicEventApiHelpers.TryNormalizeEventId(body.Id, out var bodyId)
+      && bodyId != routeId)
+  {
+    return Results.BadRequest("Body id must match the URL or be omitted.");
+  }
+  if (!PublicEventApiHelpers.TryValidateEventPayload(body, out var err)) return err!;
+
+  var row = await db.PublicEvents.FirstOrDefaultAsync(e => e.Id == routeId);
+  if (row is null) return Results.NotFound();
+
+  var now = DateTimeOffset.UtcNow;
+  PublicEventApiHelpers.ApplyBody(row, body, isNew: false, now);
+  await db.SaveChangesAsync();
+  return Results.Ok(PublicEventDto.From(row));
+})
+.WithTags("AdminEvents");
+
+admin.MapDelete("/events/{id}", async Task<IResult> (string id, AppDbContext db) =>
+{
+  if (!PublicEventApiHelpers.TryNormalizeEventId(id, out var routeId)) return Results.BadRequest("Invalid id.");
+  var row = await db.PublicEvents.FirstOrDefaultAsync(e => e.Id == routeId);
+  if (row is null) return Results.NotFound();
+  db.PublicEvents.Remove(row);
+  await db.SaveChangesAsync();
+  return Results.Ok(new { ok = true });
+})
+.WithTags("AdminEvents");
 
 app.Run();
 

@@ -4,9 +4,9 @@ import type { MenuCategoryData } from "@/data/menuTypes";
 export const brunchMenuCategories: MenuCategoryData[] = [
   {
     title: {
-      en: "Saturday & Sunday · 10:00–14:30",
-      es: "Sábados y domingos · 10:00–14:30",
-      sv: "Lördagar och söndagar · 10:00–14:30",
+      en: "Saturday & Sunday · 10:00–14:00",
+      es: "Sábados y domingos · 10:00–14:00",
+      sv: "Lördagar och söndagar · 10:00–14:00",
     },
     items: [
       {

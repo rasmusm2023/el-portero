@@ -81,6 +81,12 @@ export function AdminLoginPage() {
           >
             Media
           </Link>
+          <Link
+            href="/admin/events"
+            className="inline-flex rounded-none border border-violet-300 bg-violet-100 px-3 py-1.5 text-xs font-semibold text-violet-950 hover:bg-violet-200"
+          >
+            Events
+          </Link>
         </div>
       </div>
 

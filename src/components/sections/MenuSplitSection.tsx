@@ -40,7 +40,8 @@ const menuSplitSeeMenuClass =
 const panelEase: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
 const panelBaseClass =
-  "group/panel relative flex min-h-0 flex-col items-center justify-center overflow-hidden px-3 py-12 transition-[color,transform] duration-300 sm:px-5 sm:py-14 md:py-16 " +
+  "group/panel relative flex min-h-0 flex-col items-stretch justify-stretch overflow-hidden px-3 pt-10 pb-3 sm:px-5 sm:pt-12 sm:pb-4 md:pt-14 md:pb-4 " +
+  "transition-[color,transform] duration-300 " +
   "cursor-pointer select-none " +
   "hover:brightness-[1.06] active:brightness-[1.02] " +
   "ring-2 ring-paper/0 hover:ring-paper/25 " +
@@ -132,12 +133,14 @@ function MenuPanelPhoto({
 function PanelContent({
   labelKey,
   srKey,
+  scheduleKey,
   seeMenu,
   titleSingleLine,
   selected,
 }: {
   labelKey: MessageKey;
   srKey: MessageKey;
+  scheduleKey: MessageKey;
   seeMenu: string;
   /** Keep label on one line (e.g. “A la carte”). */
   titleSingleLine?: boolean;
@@ -164,30 +167,44 @@ function PanelContent({
         className="absolute inset-0 z-[1] bg-gradient-to-t from-ink/90 via-ink/55 to-ink/35 transition-colors duration-500 ease-out group-hover/panel:from-ink/92 group-hover/panel:via-ink/60"
         aria-hidden
       />
-      <div className="relative z-[2] flex h-full min-h-0 w-full flex-col">
-        {/*
-          Single subtree so the title stays mounted: `layout` animates it sliding down/up when
-          `justify-center` ↔ `justify-end` and the footer height changes.
-        */}
+      {/*
+        Title+schedule: full-card `flex-col` center when idle; `justify-end` when active so
+        `layout` can slide the block (same idea as the pre-absolute flex-1 column).
+        "See menu" stays absolutely at the bottom.
+      */}
+      <div className="relative z-[2] min-h-0 w-full min-w-0 flex-1 self-stretch">
         <div
           className={[
-            "flex min-h-0 flex-1 flex-col items-center px-2 text-center",
+            "pointer-events-none absolute inset-0 z-10 flex flex-col items-center px-2 text-center",
             selected ? "justify-end pb-7 sm:pb-9" : "justify-center",
           ].join(" ")}
         >
-          <motion.span
+          <motion.div
             layout
-            className={titleClass}
             transition={{ layout: layoutAnim }}
+            className="flex max-w-full flex-col items-center gap-2 sm:gap-2.5"
           >
-            {t(locale, labelKey)}
-          </motion.span>
+            <motion.span
+              layout
+              className={titleClass}
+              transition={{ layout: layoutAnim }}
+            >
+              {t(locale, labelKey)}
+            </motion.span>
+            <motion.span
+              layout
+              className="max-w-full font-sans text-sm text-paper/80 tabular-nums tracking-wide sm:text-base"
+              transition={{ layout: layoutAnim }}
+            >
+              {t(locale, scheduleKey)}
+            </motion.span>
+          </motion.div>
         </div>
         <motion.div
           initial={false}
           animate={{ height: selected ? 0 : "auto" }}
           transition={{ duration: dur, ease: panelEase }}
-          className="shrink-0 overflow-hidden text-center"
+          className="absolute bottom-0 left-0 right-0 z-0 overflow-hidden text-center"
           aria-hidden={selected}
           style={{ pointerEvents: selected ? "none" : undefined }}
         >
@@ -205,7 +222,7 @@ function PanelContent({
                 delay: selected ? 0 : dur * 0.16,
               },
             }}
-            className="pb-7 pt-2 sm:pb-9"
+            className="pb-0.5 pt-1"
           >
             <span className={menuSplitSeeMenuClass}>{seeMenu}</span>
           </motion.div>
@@ -259,6 +276,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                     <PanelContent
                       labelKey={panel.labelKey}
                       srKey={panel.srKey}
+                      scheduleKey={panel.scheduleKey}
                       seeMenu={seeMenu}
                       titleSingleLine={panel.key === "alacarte"}
                       selected={isSelected}
@@ -308,6 +326,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                     <PanelContent
                       labelKey={panel.labelKey}
                       srKey={panel.srKey}
+                      scheduleKey={panel.scheduleKey}
                       seeMenu={seeMenu}
                       titleSingleLine={panel.key === "alacarte"}
                       selected={isSelected}
