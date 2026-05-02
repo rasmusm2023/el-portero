@@ -33,6 +33,7 @@ const previewCategories: Record<
 
 /**
  * Full-width menu cards + inline previews — no hero; first content below the site header.
+ * Shown at `/menu` when `areMenusPublished()` in `app/menu/layout.tsx` is true.
  */
 export function MenusHubPage() {
   const { locale } = useLocale();
@@ -51,8 +52,7 @@ export function MenusHubPage() {
         {!expandedMenu ? (
           <div className="mx-auto w-full max-w-[var(--container-max)] pb-2 pt-6 sm:pt-8">
             <p className="max-w-2xl text-lg text-ink-muted leading-relaxed">
-              Choose a menu above to preview it here — or open it to see the full
-              list.
+              {t(locale, "page.menu.hubHint")}
             </p>
           </div>
         ) : null}

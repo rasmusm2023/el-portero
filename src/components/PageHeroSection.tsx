@@ -12,6 +12,8 @@ const heroRadialOverlayStyle = {
 type PageHeroSectionProps = {
   heroImages: string[];
   children: ReactNode;
+  /** Centered action(s) toward the lower third of the hero (e.g. primary CTA). */
+  bottomCta?: ReactNode;
   /** Optional bottom-right block (e.g. home tagline). */
   bottomAside?: ReactNode;
 };
@@ -23,6 +25,7 @@ type PageHeroSectionProps = {
 export function PageHeroSection({
   heroImages,
   children,
+  bottomCta,
   bottomAside,
 }: PageHeroSectionProps) {
   const heroSectionRef = useRef<HTMLElement>(null);
@@ -47,6 +50,11 @@ export function PageHeroSection({
             <div className="flex flex-1 flex-col items-center justify-center px-2 py-10 sm:py-14 md:py-16">
               <div className="w-full max-w-5xl text-center text-paper">{children}</div>
             </div>
+            {bottomCta ? (
+              <div className="relative z-20 -mt-6 mb-6 flex w-full justify-center px-2 pb-2 sm:-mt-8 sm:mb-10 sm:pb-0 md:-mt-10">
+                {bottomCta}
+              </div>
+            ) : null}
             {bottomAside ? (
               <div className="absolute inset-x-5 bottom-8 z-20 flex justify-end sm:inset-x-10 sm:bottom-10 lg:inset-x-14 xl:inset-x-20">
                 {bottomAside}

@@ -1,6 +1,5 @@
 "use client";
 
-import { LocationMapEmbed } from "@/components/LocationMap";
 import { useEffect, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -32,7 +31,6 @@ function getVenueStatus(locale: string): VenueStatus {
   const { weekday, hour, minute } = getMadridNowParts();
   const minutes = hour * 60 + minute;
 
-  // Hours as displayed in the section.
   const OPEN_18 = 18 * 60;
   const CLOSE_23 = 23 * 60;
   const CLOSE_24 = 24 * 60;
@@ -104,77 +102,78 @@ function getVenueStatus(locale: string): VenueStatus {
   };
 }
 
-export function HoursAndMapSection() {
-  const { locale } = useLocale();
+const WEEK_ROWS = [
+  { day: "Mon", hours: "18:00 – 23:00" },
+  { day: "Tue", hours: "18:00 – 23:00" },
+  { day: "Wed", hours: "18:00 – 23:00" },
+  { day: "Thu", hours: "18:00 – 23:00" },
+  { day: "Fri", hours: "18:00 – 00:00" },
+  { day: "Sat", hours: "18:00 – 00:00" },
+  { day: "Sun", hours: "Closed" },
+] as const;
 
-  const rows = [
-    { day: "Mon", hours: "18:00 – 23:00" },
-    { day: "Tue", hours: "18:00 – 23:00" },
-    { day: "Wed", hours: "18:00 – 23:00" },
-    { day: "Thu", hours: "18:00 – 23:00" },
-    { day: "Fri", hours: "18:00 – 00:00" },
-    { day: "Sat", hours: "18:00 – 00:00" },
-    { day: "Sun", hours: "Closed" },
-  ];
+type OpeningHoursCardProps = {
+  /** For deep links (`/#hours`). */
+  id?: string;
+  headingId?: string;
+  className?: string;
+};
+
+export function OpeningHoursCard({
+  id,
+  headingId = "hours-heading",
+  className = "",
+}: OpeningHoursCardProps) {
+  const { locale } = useLocale();
 
   const [, setTick] = useState(0);
   useEffect(() => {
-    const id = window.setInterval(() => setTick((v) => v + 1), 30_000);
-    return () => window.clearInterval(id);
+    const timer = window.setInterval(() => setTick((v) => v + 1), 30_000);
+    return () => window.clearInterval(timer);
   }, []);
 
   const status = getVenueStatus(locale);
 
   return (
-    <section
-      id="hours"
-      aria-labelledby="hours-heading"
-      className="flex min-h-0 flex-1 flex-col scroll-mt-[calc(var(--header-h)+1px)] border-t border-border bg-paper-dark/35"
-    >
-      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-5 pt-16 pb-12 sm:px-10 sm:pt-20 sm:pb-14 lg:px-14 xl:px-20">
-        <div className="max-w-xl rounded-2xl bg-paper/75 px-6 py-6 shadow-[0_4px_28px_-8px_rgba(10,10,10,0.08)] ring-1 ring-ink/6 sm:px-7 sm:py-7">
-          <h2
-            id="hours-heading"
-            className="font-display text-3xl font-semibold tracking-tight text-ink/95 sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
-          >
-            {t(locale, "page.hours.title")}
-          </h2>
+    <div id={id} className={["scroll-mt-[calc(var(--header-h)+1px)]", className].filter(Boolean).join(" ")}>
+      <div className="max-w-xl rounded-2xl bg-paper/75 px-6 py-6 shadow-[0_4px_28px_-8px_rgba(10,10,10,0.08)] ring-1 ring-ink/6 sm:px-7 sm:py-7 md:max-w-none">
+        <h2
+          id={headingId}
+          className="font-display text-3xl font-semibold tracking-tight text-ink/95 sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
+        >
+          {t(locale, "page.hours.title")}
+        </h2>
 
-          <p
-            className="mt-5 font-sans text-sm leading-relaxed text-ink-muted sm:text-[15px] lg:mt-6"
-            role="status"
-          >
-            <span
-              className={`mr-2 inline-block size-2 translate-y-px rounded-full ${
-                status.isOpen ? "bg-emerald-600/80" : "bg-rose-500/75"
-              }`}
-              aria-hidden
-            />
-            <span className="font-medium text-ink">{status.label}</span>
-            <span className="font-normal"> — {status.detail}</span>
-          </p>
+        <p
+          className="mt-5 font-sans text-sm leading-relaxed text-ink-muted sm:text-[15px] lg:mt-6"
+          role="status"
+        >
+          <span
+            className={`mr-2 inline-block size-2 translate-y-px rounded-full ${
+              status.isOpen ? "bg-emerald-600/80" : "bg-rose-500/75"
+            }`}
+            aria-hidden
+          />
+          <span className="font-medium text-ink">{status.label}</span>
+          <span className="font-normal"> — {status.detail}</span>
+        </p>
 
-          <ul className="mt-6 space-y-2.5 font-sans sm:space-y-3">
-            {rows.map((row) => (
-              <li
-                key={row.day}
-                className="flex items-baseline justify-between gap-4"
-              >
-                <span className="min-w-11 text-[15px] font-normal text-ink-muted">
-                  {row.day}
-                </span>
-                <span className="text-[15px] tabular-nums font-medium text-ink sm:text-base">
-                  {row.hours}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul className="mt-6 space-y-2.5 font-sans sm:space-y-3">
+          {WEEK_ROWS.map((row) => (
+            <li
+              key={row.day}
+              className="flex items-baseline justify-between gap-4"
+            >
+              <span className="min-w-11 text-[15px] font-normal text-ink-muted">
+                {row.day}
+              </span>
+              <span className="text-[15px] tabular-nums font-medium text-ink sm:text-base">
+                {row.hours}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <div className="w-full shrink-0">
-        <LocationMapEmbed locale={locale} />
-      </div>
-    </section>
+    </div>
   );
 }

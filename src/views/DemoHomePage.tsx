@@ -5,7 +5,6 @@ import { useRef, useState } from "react";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
-import { HoursAndMapSection } from "@/components/sections/HoursAndMapSection";
 import { MenuSplitSectionVertical } from "@/components/sections/MenuSplitSectionVertical";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
@@ -54,8 +53,7 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
         heroImages={heroImages}
         bottomAside={
           <p className="max-w-[28rem] text-right font-sans text-xs font-medium tracking-[0.22em] text-paper/85 uppercase sm:text-sm">
-            South American cuisine fused with Swedish classics — dinner club
-            nights in Torrevieja
+            {t(locale, "page.home.heroTagline")}
           </p>
         }
       >
@@ -133,11 +131,10 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
         </AnimatePresence>
       </MenuSplitSectionVertical>
 
-      <HomeEventsSection />
-
       <GallerySection />
+
+      <HomeEventsSection />
       <InstagramFeedSection />
-      <HoursAndMapSection />
     </div>
   );
 }

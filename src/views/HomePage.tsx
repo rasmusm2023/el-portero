@@ -1,25 +1,35 @@
 "use client";
 
+import Link from "next/link";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
-import { HoursAndMapSection } from "@/components/sections/HoursAndMapSection";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { LogoWordmark } from "@/components/LogoWordmark";
+import { useLocale } from "@/i18n/useLocale";
+import { t } from "@/i18n/strings";
 
 type HomePageProps = {
   heroImages?: string[];
 };
 
 export function HomePage({ heroImages = [] }: HomePageProps) {
+  const { locale } = useLocale();
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeroSection
         heroImages={heroImages}
+        bottomCta={
+          <Link
+            href="/reserve"
+            className="inline-flex items-center justify-center rounded-lg border border-paper/45 bg-paper/10 px-8 py-3.5 text-xs font-semibold tracking-[0.24em] text-paper uppercase transition-colors hover:border-paper hover:bg-paper hover:text-ink sm:px-10 sm:py-4 sm:text-sm sm:tracking-[0.28em]"
+          >
+            {t(locale, "page.home.heroReserveCta")}
+          </Link>
+        }
         bottomAside={
           <p className="max-w-[28rem] text-right font-sans text-xs font-medium tracking-[0.22em] text-paper/85 uppercase sm:text-sm">
-            South American cuisine fused with Swedish classics — dinner club
-            nights in Torrevieja
+            {t(locale, "page.home.heroTagline")}
           </p>
         }
       >
@@ -33,11 +43,9 @@ export function HomePage({ heroImages = [] }: HomePageProps) {
         </div>
       </PageHeroSection>
 
-      <HomeEventsSection />
-
       <GallerySection />
+      <HomeEventsSection />
       <InstagramFeedSection />
-      <HoursAndMapSection />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { MenusHubPage } from "@/views/MenusHubPage";
 export const metadata: Metadata = {
   title: "Menus",
   description:
-    "Lunch, à la carte, brunch, and drinks at El Portero — Torrevieja.",
+    "Browse lunch, à la carte, weekend brunch, and the drinks list at El Portero, Torrevieja.",
 };
 
 export default function Page() {
