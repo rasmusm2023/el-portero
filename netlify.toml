@@ -1,0 +1,7 @@
+# Firebase web config uses NEXT_PUBLIC_* vars; Next.js inlines them into JS bundles.
+# Those values are meant to be shipped to browsers (access is enforced by Firebase rules
+# and optional API-key restrictions). Netlify's secrets scanner otherwise flags the API key
+# shape in build output — list the env *names* here so scans allow them.
+# https://ntl.fyi/configure-secrets-scanning
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,NEXT_PUBLIC_FIREBASE_APP_ID"
