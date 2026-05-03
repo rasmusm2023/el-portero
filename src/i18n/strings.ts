@@ -43,6 +43,7 @@ type PageKey =
   | "page.home.eventsCta"
   | "page.home.eventsScrollHint"
   | "page.home.eventsEmpty"
+  | "page.home.eventsLoading"
   | "page.home.heroReserveCta"
   | "page.home.heroTagline"
   | "page.menu.title"
@@ -93,6 +94,7 @@ type PageKey =
   | "page.events.explainPrivateBody"
   | "page.events.listHeading"
   | "page.events.listEmpty"
+  | "page.events.listLoading"
   | "page.events.sectionOverviewLabel"
   | "page.story.title"
   | "page.story.intro"
@@ -145,44 +147,9 @@ type PageKey =
   | "page.contact.title"
   | "page.contact.heroTitle"
   | "page.contact.heroBody"
-  | "page.contact.labelName"
-  | "page.contact.labelEmail"
-  | "page.contact.labelSubject"
-  | "page.contact.labelMessage"
-  | "page.contact.subjectPlaceholder"
-  | "page.contact.submitting"
-  | "page.contact.submitSoon"
-  | "page.contact.policyNote"
-  | "page.contact.validationName"
-  | "page.contact.validationEmail"
-  | "page.contact.validationEmailFormat"
-  | "page.contact.validationSubject"
-  | "page.contact.validationMessage"
-  | "page.contact.sendSuccess"
-  | "page.contact.errorSendFailed"
-  | "page.contact.validationSummary"
-  | "page.contact.validationTooFast"
-  | "page.contact.placeholderName"
-  | "page.contact.placeholderEmail"
-  | "page.contact.placeholderMessage"
-  | "page.contact.subject.general"
-  | "page.contact.subject.reservation"
-  | "page.contact.subject.privateEvent"
-  | "page.contact.subject.feedbackVisit"
-  | "page.contact.subject.dietaryAllergies"
-  | "page.contact.subject.largeGroup"
-  | "page.contact.subject.giftCard"
-  | "page.contact.subject.pressMedia"
-  | "page.contact.subject.partnership"
-  | "page.contact.subject.careers"
-  | "page.contact.subject.lostProperty"
-  | "page.contact.subject.accessibility"
-  | "page.contact.subject.wineCellar"
-  | "page.contact.subject.hoursLocation"
-  | "page.contact.subject.billing"
-  | "page.contact.subject.privateDining"
-  | "page.contact.subject.specialOccasion"
-  | "page.contact.subject.other"
+  | "page.contact.phoneLabel"
+  | "page.contact.emailLabel"
+  | "page.contact.mailtoHint"
   | "page.gallery.srHeading"
   | "page.gallery.imageAlt1"
   | "page.gallery.imageAlt2"
@@ -202,7 +169,6 @@ type FooterKey =
   | "footer.whatsapp"
   | "footer.whatsappAria"
   | "footer.tagline"
-  | "footer.findUs"
   | "footer.links"
   | "footer.openInMaps";
 
@@ -224,7 +190,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.story": "Our story",
     "nav.menu": "Menus",
     "nav.events": "Events",
-    "nav.reserve": "Reservations",
+    "nav.reserve": "Book a table",
     "nav.bookTable": "Book a table",
     "nav.contact": "Contact",
     "nav.gallery": "Look inside",
@@ -241,10 +207,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsCta": "Details",
     "page.home.eventsScrollHint": "Scroll sideways for more",
     "page.home.eventsEmpty":
-      "The calendar is being set — we’ll list dates here as soon as they’re public. For now, follow us on Instagram or drop us a line about a private dinner.",
-    "page.home.heroReserveCta": "RESERVATION",
+      "There are no published public events at the moment. Check back soon, follow us on Instagram, or ask about a private dinner.",
+    "page.home.eventsLoading": "Loading events…",
+    "page.home.heroReserveCta": "Book a table",
     "page.home.heroTagline":
-      "A throw-in from the Mediterranean —\nSouth American heart meets Nordic poise in Torrevieja.",
+      "Latin American heart meets Nordic elegance in Torrevieja.\n— Just a throw-in from the Mediterranean.",
     "page.menu.title": "Our menus",
     "page.menu.food": "Highlights",
     "page.menu.drinks": "Drinks",
@@ -277,7 +244,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "This week’s lunch menu is not online yet. Please check back shortly or call us for today’s offering.",
     "page.menu.weeklyWeekLabel": "Week of",
     "page.menu.weeklyEffectiveLabel": "Goes live",
-    "page.menu.weeklyMadridNote": "Madrid week start",
+    "page.menu.weeklyMadridNote": "Lunch week anchor (Sat, Madrid)",
     "page.menu.hubHint":
       "Choose a menu above — each section opens in full beneath, dishes, pairings, and all.",
     "page.menu.preLaunchTitle": "Menus publish on opening night",
@@ -303,7 +270,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Hire the restaurant for your crowd — weddings, company dinners, birthdays, tastings, or a fully private celebration. Tell us your date, group size, and mood; we’ll come back with menus, pacing, and a clear way forward.",
     "page.events.listHeading": "Coming up",
     "page.events.listEmpty":
-      "No dates on the board yet — check back shortly, or ask us about a private booking.",
+      "There are no published public events on the calendar right now. Check back soon, or contact us about a private booking.",
+    "page.events.listLoading": "Loading events…",
     "page.events.sectionOverviewLabel": "Public nights and private events",
     "page.story.title": "Our story",
     "page.story.intro":
@@ -363,49 +331,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.title": "Contact",
     "page.contact.heroTitle": "We’re listening",
     "page.contact.heroBody":
-      "Reservations, private events, dietary requirements, directions — we read every message and reply as soon as we can.",
-    "page.contact.labelName": "Name",
-    "page.contact.labelEmail": "Email",
-    "page.contact.labelSubject": "Subject",
-    "page.contact.labelMessage": "Message",
-    "page.contact.subjectPlaceholder": "Choose a topic",
-    "page.contact.submitting": "Sending…",
-    "page.contact.submitSoon": "Send message",
-    "page.contact.policyNote":
-      "We aim to respond within a few business days. Reservations and payments are not confirmed until we reply.",
-    "page.contact.validationName": "Please enter your name.",
-    "page.contact.validationEmail": "Please enter your email address.",
-    "page.contact.validationEmailFormat": "That doesn’t look like a valid email address.",
-    "page.contact.validationSubject": "Please choose a subject.",
-    "page.contact.validationMessage": "Please enter a message.",
-    "page.contact.sendSuccess": "Thank you — your message has been sent. We’ll get back to you soon.",
-    "page.contact.errorSendFailed":
-      "We couldn’t send your message just now. Please try again in a moment or reach us by phone.",
-    "page.contact.validationSummary": "Please correct the highlighted fields.",
-    "page.contact.validationTooFast":
-      "Please wait a moment before sending — this helps us block automated submissions.",
-    "page.contact.placeholderName": "Your name",
-    "page.contact.placeholderEmail": "example@example.com",
-    "page.contact.placeholderMessage":
-      "Tell us what you need — dates, party size, dietary notes…",
-    "page.contact.subject.general": "General inquiry",
-    "page.contact.subject.reservation": "Reservation question",
-    "page.contact.subject.privateEvent": "Private event or catering",
-    "page.contact.subject.feedbackVisit": "Feedback on a recent visit",
-    "page.contact.subject.dietaryAllergies": "Dietary needs or allergies",
-    "page.contact.subject.largeGroup": "Large group / party size",
-    "page.contact.subject.giftCard": "Gift card or voucher",
-    "page.contact.subject.pressMedia": "Press & media",
-    "page.contact.subject.partnership": "Collaboration or partnership",
-    "page.contact.subject.careers": "Jobs & careers",
-    "page.contact.subject.lostProperty": "Lost & found",
-    "page.contact.subject.accessibility": "Accessibility",
-    "page.contact.subject.wineCellar": "Wine list or cellar",
-    "page.contact.subject.hoursLocation": "Hours, parking, or directions",
-    "page.contact.subject.billing": "Invoice, receipt, or billing",
-    "page.contact.subject.privateDining": "Private dining room",
-    "page.contact.subject.specialOccasion": "Birthday or celebration",
-    "page.contact.subject.other": "Something else",
+      "Call us or send an email — we’ll get back as soon as we can. Reservations are not confirmed until we reply.",
+    "page.contact.phoneLabel": "Phone",
+    "page.contact.emailLabel": "Email",
+    "page.contact.mailtoHint":
+      "Opens your mail app with the subject “Contact from website” — add your message and send.",
     "page.gallery.srHeading": "A glimpse of El Portero",
     "page.gallery.imageAlt1":
       "Dining room with warm light, set tables, and an inviting atmosphere",
@@ -433,8 +363,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.closeNav": "Close menu",
     "header.openNav": "Open menu",
     "header.navDialog": "Site navigation",
-    "header.reserveTable": "Make reservation",
-    "header.reserveNav": "Reservation",
+    "header.reserveTable": "Book a table",
+    "header.reserveNav": "Book a table",
     "page.reserve.altBookingTitle": "Book by phone or WhatsApp",
     "page.reserve.altBookingOr": "Or",
     "page.reserve.altCall": "Call",
@@ -447,7 +377,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsappAria": "Open WhatsApp chat with El Portero",
     "footer.tagline":
       "Fine dining on the Costa Blanca with a dinner-club pulse — Latin generosity at the table, Nordic discipline in the kitchen, and the sea within walking distance.",
-    "footer.findUs": "Find us",
     "footer.links": "Quick links",
     "footer.openInMaps": "Open in Google Maps",
     "brand.dinnerClub": "Dinner Club",
@@ -457,7 +386,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.story": "Nuestra historia",
     "nav.menu": "Cartas",
     "nav.events": "Eventos",
-    "nav.reserve": "Reservas",
+    "nav.reserve": "Reservar mesa",
     "nav.bookTable": "Reservar mesa",
     "nav.contact": "Contacto",
     "nav.gallery": "Echa un vistazo",
@@ -474,10 +403,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsCta": "Detalles",
     "page.home.eventsScrollHint": "Desplázate horizontalmente para ver más",
     "page.home.eventsEmpty":
-      "Estamos cerrando el calendario — en cuanto haya fechas públicas, las veréis aquí. Mientras tanto, seguid en Instagram o escribid para una cena privada.",
-    "page.home.heroReserveCta": "Reserva",
+      "No hay eventos públicos publicados en este momento. Volved pronto, seguid en Instagram o escribid para una cena privada.",
+    "page.home.eventsLoading": "Cargando eventos…",
+    "page.home.heroReserveCta": "Reservar mesa",
     "page.home.heroTagline":
-      "Un saque de banda desde el Mediterráneo —\nCorazón sudamericano y compostura nórdica en Torrevieja.",
+      "Corazón latinoamericano y elegancia nórdica en Torrevieja.\n— A solo un saque de banda del Mediterráneo.",
     "page.menu.title": "Nuestras cartas",
     "page.menu.food": "Selección",
     "page.menu.drinks": "Bebidas",
@@ -510,7 +440,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "La carta de almuerzo de esta semana aún no está en la web. Volved en breve o llamad para la oferta del día.",
     "page.menu.weeklyWeekLabel": "Semana del",
     "page.menu.weeklyEffectiveLabel": "Activo desde",
-    "page.menu.weeklyMadridNote": "Inicio de semana (Madrid)",
+    "page.menu.weeklyMadridNote": "Ancla de la semana de almuerzo (sáb., Madrid)",
     "page.menu.hubHint":
       "Elegid una carta arriba — cada sección se abre completa debajo, con platos, maridajes y todo el detalle.",
     "page.menu.preLaunchTitle": "Las cartas se publican el día de la apertura",
@@ -536,7 +466,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Reservad el restaurante para vuestro grupo — bodas, cenas de empresa, cumpleaños, catas o una celebración a puerta cerrada. Decidnos fecha, tamaño del grupo y ambición; volveremos con menús, ritmo y siguientes pasos claros.",
     "page.events.listHeading": "Próximas fechas",
     "page.events.listEmpty":
-      "Aún no hay fechas en cartel — volved en breve o preguntad por una reserva privada.",
+      "No hay eventos públicos publicados en el calendario ahora mismo. Volved pronto o contactad para una reserva privada.",
+    "page.events.listLoading": "Cargando eventos…",
     "page.events.sectionOverviewLabel": "Eventos abiertos y celebraciones privadas",
     "page.story.title": "Nuestra historia",
     "page.story.intro":
@@ -604,49 +535,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.title": "Contacto",
     "page.contact.heroTitle": "Escribidnos",
     "page.contact.heroBody":
-      "Reservas, eventos privados, alimentación, cómo llegar — leemos cada mensaje y respondemos en cuanto podemos.",
-    "page.contact.labelName": "Nombre",
-    "page.contact.labelEmail": "Correo electrónico",
-    "page.contact.labelSubject": "Asunto",
-    "page.contact.labelMessage": "Mensaje",
-    "page.contact.subjectPlaceholder": "Elige un tema",
-    "page.contact.submitting": "Enviando…",
-    "page.contact.submitSoon": "Enviar mensaje",
-    "page.contact.policyNote":
-      "Intentamos responder en unos días laborables. Reservas y pagos no quedan confirmados hasta que os contestemos.",
-    "page.contact.validationName": "Indica tu nombre.",
-    "page.contact.validationEmail": "Indica tu correo electrónico.",
-    "page.contact.validationEmailFormat": "Ese correo no parece válido.",
-    "page.contact.validationSubject": "Elige un asunto.",
-    "page.contact.validationMessage": "Escribe un mensaje.",
-    "page.contact.sendSuccess": "Gracias — tu mensaje se ha enviado. Te responderemos pronto.",
-    "page.contact.errorSendFailed":
-      "No hemos podido enviar el mensaje. Inténtalo de nuevo en un momento o llámanos.",
-    "page.contact.validationSummary": "Revisa los campos marcados.",
-    "page.contact.validationTooFast":
-      "Espera un momento antes de enviar — nos ayuda a frenar envíos automáticos.",
-    "page.contact.placeholderName": "Tu nombre",
-    "page.contact.placeholderEmail": "ejemplo@ejemplo.com",
-    "page.contact.placeholderMessage":
-      "Cuéntanos qué necesitas — fechas, comensales, alimentación…",
-    "page.contact.subject.general": "Consulta general",
-    "page.contact.subject.reservation": "Pregunta sobre reserva",
-    "page.contact.subject.privateEvent": "Evento privado o catering",
-    "page.contact.subject.feedbackVisit": "Opinión sobre una visita reciente",
-    "page.contact.subject.dietaryAllergies": "Dieta o alergias",
-    "page.contact.subject.largeGroup": "Grupo grande / comensales",
-    "page.contact.subject.giftCard": "Tarjeta regalo o vale",
-    "page.contact.subject.pressMedia": "Prensa y medios",
-    "page.contact.subject.partnership": "Colaboración o partnership",
-    "page.contact.subject.careers": "Empleo y prácticas",
-    "page.contact.subject.lostProperty": "Objetos perdidos",
-    "page.contact.subject.accessibility": "Accesibilidad",
-    "page.contact.subject.wineCellar": "Carta de vinos o bodega",
-    "page.contact.subject.hoursLocation": "Horario, parking o cómo llegar",
-    "page.contact.subject.billing": "Factura, ticket o pagos",
-    "page.contact.subject.privateDining": "Comedor privado",
-    "page.contact.subject.specialOccasion": "Cumpleaños o celebración",
-    "page.contact.subject.other": "Otro tema",
+      "Llamad o escribid un correo — contestamos en cuanto podamos. Las reservas no quedan confirmadas hasta que os respondamos.",
+    "page.contact.phoneLabel": "Teléfono",
+    "page.contact.emailLabel": "Correo",
+    "page.contact.mailtoHint":
+      "Se abre el correo con el asunto «Contact from website» — añadid el mensaje y enviad.",
     "page.gallery.srHeading": "Un vistazo a El Portero",
     "page.gallery.imageAlt1":
       "Comedor con luz cálida, mesas puestas y ambiente acogedor",
@@ -674,15 +567,14 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsappAria": "Abrir chat de WhatsApp con El Portero",
     "footer.tagline":
       "Alta cocina en la Costa Blanca con pulso de club — generosidad latina en la mesa, rigor nórdico en cocina y el mar a un paseo.",
-    "footer.findUs": "Dónde estamos",
     "footer.links": "Enlaces rápidos",
     "footer.openInMaps": "Abrir en Google Maps",
     "header.menuLabel": "MENÚ",
     "header.closeNav": "Cerrar menú",
     "header.openNav": "Abrir menú",
     "header.navDialog": "Navegación",
-    "header.reserveTable": "Hacer reserva",
-    "header.reserveNav": "Reserva",
+    "header.reserveTable": "Reservar mesa",
+    "header.reserveNav": "Reservar mesa",
     "brand.dinnerClub": "Dinner Club",
   },
   sv: {
@@ -690,7 +582,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.story": "Vår historia",
     "nav.menu": "Menyer",
     "nav.events": "Events",
-    "nav.reserve": "Bokningar",
+    "nav.reserve": "Boka bord",
     "nav.bookTable": "Boka bord",
     "nav.contact": "Kontakt",
     "nav.gallery": "En glimt in",
@@ -707,10 +599,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsCta": "Läs mer",
     "page.home.eventsScrollHint": "Scrolla åt sidan för fler",
     "page.home.eventsEmpty":
-      "Kalendern sätts just nu — datum publiceras här så fort de är officiella. Under tiden: följ oss på Instagram eller hör av dig om en privat middag.",
-    "page.home.heroReserveCta": "Bokning",
+      "Det finns inga publicerade publika evenemang just nu. Kom tillbaka snart, följ oss på Instagram eller hör av dig om en privat middag.",
+    "page.home.eventsLoading": "Laddar evenemang…",
+    "page.home.heroReserveCta": "Boka bord",
     "page.home.heroTagline":
-      "Ett inkast från Medelhavet —\nlatinamerikanskt hjärta möter nordisk elegans i Torrevieja.",
+      "Latinamerikanskt hjärta möter nordisk elegans i Torrevieja.\n— Bara ett inkast från Medelhavet.",
     "page.menu.title": "Våra menyer",
     "page.menu.food": "Höjdpunkter",
     "page.menu.drinks": "Dryck",
@@ -743,7 +636,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Veckans lunchmeny är inte publicerad än. Kom tillbaka snart eller ring oss för dagens erbjudande.",
     "page.menu.weeklyWeekLabel": "Vecka från",
     "page.menu.weeklyEffectiveLabel": "Aktiveras",
-    "page.menu.weeklyMadridNote": "Veckostart (Madrid)",
+    "page.menu.weeklyMadridNote": "Lunchveckans ankare (lör, Madrid)",
     "page.menu.hubHint":
       "Välj meny ovan — varje del öppnas i full längd nedanför, med rätter, maridage och allt du behöver.",
     "page.menu.preLaunchTitle": "Menyerna publiceras på öppningskvällen",
@@ -769,7 +662,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Ta över restaurangen för er skara — bröllop, företagsmiddagar, födelsedagar, provningar eller en helt privat fest. Berätta om datum, antal gäster och känsla; vi återkom med meny, upplägg och nästa steg.",
     "page.events.listHeading": "Kommande",
     "page.events.listEmpty":
-      "Inga datum uppslagna ännu — titta snart igen eller fråga om en privat bokning.",
+      "Det finns inga publicerade publika evenemang i kalendern just nu. Kom tillbaka snart eller kontakta oss om en privat bokning.",
+    "page.events.listLoading": "Laddar evenemang…",
     "page.events.sectionOverviewLabel": "Publika kvällar och privata event",
     "page.story.title": "Vår historia",
     "page.story.intro":
@@ -837,49 +731,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.title": "Kontakt",
     "page.contact.heroTitle": "Hör av dig",
     "page.contact.heroBody":
-      "Bokningar, privata event, allergier, vägen hit — vi läser allt och återkommer så fort vi kan.",
-    "page.contact.labelName": "Namn",
-    "page.contact.labelEmail": "E-post",
-    "page.contact.labelSubject": "Ämne",
-    "page.contact.labelMessage": "Meddelande",
-    "page.contact.subjectPlaceholder": "Välj ett ämne",
-    "page.contact.submitting": "Skickar…",
-    "page.contact.submitSoon": "Skicka meddelande",
-    "page.contact.policyNote":
-      "Vi siktar på svar inom några vardagar. Bokningar och betalningar är inte bekräftade förrän vi hört av oss.",
-    "page.contact.validationName": "Ange ditt namn.",
-    "page.contact.validationEmail": "Ange din e-postadress.",
-    "page.contact.validationEmailFormat": "E-postadressen verkar ogiltig.",
-    "page.contact.validationSubject": "Välj ett ämne.",
-    "page.contact.validationMessage": "Skriv ett meddelande.",
-    "page.contact.sendSuccess": "Tack — ditt meddelande har skickats. Vi återkommer så snart vi kan.",
-    "page.contact.errorSendFailed":
-      "Meddelandet kunde inte skickas. Försök igen om en stund eller ring oss.",
-    "page.contact.validationSummary": "Korrigera de markerade fälten.",
-    "page.contact.validationTooFast":
-      "Vänta lite innan du skickar — det hjälper oss stoppa automatiska inskick.",
-    "page.contact.placeholderName": "Ditt namn",
-    "page.contact.placeholderEmail": "exempel@exempel.se",
-    "page.contact.placeholderMessage":
-      "Skriv vad du behöver — datum, antal gäster, allergier…",
-    "page.contact.subject.general": "Allmän fråga",
-    "page.contact.subject.reservation": "Fråga om bokning",
-    "page.contact.subject.privateEvent": "Privat event eller catering",
-    "page.contact.subject.feedbackVisit": "Synpunkter efter besök",
-    "page.contact.subject.dietaryAllergies": "Kost eller allergier",
-    "page.contact.subject.largeGroup": "Större sällskap",
-    "page.contact.subject.giftCard": "Presentkort eller värdebevis",
-    "page.contact.subject.pressMedia": "Press och media",
-    "page.contact.subject.partnership": "Samarbete eller partnerskap",
-    "page.contact.subject.careers": "Jobb och karriär",
-    "page.contact.subject.lostProperty": "Hittegods",
-    "page.contact.subject.accessibility": "Tillgänglighet",
-    "page.contact.subject.wineCellar": "Vinlista eller källare",
-    "page.contact.subject.hoursLocation": "Tider, parkering eller vägbeskrivning",
-    "page.contact.subject.billing": "Faktura, kvitto eller betalning",
-    "page.contact.subject.privateDining": "Privat matsal",
-    "page.contact.subject.specialOccasion": "Födelsedag eller firande",
-    "page.contact.subject.other": "Annat",
+      "Ring eller mejla — vi återkommer så fort vi kan. Bokningar är inte bekräftade förrän vi hört av oss.",
+    "page.contact.phoneLabel": "Telefon",
+    "page.contact.emailLabel": "E-post",
+    "page.contact.mailtoHint":
+      "Öppnar din mejlklient med ämnet «Contact from website» — skriv meddelandet och skicka.",
     "page.gallery.srHeading": "En glimt av El Portero",
     "page.gallery.imageAlt1":
       "Matsal i varmt ljus med dukade bord och inbjudande stämning",
@@ -907,15 +763,14 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsappAria": "Öppna WhatsApp-chatt med El Portero",
     "footer.tagline":
       "Fin gastronomi på Costa Blanca med dinner club-puls — latinamerikansk generositet vid bordet, nordisk disciplin i köket och havet på promenadavstånd.",
-    "footer.findUs": "Hitta hit",
     "footer.links": "Snabblänkar",
     "footer.openInMaps": "Öppna i Google Maps",
     "header.menuLabel": "MENY",
     "header.closeNav": "Stäng meny",
     "header.openNav": "Öppna menyn",
     "header.navDialog": "Navigering",
-    "header.reserveTable": "Gör bokning",
-    "header.reserveNav": "Bokning",
+    "header.reserveTable": "Boka bord",
+    "header.reserveNav": "Boka bord",
     "brand.dinnerClub": "Dinner Club",
   },
 };

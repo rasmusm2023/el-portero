@@ -63,11 +63,11 @@ export default function RootLayout({
     >
       <body>
         <AppProviders>
-          <div className="flex min-h-dvh flex-col">
+          <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip">
             <SiteHeader />
             <main
               id="main"
-              className="flex min-h-0 flex-1 flex-col pt-[var(--header-h)]"
+              className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip pt-[var(--header-h)]"
             >
               {children}
             </main>

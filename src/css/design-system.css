@@ -47,8 +47,8 @@
 
 @media (min-width: 1024px) {
   :root {
-    /* Two-tier header + faded rule + nav row — keep in sync with SiteHeader layout */
-    --header-h: calc(7.5rem + 1px);
+    /* Two-tier header + faded rule + nav row (incl. `py-3` on desktop nav band) — keep in sync with SiteHeader */
+    --header-h: calc(9rem + 1px);
   }
 }
 

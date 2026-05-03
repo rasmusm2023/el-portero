@@ -12,7 +12,7 @@ import {
   adminCalloutSuccess,
 } from "@/lib/adminUiStyles";
 import { LUNCH_DISH_SLOT_LABELS } from "@/lib/lunchDishSlots";
-import { getMadridWeekStartYmd } from "@/lib/madridWeek";
+import { getMadridLunchWeekSaturdayYmd } from "@/lib/madridWeek";
 import { addDaysToYmd, formatYmdLongEnglish } from "@/lib/madridMonday";
 import type { WeeklyMenu } from "@/lib/weeklyMenuTypes";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
@@ -26,7 +26,7 @@ type DishDraft = {
   dietaryTags: string;
 };
 
-type ScheduleMode = "nextMonday" | "immediate";
+type ScheduleMode = "nextSaturday" | "immediate";
 
 function emptyDishes(): DishDraft[] {
   return Array.from({ length: 5 }, () => ({
@@ -55,15 +55,15 @@ function dishesFromMenu(menu: WeeklyMenu): DishDraft[] {
 export function LunchMenuAdminPage() {
   const router = useRouter();
   const { user, ready, signOutUser } = useAdminAuth();
-  const madridMonday = useMemo(() => getMadridWeekStartYmd(), []);
-  const nextMondayYmd = useMemo(() => addDaysToYmd(madridMonday, 7), [madridMonday]);
-  const nextMondayLabel = useMemo(() => formatYmdLongEnglish(nextMondayYmd), [nextMondayYmd]);
+  const madridSaturday = useMemo(() => getMadridLunchWeekSaturdayYmd(), []);
+  const nextSaturdayYmd = useMemo(() => addDaysToYmd(madridSaturday, 7), [madridSaturday]);
+  const nextSaturdayLabel = useMemo(() => formatYmdLongEnglish(nextSaturdayYmd), [nextSaturdayYmd]);
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>("nextMonday");
+  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>("nextSaturday");
   const [title, setTitle] = useState("");
   const [dishes, setDishes] = useState<DishDraft[]>(() => emptyDishes());
   const [published, setPublished] = useState(false);
@@ -79,7 +79,7 @@ export function LunchMenuAdminPage() {
       const menu = await readWeeklyMenuCurrent(db);
       if (!menu) {
         // First run: keep current UI state (empty draft) but set a sensible schedule.
-        setScheduleMode("nextMonday");
+        setScheduleMode("nextSaturday");
         setPublished(false);
         setUpdatedAt(null);
         setVisibleOnSiteNow(false);
@@ -88,10 +88,10 @@ export function LunchMenuAdminPage() {
       setTitle(menu.title ?? "");
       setPublished(Boolean(menu.isPublished));
       setUpdatedAt(menu.updatedAtUtc ?? null);
-      const eff = menu.effectiveWeekStartDate || menu.weekStartDate || madridMonday;
-      setScheduleMode(eff === madridMonday ? "immediate" : "nextMonday");
+      const eff = menu.effectiveWeekStartDate || menu.weekStartDate || madridSaturday;
+      setScheduleMode(eff === madridSaturday ? "immediate" : "nextSaturday");
       setDishes(dishesFromMenu(menu));
-      setVisibleOnSiteNow(Boolean(menu.isPublished) && eff === madridMonday);
+      setVisibleOnSiteNow(Boolean(menu.isPublished) && eff === madridSaturday);
     } catch (err) {
       console.error(err);
       setError(unknownErrorMessage(err, "Could not load lunch menu from Firestore."));
@@ -129,7 +129,7 @@ export function LunchMenuAdminPage() {
         return;
       }
 
-      const effectiveYmd = scheduleMode === "immediate" ? madridMonday : nextMondayYmd;
+      const effectiveYmd = scheduleMode === "immediate" ? madridSaturday : nextSaturdayYmd;
 
       const items = dishes.map((d, idx) => ({
         position: idx + 1,
@@ -150,7 +150,7 @@ export function LunchMenuAdminPage() {
       };
       await upsertWeeklyMenuCurrent(db, menu);
       setUpdatedAt(null);
-      setVisibleOnSiteNow(Boolean(menu.isPublished) && effectiveYmd === madridMonday);
+      setVisibleOnSiteNow(Boolean(menu.isPublished) && effectiveYmd === madridSaturday);
       setMessage("Saved as a draft. Guests won’t see it until you click “Publish”.");
     } catch (err) {
       console.error(err);
@@ -168,8 +168,8 @@ export function LunchMenuAdminPage() {
       const db = getFirebaseFirestore();
       await setWeeklyMenuCurrentPublished(db, nextPublished);
       setPublished(nextPublished);
-      const effectiveYmd = scheduleMode === "immediate" ? madridMonday : nextMondayYmd;
-      setVisibleOnSiteNow(Boolean(nextPublished) && effectiveYmd === madridMonday);
+      const effectiveYmd = scheduleMode === "immediate" ? madridSaturday : nextSaturdayYmd;
+      setVisibleOnSiteNow(Boolean(nextPublished) && effectiveYmd === madridSaturday);
       setMessage(nextPublished ? "Published." : "Unpublished (hidden from guests).");
     } catch (err) {
       console.error(err);
@@ -187,12 +187,12 @@ export function LunchMenuAdminPage() {
     );
   }
 
-  const effectiveYmdForDisplay = scheduleMode === "immediate" ? madridMonday : nextMondayYmd;
+  const effectiveYmdForDisplay = scheduleMode === "immediate" ? madridSaturday : nextSaturdayYmd;
 
   return (
     <PageShell
       title="Lunch menu"
-      intro="Update the 5 dishes, then publish when ready."
+      intro="Update the 5 dishes, then publish when ready. Lunch weeks are keyed to Saturday (Madrid) — the Mon–Fri block after each weekend."
     >
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-3">
@@ -250,16 +250,16 @@ export function LunchMenuAdminPage() {
             <p>
               <span className="text-ink-muted">Website timing:</span>{" "}
               <span className="font-semibold text-ink">
-                {scheduleMode === "immediate" ? "Immediately (this week)" : `Next Monday (${nextMondayYmd})`}
+                {scheduleMode === "immediate" ? "Immediately (this week)" : `Next Saturday (${nextSaturdayYmd})`}
               </span>
             </p>
             <p>
-              <span className="text-ink-muted">Effective Monday (saved):</span>{" "}
+              <span className="text-ink-muted">Effective week start (saved, Saturday):</span>{" "}
               <span className="font-mono font-semibold text-ink">{effectiveYmdForDisplay}</span>
             </p>
             <p>
-              <span className="text-ink-muted">Today’s Madrid week start:</span>{" "}
-              <span className="font-semibold text-ink">{madridMonday}</span>
+              <span className="text-ink-muted">Today’s Madrid lunch anchor (Saturday):</span>{" "}
+              <span className="font-semibold text-ink">{madridSaturday}</span>
             </p>
             <p>
               <span className="text-ink-muted">Visible on website now:</span>{" "}
@@ -313,18 +313,18 @@ export function LunchMenuAdminPage() {
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => setScheduleMode("nextMonday")}
+                  onClick={() => setScheduleMode("nextSaturday")}
                   className={`flex-1 rounded-none border px-4 py-4 text-left transition-colors disabled:opacity-50 ${
-                    scheduleMode === "nextMonday"
+                    scheduleMode === "nextSaturday"
                       ? "border-sky-700 bg-sky-100 text-sky-950 shadow-md ring-2 ring-sky-500/50"
                       : "border-slate-300 bg-white text-ink hover:border-sky-400 hover:bg-sky-50/50"
                   }`}
                 >
                   <span className="text-xs font-semibold tracking-[0.22em] uppercase text-sky-900">Recommended</span>
                   <span className="mt-2 block font-display text-lg font-medium leading-snug">
-                    Next Monday
+                    Next Saturday
                     <span className="mt-1 block font-sans text-sm font-normal text-sky-900/85">
-                      {nextMondayLabel} ({nextMondayYmd})
+                      {nextSaturdayLabel} ({nextSaturdayYmd})
                     </span>
                   </span>
                 </button>

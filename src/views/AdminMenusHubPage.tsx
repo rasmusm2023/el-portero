@@ -11,7 +11,7 @@ export function AdminMenusHubPage() {
   return (
     <PageShell
       title="Menus"
-      intro="Choose which menu to edit. Data will sync from Firebase once those editors are wired to Firestore."
+      intro="Choose which menu to edit (Firebase). Lunch weeks are dated from each Saturday (Madrid) before the Mon–Fri service block."
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
       <div className="mb-8 flex flex-wrap gap-3">
@@ -30,7 +30,7 @@ export function AdminMenusHubPage() {
           </p>
           <h2 className="mt-2 font-display text-2xl font-medium text-ink">Set lunch menu</h2>
           <p className="mt-3 text-sm text-ink-muted leading-relaxed">
-            Five dishes, week start, publish — same editor as before.
+            Five dishes, Saturday week anchor, publish — same editor as before.
           </p>
           <p className="mt-6 text-sm font-semibold text-emerald-800 group-hover:underline">
             Open lunch editor →

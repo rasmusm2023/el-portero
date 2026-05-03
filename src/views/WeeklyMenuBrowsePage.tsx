@@ -5,14 +5,14 @@ import { MenuPager } from "@/components/menu/MenuPager";
 import { PageShell } from "@/components/layout/PageShell";
 import { useWeeklyMenuCurrent } from "@/lib/weeklyMenuApi";
 import { getIsoWeekNumberFromYmd } from "@/lib/isoWeek";
-import { getMadridWeekStartYmd } from "@/lib/madridWeek";
+import { getMadridLunchWeekSaturdayYmd } from "@/lib/madridWeek";
 import { useLocale } from "@/i18n/useLocale";
 import { t, weeklyMenuWeekTitle } from "@/i18n/strings";
 
 export function WeeklyMenuBrowsePage() {
   const { locale } = useLocale();
   const { menu, ready } = useWeeklyMenuCurrent();
-  const madridWeekStart = getMadridWeekStartYmd();
+  const madridLunchSaturday = getMadridLunchWeekSaturdayYmd();
 
   return (
     <PageShell
@@ -45,7 +45,7 @@ export function WeeklyMenuBrowsePage() {
                 {t(locale, "page.menu.weeklyEffectiveLabel")}:{" "}
                 {menu.effectiveWeekStartDate || menu.weekStartDate}{" "}
                 <span className="normal-case tracking-normal text-ink-muted/70">
-                  ({t(locale, "page.menu.weeklyMadridNote")}: {madridWeekStart})
+                  ({t(locale, "page.menu.weeklyMadridNote")}: {madridLunchSaturday})
                 </span>
               </p>
             </div>

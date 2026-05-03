@@ -2,12 +2,12 @@ import type { WeeklyMenu } from "@/lib/weeklyMenuTypes";
 
 /**
  * Set lunch for the site (home preview, /menu/weekly, optional home section).
- * Update `effectiveWeekStartDate` / `weekStartDate` to the Monday (Europe/Madrid)
- * for the week you are publishing, then replace `items` when the team sends the menu.
+ * Set `effectiveWeekStartDate` / `weekStartDate` to the **Saturday** (Europe/Madrid)
+ * that anchors the Mon–Fri lunch block, then replace `items` when the team sends the menu.
  */
 export const STATIC_WEEKLY_MENU: WeeklyMenu = {
-  weekStartDate: "2026-04-27",
-  effectiveWeekStartDate: "2026-04-27",
+  weekStartDate: "2026-04-25",
+  effectiveWeekStartDate: "2026-04-25",
   title: "",
   isPublished: true,
   updatedAtUtc: "2026-05-01T12:00:00.000Z",
