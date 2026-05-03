@@ -1,38 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { LunchMenuItemsList } from "@/components/menu/LunchMenuItemsList";
-import { getApiBaseUrl } from "@/lib/apiBase";
+import { useWeeklyMenuCurrent } from "@/lib/weeklyMenuApi";
 import { getIsoWeekNumberFromYmd } from "@/lib/isoWeek";
-import type { WeeklyMenu } from "@/lib/weeklyMenuTypes";
 import { useLocale } from "@/i18n/useLocale";
 import { t, weeklyMenuWeekTitle } from "@/i18n/strings";
 
 export function WeeklyMenuSection() {
   const { locale } = useLocale();
-  const apiBase = getApiBaseUrl();
-  const [menu, setMenu] = useState<WeeklyMenu | null>(null);
+  const { menu, ready } = useWeeklyMenuCurrent();
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const r = await fetch(`${apiBase}/api/weekly-menu/current`, {
-          cache: "no-store",
-        });
-        if (!r.ok) return;
-        const data = (await r.json()) as WeeklyMenu;
-        if (!cancelled) setMenu(data);
-      } catch {
-        // ignore: fallback is simply "no section"
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [apiBase]);
+  if (!ready) {
+    return (
+      <section className="border-t border-border bg-paper" aria-busy="true">
+        <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
+          <div className="mx-auto w-full max-w-[var(--container-max)]">
+            <p className="text-sm font-medium text-ink-muted">{t(locale, "page.menu.weeklyLoading")}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-  if (!menu) return null;
+  if (!menu || !menu.items?.length) return null;
 
   return (
     <section

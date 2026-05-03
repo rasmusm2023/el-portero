@@ -3,8 +3,13 @@
 import { Instagram, MapPin } from "lucide-react";
 import Link from "next/link";
 import { LogoWordmark } from "@/components/LogoWordmark";
+import { LocationMapEmbed } from "@/components/LocationMap";
 import { VENUE_ADDRESS, googleMapsSearchUrl } from "@/constants/venue";
-import { INSTAGRAM_PROFILE_URL, bookingWhatsAppHref } from "@/config/site";
+import {
+  INSTAGRAM_HANDLE,
+  INSTAGRAM_PROFILE_URL,
+  bookingWhatsAppHref,
+} from "@/config/site";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -14,23 +19,28 @@ export function SiteFooter() {
   const mapsHref = googleMapsSearchUrl();
 
   return (
-    <footer className="border-t border-border bg-ink text-paper">
-      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-3">
+    <footer className="bg-ink text-paper">
+      <div className="w-full border-b border-paper/10">
+        <LocationMapEmbed locale={locale} />
+      </div>
+
+      <div className="w-full py-8">
+        <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <LogoWordmark size="footer" align="start" tone="onDark" />
             <p className="mt-3 max-w-md text-sm leading-relaxed text-paper/75">
-              {locale === "es"
-                ? "Experiencia gastronómica en Torrevieja — elegancia, producto y servicio."
-                : locale === "sv"
-                  ? "Gastronomisk upplevelse i Torrevieja — elegans, råvaror och service."
-                  : "Dining in Torrevieja — poise, produce, and hospitality."}
+              {t(locale, "footer.tagline")}
             </p>
           </div>
 
           <div className="min-w-0">
             <p className="text-xs font-semibold tracking-[0.22em] text-paper/70 uppercase">
-              {locale === "es" ? "Encuéntranos" : locale === "sv" ? "Hitta oss" : "Find us"}
+              {locale === "es"
+                ? "Encuéntranos"
+                : locale === "sv"
+                  ? "Hitta oss"
+                  : "Find us"}
             </p>
             <div className="mt-4 flex gap-3 text-sm text-paper/85">
               <MapPin
@@ -56,14 +66,14 @@ export function SiteFooter() {
                 rel="noreferrer noopener"
                 className="text-sm font-medium tracking-wide text-paper underline decoration-paper/35 underline-offset-[0.25em] transition-colors hover:decoration-paper/80"
               >
-                {locale === "es" ? "Abrir en Google Maps" : locale === "sv" ? "Öppna i Google Maps" : "Open in Google Maps"}
+                {t(locale, "footer.openInMaps")}
               </a>
             </div>
           </div>
 
           <div className="min-w-0">
             <p className="text-xs font-semibold tracking-[0.22em] text-paper/70 uppercase">
-              {locale === "es" ? "Enlaces" : locale === "sv" ? "Länkar" : "Links"}
+              {t(locale, "footer.links")}
             </p>
             <ul className="mt-4 space-y-2 text-sm text-paper/85">
               <li>
@@ -99,9 +109,14 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noreferrer noopener"
                 className="inline-flex items-center gap-2 text-sm text-paper/85 transition-colors hover:text-paper"
+                aria-label={t(locale, "page.home.instagramAria")}
               >
-                <Instagram className="size-4 text-paper/60" strokeWidth={1.75} aria-hidden />
-                Instagram
+                <Instagram
+                  className="size-4 text-paper/60"
+                  strokeWidth={1.75}
+                  aria-hidden
+                />
+                {INSTAGRAM_HANDLE}
               </a>
               <a
                 href={bookingWhatsAppHref()}
@@ -124,11 +139,12 @@ export function SiteFooter() {
               </a>
             </div>
           </div>
-        </div>
+          </div>
 
-        <p className="mt-8 text-xs tracking-wide text-paper/55 uppercase">
-          © {new Date().getFullYear()} El Portero
-        </p>
+          <p className="mt-8 text-xs tracking-wide text-paper/55 uppercase">
+            © {new Date().getFullYear()} El Portero
+          </p>
+        </div>
       </div>
     </footer>
   );

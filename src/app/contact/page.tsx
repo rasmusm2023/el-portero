@@ -4,7 +4,7 @@ import { ContactPage } from "@/views/ContactPage";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Contact El Portero in Torrevieja — reservations, events, dietary questions, and general inquiries.",
+    "Reach El Portero in Torrevieja — reservations, private events, dietary notes, and every other enquiry.",
 };
 
 export default function Page() {

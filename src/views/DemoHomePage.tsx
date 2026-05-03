@@ -5,7 +5,6 @@ import { useRef, useState } from "react";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
-import { HoursAndMapSection } from "@/components/sections/HoursAndMapSection";
 import { MenuSplitSectionVertical } from "@/components/sections/MenuSplitSectionVertical";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
@@ -53,9 +52,8 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
       <PageHeroSection
         heroImages={heroImages}
         bottomAside={
-          <p className="max-w-[28rem] text-right font-sans text-xs font-medium tracking-[0.22em] text-paper/85 uppercase sm:text-sm">
-            South American cuisine fused with Swedish classics — dinner club
-            nights in Torrevieja
+          <p className="max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3">
+            {t(locale, "page.home.heroTagline")}
           </p>
         }
       >
@@ -133,11 +131,10 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
         </AnimatePresence>
       </MenuSplitSectionVertical>
 
-      <HomeEventsSection />
-
       <GallerySection />
+
+      <HomeEventsSection />
       <InstagramFeedSection />
-      <HoursAndMapSection />
     </div>
   );
 }

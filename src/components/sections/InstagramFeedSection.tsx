@@ -4,26 +4,115 @@ import { Instagram } from "lucide-react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 import { INSTAGRAM_HANDLE, INSTAGRAM_PROFILE_URL } from "@/config/site";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
-const INITIAL_POSTS = 4;
-const EXPANDED_POSTS = 8;
+const GRID_SIZE = 4;
 
-/**
- * Placeholder for a future Instagram embed / API feed.
- */
+type FeedPost = {
+  id: string;
+  permalink: string;
+  imageUrl: string;
+  alt: string;
+};
+
+function InstagramFeedGrid({
+  posts,
+  loading,
+  panelId,
+  locale,
+}: {
+  posts: (FeedPost | null)[];
+  loading: boolean;
+  panelId: string;
+  locale: "en" | "es" | "sv";
+}) {
+  return (
+    <div
+      id={panelId}
+      className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
+      aria-label={t(locale, "page.home.instagramGridAria")}
+    >
+      {loading
+        ? Array.from({ length: GRID_SIZE }, (_, i) => (
+            <div
+              key={`sk-${i}`}
+              className="aspect-square animate-pulse rounded-none bg-paper-dark/50 ring-1 ring-border/60"
+              aria-hidden
+            />
+          ))
+        : posts.map((post, i) =>
+            post ? (
+              <a
+                key={post.id}
+                href={post.permalink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative aspect-square overflow-hidden rounded-none ring-1 ring-border/60 transition-opacity hover:opacity-95 focus-visible:ring-2 focus-visible:ring-ink"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- Instagram CDN hostnames vary; avoid remotePatterns churn */}
+                <img
+                  src={post.imageUrl}
+                  alt={post.alt}
+                  className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                  loading="lazy"
+                  decoding="async"
+                  referrerPolicy="no-referrer"
+                />
+              </a>
+            ) : (
+              <div
+                key={`empty-${i}`}
+                className="aspect-square rounded-none border border-dashed border-border bg-paper-dark/40 ring-1 ring-border/60"
+                aria-hidden
+              />
+            ),
+          )}
+    </div>
+  );
+}
+
 export function InstagramFeedSection() {
   const { locale } = useLocale();
-  const [expanded, setExpanded] = useState(false);
   const panelId = useId();
-  const count = expanded ? EXPANDED_POSTS : INITIAL_POSTS;
+  const [posts, setPosts] = useState<(FeedPost | null)[]>(() =>
+    Array.from({ length: GRID_SIZE }, () => null),
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/instagram/feed", {
+          credentials: "same-origin",
+        });
+        const data = (await res.json()) as {
+          posts?: FeedPost[];
+        };
+        const list = Array.isArray(data.posts) ? data.posts : [];
+        const padded: (FeedPost | null)[] = Array.from(
+          { length: GRID_SIZE },
+          (_, i) => list[i] ?? null,
+        );
+        if (!cancelled) setPosts(padded);
+      } catch {
+        if (!cancelled)
+          setPosts(Array.from({ length: GRID_SIZE }, () => null));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <section
       aria-label={t(locale, "page.home.instagramAria")}
       className="border-t border-border bg-paper-dark/30"
     >
-      <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
+      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
           <div className="flex min-w-0 flex-1 items-center gap-5 sm:gap-6">
             <a
@@ -50,7 +139,7 @@ export function InstagramFeedSection() {
                   >
                     @
                   </span>
-                  <span className="text-xl font-bold tracking-[0.16em] text-ink group-hover:text-ink sm:text-2xl">
+                  <span className="text-xl font-bold tracking-[0.12em] text-ink group-hover:text-ink sm:text-2xl">
                     {INSTAGRAM_HANDLE.replace(/^@/, "")}
                   </span>
                 </a>
@@ -69,33 +158,12 @@ export function InstagramFeedSection() {
           </div>
         </div>
 
-        <div
-          id={panelId}
-          className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4"
-          aria-live="polite"
-        >
-          {Array.from({ length: count }, (_, i) => (
-            <div
-              key={i}
-              className="aspect-square rounded-none border border-dashed border-border bg-paper-dark/40 ring-1 ring-border/60"
-              aria-hidden
-            />
-          ))}
-        </div>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          <button
-            type="button"
-            className="inline-flex items-center justify-center rounded-none border border-border bg-paper-dark/50 px-5 py-2.5 text-sm font-medium tracking-[0.12em] text-ink uppercase transition-colors hover:border-ink/25 hover:text-ink"
-            onClick={() => setExpanded((e) => !e)}
-            aria-expanded={expanded}
-            aria-controls={panelId}
-          >
-            {expanded
-              ? t(locale, "page.home.instagramShowLess")
-              : t(locale, "page.home.instagramShowMore")}
-          </button>
-        </div>
+        <InstagramFeedGrid
+          posts={posts}
+          loading={loading}
+          panelId={panelId}
+          locale={locale}
+        />
       </div>
     </section>
   );

@@ -1,8 +1,9 @@
-/** Public Instagram profile — update when the account is live. */
-export const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/elportero/";
+/** Public Instagram profile. */
+export const INSTAGRAM_PROFILE_URL =
+  "https://www.instagram.com/elporterorestaurant/";
 
-/** Shown in UI (stylistic); URL uses the real handle without hyphen. */
-export const INSTAGRAM_HANDLE = "@EL-PORTERO";
+/** Shown in UI next to the Instagram icon and in the feed section. */
+export const INSTAGRAM_HANDLE = "@elporterorestaurant";
 
 /**
  * Restaurant booking line: digits only, country code included, no leading +.

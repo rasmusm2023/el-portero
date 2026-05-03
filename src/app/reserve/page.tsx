@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { ReservePage } from "@/views/ReservePage";
 
 export const metadata: Metadata = {
-  title: "Reservations",
+  title: "Book a table",
   description:
-    "Book a table at El Portero, Torrevieja — Mediterranean dining and warm hospitality.",
+    "Reserve a table at El Portero — seasonal cooking, warm service, and dinner-club evenings in Torrevieja.",
 };
 
 export default function Page() {

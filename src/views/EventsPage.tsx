@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { PageShell } from "@/components/layout/PageShell";
-import { publicEventFromDto, type HomeEvent, type PublicEventApiDto } from "@/lib/publicEventTypes";
-import { getApiBaseUrl } from "@/lib/apiBase";
+import { getSortedPublicEvents } from "@/data/publicEventsStatic";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -16,46 +15,7 @@ type EventsPageProps = {
 
 export function EventsPage({ heroImages }: EventsPageProps) {
   const { locale } = useLocale();
-  const [homeEvents, setHomeEvents] = useState<HomeEvent[] | null>(null);
-  const apiBase = getApiBaseUrl();
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch(`${apiBase}/api/events`, { method: "GET" });
-        if (!r.ok) {
-          setHomeEvents([]);
-          return;
-        }
-        const data = (await r.json()) as PublicEventApiDto[];
-        setHomeEvents(data.map(publicEventFromDto));
-      } catch {
-        setHomeEvents([]);
-      }
-    })();
-  }, [apiBase]);
-
-  if (homeEvents === null) {
-    return (
-      <>
-        <PageHeroSection heroImages={heroImages}>
-          <h1 className="font-hero-title text-[clamp(2.25rem,6vw,4.25rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
-            {t(locale, "page.events.title")}
-          </h1>
-          <p className="mx-auto mt-8 max-w-2xl font-sans text-base leading-[1.75] text-paper/85 sm:mt-10 sm:text-lg">
-            {t(locale, "page.events.heroSubtitle")}
-          </p>
-        </PageHeroSection>
-        <PageShell showDocumentHeader={false}>
-          <p className="text-ink-muted">
-            {locale === "es" ? "Cargando…" : locale === "sv" ? "Laddar…" : "Loading…"}
-          </p>
-        </PageShell>
-      </>
-    );
-  }
-
-  const sorted = [...homeEvents].sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+  const sorted = useMemo(() => getSortedPublicEvents(), []);
 
   return (
     <>
