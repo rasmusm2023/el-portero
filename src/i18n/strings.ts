@@ -566,7 +566,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsapp": "WhatsApp",
     "footer.whatsappAria": "Abrir chat de WhatsApp con El Portero",
     "footer.tagline":
-      "Alta cocina en la Costa Blanca con pulso de club — generosidad latina en la mesa, rigor nórdico en cocina y el mar a un paseo.",
+      "Alta cocina en la Costa Blanca con el pulso de un dinner club — generosidad latina en la mesa, disciplina nórdica en cocina y el mar a un paseo.",
     "footer.links": "Enlaces rápidos",
     "footer.openInMaps": "Abrir en Google Maps",
     "header.menuLabel": "MENÚ",
@@ -762,7 +762,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsapp": "WhatsApp",
     "footer.whatsappAria": "Öppna WhatsApp-chatt med El Portero",
     "footer.tagline":
-      "Fin gastronomi på Costa Blanca med dinner club-puls — latinamerikansk generositet vid bordet, nordisk disciplin i köket och havet på promenadavstånd.",
+      "Fin gastronomi på Costa Blanca med dinner club-puls — latinamerikansk generositet vid bordet, nordisk disciplin i köket och havet inom gångavstånd.",
     "footer.links": "Snabblänkar",
     "footer.openInMaps": "Öppna i Google Maps",
     "header.menuLabel": "MENY",
