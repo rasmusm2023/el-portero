@@ -1,0 +1,52 @@
+rules_version = '2';
+
+/**
+ * WHY PUBLIC READS OFTEN FAIL UNTIL THIS FILE IS DEPLOYED
+ * — New Firestore databases default to deny-all until custom rules exist in the cloud (deploy or Console).
+ * — WRONG PATTERN (symptom: events load only while signed in as admin):
+ *     match /publicEvents/{id} { allow read, write: if isAdmin(); }
+ *   That blocks anonymous reads entirely. The site needs a separate allow read for published docs.
+ * — Rules are not filters: a query is rejected if it could return a document the user is not allowed to read.
+ *   So the web app uses `where('published', '==', true)` (sort in the app) and rules that allow
+ *   read when `published == true` (admins get full read via `admins/{uid}`).
+ * — That query needs the composite index in `firestore.indexes.json` (deploy indexes, or open the URL in
+ *   a “failed precondition” error — that usually means missing index, not a random bug).
+ * — Each live event should store `published: true` as a boolean (save from admin once).
+ *
+ * Deploy: `firebase deploy --only firestore:rules,firestore:indexes` to the same project as NEXT_PUBLIC_*.
+ * Optional: `FIREBASE_SERVICE_ACCOUNT_JSON` enables `/api/public/events` only if the listener still errors.
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Matches `adminsStore.ts` — only allowlisted UIDs are admins. */
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /admins/{uid} {
+      allow get: if isSignedIn() && request.auth.uid == uid;
+      allow list: if false;
+      allow create, update, delete: if false;
+    }
+
+    match /publicEvents/{eventId} {
+      // Anonymous visitors: only published docs (see `subscribePublishedPublicEvents` query).
+      allow read: if resource.data.published == true;
+      // Admins: full list including drafts (`subscribeAdminPublicEvents`).
+      allow read: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /weeklyMenus/{docId} {
+      allow read: if resource.data.isPublished == true;
+      allow read: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

@@ -6,11 +6,13 @@ function toYmd(d: Date) {
 }
 
 /**
- * Returns Monday (YYYY-MM-DD) for the current week in Europe/Madrid.
+ * Returns the Saturday (YYYY-MM-DD) that anchors the current lunch week in Europe/Madrid.
+ * Lunch is Mon–Fri; menus roll on Saturdays, so the saved `weekStartDate` / `effectiveWeekStartDate`
+ * use that Saturday as the week key (not Monday).
+ *
  * Implemented with Intl to avoid server timezone differences.
  */
-export function getMadridWeekStartYmd(now = new Date()) {
-  // Get Madrid local date parts
+export function getMadridLunchWeekSaturdayYmd(now = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Madrid",
     year: "numeric",
@@ -23,9 +25,8 @@ export function getMadridWeekStartYmd(now = new Date()) {
   const year = Number(get("year"));
   const month = Number(get("month"));
   const day = Number(get("day"));
-  const weekday = get("weekday"); // Mon, Tue...
+  const weekday = get("weekday");
 
-  // Construct a date in local runtime timezone, but with Madrid's calendar date.
   const madridDate = new Date(year, month - 1, day);
 
   const map: Record<string, number> = {
@@ -39,10 +40,15 @@ export function getMadridWeekStartYmd(now = new Date()) {
   };
   const dow = map[weekday] ?? madridDate.getDay();
 
-  // Monday = 1. If Sunday (0), go back 6 days.
-  const diff = dow === 0 ? 6 : dow - 1;
+  // JS weekday Sun=0 … Sat=6. Step back to the most recent Saturday (Sat → 0 days).
+  const diff = (dow + 1) % 7;
   madridDate.setDate(madridDate.getDate() - diff);
 
   return toYmd(madridDate);
+}
+
+/** @deprecated Use {@link getMadridLunchWeekSaturdayYmd} (lunch week is Saturday-anchored). */
+export function getMadridWeekStartYmd(now = new Date()) {
+  return getMadridLunchWeekSaturdayYmd(now);
 }
 

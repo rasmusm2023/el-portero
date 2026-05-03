@@ -9,7 +9,12 @@ type LocationMapEmbedProps = {
   className?: string;
 };
 
-/** Map iframe only — full-bleed; no frame chrome (Google’s own embed UI remains). */
+/**
+ * Map iframe only — full-bleed; no frame chrome (Google’s own embed UI remains).
+ *
+ * Browsers may log CSP / “partitioned cookie” notices for third-party Google embeds; that is normal
+ * and not controlled by this app’s code unless you replace the embed with a static map image + link.
+ */
 export function LocationMapEmbed({ locale, className }: LocationMapEmbedProps) {
   const embedSrc = googleMapsEmbedUrl();
 
@@ -25,7 +30,7 @@ export function LocationMapEmbed({ locale, className }: LocationMapEmbedProps) {
           src={embedSrc}
           className="absolute inset-0 h-full w-full border-0"
           loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
+          referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
       </div>

@@ -1,13 +1,17 @@
 import type { HomeEvent } from "@/lib/publicEventTypes";
 
 /**
- * Public events shown on the home page and /events.
- * When the kitchen or owners send updates, edit this array and redeploy.
+ * Reference sample events (not used by the live site). The home page and /events load **published**
+ * documents from Firestore only (`usePublicEvents`). Keep this file for fixtures or local experiments.
  */
 export const PUBLIC_EVENTS_STATIC: HomeEvent[] = [
   {
     id: "mock-coastal-tasting-2026",
     sortDate: "2026-05-24",
+    published: true,
+    timeSlotStart: "19:30",
+    timeSlotEnd: "23:00",
+    eventPlace: "Torrevieja",
     fullyBooked: true,
     weekdayDate: {
       en: "Saturday 24 May",
@@ -15,9 +19,9 @@ export const PUBLIC_EVENTS_STATIC: HomeEvent[] = [
       sv: "Lördag 24 maj",
     },
     timeDetail: {
-      en: "19:30 · Torrevieja",
-      es: "19:30 · Torrevieja",
-      sv: "19:30 · Torrevieja",
+      en: "19:30-23:00 · Torrevieja",
+      es: "19:30-23:00 · Torrevieja",
+      sv: "19:30-23:00 · Torrevieja",
     },
     title: {
       en: "Coastal tasting — five courses & paired wines",
@@ -40,6 +44,10 @@ export const PUBLIC_EVENTS_STATIC: HomeEvent[] = [
   {
     id: "wc-2026-opening-night",
     sortDate: "2026-06-11",
+    published: true,
+    timeSlotStart: "17:30",
+    timeSlotEnd: "23:30",
+    eventPlace: "Torrevieja",
     fullyBooked: false,
     weekdayDate: {
       en: "Thursday 11 June",
@@ -47,9 +55,9 @@ export const PUBLIC_EVENTS_STATIC: HomeEvent[] = [
       sv: "Torsdag 11 juni",
     },
     timeDetail: {
-      en: "From 17:30 · Opening match on screen",
-      es: "Desde las 17:30 · Partido inaugural en pantalla",
-      sv: "Från 17.30 · Öppningsmatch på skärm",
+      en: "17:30-23:30 · Torrevieja",
+      es: "17:30-23:30 · Torrevieja",
+      sv: "17:30-23:30 · Torrevieja",
     },
     title: {
       en: "World Cup kicks off — opening night at the bar",

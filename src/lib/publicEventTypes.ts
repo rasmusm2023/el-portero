@@ -2,9 +2,21 @@ import type { Locale } from "@/i18n/strings";
 
 export type LocaleTrio = Record<Locale, string>;
 
+/** Defaults for new events / editor (keep aligned with `eventSchedule.ts` helpers). */
+export const DEFAULT_EVENT_TIME_START = "19:30";
+export const DEFAULT_EVENT_TIME_END = "23:00";
+export const DEFAULT_EVENT_PLACE = "Torrevieja";
+
 export type HomeEvent = {
   id: string;
   sortDate: string;
+  /** When false, hidden on the public site (draft). Missing in older Firestore docs = published. */
+  published?: boolean;
+  /** HH:mm (24h). Drives the shared `timeDetail` line together with `timeSlotEnd` and `eventPlace`. */
+  timeSlotStart?: string;
+  timeSlotEnd?: string;
+  /** Appended after times in `timeDetail` (same for all locales). */
+  eventPlace?: string;
   fullyBooked?: boolean;
   weekdayDate: LocaleTrio;
   timeDetail: LocaleTrio;
@@ -31,6 +43,7 @@ export function publicEventFromDto(d: PublicEventApiDto): HomeEvent {
   return {
     id: d.id,
     sortDate: d.sortDate,
+    published: true,
     fullyBooked: d.fullyBooked,
     weekdayDate: { en: d.weekdayDate.en, es: d.weekdayDate.es, sv: d.weekdayDate.sv },
     timeDetail: { en: d.timeDetail.en, es: d.timeDetail.es, sv: d.timeDetail.sv },
@@ -45,6 +58,10 @@ export function toUpsertBody(ev: HomeEvent) {
   return {
     id: ev.id,
     sortDate: ev.sortDate,
+    published: ev.published !== false,
+    timeSlotStart: ev.timeSlotStart ?? DEFAULT_EVENT_TIME_START,
+    timeSlotEnd: ev.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
+    eventPlace: ev.eventPlace ?? DEFAULT_EVENT_PLACE,
     fullyBooked: ev.fullyBooked ?? false,
     weekdayDate: { en: ev.weekdayDate.en, es: ev.weekdayDate.es, sv: ev.weekdayDate.sv },
     timeDetail: { en: ev.timeDetail.en, es: ev.timeDetail.es, sv: ev.timeDetail.sv },
@@ -57,12 +74,17 @@ export function toUpsertBody(ev: HomeEvent) {
 
 export function emptyHomeEvent(ymd: string): HomeEvent {
   const empty = (v: string): LocaleTrio => ({ en: v, es: v, sv: v });
+  const line = `${DEFAULT_EVENT_TIME_START}-${DEFAULT_EVENT_TIME_END} · ${DEFAULT_EVENT_PLACE}`;
   return {
     id: "",
     sortDate: ymd,
+    published: true,
+    timeSlotStart: DEFAULT_EVENT_TIME_START,
+    timeSlotEnd: DEFAULT_EVENT_TIME_END,
+    eventPlace: DEFAULT_EVENT_PLACE,
     fullyBooked: false,
     weekdayDate: empty(""),
-    timeDetail: empty(""),
+    timeDetail: empty(line),
     title: empty(""),
     excerpt: empty(""),
     imageSrc: "",

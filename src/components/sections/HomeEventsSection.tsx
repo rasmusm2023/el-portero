@@ -4,7 +4,7 @@ import { useMemo, useRef } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
 import { OpeningHoursCard } from "@/components/OpeningHoursCard";
-import { getSortedPublicEvents } from "@/data/publicEventsStatic";
+import { usePublicEvents } from "@/hooks/usePublicEvents";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -13,7 +13,8 @@ export function HomeEventsSection() {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useMemo(() => new Map<string, HTMLLIElement>(), []);
 
-  const sorted = useMemo(() => getSortedPublicEvents(), []);
+  const { events, ready } = usePublicEvents();
+  const sorted = useMemo(() => events, [events]);
 
   return (
     <section
@@ -44,7 +45,11 @@ export function HomeEventsSection() {
             </header>
 
             <div className="relative mt-10 w-full lg:mt-12">
-              {sorted.length === 0 ? (
+              {!ready ? (
+                <p className="max-w-md text-base text-ink-muted leading-relaxed">
+                  {t(locale, "page.home.eventsLoading")}
+                </p>
+              ) : sorted.length === 0 ? (
                 <p className="max-w-md text-base text-ink-muted leading-relaxed">
                   {t(locale, "page.home.eventsEmpty")}
                 </p>
@@ -116,12 +121,23 @@ export function HomeEventsSection() {
                               </p>
                             </div>
                             <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-                              <Link
-                                href="/reserve"
-                                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink bg-ink px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:px-4 sm:py-2.5 sm:text-xs"
-                              >
-                                {t(locale, "nav.reserve")}
-                              </Link>
+                              {ev.fullyBooked ? (
+                                <button
+                                  type="button"
+                                  disabled
+                                  className="inline-flex shrink-0 cursor-not-allowed items-center justify-center rounded-lg border border-border bg-ink/10 px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-ink-muted uppercase opacity-80 sm:px-4 sm:py-2.5 sm:text-xs"
+                                  aria-disabled="true"
+                                >
+                                  {t(locale, "page.reserve.fullyBooked")}
+                                </button>
+                              ) : (
+                                <Link
+                                  href="/reserve"
+                                  className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink bg-ink px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:px-4 sm:py-2.5 sm:text-xs"
+                                >
+                                  {t(locale, "nav.reserve")}
+                                </Link>
+                              )}
                               <Link
                                 href="/events"
                                 className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink/30 bg-paper px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-ink uppercase transition-colors hover:border-ink hover:bg-ink hover:text-paper sm:px-4 sm:py-2.5 sm:text-xs"

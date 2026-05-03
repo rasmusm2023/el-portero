@@ -5,7 +5,7 @@ import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { PageShell } from "@/components/layout/PageShell";
-import { getSortedPublicEvents } from "@/data/publicEventsStatic";
+import { usePublicEvents } from "@/hooks/usePublicEvents";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -15,7 +15,8 @@ type EventsPageProps = {
 
 export function EventsPage({ heroImages }: EventsPageProps) {
   const { locale } = useLocale();
-  const sorted = useMemo(() => getSortedPublicEvents(), []);
+  const { events, ready } = usePublicEvents();
+  const sorted = useMemo(() => events, [events]);
 
   return (
     <>
@@ -77,7 +78,11 @@ export function EventsPage({ heroImages }: EventsPageProps) {
             {t(locale, "page.events.listHeading")}
           </h2>
 
-          {sorted.length === 0 ? (
+          {!ready ? (
+            <div className="mt-8 px-2 text-ink-muted sm:text-lg">
+              {t(locale, "page.events.listLoading")}
+            </div>
+          ) : sorted.length === 0 ? (
             <div className="mt-8 rounded-none border border-dashed border-border bg-paper-dark/50 px-6 py-12 text-center">
               <p className="text-ink-muted sm:text-lg">{t(locale, "page.events.listEmpty")}</p>
             </div>
@@ -105,11 +110,6 @@ export function EventsPage({ heroImages }: EventsPageProps) {
                           <p className="text-xs font-semibold tracking-[0.18em] text-ink-muted/90 uppercase">
                             {ev.timeDetail[locale]}
                           </p>
-                          {ev.fullyBooked ? (
-                            <span className="inline-flex items-center rounded-full border border-border bg-paper px-2.5 py-1 text-[0.7rem] font-semibold tracking-[0.18em] text-ink uppercase">
-                              {t(locale, "page.reserve.fullyBooked")}
-                            </span>
-                          ) : null}
                         </div>
                         <h2 className="mt-3 font-display text-2xl font-medium text-ink sm:text-3xl">
                           {ev.title[locale]}
@@ -117,12 +117,23 @@ export function EventsPage({ heroImages }: EventsPageProps) {
                         <p className="mt-4 text-ink-muted leading-relaxed">{ev.excerpt[locale]}</p>
                       </div>
                       <div className="mt-8 flex flex-wrap gap-2.5">
-                        <Link
-                          href="/reserve"
-                          className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink bg-ink px-4 py-2.5 text-xs font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:text-sm"
-                        >
-                          {t(locale, "nav.reserve")}
-                        </Link>
+                        {ev.fullyBooked ? (
+                          <button
+                            type="button"
+                            disabled
+                            className="inline-flex shrink-0 cursor-not-allowed items-center justify-center rounded-lg border border-border bg-ink/10 px-4 py-2.5 text-xs font-semibold tracking-[0.2em] text-ink-muted uppercase opacity-80 sm:text-sm"
+                            aria-disabled="true"
+                          >
+                            {t(locale, "page.reserve.fullyBooked")}
+                          </button>
+                        ) : (
+                          <Link
+                            href="/reserve"
+                            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink bg-ink px-4 py-2.5 text-xs font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:text-sm"
+                          >
+                            {t(locale, "nav.reserve")}
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>

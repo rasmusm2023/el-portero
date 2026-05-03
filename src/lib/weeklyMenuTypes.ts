@@ -8,7 +8,7 @@ export type WeeklyMenuItem = {
 
 export type WeeklyMenu = {
   weekStartDate: string; // YYYY-MM-DD
-  effectiveWeekStartDate: string; // YYYY-MM-DD (Monday, Europe/Madrid)
+  effectiveWeekStartDate: string; // YYYY-MM-DD (Saturday anchor, Europe/Madrid — Mon–Fri lunch block)
   title: string;
   isPublished: boolean;
   updatedAtUtc: string;

@@ -19,6 +19,7 @@ export function HomePage({ heroImages = [] }: HomePageProps) {
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeroSection
         heroImages={heroImages}
+        accentVideo
         bottomCta={
           <Link
             href="/menu"

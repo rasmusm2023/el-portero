@@ -101,8 +101,16 @@ function overlayNavLinkClass(
 const headerInnerMax =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
+/** Square “double frame”: 2px ink, 2px paper gap, 2px outer ink (no rounding). */
 const bookTableNavButtonClass =
-  "inline-flex max-w-[min(11.5rem,calc(100vw-8rem))] shrink-0 items-center justify-center truncate rounded-lg bg-[#3B495B] px-3 py-2 font-sans text-[11px] font-semibold tracking-[0.06em] text-paper shadow-[0_6px_20px_rgba(59,73,91,0.35)] ring-1 ring-[#3B495B]/40 transition-colors hover:bg-[#4a5d72] focus-visible:ring-2 focus-visible:ring-[#3B495B]/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper active:bg-[#344352] sm:max-w-none sm:px-5 sm:py-2.5 sm:text-sm sm:tracking-[0.08em]";
+  [
+    "inline-flex max-w-[min(11.5rem,calc(100%-2rem))] shrink-0 items-center justify-center truncate rounded-none",
+    "bg-paper px-3 py-2 font-sans text-[11px] font-semibold tracking-[0.06em] text-ink",
+    "shadow-[0_0_0_2px_var(--color-ink),0_0_0_4px_var(--color-paper),0_0_0_6px_var(--color-ink)]",
+    "transition-[color,background-color,box-shadow] hover:bg-paper-dark/50",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/45 focus-visible:ring-offset-[8px] focus-visible:ring-offset-paper",
+    "sm:max-w-none sm:px-5 sm:py-2.5 sm:text-sm sm:tracking-[0.08em]",
+  ].join(" ");
 
 /** Below fixed header bar (see `--header-h` in design-system.css, includes faded rule). */
 const navOverlayTopClass = "top-[var(--header-h)]";
@@ -274,7 +282,7 @@ export function SiteHeader() {
 
           <HeaderFadedRule />
 
-          <div className={`flex items-center py-0 ${headerInnerMax}`}>
+          <div className={`flex items-center py-3 ${headerInnerMax}`}>
             <div className="min-w-0 flex-1" aria-hidden />
             <nav
               className="flex flex-wrap items-stretch justify-center gap-x-16 gap-y-0 sm:gap-x-20"

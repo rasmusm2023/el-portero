@@ -7,10 +7,11 @@
     color-scheme: light;
     /* Avoid horizontal jump when scrollbars appear/disappear (e.g. menu open). */
     scrollbar-gutter: stable;
+    overflow-x: clip;
   }
 
   body {
-    @apply text-ink font-sans text-base font-normal leading-relaxed;
+    @apply overflow-x-clip text-ink font-sans text-base font-normal leading-relaxed;
     background-color: var(--color-paper);
     background-image: var(--bg-paper-texture);
   }

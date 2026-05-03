@@ -1,11 +1,76 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
-const GALLERY_ROUNDED =
-  "rounded-2xl sm:rounded-3xl shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10";
+/** Subtle vertical parallax inside the crop; respects `prefers-reduced-motion`. */
+function GalleryParallaxImage({
+  src,
+  alt,
+  sizes,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+
+    let raf = 0;
+    const strength = 0.3;
+
+    const tick = () => {
+      const wrap = wrapRef.current;
+      if (!wrap) return;
+      const img = wrap.querySelector("img");
+      if (!img) return;
+      const rect = wrap.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const centerOffset = rect.top + rect.height / 2 - vh / 2;
+      const y = (-centerOffset / vh) * rect.height * strength;
+      img.style.transform = `translate3d(0,${y.toFixed(2)}px,0) scale(1.18)`;
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(tick);
+    };
+
+    tick();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(raf);
+      const wrap = wrapRef.current;
+      const img = wrap?.querySelector("img");
+      if (img) img.style.removeProperty("transform");
+    };
+  }, []);
+
+  return (
+    <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="scale-[1.18] object-cover will-change-transform"
+        sizes={sizes}
+      />
+    </div>
+  );
+}
+
+const GALLERY_IMAGE_FRAME =
+  "shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10";
 
 const ROWS: {
   src: string;
@@ -36,12 +101,12 @@ const ROWS: {
 
 /**
  * Repeating trio: portrait anchor → wide panoramic → tall narrow.
- * Keeps alternating image/caption sides for continuity.
+ * Alternates image/caption sides; first row image is on the **right** (clearer space under the hero video).
  */
 const RHYTHM = [
   {
     row: "",
-    image: `relative z-0 aspect-[4/5] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[4/5] md:w-[54%] md:max-w-none ${GALLERY_ROUNDED}`,
+    image: `relative z-0 aspect-[4/5] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[4/5] md:w-[54%] md:max-w-none ${GALLERY_IMAGE_FRAME}`,
     sizes: "(max-width: 768px) 100vw, 52vw",
     caption:
       "relative z-10 flex w-full flex-1 items-center md:w-0 md:min-w-0 md:py-4",
@@ -50,7 +115,7 @@ const RHYTHM = [
   },
   {
     row: "md:items-center",
-    image: `relative z-0 aspect-[5/4] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[16/10] md:w-[66%] md:max-w-none ${GALLERY_ROUNDED}`,
+    image: `relative z-0 aspect-[5/4] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[16/10] md:w-[66%] md:max-w-none ${GALLERY_IMAGE_FRAME}`,
     sizes: "(max-width: 768px) 100vw, 64vw",
     caption:
       "relative z-10 flex w-full flex-1 items-center md:w-0 md:min-w-0 md:self-stretch md:py-2",
@@ -59,7 +124,7 @@ const RHYTHM = [
   },
   {
     row: "",
-    image: `relative z-0 aspect-[3/4] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[3/5] md:w-[38%] md:max-w-none ${GALLERY_ROUNDED}`,
+    image: `relative z-0 aspect-[3/4] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[3/5] md:w-[38%] md:max-w-none ${GALLERY_IMAGE_FRAME}`,
     sizes: "(max-width: 768px) 100vw, 38vw",
     caption:
       "relative z-10 flex w-full flex-1 items-center md:w-0 md:min-w-0 md:py-4",
@@ -83,7 +148,7 @@ export function GallerySection() {
       <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="mt-0 flex flex-col gap-14 md:gap-17 lg:gap-24">
           {ROWS.map((row, i) => {
-            const imageLeft = i % 2 === 0;
+            const imageLeft = i % 2 === 1;
             const beat = RHYTHM[i % RHYTHM.length] ?? RHYTHM[0];
             const overlap = imageLeft ? beat.captionBox : beat.captionBoxRev;
             return (
@@ -94,11 +159,9 @@ export function GallerySection() {
                 <div
                   className={`${beat.image} ${imageLeft ? "" : "md:order-2"}`}
                 >
-                  <Image
+                  <GalleryParallaxImage
                     src={row.src}
                     alt={t(locale, row.altKey)}
-                    fill
-                    className="object-cover"
                     sizes={beat.sizes}
                   />
                 </div>

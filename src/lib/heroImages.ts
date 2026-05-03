@@ -19,9 +19,12 @@ function readImageDir(...segments: string[]): string[] {
   }
 }
 
-/** Paths under `/images/` for files in `public/images` (sorted, for hero slideshow). */
+/** Single launch hero — `public/images/home-hero-img.jpg`. */
+const LAUNCH_HERO_IMAGE = "/images/home-hero-img.jpg";
+
+/** Home (and demo) hero slideshow: one image for launch. */
 export function getHeroSlideImages(): string[] {
-  return readImageDir("images");
+  return [LAUNCH_HERO_IMAGE];
 }
 
 /**

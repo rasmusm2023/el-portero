@@ -3,17 +3,17 @@
 import { LunchMenuItemsList } from "@/components/menu/LunchMenuItemsList";
 import { useWeeklyMenuCurrent } from "@/lib/weeklyMenuApi";
 import { getIsoWeekNumberFromYmd } from "@/lib/isoWeek";
-import { getMadridWeekStartYmd } from "@/lib/madridWeek";
+import { getMadridLunchWeekSaturdayYmd } from "@/lib/madridWeek";
 import { useLocale } from "@/i18n/useLocale";
 import { t, weeklyMenuWeekTitle } from "@/i18n/strings";
 
-/** Home split-panel expansion: same lunch as `/menu/weekly` (`src/data/weeklyMenuStatic.ts`). */
+/** Home split-panel expansion: same lunch as `/menu/weekly` (Saturday-anchored week in `weeklyMenuStatic`). */
 export function LunchMenuExpandedPreview() {
   const { locale } = useLocale();
   const { menu, ready } = useWeeklyMenuCurrent();
 
   const weekYmd =
-    menu?.effectiveWeekStartDate || menu?.weekStartDate || getMadridWeekStartYmd();
+    menu?.effectiveWeekStartDate || menu?.weekStartDate || getMadridLunchWeekSaturdayYmd();
   const isoWeek = getIsoWeekNumberFromYmd(weekYmd);
 
   return (
