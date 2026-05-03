@@ -1,19 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { PageShell } from "@/components/layout/PageShell";
 import { adminBtnBlue, adminBtnCaution, adminBtnGreen, adminBtnNeutral, adminCalloutSuccess } from "@/lib/adminUiStyles";
-import { getApiBaseUrl } from "@/lib/apiBase";
 import {
   emptyHomeEvent,
-  publicEventFromDto,
   toUpsertBody,
   type HomeEvent,
-  type PublicEventApiDto,
 } from "@/lib/publicEventTypes";
-
-type AuthState = { status: "unknown" } | { status: "logged_out" } | { status: "logged_in" };
+import { unknownErrorMessage } from "@/lib/unknownErrorMessage";
+import { getFirebaseFirestore } from "@/lib/firebase/client";
+import { removePublicEvent, subscribeAdminPublicEvents, upsertPublicEvent } from "@/lib/firebase/eventsStore";
 
 const LOCALE = [
   { k: "en" as const, label: "EN" },
@@ -23,17 +23,6 @@ const LOCALE = [
 
 function todayYmd() {
   return new Date().toISOString().slice(0, 10);
-}
-
-async function readApiError(r: Response): Promise<string> {
-  const t = await r.text();
-  if (!t) return `Request failed (${r.status}).`;
-  try {
-    const j = JSON.parse(t) as { detail?: string; title?: string; message?: string };
-    return j.detail ?? j.title ?? j.message ?? t;
-  } catch {
-    return t;
-  }
 }
 
 function cloneHomeEvent(e: HomeEvent): HomeEvent {
@@ -103,10 +92,8 @@ function LocaleBlock({
 }
 
 export function EventsAdminPage() {
-  const apiBase = getApiBaseUrl();
-  const [auth, setAuth] = useState<AuthState>({ status: "unknown" });
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin");
+  const router = useRouter();
+  const { user, ready, signOutUser } = useAdminAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -124,94 +111,33 @@ export function EventsAdminPage() {
   );
 
   const load = useCallback(async () => {
-    setError(null);
-    const r = await fetch(`${apiBase}/api/admin/events`, { credentials: "include" });
-    if (r.status === 401) {
-      setAuth({ status: "logged_out" });
-      return;
-    }
-    if (!r.ok) {
-      if (r.status === 404) {
-        setError(
-          "Could not load events (404). The API at " +
-            apiBase +
-            " has no /api/admin/events route — usually the .NET app needs a rebuild and restart, or the wrong API URL is in NEXT_PUBLIC_API_BASE_URL.",
-        );
-      } else {
-        setError(`Could not load events (${r.status}).`);
-      }
-      return;
-    }
-    const data = (await r.json()) as PublicEventApiDto[];
-    setRows(data.map(publicEventFromDto));
-  }, [apiBase]);
+    // No-op: Firestore is live-subscribed via onSnapshot below.
+  }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch(`${apiBase}/api/admin/events`, { credentials: "include" });
-        if (r.status === 401) {
-          setAuth({ status: "logged_out" });
-          return;
-        }
-        if (r.status === 404) {
-          setAuth({ status: "logged_in" });
-          setError(
-            "Could not load events (404). The API at " +
-              apiBase +
-              " has no /api/admin/events route — usually the .NET app needs a rebuild and restart, or the wrong API URL is in NEXT_PUBLIC_API_BASE_URL.",
-          );
-          return;
-        }
-        if (!r.ok) {
-          setAuth({ status: "logged_in" });
-          setError(`Could not load events (${r.status}).`);
-          return;
-        }
-        setError(null);
-        setAuth({ status: "logged_in" });
-        setRows(
-          (await r.json() as PublicEventApiDto[]).map(publicEventFromDto),
-        );
-      } catch {
-        setAuth({ status: "logged_out" });
-      }
-    })();
-  }, [apiBase]);
-
-  async function onLogin() {
+    if (!ready || !user) return;
     setError(null);
-    setMessage(null);
-    setBusy(true);
-    try {
-      const r = await fetch(`${apiBase}/api/auth/login`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
-      if (!r.ok) {
-        setAuth({ status: "logged_out" });
-        setError("Invalid credentials.");
-        return;
-      }
-      setAuth({ status: "logged_in" });
-      setMessage("Signed in.");
-      await load();
-    } catch {
-      setError("Login failed (network error).");
-    } finally {
-      setBusy(false);
-    }
-  }
+    const db = getFirebaseFirestore();
+    const unsub = subscribeAdminPublicEvents(
+      db,
+      (events) => {
+        setRows(events);
+      },
+      (err) => {
+        console.error(err);
+        setError(unknownErrorMessage(err, "Could not load events from Firestore."));
+      },
+    );
+    return () => unsub();
+  }, [ready, user]);
 
   async function onLogout() {
     setError(null);
     setBusy(true);
     try {
-      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      await signOutUser();
+      router.push("/admin");
     } finally {
-      setAuth({ status: "logged_out" });
       setBusy(false);
     }
   }
@@ -256,69 +182,19 @@ export function EventsAdminPage() {
     setBusy(true);
     try {
       const body = toUpsertBody(draftToSave);
-      if (isNew) {
-        const r = await fetch(`${apiBase}/api/admin/events`, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify(body),
-        });
-        if (r.status === 401) {
-          setAuth({ status: "logged_out" });
-          setError("Not signed in.");
-          return;
-        }
-        if (r.status === 409) {
-          setError("An event with this id already exists. Choose another id or open it to edit.");
-          return;
-        }
-        if (!r.ok) {
-          setError(await readApiError(r));
-          return;
-        }
-        const created = (await r.json()) as PublicEventApiDto;
-        const ev = publicEventFromDto(created);
-        setRows((prev) =>
-          [...prev.filter((x) => x.id !== ev.id), ev].sort((a, b) =>
-            a.sortDate.localeCompare(b.sortDate),
-          ),
-        );
-        setDraft(ev);
-        setSavedBaseline(cloneHomeEvent(ev));
-        setIsNew(false);
-        setEditingId(ev.id);
-        setMessage("Event created.");
-      } else {
-        const r = await fetch(
-          `${apiBase}/api/admin/events/${encodeURIComponent(editingId ?? draftToSave.id)}`,
-          {
-            method: "PUT",
-            headers: { "content-type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({ ...body, id: body.id }),
-          },
-        );
-        if (r.status === 401) {
-          setAuth({ status: "logged_out" });
-          return;
-        }
-        if (!r.ok) {
-          setError(await readApiError(r));
-          return;
-        }
-        const updated = (await r.json()) as PublicEventApiDto;
-        const ev = publicEventFromDto(updated);
-        setRows((prev) =>
-          prev
-            .map((x) => (x.id === ev.id ? ev : x))
-            .sort((a, b) => a.sortDate.localeCompare(b.sortDate)),
-        );
-        setDraft(ev);
-        setSavedBaseline(cloneHomeEvent(ev));
-        setMessage("Event updated.");
-      }
-    } catch {
-      setError("Network error while saving.");
+      void body; // kept for shape parity with old API payloads
+
+      const db = getFirebaseFirestore();
+      await upsertPublicEvent(db, draftToSave);
+      const saved = cloneHomeEvent(draftToSave);
+      setDraft(saved);
+      setSavedBaseline(cloneHomeEvent(saved));
+      setIsNew(false);
+      setEditingId(saved.id);
+      setMessage(isNew ? "Event created." : "Event updated.");
+    } catch (err) {
+      console.error(err);
+      setError(unknownErrorMessage(err, "Network error while saving."));
     } finally {
       setBusy(false);
     }
@@ -331,29 +207,20 @@ export function EventsAdminPage() {
     setMessage(null);
     setBusy(true);
     try {
-      const r = await fetch(`${apiBase}/api/admin/events/${encodeURIComponent(editingId)}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (r.status === 401) {
-        setAuth({ status: "logged_out" });
-        return;
-      }
-      if (!r.ok) {
-        setError(`Delete failed (${r.status}).`);
-        return;
-      }
+      const db = getFirebaseFirestore();
+      await removePublicEvent(db, editingId);
       setMessage("Event deleted.");
       startNew();
       await load();
-    } catch {
-      setError("Network error while deleting.");
+    } catch (err) {
+      console.error(err);
+      setError(unknownErrorMessage(err, "Network error while deleting."));
     } finally {
       setBusy(false);
     }
   }
 
-  if (auth.status === "unknown") {
+  if (!ready || !user) {
     return (
       <PageShell title="Events" intro="Loading…">
         <p className="text-sm text-ink-muted">Checking sign-in…</p>
@@ -361,61 +228,15 @@ export function EventsAdminPage() {
     );
   }
 
-  if (auth.status === "logged_out") {
-    return (
-      <PageShell title="Events" intro="Sign in to manage public events.">
-        <div className="mb-4 flex flex-wrap gap-2 text-sm">
-          <Link href="/admin" className={`inline-flex items-center ${adminBtnNeutral}`}>
-            Back to sign-in
-          </Link>
-        </div>
-        <div className="max-w-sm space-y-3">
-          <div>
-            <label className="text-xs font-medium text-ink" htmlFor="ev-admin-user">
-              Username
-            </label>
-            <input
-              id="ev-admin-user"
-              className="mt-0.5 w-full border border-slate-300 bg-paper px-2 py-1.5 text-sm"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-ink" htmlFor="ev-admin-pass">
-              Password
-            </label>
-            <input
-              id="ev-admin-pass"
-              type="password"
-              className="mt-0.5 w-full border border-slate-300 bg-paper px-2 py-1.5 text-sm"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-            />
-          </div>
-          {error ? <p className="text-sm text-red-800">{error}</p> : null}
-          <button type="button" className={adminBtnBlue} onClick={onLogin} disabled={busy}>
-            Sign in
-          </button>
-        </div>
-      </PageShell>
-    );
-  }
-
   return (
     <PageShell
       title="Events"
-      intro="Create, edit, or delete public events. IDs are stable slugs (used in the API). Image URL can be from Media uploads or a direct https link."
+      intro="Create, edit, or delete public events. IDs are stable slugs. Image URL should be a direct https link."
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
       <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
         <Link href="/admin/dashboard" className={`inline-flex items-center ${adminBtnNeutral}`}>
           Dashboard
-        </Link>
-        <Link href="/admin/media" className={`inline-flex items-center ${adminBtnGreen}`}>
-          Media
         </Link>
         <button type="button" className={adminBtnCaution} onClick={onLogout} disabled={busy}>
           Sign out
@@ -582,7 +403,15 @@ export function EventsAdminPage() {
               {isNew ? "Create" : "Save changes"}
             </button>
             {!isNew && editingId ? (
-              <button type="button" className={adminBtnCaution} onClick={onDelete} disabled={busy}>
+              <button
+                type="button"
+                className={adminBtnCaution}
+                onClick={(e) => {
+                  e.preventDefault();
+                  void onDelete();
+                }}
+                disabled={busy}
+              >
                 Delete
               </button>
             ) : null}

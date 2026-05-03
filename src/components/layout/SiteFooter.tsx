@@ -19,13 +19,14 @@ export function SiteFooter() {
   const mapsHref = googleMapsSearchUrl();
 
   return (
-    <footer className="border-t border-border bg-ink text-paper">
+    <footer className="bg-ink text-paper">
       <div className="w-full border-b border-paper/10">
         <LocationMapEmbed locale={locale} />
       </div>
 
-      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-3">
+      <div className="w-full py-8">
+        <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <LogoWordmark size="footer" align="start" tone="onDark" />
             <p className="mt-3 max-w-md text-sm leading-relaxed text-paper/75">
@@ -138,13 +139,12 @@ export function SiteFooter() {
               </a>
             </div>
           </div>
-        </div>
-      </div>
+          </div>
 
-      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 pb-8 pt-0 sm:px-6 lg:px-8">
-        <p className="text-xs tracking-wide text-paper/55 uppercase">
-          © {new Date().getFullYear()} El Portero
-        </p>
+          <p className="mt-8 text-xs tracking-wide text-paper/55 uppercase">
+            © {new Date().getFullYear()} El Portero
+          </p>
+        </div>
       </div>
     </footer>
   );

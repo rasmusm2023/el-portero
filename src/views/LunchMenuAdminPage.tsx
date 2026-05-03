@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { PageShell } from "@/components/layout/PageShell";
-import { getApiBaseUrl } from "@/lib/apiBase";
 import {
-  adminBtnBlue,
   adminBtnCaution,
   adminBtnGreen,
   adminBtnNeutral,
@@ -15,14 +15,9 @@ import { LUNCH_DISH_SLOT_LABELS } from "@/lib/lunchDishSlots";
 import { getMadridWeekStartYmd } from "@/lib/madridWeek";
 import { addDaysToYmd, formatYmdLongEnglish } from "@/lib/madridMonday";
 import type { WeeklyMenu } from "@/lib/weeklyMenuTypes";
-
-type AuthState = "unknown" | "in" | "out";
-
-type LunchMenuStatus = {
-  madridWeekStart: string;
-  draft: WeeklyMenu;
-  live: WeeklyMenu | null;
-};
+import { getFirebaseFirestore } from "@/lib/firebase/client";
+import { readWeeklyMenuCurrent, setWeeklyMenuCurrentPublished, upsertWeeklyMenuCurrent } from "@/lib/firebase/weeklyMenuStore";
+import { unknownErrorMessage } from "@/lib/unknownErrorMessage";
 
 type DishDraft = {
   title: string;
@@ -58,12 +53,12 @@ function dishesFromMenu(menu: WeeklyMenu): DishDraft[] {
 }
 
 export function LunchMenuAdminPage() {
-  const apiBase = getApiBaseUrl();
+  const router = useRouter();
+  const { user, ready, signOutUser } = useAdminAuth();
   const madridMonday = useMemo(() => getMadridWeekStartYmd(), []);
   const nextMondayYmd = useMemo(() => addDaysToYmd(madridMonday, 7), [madridMonday]);
   const nextMondayLabel = useMemo(() => formatYmdLongEnglish(nextMondayYmd), [nextMondayYmd]);
 
-  const [auth, setAuth] = useState<AuthState>("unknown");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -75,97 +70,48 @@ export function LunchMenuAdminPage() {
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [visibleOnSiteNow, setVisibleOnSiteNow] = useState(false);
 
-  // login
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch(`${apiBase}/api/admin/lunch-menu`, { credentials: "include" });
-        setAuth(r.ok ? "in" : "out");
-      } catch {
-        setAuth("out");
-      }
-    })();
-  }, [apiBase]);
-
   async function load() {
     setError(null);
     setMessage(null);
     setBusy(true);
     try {
-      const r = await fetch(`${apiBase}/api/admin/lunch-menu`, { credentials: "include" });
-      if (r.status === 401) {
-        setAuth("out");
-        setError("Not signed in.");
+      const db = getFirebaseFirestore();
+      const menu = await readWeeklyMenuCurrent(db);
+      if (!menu) {
+        // First run: keep current UI state (empty draft) but set a sensible schedule.
+        setScheduleMode("nextMonday");
+        setPublished(false);
+        setUpdatedAt(null);
+        setVisibleOnSiteNow(false);
         return;
       }
-      if (!r.ok) {
-        setError(`Could not load lunch menu (${r.status}).`);
-        return;
-      }
-      const menu = (await r.json()) as WeeklyMenu;
       setTitle(menu.title ?? "");
       setPublished(Boolean(menu.isPublished));
       setUpdatedAt(menu.updatedAtUtc ?? null);
       const eff = menu.effectiveWeekStartDate || menu.weekStartDate || madridMonday;
       setScheduleMode(eff === madridMonday ? "immediate" : "nextMonday");
       setDishes(dishesFromMenu(menu));
-      await refreshStatus();
+      setVisibleOnSiteNow(Boolean(menu.isPublished) && eff === madridMonday);
+    } catch (err) {
+      console.error(err);
+      setError(unknownErrorMessage(err, "Could not load lunch menu from Firestore."));
     } finally {
       setBusy(false);
-    }
-  }
-
-  async function refreshStatus() {
-    try {
-      const r = await fetch(`${apiBase}/api/admin/lunch-menu/status`, { credentials: "include" });
-      if (!r.ok) return;
-      const s = (await r.json()) as LunchMenuStatus;
-      setVisibleOnSiteNow(Boolean(s.live));
-    } catch {
-      // ignore
     }
   }
 
   useEffect(() => {
-    if (auth !== "in") return;
+    if (!ready || !user) return;
     void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
-
-  async function onLogin() {
-    setError(null);
-    setMessage(null);
-    setBusy(true);
-    try {
-      const r = await fetch(`${apiBase}/api/auth/login`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
-      if (!r.ok) {
-        setError("Invalid credentials.");
-        return;
-      }
-      setAuth("in");
-      setMessage("Signed in.");
-    } catch (err) {
-      const detail = err instanceof Error && err.message ? ` (${err.message})` : "";
-      setError(`Could not reach the server${detail}. Is the API running?`);
-    } finally {
-      setBusy(false);
-    }
-  }
+  }, [ready, user]);
 
   async function onLogout() {
     setBusy(true);
     try {
-      await fetch(`${apiBase}/api/auth/logout`, { method: "POST", credentials: "include" });
+      await signOutUser();
+      router.push("/admin");
     } finally {
-      setAuth("out");
       setBusy(false);
     }
   }
@@ -193,41 +139,22 @@ export function LunchMenuAdminPage() {
         dietaryTags: d.dietaryTags?.trim() ?? "",
       }));
 
-      const r = await fetch(`${apiBase}/api/admin/lunch-menu`, {
-        method: "PUT",
-        headers: { "content-type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          effectiveWeekStartDate: effectiveYmd,
-          title,
-          items,
-        }),
-      });
-
-      if (r.status === 401) {
-        setAuth("out");
-        setError("Not signed in.");
-        return;
-      }
-      if (r.status === 400) {
-        const text = await r.text();
-        setError(text || "Could not save (invalid date).");
-        return;
-      }
-      if (!r.ok) {
-        setError(`Save failed (${r.status}).`);
-        return;
-      }
-
-      const menu = (await r.json()) as WeeklyMenu;
-      const eff = menu.effectiveWeekStartDate || menu.weekStartDate || madridMonday;
-      setScheduleMode(eff === madridMonday ? "immediate" : "nextMonday");
-      setPublished(Boolean(menu.isPublished));
-      setUpdatedAt(menu.updatedAtUtc ?? null);
-      await refreshStatus();
+      const db = getFirebaseFirestore();
+      const menu: WeeklyMenu = {
+        weekStartDate: effectiveYmd,
+        effectiveWeekStartDate: effectiveYmd,
+        title,
+        isPublished: published,
+        updatedAtUtc: "",
+        items,
+      };
+      await upsertWeeklyMenuCurrent(db, menu);
+      setUpdatedAt(null);
+      setVisibleOnSiteNow(Boolean(menu.isPublished) && effectiveYmd === madridMonday);
       setMessage("Saved as a draft. Guests won’t see it until you click “Publish”.");
-    } catch {
-      setError("Save failed (network error).");
+    } catch (err) {
+      console.error(err);
+      setError(unknownErrorMessage(err, "Save failed."));
     } finally {
       setBusy(false);
     }
@@ -238,82 +165,24 @@ export function LunchMenuAdminPage() {
     setMessage(null);
     setBusy(true);
     try {
-      const r = await fetch(`${apiBase}/api/admin/lunch-menu/publish`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ isPublished: nextPublished }),
-      });
-      if (r.status === 401) {
-        setAuth("out");
-        setError("Not signed in.");
-        return;
-      }
-      if (!r.ok) {
-        setError(`Publish failed (${r.status}).`);
-        return;
-      }
+      const db = getFirebaseFirestore();
+      await setWeeklyMenuCurrentPublished(db, nextPublished);
       setPublished(nextPublished);
-      await refreshStatus();
+      const effectiveYmd = scheduleMode === "immediate" ? madridMonday : nextMondayYmd;
+      setVisibleOnSiteNow(Boolean(nextPublished) && effectiveYmd === madridMonday);
       setMessage(nextPublished ? "Published." : "Unpublished (hidden from guests).");
-    } catch {
-      setError("Publish failed (network error).");
+    } catch (err) {
+      console.error(err);
+      setError(unknownErrorMessage(err, "Publish failed."));
     } finally {
       setBusy(false);
     }
   }
 
-  if (auth === "unknown") {
+  if (!ready || !user) {
     return (
       <PageShell title="Lunch menu" intro="Loading…">
         <p className="text-sm text-ink-muted">Checking sign-in…</p>
-      </PageShell>
-    );
-  }
-
-  if (auth === "out") {
-    return (
-      <PageShell
-        title="Lunch menu"
-        intro="Sign in to edit the lunch menu. If you don’t know the password, ask the site owner."
-      >
-        <div className="max-w-md space-y-6">
-          <div className="rounded-none border border-slate-300 border-l-4 border-l-sky-600 bg-sky-50/40 p-6">
-            <div className="grid gap-4">
-              <div>
-                <label className="block text-sm font-medium text-ink">Username</label>
-                <input
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
-                  autoComplete="username"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-ink">Password</label>
-                <input
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  type="password"
-                  className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
-                  autoComplete="current-password"
-                />
-              </div>
-            </div>
-            <button
-              type="button"
-              className={`mt-6 w-full ${adminBtnBlue}`}
-              onClick={onLogin}
-              disabled={busy}
-            >
-              Sign in
-            </button>
-          </div>
-
-          <Link href="/admin/dashboard" className="text-sm text-ink underline-offset-4 hover:underline">
-            Back to dashboard
-          </Link>
-        </div>
       </PageShell>
     );
   }

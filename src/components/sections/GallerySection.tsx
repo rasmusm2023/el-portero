@@ -26,7 +26,8 @@ const ROWS: {
     altKey: "page.gallery.imageAlt2",
   },
   {
-    src: "https://images.unsplash.com/photo-1577219491135-391e4fdf09bb?w=1400&q=85&auto=format&fit=crop",
+    // NOTE: Unsplash image IDs occasionally 404; keep a known-good fallback here.
+    src: "https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=1400&q=85&auto=format&fit=crop",
     captionKey: "page.gallery.caption3",
     bodyKey: "page.gallery.body3",
     altKey: "page.gallery.imageAlt3",
@@ -79,7 +80,7 @@ export function GallerySection() {
       <h2 id="gallery-heading" className="sr-only">
         {t(locale, "page.gallery.srHeading")}
       </h2>
-      <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
+      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="mt-0 flex flex-col gap-14 md:gap-17 lg:gap-24">
           {ROWS.map((row, i) => {
             const imageLeft = i % 2 === 0;

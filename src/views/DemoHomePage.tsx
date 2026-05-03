@@ -52,7 +52,7 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
       <PageHeroSection
         heroImages={heroImages}
         bottomAside={
-          <p className="max-w-[28rem] text-right font-sans text-xs font-medium tracking-[0.22em] text-paper/85 uppercase sm:text-sm">
+          <p className="max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3">
             {t(locale, "page.home.heroTagline")}
           </p>
         }

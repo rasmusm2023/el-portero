@@ -56,7 +56,7 @@ export function PageHeroSection({
               </div>
             ) : null}
             {bottomAside ? (
-              <div className="absolute inset-x-5 bottom-8 z-20 flex justify-end sm:inset-x-10 sm:bottom-10 lg:inset-x-14 xl:inset-x-20">
+              <div className="absolute inset-x-5 bottom-8 z-20 box-border flex w-full min-w-0 justify-end pr-7 sm:inset-x-10 sm:bottom-10 sm:pr-10 lg:inset-x-14 lg:pr-14 xl:inset-x-20 xl:pr-16 2xl:pr-20">
                 {bottomAside}
               </div>
             ) : null}

@@ -1,48 +1,26 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
 import { OpeningHoursCard } from "@/components/OpeningHoursCard";
-import { publicEventFromDto, type HomeEvent, type PublicEventApiDto } from "@/lib/publicEventTypes";
-import { getApiBaseUrl } from "@/lib/apiBase";
+import { getSortedPublicEvents } from "@/data/publicEventsStatic";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
 export function HomeEventsSection() {
   const { locale } = useLocale();
-  const [homeEvents, setHomeEvents] = useState<HomeEvent[] | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useMemo(() => new Map<string, HTMLLIElement>(), []);
 
-  const apiBase = getApiBaseUrl();
-  useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch(`${apiBase}/api/events`, { method: "GET" });
-        if (!r.ok) {
-          setHomeEvents([]);
-          return;
-        }
-        const data = (await r.json()) as PublicEventApiDto[];
-        setHomeEvents(data.map(publicEventFromDto));
-      } catch {
-        setHomeEvents([]);
-      }
-    })();
-  }, [apiBase]);
-
-  const sorted =
-    homeEvents === null
-      ? []
-      : [...homeEvents].sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+  const sorted = useMemo(() => getSortedPublicEvents(), []);
 
   return (
     <section
       aria-labelledby="home-events-heading"
       className="border-t border-border bg-paper"
     >
-      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-5 py-20 sm:px-10 sm:py-24 lg:px-14 xl:px-20">
+      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-14 xl:gap-16">
           <div className="min-w-0 flex-1">
             <header className="max-w-xl">
@@ -58,17 +36,15 @@ export function HomeEventsSection() {
               <div className="mt-6 flex flex-col items-start gap-2">
                 <Link
                   href="/events"
-                  className="text-sm font-semibold tracking-[0.2em] text-ink uppercase underline-offset-[0.35em] transition-colors hover:text-ink-muted"
+                  className="text-sm font-semibold tracking-[0.2em] text-ink uppercase underline decoration-ink/35 underline-offset-[0.35em] transition-colors hover:text-ink-muted hover:decoration-ink-muted"
                 >
                   {t(locale, "page.home.eventsViewAll")}
                 </Link>
               </div>
             </header>
 
-            <div className="relative mt-10 w-full max-w-[44rem] lg:mt-12">
-              {homeEvents === null ? (
-                <div className="min-h-[12rem] rounded-2xl border border-dashed border-border bg-paper-dark/20 sm:rounded-3xl" />
-              ) : sorted.length === 0 ? (
+            <div className="relative mt-10 w-full lg:mt-12">
+              {sorted.length === 0 ? (
                 <p className="max-w-md text-base text-ink-muted leading-relaxed">
                   {t(locale, "page.home.eventsEmpty")}
                 </p>
@@ -113,13 +89,13 @@ export function HomeEventsSection() {
                           {ev.weekdayDate[locale]}
                         </time>
 
-                        <article className="group flex w-full min-h-[13.5rem] flex-row overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:min-h-[15rem] sm:rounded-3xl">
+                        <article className="flex w-full min-h-[13.5rem] flex-row overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:min-h-[15rem] sm:rounded-3xl">
                           <div className="relative w-[44%] min-w-[9rem] max-w-[18rem] shrink-0 self-stretch bg-ink/5 sm:w-[46%] sm:min-w-[11rem] sm:max-w-[22rem] xl:max-w-[26rem]">
                             <EventImage
                               src={ev.imageSrc}
                               alt={ev.imageAlt[locale]}
                               fill
-                              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                              className="object-cover"
                               sizes="(max-width: 640px) 45vw, (max-width: 1024px) 280px, (max-width: 1280px) 320px, 380px"
                             />
                             <div
@@ -160,7 +136,7 @@ export function HomeEventsSection() {
                   </ol>
                 </div>
               )}
-              {homeEvents !== null && sorted.length > 0 ? (
+              {sorted.length > 0 ? (
                 <div
                   className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-12 bg-gradient-to-t from-paper to-transparent"
                   aria-hidden

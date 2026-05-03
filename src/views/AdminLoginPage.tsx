@@ -2,17 +2,20 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { PageShell } from "@/components/layout/PageShell";
+import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { firebaseAuthErrorMessage } from "@/lib/firebase/authErrors";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
-import { getApiBaseUrl } from "@/lib/apiBase";
-import { adminBtnBlue, adminCalloutInfo } from "@/lib/adminUiStyles";
+import { adminBtnBlue } from "@/lib/adminUiStyles";
 
 export function AdminLoginPage() {
   const { locale } = useLocale();
   const router = useRouter();
-  const apiBase = getApiBaseUrl();
+  const { user, ready, firebaseConfigured, adminReady, isAdmin, signInWithEmailPassword } =
+    useAdminAuth();
+  const lastLoginAttemptAt = useRef<number>(0);
 
   const intro =
     locale === "es"
@@ -21,91 +24,70 @@ export function AdminLoginPage() {
         ? "Begränsad åtkomst."
         : "Restricted access for staff.";
 
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!ready || !firebaseConfigured || !adminReady || !user) return;
+    if (isAdmin) {
+      router.replace("/admin/dashboard");
+    }
+  }, [ready, firebaseConfigured, adminReady, user, isAdmin, router]);
+
+  // Note: if Firebase remembers a previous session that isn't allowlisted, we still show
+  // the sign-in form here (no "access denied" UI, no automatic sign-out).
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!firebaseConfigured) {
+      setError("Firebase is not configured. Add NEXT_PUBLIC_FIREBASE_* env vars and restart.");
+      return;
+    }
     setBusy(true);
     try {
-      const r = await fetch(`${apiBase}/api/auth/login`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
-      if (!r.ok) {
-        setError(
-          locale === "es"
-            ? "Credenciales inválidas."
-            : locale === "sv"
-              ? "Ogiltiga inloggningsuppgifter."
-              : "Invalid credentials.",
-        );
-        return;
-      }
-
+      lastLoginAttemptAt.current = Date.now();
+      await signInWithEmailPassword(email, password);
       router.push("/admin/dashboard");
-    } catch (err) {
-      const detail =
-        err instanceof Error && err.message ? ` (${err.message})` : "";
-      setError(
-        locale === "es"
-          ? `No se pudo conectar con el servidor${detail}. ¿Está el API en marcha y la URL correcta?`
-          : locale === "sv"
-            ? `Kunde inte nå servern${detail}. Körs API:et och är adressen rätt?`
-            : `Could not reach the server${detail}. Is the API running at the URL shown above?`,
-      );
+    } catch (err: unknown) {
+      const code =
+        err && typeof err === "object" && "code" in err
+          ? String((err as { code?: string }).code)
+          : undefined;
+      setError(firebaseAuthErrorMessage(code));
     } finally {
       setBusy(false);
     }
   }
 
+  if (!firebaseConfigured) {
+    return (
+      <PageShell title={t(locale, "page.admin.title")} intro={intro}>
+        <p className="max-w-xl text-sm text-ink-muted leading-relaxed">
+          Add Firebase web config to <code className="font-mono text-xs">.env.local</code> (see{" "}
+          <code className="font-mono text-xs">.env.example</code>), then restart{" "}
+          <code className="font-mono text-xs">npm run dev</code>.
+        </p>
+      </PageShell>
+    );
+  }
+
   return (
     <PageShell title={t(locale, "page.admin.title")} intro={intro}>
-      <div className={`mb-8 max-w-sm space-y-3 text-sm ${adminCalloutInfo}`}>
-        <p className="font-mono text-xs break-all text-sky-950">{apiBase}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Link
-            href="/admin/lunch-menu"
-            className="inline-flex rounded-none border border-emerald-300 bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-950 hover:bg-emerald-200"
-          >
-            Lunch menu
-          </Link>
-          <Link
-            href="/admin/media"
-            className="inline-flex rounded-none border border-sky-300 bg-sky-100 px-3 py-1.5 text-xs font-semibold text-sky-950 hover:bg-sky-200"
-          >
-            Media
-          </Link>
-          <Link
-            href="/admin/events"
-            className="inline-flex rounded-none border border-violet-300 bg-violet-100 px-3 py-1.5 text-xs font-semibold text-violet-950 hover:bg-violet-200"
-          >
-            Events
-          </Link>
-        </div>
-      </div>
-
       <form className="max-w-sm space-y-6" onSubmit={onSubmit}>
         <div>
-          <label htmlFor="admin-username" className="block text-sm font-medium text-ink">
-            {locale === "es"
-              ? "Usuario"
-              : locale === "sv"
-                ? "Användarnamn"
-                : "Username"}
+          <label htmlFor="admin-email" className="block text-sm font-medium text-ink">
+            {locale === "es" ? "Correo" : locale === "sv" ? "E-post" : "Email"}
           </label>
           <input
-            id="admin-username"
-            name="username"
-            type="text"
-            autoComplete="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="admin-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
           />
         </div>
@@ -141,6 +123,12 @@ export function AdminLoginPage() {
           {error}
         </div>
       ) : null}
+
+      <p className="mt-10 text-xs text-ink-muted">
+        <Link href="/" className="underline-offset-4 hover:underline">
+          ← {locale === "es" ? "Volver al sitio" : locale === "sv" ? "Tillbaka till sajten" : "Back to site"}
+        </Link>
+      </p>
     </PageShell>
   );
 }

@@ -112,7 +112,7 @@ export function InstagramFeedSection() {
       aria-label={t(locale, "page.home.instagramAria")}
       className="border-t border-border bg-paper-dark/30"
     >
-      <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
+      <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
           <div className="flex min-w-0 flex-1 items-center gap-5 sm:gap-6">
             <a

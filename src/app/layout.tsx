@@ -41,8 +41,8 @@ const fontLogo = Jaro({
 
 export const metadata: Metadata = {
   title: {
-    default: "El Portero | Torrevieja",
-    template: "%s | El Portero",
+    default: "El Portero Restaurant & Bar · Welcome",
+    template: "El Portero Restaurant & Bar · %s",
   },
   description:
     "El Portero — restaurant and dinner club in Torrevieja. Seasonal cooking where Latin warmth meets Nordic precision, a short stroll from the Mediterranean.",

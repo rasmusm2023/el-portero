@@ -59,7 +59,8 @@ export function ContactPage() {
   const [subject, setSubject] = useState("");
   const [openMenu, setOpenMenu] = useState<"subject" | null>(null);
   const [errors, setErrors] = useState<Partial<Record<FieldKey, MessageKey>>>({});
-  const [readyNotSent, setReadyNotSent] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   /** Honeypot: must stay empty (bots often fill it). */
   const [honeypot, setHoneypot] = useState("");
   const [formError, setFormError] = useState<MessageKey | null>(null);
@@ -94,7 +95,7 @@ export function ContactPage() {
       delete next[key];
       return next;
     });
-    setReadyNotSent(false);
+    setSendSuccess(false);
     setFormError(null);
   }
 
@@ -106,9 +107,17 @@ export function ContactPage() {
     } else if (next.message) messageRef.current?.focus();
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function encodeFormBody(values: Record<string, string>) {
+    const params = new URLSearchParams();
+    for (const [k, v] of Object.entries(values)) {
+      params.set(k, v);
+    }
+    return params.toString();
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setReadyNotSent(false);
+    setSendSuccess(false);
     setFormError(null);
 
     if (honeypot.trim() !== "") {
@@ -131,7 +140,45 @@ export function ContactPage() {
       focusFirstError(next);
       return;
     }
-    setReadyNotSent(true);
+
+    const subjectDisplay =
+      subjectOptions.find((o) => o.value === subject)?.label ?? subject;
+    const emailSubject = `Contact form: ${subjectDisplay} - ${name.trim()}`;
+
+    setSubmitting(true);
+    try {
+      // Netlify Forms: POST urlencoded body to "/" (Netlify captures it in production).
+      const res = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encodeFormBody({
+          "form-name": "contact",
+          name: name.trim(),
+          email: email.trim(),
+          subject,
+          subjectDisplay,
+          emailSubject,
+          message: message.trim(),
+          website: honeypot,
+        }),
+      });
+
+      if (!res.ok) {
+        setFormError("page.contact.errorSendFailed");
+        return;
+      }
+
+      setSendSuccess(true);
+      setName("");
+      setEmail("");
+      setMessage("");
+      setSubject("");
+      setErrors({});
+    } catch {
+      setFormError("page.contact.errorSendFailed");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const hasErrors = Object.keys(errors).length > 0;
@@ -179,17 +226,26 @@ export function ContactPage() {
           </p>
         ) : null}
 
-        {readyNotSent ? (
+        {sendSuccess ? (
           <p
             className="mb-6 rounded-md border border-ink/15 bg-paper-dark/50 px-4 py-3 text-sm text-ink"
             role="status"
             aria-live="polite"
           >
-            {t(locale, "page.contact.validationOkNotSent")}
+            {t(locale, "page.contact.sendSuccess")}
           </p>
         ) : null}
 
-        <form className="relative space-y-6" onSubmit={handleSubmit} noValidate>
+        <form
+          className="relative space-y-6"
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="website"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <input type="hidden" name="form-name" value="contact" />
           <div>
             <label
               htmlFor="contact-name"
@@ -284,6 +340,19 @@ export function ContactPage() {
                 }
               />
             </div>
+            {/* Hidden fields for Netlify emails (human-friendly subject and label). */}
+            <input
+              type="hidden"
+              name="subjectDisplay"
+              value={subjectOptions.find((o) => o.value === subject)?.label ?? subject}
+            />
+            <input
+              type="hidden"
+              name="emailSubject"
+              value={`Contact form: ${
+                subjectOptions.find((o) => o.value === subject)?.label ?? subject
+              } - ${name}`.trim()}
+            />
             {/* Focus target when subject invalid — ReserveInlineSelect owns the visible button; we focus via id after mount is complex; use native query */}
             {errors.subject ? (
               <p id="contact-subject-error" className="mt-2 text-sm text-rose-700">
@@ -340,16 +409,13 @@ export function ContactPage() {
             />
           </div>
 
-          <p className="text-center text-xs leading-relaxed text-ink-muted sm:text-left">
-            {t(locale, "page.contact.spamNote")}
-          </p>
-
           <div className="pt-1">
             <button
               type="submit"
-              className="min-h-13 w-full border border-ink bg-ink px-8 font-sans text-[11px] font-semibold tracking-[0.22em] text-paper uppercase transition-colors hover:bg-ink/90 sm:w-auto"
+              disabled={submitting}
+              className="min-h-13 w-full border border-ink bg-ink px-8 font-sans text-[11px] font-semibold tracking-[0.22em] text-paper uppercase transition-colors hover:bg-ink/90 enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
-              {t(locale, "page.contact.submitSoon")}
+              {submitting ? t(locale, "page.contact.submitting") : t(locale, "page.contact.submitSoon")}
             </button>
           </div>
 

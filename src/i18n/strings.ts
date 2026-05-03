@@ -26,6 +26,7 @@ export type NavKey =
   | "nav.menu"
   | "nav.events"
   | "nav.reserve"
+  | "nav.bookTable"
   | "nav.contact"
   | "nav.gallery"
   | "nav.hours"
@@ -149,6 +150,7 @@ type PageKey =
   | "page.contact.labelSubject"
   | "page.contact.labelMessage"
   | "page.contact.subjectPlaceholder"
+  | "page.contact.submitting"
   | "page.contact.submitSoon"
   | "page.contact.policyNote"
   | "page.contact.validationName"
@@ -156,13 +158,13 @@ type PageKey =
   | "page.contact.validationEmailFormat"
   | "page.contact.validationSubject"
   | "page.contact.validationMessage"
-  | "page.contact.validationOkNotSent"
+  | "page.contact.sendSuccess"
+  | "page.contact.errorSendFailed"
   | "page.contact.validationSummary"
   | "page.contact.validationTooFast"
   | "page.contact.placeholderName"
   | "page.contact.placeholderEmail"
   | "page.contact.placeholderMessage"
-  | "page.contact.spamNote"
   | "page.contact.subject.general"
   | "page.contact.subject.reservation"
   | "page.contact.subject.privateEvent"
@@ -223,6 +225,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.menu": "Menus",
     "nav.events": "Events",
     "nav.reserve": "Reservations",
+    "nav.bookTable": "Book a table",
     "nav.contact": "Contact",
     "nav.gallery": "Look inside",
     "nav.hours": "Hours",
@@ -241,7 +244,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "The calendar is being set — we’ll list dates here as soon as they’re public. For now, follow us on Instagram or drop us a line about a private dinner.",
     "page.home.heroReserveCta": "RESERVATION",
     "page.home.heroTagline":
-      "South American heart, Nordic poise — dinner-club nights one step from the Mediterranean.",
+      "A throw-in from the Mediterranean —\nSouth American heart meets Nordic poise in Torrevieja.",
     "page.menu.title": "Our menus",
     "page.menu.food": "Highlights",
     "page.menu.drinks": "Drinks",
@@ -366,6 +369,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.labelSubject": "Subject",
     "page.contact.labelMessage": "Message",
     "page.contact.subjectPlaceholder": "Choose a topic",
+    "page.contact.submitting": "Sending…",
     "page.contact.submitSoon": "Send message",
     "page.contact.policyNote":
       "We aim to respond within a few business days. Reservations and payments are not confirmed until we reply.",
@@ -374,8 +378,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.validationEmailFormat": "That doesn’t look like a valid email address.",
     "page.contact.validationSubject": "Please choose a subject.",
     "page.contact.validationMessage": "Please enter a message.",
-    "page.contact.validationOkNotSent":
-      "Your message is ready to send — if outbound email is not yet enabled here, please call or WhatsApp us instead.",
+    "page.contact.sendSuccess": "Thank you — your message has been sent. We’ll get back to you soon.",
+    "page.contact.errorSendFailed":
+      "We couldn’t send your message just now. Please try again in a moment or reach us by phone.",
     "page.contact.validationSummary": "Please correct the highlighted fields.",
     "page.contact.validationTooFast":
       "Please wait a moment before sending — this helps us block automated submissions.",
@@ -383,8 +388,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.placeholderEmail": "example@example.com",
     "page.contact.placeholderMessage":
       "Tell us what you need — dates, party size, dietary notes…",
-    "page.contact.spamNote":
-      "Protected against spam: please don’t fill in any hidden fields and wait a second after the page loads before submitting.",
     "page.contact.subject.general": "General inquiry",
     "page.contact.subject.reservation": "Reservation question",
     "page.contact.subject.privateEvent": "Private event or catering",
@@ -455,6 +458,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.menu": "Cartas",
     "nav.events": "Eventos",
     "nav.reserve": "Reservas",
+    "nav.bookTable": "Reservar mesa",
     "nav.contact": "Contacto",
     "nav.gallery": "Echa un vistazo",
     "nav.hours": "Horario",
@@ -473,7 +477,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Estamos cerrando el calendario — en cuanto haya fechas públicas, las veréis aquí. Mientras tanto, seguid en Instagram o escribid para una cena privada.",
     "page.home.heroReserveCta": "Reserva",
     "page.home.heroTagline":
-      "Corazón latino, pulso nórdico — veladas club a un paso del Mediterráneo.",
+      "Un saque de banda desde el Mediterráneo —\nCorazón sudamericano y compostura nórdica en Torrevieja.",
     "page.menu.title": "Nuestras cartas",
     "page.menu.food": "Selección",
     "page.menu.drinks": "Bebidas",
@@ -606,6 +610,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.labelSubject": "Asunto",
     "page.contact.labelMessage": "Mensaje",
     "page.contact.subjectPlaceholder": "Elige un tema",
+    "page.contact.submitting": "Enviando…",
     "page.contact.submitSoon": "Enviar mensaje",
     "page.contact.policyNote":
       "Intentamos responder en unos días laborables. Reservas y pagos no quedan confirmados hasta que os contestemos.",
@@ -614,8 +619,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.validationEmailFormat": "Ese correo no parece válido.",
     "page.contact.validationSubject": "Elige un asunto.",
     "page.contact.validationMessage": "Escribe un mensaje.",
-    "page.contact.validationOkNotSent":
-      "El mensaje está listo — si el envío automático no está activo aún, llamad o escribidnos por WhatsApp.",
+    "page.contact.sendSuccess": "Gracias — tu mensaje se ha enviado. Te responderemos pronto.",
+    "page.contact.errorSendFailed":
+      "No hemos podido enviar el mensaje. Inténtalo de nuevo en un momento o llámanos.",
     "page.contact.validationSummary": "Revisa los campos marcados.",
     "page.contact.validationTooFast":
       "Espera un momento antes de enviar — nos ayuda a frenar envíos automáticos.",
@@ -623,8 +629,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.placeholderEmail": "ejemplo@ejemplo.com",
     "page.contact.placeholderMessage":
       "Cuéntanos qué necesitas — fechas, comensales, alimentación…",
-    "page.contact.spamNote":
-      "Protección antispam: no rellenes campos ocultos y espera un instante tras cargar la página antes de enviar.",
     "page.contact.subject.general": "Consulta general",
     "page.contact.subject.reservation": "Pregunta sobre reserva",
     "page.contact.subject.privateEvent": "Evento privado o catering",
@@ -687,6 +691,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "nav.menu": "Menyer",
     "nav.events": "Events",
     "nav.reserve": "Bokningar",
+    "nav.bookTable": "Boka bord",
     "nav.contact": "Kontakt",
     "nav.gallery": "En glimt in",
     "nav.hours": "Öppettider",
@@ -705,7 +710,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Kalendern sätts just nu — datum publiceras här så fort de är officiella. Under tiden: följ oss på Instagram eller hör av dig om en privat middag.",
     "page.home.heroReserveCta": "Bokning",
     "page.home.heroTagline":
-      "Latinamerikanskt hjärta, nordisk tyngd — dinner club-kvällar ett steg från Medelhavet.",
+      "Ett inkast från Medelhavet —\nlatinamerikanskt hjärta möter nordisk elegans i Torrevieja.",
     "page.menu.title": "Våra menyer",
     "page.menu.food": "Höjdpunkter",
     "page.menu.drinks": "Dryck",
@@ -838,6 +843,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.labelSubject": "Ämne",
     "page.contact.labelMessage": "Meddelande",
     "page.contact.subjectPlaceholder": "Välj ett ämne",
+    "page.contact.submitting": "Skickar…",
     "page.contact.submitSoon": "Skicka meddelande",
     "page.contact.policyNote":
       "Vi siktar på svar inom några vardagar. Bokningar och betalningar är inte bekräftade förrän vi hört av oss.",
@@ -846,8 +852,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.validationEmailFormat": "E-postadressen verkar ogiltig.",
     "page.contact.validationSubject": "Välj ett ämne.",
     "page.contact.validationMessage": "Skriv ett meddelande.",
-    "page.contact.validationOkNotSent":
-      "Meddelandet är redo — om automatisk utskickning inte är påslaget än, ring eller WhatsApp oss.",
+    "page.contact.sendSuccess": "Tack — ditt meddelande har skickats. Vi återkommer så snart vi kan.",
+    "page.contact.errorSendFailed":
+      "Meddelandet kunde inte skickas. Försök igen om en stund eller ring oss.",
     "page.contact.validationSummary": "Korrigera de markerade fälten.",
     "page.contact.validationTooFast":
       "Vänta lite innan du skickar — det hjälper oss stoppa automatiska inskick.",
@@ -855,8 +862,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.placeholderEmail": "exempel@exempel.se",
     "page.contact.placeholderMessage":
       "Skriv vad du behöver — datum, antal gäster, allergier…",
-    "page.contact.spamNote":
-      "Skydd mot skräppost: fyll inte i dolda fält och vänta en kort stund efter att sidan laddats innan du skickar.",
     "page.contact.subject.general": "Allmän fråga",
     "page.contact.subject.reservation": "Fråga om bokning",
     "page.contact.subject.privateEvent": "Privat event eller catering",

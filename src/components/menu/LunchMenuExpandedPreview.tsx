@@ -1,51 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { LunchMenuItemsList } from "@/components/menu/LunchMenuItemsList";
-import { getApiBaseUrl } from "@/lib/apiBase";
+import { useWeeklyMenuCurrent } from "@/lib/weeklyMenuApi";
 import { getIsoWeekNumberFromYmd } from "@/lib/isoWeek";
 import { getMadridWeekStartYmd } from "@/lib/madridWeek";
-import type { WeeklyMenu } from "@/lib/weeklyMenuTypes";
 import { useLocale } from "@/i18n/useLocale";
 import { t, weeklyMenuWeekTitle } from "@/i18n/strings";
 
-/** Home split-panel expansion: live lunch (weekly API), aligned with `/menu/weekly`. */
+/** Home split-panel expansion: same lunch as `/menu/weekly` (`src/data/weeklyMenuStatic.ts`). */
 export function LunchMenuExpandedPreview() {
   const { locale } = useLocale();
-  const apiBase = getApiBaseUrl();
-  const [menu, setMenu] = useState<WeeklyMenu | null>(null);
-  const [busy, setBusy] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const r = await fetch(`${apiBase}/api/weekly-menu/current`, {
-          cache: "no-store",
-        });
-        if (!r.ok) {
-          if (!cancelled) {
-            setMenu(null);
-            setBusy(false);
-          }
-          return;
-        }
-        const data = (await r.json()) as WeeklyMenu;
-        if (!cancelled) {
-          setMenu(data);
-          setBusy(false);
-        }
-      } catch {
-        if (!cancelled) {
-          setMenu(null);
-          setBusy(false);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [apiBase]);
+  const { menu, ready } = useWeeklyMenuCurrent();
 
   const weekYmd =
     menu?.effectiveWeekStartDate || menu?.weekStartDate || getMadridWeekStartYmd();
@@ -63,8 +28,10 @@ export function LunchMenuExpandedPreview() {
       </div>
 
       <div className="mt-10">
-        {busy ? (
-          <p className="text-sm text-ink-muted">{t(locale, "page.menu.weeklyLoading")}</p>
+        {!ready ? (
+          <div className="rounded-none border border-border bg-paper-dark/40 px-4 py-3 text-sm text-ink-muted">
+            {t(locale, "page.menu.weeklyLoading")}
+          </div>
         ) : !menu?.items?.length ? (
           <div className="rounded-none border border-border bg-paper-dark/40 px-4 py-3 text-sm text-ink-muted">
             {t(locale, "page.menu.weeklyEmpty")}

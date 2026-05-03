@@ -19,20 +19,14 @@ const navLeftItems: { href: string; labelKey: NavKey }[] = [
   { href: "/events", labelKey: "nav.events" },
 ];
 
-const navReserveItem = {
-  href: "/reserve",
-  labelKey: "nav.reserve" as const,
-};
-
 const navRightItems: { href: string; labelKey: NavKey }[] = [
   { href: "/story", labelKey: "nav.story" },
   { href: "/contact", labelKey: "nav.contact" },
 ];
 
-/** Mobile / overlay: Home … Events, Reservations, Story, Contact */
+/** Text links only — “Book a table” is a separate button (desktop + mobile). */
 const primaryNavItems: { href: string; labelKey: NavKey }[] = [
   ...navLeftItems,
-  navReserveItem,
   ...navRightItems,
 ];
 
@@ -106,6 +100,9 @@ function overlayNavLinkClass(
 
 const headerInnerMax =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
+
+const bookTableNavButtonClass =
+  "inline-flex max-w-[min(11.5rem,calc(100vw-8rem))] shrink-0 items-center justify-center truncate rounded-lg bg-[#3B495B] px-3 py-2 font-sans text-[11px] font-semibold tracking-[0.06em] text-paper shadow-[0_6px_20px_rgba(59,73,91,0.35)] ring-1 ring-[#3B495B]/40 transition-colors hover:bg-[#4a5d72] focus-visible:ring-2 focus-visible:ring-[#3B495B]/55 focus-visible:ring-offset-2 focus-visible:ring-offset-paper active:bg-[#344352] sm:max-w-none sm:px-5 sm:py-2.5 sm:text-sm sm:tracking-[0.08em]";
 
 /** Below fixed header bar (see `--header-h` in design-system.css, includes faded rule). */
 const navOverlayTopClass = "top-[var(--header-h)]";
@@ -201,8 +198,15 @@ export function SiteHeader() {
               tone="onLight"
             />
           </Link>
-          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             <LanguageSwitcher variant="default" />
+            <Link
+              href="/reserve"
+              className={bookTableNavButtonClass}
+              title={t(locale, "nav.bookTable")}
+            >
+              {t(locale, "nav.bookTable")}
+            </Link>
             <button
               type="button"
               className="group flex shrink-0 items-center gap-1.5"
@@ -270,20 +274,28 @@ export function SiteHeader() {
 
           <HeaderFadedRule />
 
-          <nav
-            className={`flex flex-wrap items-stretch justify-center gap-x-16 gap-y-0 py-0 sm:gap-x-20 ${headerInnerMax}`}
-            aria-label="Primary"
-          >
-            {primaryNavItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={desktopNavLinkClass(pathname, item.href, locationHash)}
-              >
-                {t(locale, item.labelKey)}
+          <div className={`flex items-center py-0 ${headerInnerMax}`}>
+            <div className="min-w-0 flex-1" aria-hidden />
+            <nav
+              className="flex flex-wrap items-stretch justify-center gap-x-16 gap-y-0 sm:gap-x-20"
+              aria-label="Primary"
+            >
+              {primaryNavItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={desktopNavLinkClass(pathname, item.href, locationHash)}
+                >
+                  {t(locale, item.labelKey)}
+                </Link>
+              ))}
+            </nav>
+            <div className="flex min-w-0 flex-1 items-center justify-end pl-4">
+              <Link href="/reserve" className={bookTableNavButtonClass}>
+                {t(locale, "nav.bookTable")}
               </Link>
-            ))}
-          </nav>
+            </div>
+          </div>
         </div>
       </header>
 

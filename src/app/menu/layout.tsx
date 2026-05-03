@@ -15,6 +15,17 @@ export default function MenuRouteLayout({
   children: React.ReactNode;
 }) {
   if (!areMenusPublished()) {
+    // Dev-only: show real menus below countdown for QA.
+    if (process.env.NODE_ENV !== "production") {
+      return (
+        <>
+          <MenusPreLaunchPanel />
+          <div className="border-t border-border bg-paper">
+            {children}
+          </div>
+        </>
+      );
+    }
     return <MenusPreLaunchPanel />;
   }
   return <>{children}</>;
