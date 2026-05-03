@@ -72,9 +72,6 @@ export function SiteFooter() {
                   </a>
                 </div>
               </div>
-              <p className="mt-6 max-w-md text-sm leading-relaxed text-paper/75">
-                {t(locale, "footer.tagline")}
-              </p>
             </div>
 
             <div className="min-w-0">
@@ -144,6 +141,9 @@ export function SiteFooter() {
                   {t(locale, "footer.whatsapp")}
                 </a>
               </div>
+              <p className="mt-8 max-w-md text-sm leading-relaxed text-paper/75 lg:ml-auto lg:text-right">
+                {t(locale, "footer.tagline")}
+              </p>
             </div>
           </div>
 
