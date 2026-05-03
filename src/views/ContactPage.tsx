@@ -148,7 +148,8 @@ export function ContactPage() {
     setSubmitting(true);
     try {
       // Netlify Forms: POST urlencoded body to "/" (Netlify captures it in production).
-      const res = await fetch("/", {
+      // OpenNext on Netlify requires posting to a static HTML file in /public (see public/__forms.html).
+      const res = await fetch("/__forms.html", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: encodeFormBody({
