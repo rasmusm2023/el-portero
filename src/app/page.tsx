@@ -17,7 +17,9 @@ async function requestIsComingSoonLocked(): Promise<boolean> {
 export async function generateMetadata(): Promise<Metadata> {
   if (await requestIsComingSoonLocked()) {
     return {
-      title: "Coming soon",
+      title: {
+        absolute: "El Portero Restaurant & Bar · Opening soon",
+      },
       robots: { index: false, follow: false },
     };
   }

@@ -39,7 +39,7 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
             tone="onDark"
             className="mb-5 scale-[1.35] sm:mb-6 sm:scale-[1.5] md:mb-7 md:scale-[1.65]"
           />
-          <p className="mt-4 font-hero-title text-[clamp(1.75rem,5.5vw,3.65rem)] font-normal leading-[1.06] tracking-[0.14em] text-paper uppercase sm:mt-5 md:mt-6">
+          <p className="mt-14 font-hero-title text-[clamp(1.75rem,5.5vw,3.65rem)] font-normal leading-[1.06] tracking-[0.14em] text-paper uppercase sm:mt-16 md:mt-20">
             {t(locale, "page.comingSoon.title")}
           </p>
         </div>

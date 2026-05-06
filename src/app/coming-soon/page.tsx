@@ -3,7 +3,9 @@ import { ComingSoonPage } from "@/views/ComingSoonPage";
 import { getHeroSlideImages } from "@/lib/heroImages";
 
 export const metadata: Metadata = {
-  title: "Coming soon",
+  title: {
+    absolute: "El Portero Restaurant & Bar · Opening soon",
+  },
   robots: { index: false, follow: false },
 };
 
