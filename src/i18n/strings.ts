@@ -50,11 +50,6 @@ type PageKey =
   | "page.comingSoon.subtitle"
   | "page.comingSoon.contactCta"
   | "page.comingSoon.instagramCta"
-  | "page.comingSoon.notifyTitle"
-  | "page.comingSoon.notifyBody"
-  | "page.comingSoon.notifyPlaceholder"
-  | "page.comingSoon.notifyCta"
-  | "page.comingSoon.notifyHint"
   | "page.menu.title"
   | "page.menu.food"
   | "page.menu.drinks"
@@ -226,12 +221,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "We’re setting the room, polishing the glassware, and finalising the menu. Check back soon—or follow along for opening updates.",
     "page.comingSoon.contactCta": "Contact us",
     "page.comingSoon.instagramCta": "Follow on Instagram",
-    "page.comingSoon.notifyTitle": "Be the first to know",
-    "page.comingSoon.notifyBody":
-      "Leave your email and we’ll let you know when reservations and new menus go live.",
-    "page.comingSoon.notifyPlaceholder": "Email address",
-    "page.comingSoon.notifyCta": "Notify me",
-    "page.comingSoon.notifyHint": "Newsletter signup is coming soon.",
     "page.menu.title": "Our menus",
     "page.menu.food": "Highlights",
     "page.menu.drinks": "Drinks",
@@ -433,12 +422,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Estamos preparando la sala, puliendo las copas y cerrando la carta. Volved pronto o seguidnos para novedades de apertura.",
     "page.comingSoon.contactCta": "Contactar",
     "page.comingSoon.instagramCta": "Seguir en Instagram",
-    "page.comingSoon.notifyTitle": "Sé el primero en enterarte",
-    "page.comingSoon.notifyBody":
-      "Dejad vuestro correo y os avisaremos cuando las reservas y las nuevas cartas estén disponibles.",
-    "page.comingSoon.notifyPlaceholder": "Correo electrónico",
-    "page.comingSoon.notifyCta": "Avisadme",
-    "page.comingSoon.notifyHint": "La suscripción al boletín estará disponible pronto.",
     "page.menu.title": "Nuestras cartas",
     "page.menu.food": "Selección",
     "page.menu.drinks": "Bebidas",
@@ -640,12 +623,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Vi dukar upp, putsar glasen och färdigställer menyn. Kom tillbaka snart – eller följ oss för öppningsnyheter.",
     "page.comingSoon.contactCta": "Kontakta oss",
     "page.comingSoon.instagramCta": "Följ på Instagram",
-    "page.comingSoon.notifyTitle": "Få besked först",
-    "page.comingSoon.notifyBody":
-      "Lämna din e-post så meddelar vi när bokning och nya menyer är live.",
-    "page.comingSoon.notifyPlaceholder": "E-postadress",
-    "page.comingSoon.notifyCta": "Meddela mig",
-    "page.comingSoon.notifyHint": "Nyhetsbrevet kommer snart.",
     "page.menu.title": "Våra menyer",
     "page.menu.food": "Höjdpunkter",
     "page.menu.drinks": "Dryck",
