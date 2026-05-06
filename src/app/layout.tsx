@@ -10,6 +10,7 @@ import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SITE_COMING_SOON } from "@/config/siteMode";
 
 const fontDisplay = Cormorant_Garamond({
   subsets: ["latin"],
@@ -73,14 +74,18 @@ export default function RootLayout({
       <body>
         <AppProviders>
           <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip">
-            <SiteHeader />
+            {!SITE_COMING_SOON ? <SiteHeader /> : null}
             <main
               id="main"
-              className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip pt-[var(--header-h)]"
+              className={
+                SITE_COMING_SOON
+                  ? "flex min-h-dvh min-w-0 flex-1 flex-col overflow-x-clip"
+                  : "flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip pt-[var(--header-h)]"
+              }
             >
               {children}
             </main>
-            <SiteFooter />
+            {!SITE_COMING_SOON ? <SiteFooter /> : null}
           </div>
         </AppProviders>
       </body>

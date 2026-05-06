@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { INSTAGRAM_PROFILE_URL } from "@/config/site";
+import { INSTAGRAM_PROFILE_URL, contactMailtoHref } from "@/config/site";
 import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { useLocale } from "@/i18n/useLocale";
@@ -21,15 +20,15 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
   const { locale } = useLocale();
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
       <PageHeroSection
         heroImages={heroImages}
         accentVideo={false}
         bottomCta={
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            <Link href="/contact" className={ctaClass}>
+            <a href={contactMailtoHref()} className={ctaClass}>
               {t(locale, "page.comingSoon.contactCta")}
-            </Link>
+            </a>
             {LAUNCH_UI_INSTAGRAM ? (
               <a
                 href={INSTAGRAM_PROFILE_URL}
@@ -55,42 +54,6 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
           </p>
         </div>
       </PageHeroSection>
-
-      <section
-        aria-label={t(locale, "page.comingSoon.notifyTitle")}
-        className="border-t border-border bg-ink"
-      >
-        <div className="mx-auto w-full max-w-[var(--container-max)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-          <div className="mx-auto max-w-2xl rounded-none border border-border bg-paper-dark/45 p-8 shadow-[0_18px_48px_-16px_rgba(0,0,0,0.45)] sm:p-10">
-            <h2 className="font-display text-2xl font-medium tracking-tight text-paper sm:text-3xl">
-              {t(locale, "page.comingSoon.notifyTitle")}
-            </h2>
-            <p className="mt-4 text-ink-muted leading-relaxed sm:text-lg">
-              {t(locale, "page.comingSoon.notifyBody")}
-            </p>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-stretch">
-              <input
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                disabled
-                placeholder={t(locale, "page.comingSoon.notifyPlaceholder")}
-                className="min-h-12 w-full rounded-none border border-border bg-paper-dark/60 px-4 py-3 font-sans text-sm text-paper shadow-sm placeholder:text-paper/45 disabled:cursor-not-allowed disabled:opacity-80 sm:min-h-13"
-              />
-              <button
-                type="button"
-                disabled
-                className="min-h-12 rounded-none border border-ink bg-ink px-6 py-3 text-xs font-semibold tracking-[0.16em] text-paper uppercase opacity-70 disabled:cursor-not-allowed sm:min-h-13 sm:px-7 sm:text-sm"
-              >
-                {t(locale, "page.comingSoon.notifyCta")}
-              </button>
-            </div>
-            <p className="mt-3 text-xs text-ink-muted">{t(locale, "page.comingSoon.notifyHint")}</p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
-
