@@ -3,7 +3,7 @@
 import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
-import { PageHeroSection } from "@/components/PageHeroSection";
+import { PageHeroSection, pageHeroBottomAsideTextClass } from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import { contactMailtoHref } from "@/config/site";
@@ -31,7 +31,7 @@ export function HomePage({ heroVideos }: HomePageProps) {
           </a>
         }
         bottomAside={
-          <p className="max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3">
+          <p className={pageHeroBottomAsideTextClass}>
             {t(locale, "page.home.heroTagline")}
           </p>
         }

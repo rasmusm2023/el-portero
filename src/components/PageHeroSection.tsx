@@ -109,6 +109,10 @@ const heroRadialOverlayStyle = {
     radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.04) 0%, transparent 50%)`,
 } as const;
 
+/** Bottom-right `<p>` in `/` hero and coming-soon hero — identical tracking and uppercase rhythm. */
+export const pageHeroBottomAsideTextClass =
+  "max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3";
+
 type PageHeroSectionProps = {
   heroImages: string[];
   /**

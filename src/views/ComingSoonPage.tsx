@@ -2,7 +2,7 @@
 
 import { contactMailtoHref } from "@/config/site";
 import { LogoWordmark } from "@/components/LogoWordmark";
-import { PageHeroSection } from "@/components/PageHeroSection";
+import { PageHeroSection, pageHeroBottomAsideTextClass } from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { VENUE_ADDRESS, googleMapsSearchUrl } from "@/constants/venue";
 import { useLocale } from "@/i18n/useLocale";
@@ -20,13 +20,14 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
       <PageHeroSection
         heroImages={heroImages}
         accentVideo={false}
+        showOpeningCountdown
         bottomCta={
           <a href={contactMailtoHref()} className={bookTableHeroHollowButtonClass}>
             {t(locale, "page.contact.title")}
           </a>
         }
         bottomAside={
-          <p className="max-w-[min(52rem,calc(100%-3rem))] shrink text-right font-sans text-xs font-medium leading-relaxed tracking-normal text-paper/85 normal-case sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm lg:pe-2 xl:pe-3">
+          <p className={pageHeroBottomAsideTextClass}>
             {t(locale, "page.comingSoon.heroAside")}
           </p>
         }
@@ -38,7 +39,7 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
             tone="onDark"
             className="mb-5 scale-[1.35] sm:mb-6 sm:scale-[1.5] md:mb-7 md:scale-[1.65]"
           />
-          <p className="mt-2 font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-paper/70 sm:mt-3">
+          <p className="mt-4 font-hero-title text-[clamp(1.75rem,5.5vw,3.65rem)] font-normal leading-[1.06] tracking-[0.14em] text-paper uppercase sm:mt-5 md:mt-6">
             {t(locale, "page.comingSoon.title")}
           </p>
         </div>
