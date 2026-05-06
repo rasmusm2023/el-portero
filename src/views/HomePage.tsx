@@ -1,12 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
-import { PageHeroSection } from "@/components/PageHeroSection";
+import {
+  PageHeroSection,
+  pageHeroBottomAsideTextClass,
+} from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { LogoWordmark } from "@/components/LogoWordmark";
+import { contactMailtoHref } from "@/config/site";
 import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -26,15 +29,15 @@ export function HomePage({ heroVideos }: HomePageProps) {
         accentVideo
         showOpeningCountdown
         bottomCta={
-          <Link
-            href="/menu"
+          <a
+            href={contactMailtoHref()}
             className={bookTableHeroHollowButtonClass}
           >
-            {t(locale, "page.menu.title")}
-          </Link>
+            {t(locale, "page.contact.title")}
+          </a>
         }
         bottomAside={
-          <p className="max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3">
+          <p className={pageHeroBottomAsideTextClass}>
             {t(locale, "page.home.heroTagline")}
           </p>
         }

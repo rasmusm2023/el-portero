@@ -23,7 +23,11 @@ function heroScrollShift(containerRef: RefObject<HTMLElement | null>): number {
   return Math.min(1, Math.max(0, t));
 }
 
-function HeroAccentVideo({ containerRef }: { containerRef: RefObject<HTMLElement | null> }) {
+function HeroAccentVideo({
+  containerRef,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const smoothRef = useRef(0);
   const rafRef = useRef(0);
@@ -32,7 +36,9 @@ function HeroAccentVideo({ containerRef }: { containerRef: RefObject<HTMLElement
     const video = videoRef.current;
     if (!video || typeof window === "undefined") return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     /** Lower = silkier follow (more frames to settle); higher = snappier. */
     const ease = reduceMotion ? 1 : 0.11;
 
@@ -109,6 +115,10 @@ const heroRadialOverlayStyle = {
     radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.04) 0%, transparent 50%)`,
 } as const;
 
+/** Bottom-right `<p>` in `/` hero and coming-soon hero — identical tracking and uppercase rhythm. */
+export const pageHeroBottomAsideTextClass =
+  "max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3";
+
 type PageHeroSectionProps = {
   heroImages: string[];
   /**
@@ -154,12 +164,15 @@ export function PageHeroSection({
       <div className="relative w-full">
         <div className="relative w-full overflow-visible bg-ink text-paper shadow-[0_28px_64px_-18px_rgba(10,10,10,0.18)]">
           {useVideoBg ? (
-            <HeroVideoMontage clips={heroVideos} containerRef={heroSectionRef} />
+            <HeroVideoMontage
+              clips={heroVideos}
+              containerRef={heroSectionRef}
+            />
           ) : (
             <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
           )}
           {hasHeroMedia && (
-            <div className="absolute inset-0 z-[1] bg-ink/50" aria-hidden />
+            <div className="absolute inset-0 z-[1] bg-ink/62" aria-hidden />
           )}
           <div
             className="absolute inset-0 z-[2] opacity-40"
