@@ -57,7 +57,14 @@ export function MenusRevealCountdown() {
           viewBox="0 0 100 100"
           aria-hidden
         >
-          <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="1" />
+          <circle
+            cx="50"
+            cy="50"
+            r="48"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1"
+          />
         </svg>
 
         <svg

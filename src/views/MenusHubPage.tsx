@@ -95,7 +95,10 @@ export function MenusHubPage() {
                         </div>
 
                         <motion.div
-                          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                          transition={{
+                            duration: 0.55,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
                           className="mt-10"
                         >
                           <MenuCategoryGrid

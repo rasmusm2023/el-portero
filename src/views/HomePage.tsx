@@ -3,7 +3,10 @@
 import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
-import { PageHeroSection, pageHeroBottomAsideTextClass } from "@/components/PageHeroSection";
+import {
+  PageHeroSection,
+  pageHeroBottomAsideTextClass,
+} from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import { contactMailtoHref } from "@/config/site";
@@ -26,7 +29,10 @@ export function HomePage({ heroVideos }: HomePageProps) {
         accentVideo
         showOpeningCountdown
         bottomCta={
-          <a href={contactMailtoHref()} className={bookTableHeroHollowButtonClass}>
+          <a
+            href={contactMailtoHref()}
+            className={bookTableHeroHollowButtonClass}
+          >
             {t(locale, "page.contact.title")}
           </a>
         }

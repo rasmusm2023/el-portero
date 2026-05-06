@@ -23,7 +23,11 @@ function heroScrollShift(containerRef: RefObject<HTMLElement | null>): number {
   return Math.min(1, Math.max(0, t));
 }
 
-function HeroAccentVideo({ containerRef }: { containerRef: RefObject<HTMLElement | null> }) {
+function HeroAccentVideo({
+  containerRef,
+}: {
+  containerRef: RefObject<HTMLElement | null>;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const smoothRef = useRef(0);
   const rafRef = useRef(0);
@@ -32,7 +36,9 @@ function HeroAccentVideo({ containerRef }: { containerRef: RefObject<HTMLElement
     const video = videoRef.current;
     if (!video || typeof window === "undefined") return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     /** Lower = silkier follow (more frames to settle); higher = snappier. */
     const ease = reduceMotion ? 1 : 0.11;
 
@@ -158,7 +164,10 @@ export function PageHeroSection({
       <div className="relative w-full">
         <div className="relative w-full overflow-visible bg-ink text-paper shadow-[0_28px_64px_-18px_rgba(10,10,10,0.18)]">
           {useVideoBg ? (
-            <HeroVideoMontage clips={heroVideos} containerRef={heroSectionRef} />
+            <HeroVideoMontage
+              clips={heroVideos}
+              containerRef={heroSectionRef}
+            />
           ) : (
             <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
           )}

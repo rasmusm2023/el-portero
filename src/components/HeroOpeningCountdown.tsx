@@ -10,7 +10,9 @@ function pad2(n: number) {
 
 function useCountdownParts(target: Date) {
   /** `null` until mount — avoids SSR/client `Date.now()` drift (same pattern as menu countdown ring). */
-  const [parts, setParts] = useState<ReturnType<typeof computeParts> | null>(null);
+  const [parts, setParts] = useState<ReturnType<typeof computeParts> | null>(
+    null,
+  );
 
   useEffect(() => {
     const tick = () => setParts(computeParts(target));
@@ -43,13 +45,7 @@ function localeTag(locale: string) {
   return "en-GB";
 }
 
-function Segment({
-  value,
-  label,
-}: {
-  value: string | number;
-  label: string;
-}) {
+function Segment({ value, label }: { value: string | number; label: string }) {
   return (
     <div className="flex min-w-[4.5rem] flex-col items-center justify-center px-[clamp(0.85rem,3.2vw,2.25rem)] py-[clamp(0.65rem,2.2vw,1.35rem)] sm:min-w-[5.5rem] sm:py-7">
       <span
@@ -92,7 +88,9 @@ export function HeroOpeningCountdown({ targetDate }: Props) {
     >
       <div className="flex max-w-[min(100%,52rem)] -translate-y-[clamp(6rem,26vh,15rem)] flex-col items-center gap-5 sm:gap-6 sm:-translate-y-[clamp(7.5rem,28vh,17rem)]">
         <p className="text-center font-sans text-[10px] font-medium uppercase tracking-[0.55em] text-paper/90 sm:text-[11px] sm:tracking-[0.62em]">
-          <span className="text-paper">{t(locale, "page.home.countdownLabel")}</span>
+          <span className="text-paper">
+            {t(locale, "page.home.countdownLabel")}
+          </span>
           <span className="mx-2 text-paper/55" aria-hidden>
             ·
           </span>

@@ -2,7 +2,10 @@
 
 import { contactMailtoHref } from "@/config/site";
 import { LogoWordmark } from "@/components/LogoWordmark";
-import { PageHeroSection, pageHeroBottomAsideTextClass } from "@/components/PageHeroSection";
+import {
+  PageHeroSection,
+  pageHeroBottomAsideTextClass,
+} from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { VENUE_ADDRESS, googleMapsSearchUrl } from "@/constants/venue";
 import { useLocale } from "@/i18n/useLocale";
@@ -22,7 +25,10 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
         accentVideo={false}
         showOpeningCountdown
         bottomCta={
-          <a href={contactMailtoHref()} className={bookTableHeroHollowButtonClass}>
+          <a
+            href={contactMailtoHref()}
+            className={bookTableHeroHollowButtonClass}
+          >
             {t(locale, "page.contact.title")}
           </a>
         }
