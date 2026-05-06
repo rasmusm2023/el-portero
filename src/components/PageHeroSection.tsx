@@ -163,7 +163,7 @@ export function PageHeroSection({
             <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
           )}
           {hasHeroMedia && (
-            <div className="absolute inset-0 z-[1] bg-ink/50" aria-hidden />
+            <div className="absolute inset-0 z-[1] bg-ink/62" aria-hidden />
           )}
           <div
             className="absolute inset-0 z-[2] opacity-40"
