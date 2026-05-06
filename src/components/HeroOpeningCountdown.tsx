@@ -49,9 +49,9 @@ function localeTag(locale: string) {
 
 function Segment({ value, label }: { value: string | number; label: string }) {
   return (
-    <div className="flex min-w-[4.5rem] flex-col items-center justify-center px-[clamp(0.85rem,3.2vw,2.25rem)] py-[clamp(0.65rem,2.2vw,1.35rem)] sm:min-w-[5.5rem] sm:py-7">
+    <div className="flex min-w-0 flex-1 flex-col items-center justify-center px-[clamp(0.5rem,2vw,1.75rem)] py-[clamp(0.65rem,2.2vw,1.35rem)] sm:px-[clamp(0.85rem,3.2vw,2.25rem)] sm:py-7">
       <span
-        className="font-countdown-heavy tabular-nums tracking-[0.03em] text-paper/26"
+        className="block w-full text-center font-countdown-heavy tabular-nums tracking-[0.03em] text-paper/26"
         style={{
           fontSize: "clamp(2.4rem, 9.5vw, 5.75rem)",
           lineHeight: 0.88,
@@ -59,7 +59,7 @@ function Segment({ value, label }: { value: string | number; label: string }) {
       >
         {value}
       </span>
-      <span className="mt-[0.65em] max-w-[8em] text-center font-sans text-[10px] font-semibold uppercase leading-tight tracking-[0.42em] text-paper/34 sm:text-[11px] sm:tracking-[0.48em]">
+      <span className="mt-[0.65em] block w-full max-w-[8em] text-center font-sans text-[10px] font-semibold uppercase leading-tight tracking-[0.42em] text-paper/34 sm:text-[11px] sm:tracking-[0.48em]">
         {label}
       </span>
     </div>
