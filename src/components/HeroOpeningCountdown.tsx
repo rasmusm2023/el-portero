@@ -91,12 +91,12 @@ export function HeroOpeningCountdown({ targetDate }: Props) {
       aria-hidden
     >
       <div className="flex max-w-[min(100%,52rem)] -translate-y-[clamp(6rem,26vh,15rem)] flex-col items-center gap-5 sm:gap-6 sm:-translate-y-[clamp(7.5rem,28vh,17rem)]">
-        <p className="text-center font-sans text-[10px] font-medium uppercase tracking-[0.55em] text-paper/28 sm:text-[11px] sm:tracking-[0.62em]">
-          <span className="text-paper/40">{t(locale, "page.home.countdownLabel")}</span>
-          <span className="mx-2 text-paper/18" aria-hidden>
+        <p className="text-center font-sans text-[10px] font-medium uppercase tracking-[0.55em] text-paper/90 sm:text-[11px] sm:tracking-[0.62em]">
+          <span className="text-paper">{t(locale, "page.home.countdownLabel")}</span>
+          <span className="mx-2 text-paper/55" aria-hidden>
             ·
           </span>
-          <span>{dateCaption}</span>
+          <span className="text-paper">{dateCaption}</span>
         </p>
 
         <div
