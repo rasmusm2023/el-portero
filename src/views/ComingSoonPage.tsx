@@ -7,22 +7,19 @@ import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { VENUE_ADDRESS, googleMapsSearchUrl } from "@/constants/venue";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
-import type { HeroMontageClip } from "@/lib/heroVideos";
 
 type ComingSoonPageProps = {
-  heroVideos: HeroMontageClip[];
+  heroImages: string[];
 };
 
-export function ComingSoonPage({ heroVideos }: ComingSoonPageProps) {
+export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
   const { locale } = useLocale();
 
   return (
     <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
       <PageHeroSection
-        heroImages={[]}
-        heroVideos={heroVideos}
-        accentVideo
-        showOpeningCountdown
+        heroImages={heroImages}
+        accentVideo={false}
         bottomCta={
           <a href={contactMailtoHref()} className={bookTableHeroHollowButtonClass}>
             {t(locale, "page.contact.title")}
