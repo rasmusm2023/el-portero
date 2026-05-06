@@ -47,9 +47,7 @@ type PageKey =
   | "page.home.heroTagline"
   | "page.home.countdownLabel"
   | "page.comingSoon.title"
-  | "page.comingSoon.subtitle"
-  | "page.comingSoon.contactCta"
-  | "page.comingSoon.instagramCta"
+  | "page.comingSoon.heroAside"
   | "page.menu.title"
   | "page.menu.food"
   | "page.menu.drinks"
@@ -217,10 +215,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Latin American heart meets Nordic elegance in Torrevieja.\n— Just a throw-in from the Mediterranean.",
     "page.home.countdownLabel": "Opening",
     "page.comingSoon.title": "Coming soon",
-    "page.comingSoon.subtitle":
-      "We’re setting the room, polishing the glassware, and finalising the menu. Check back soon—or follow along for opening updates.",
-    "page.comingSoon.contactCta": "Contact us",
-    "page.comingSoon.instagramCta": "Follow on Instagram",
+    "page.comingSoon.heroAside":
+      "Stay tuned. A culinary experience reaching from South America to Sweden is taking place in Torrevieja on the beautiful Costa Blanca.",
     "page.menu.title": "Our menus",
     "page.menu.food": "Highlights",
     "page.menu.drinks": "Drinks",
@@ -418,10 +414,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Corazón latinoamericano y elegancia nórdica en Torrevieja.\n— A solo un saque de banda del Mediterráneo.",
     "page.home.countdownLabel": "Apertura",
     "page.comingSoon.title": "Próximamente",
-    "page.comingSoon.subtitle":
-      "Estamos preparando la sala, puliendo las copas y cerrando la carta. Volved pronto o seguidnos para novedades de apertura.",
-    "page.comingSoon.contactCta": "Contactar",
-    "page.comingSoon.instagramCta": "Seguir en Instagram",
+    "page.comingSoon.heroAside":
+      "Manteneos atentos: una experiencia culinaria que va de Sudamérica a Suecia cobra vida en Torrevieja, en la bella Costa Blanca.",
     "page.menu.title": "Nuestras cartas",
     "page.menu.food": "Selección",
     "page.menu.drinks": "Bebidas",
@@ -619,10 +613,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Latinamerikanskt hjärta möter nordisk elegans i Torrevieja.\n— Bara ett inkast från Medelhavet.",
     "page.home.countdownLabel": "Öppning",
     "page.comingSoon.title": "Snart öppnar vi",
-    "page.comingSoon.subtitle":
-      "Vi dukar upp, putsar glasen och färdigställer menyn. Kom tillbaka snart – eller följ oss för öppningsnyheter.",
-    "page.comingSoon.contactCta": "Kontakta oss",
-    "page.comingSoon.instagramCta": "Följ på Instagram",
+    "page.comingSoon.heroAside":
+      "Håll utkik. En kulinarisk upplevelse från Sydamerika till Sverige växer fram i Torrevieja på Costa Blanca.",
     "page.menu.title": "Våra menyer",
     "page.menu.food": "Höjdpunkter",
     "page.menu.drinks": "Dryck",

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ComingSoonPage } from "@/views/ComingSoonPage";
-import { getHeroSlideImages } from "@/lib/heroImages";
+import { getHeroMontageClips } from "@/lib/heroVideos";
 
 export const metadata: Metadata = {
   title: "Coming soon",
@@ -8,7 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const heroImages = getHeroSlideImages();
-  return <ComingSoonPage heroImages={heroImages} />;
+  return <ComingSoonPage heroVideos={getHeroMontageClips()} />;
 }
 

@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import { effectiveComingSoonForHost } from "@/config/siteMode";
 import { ComingSoonPage } from "@/views/ComingSoonPage";
 import { HomePage } from "@/views/HomePage";
-import { getHeroSlideImages } from "@/lib/heroImages";
 import { getHeroMontageClips } from "@/lib/heroVideos";
 
 async function requestIsComingSoonLocked(): Promise<boolean> {
@@ -26,8 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Page() {
   if (await requestIsComingSoonLocked()) {
-    const heroImages = getHeroSlideImages();
-    return <ComingSoonPage heroImages={heroImages} />;
+    return <ComingSoonPage heroVideos={getHeroMontageClips()} />;
   }
   return <HomePage heroVideos={getHeroMontageClips()} />;
 }
