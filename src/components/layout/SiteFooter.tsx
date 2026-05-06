@@ -3,6 +3,7 @@
 import { Instagram, MapPin } from "lucide-react";
 import Link from "next/link";
 import { LogoWordmark } from "@/components/LogoWordmark";
+import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { LocationMapEmbed } from "@/components/LocationMap";
 import { VENUE_ADDRESS, googleMapsSearchUrl } from "@/constants/venue";
 import {
@@ -89,9 +90,12 @@ export function SiteFooter() {
                   </li>
                 ) : null}
                 <li>
-                  <Link className="hover:text-paper" href="/reserve">
+                  <BookTableWidgetButton
+                    type="button"
+                    className="inline border-0 bg-transparent p-0 text-left font-inherit text-inherit hover:text-paper"
+                  >
                     {t(locale, "nav.reserve")}
-                  </Link>
+                  </BookTableWidgetButton>
                 </li>
                 <li>
                   <Link className="hover:text-paper" href="/menu">

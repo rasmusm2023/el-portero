@@ -2,12 +2,11 @@
 
 import { contactMailtoHref } from "@/config/site";
 import { LogoWordmark } from "@/components/LogoWordmark";
-import {
-  PageHeroSection,
-  pageHeroBottomAsideTextClass,
-} from "@/components/PageHeroSection";
+import { PageHeroSection } from "@/components/PageHeroSection";
+import { HeroOpeningCountdown } from "@/components/HeroOpeningCountdown";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { VENUE_ADDRESS, googleMapsSearchUrl } from "@/constants/venue";
+import { OPENING_COUNTDOWN_END } from "@/lib/openingCountdown";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -20,24 +19,7 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
 
   return (
     <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
-      <PageHeroSection
-        heroImages={heroImages}
-        accentVideo={false}
-        showOpeningCountdown
-        bottomCta={
-          <a
-            href={contactMailtoHref()}
-            className={bookTableHeroHollowButtonClass}
-          >
-            {t(locale, "page.contact.title")}
-          </a>
-        }
-        bottomAside={
-          <p className={pageHeroBottomAsideTextClass}>
-            {t(locale, "page.comingSoon.heroAside")}
-          </p>
-        }
-      >
+      <PageHeroSection heroImages={heroImages} accentVideo={false}>
         <div className="mx-auto flex w-full max-w-[46rem] flex-col items-center">
           <LogoWordmark
             size="hero"
@@ -48,17 +30,30 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
           <p className="mt-14 font-hero-title text-[clamp(1.75rem,5.5vw,3.65rem)] font-normal leading-[1.06] tracking-[0.14em] text-paper uppercase sm:mt-16 md:mt-20">
             {t(locale, "page.comingSoon.title")}
           </p>
+          <HeroOpeningCountdown
+            targetDate={OPENING_COUNTDOWN_END}
+            variant="inline"
+          />
         </div>
       </PageHeroSection>
 
       <section
-        aria-labelledby="coming-soon-venue-heading"
+        aria-labelledby="coming-soon-lower-heading"
         className="border-t border-border bg-ink px-4 py-10 text-paper sm:px-6 sm:py-14"
       >
-        <h2 id="coming-soon-venue-heading" className="sr-only">
-          {t(locale, "page.hours.map")}
+        <h2 id="coming-soon-lower-heading" className="sr-only">
+          {t(locale, "page.comingSoon.lowerSectionAria")}
         </h2>
-        <div className="mx-auto w-full max-w-[var(--container-max)] text-center">
+        <div className="mx-auto flex w-full max-w-[var(--container-max)] flex-col items-center gap-8 text-center sm:gap-10">
+          <p className="mx-auto max-w-[min(42rem,calc(100%-2rem))] font-sans text-sm leading-relaxed text-paper/90 sm:text-base">
+            {t(locale, "page.comingSoon.heroAside")}
+          </p>
+          <a
+            href={contactMailtoHref()}
+            className={bookTableHeroHollowButtonClass}
+          >
+            {t(locale, "page.contact.title")}
+          </a>
           <a
             href={googleMapsSearchUrl()}
             target="_blank"

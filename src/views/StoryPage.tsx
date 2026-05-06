@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PageHeroSection } from "@/components/PageHeroSection";
+import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { PageShell } from "@/components/layout/PageShell";
 import type { StoryContentImages } from "@/data/storyContentImages";
 import { useLocale } from "@/i18n/useLocale";
@@ -165,13 +166,13 @@ export function StoryPage({ heroImages, contentImages }: StoryPageProps) {
               {t(locale, "page.story.sectionCoastBody")}
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
-              <Link
-                href="/reserve"
+              <BookTableWidgetButton
+                type="button"
                 className="inline-flex min-h-12 items-center justify-center rounded-none border-0 bg-ink px-10 py-3.5 font-sans text-xs font-bold tracking-[0.22em] text-paper uppercase transition-[background-color,box-shadow,transform] hover:-translate-y-0.5 hover:bg-ink/90 hover:shadow-[0_14px_36px_-14px_rgba(0,0,0,0.35)] sm:min-h-13 sm:px-12 sm:text-sm sm:tracking-[0.24em]"
                 aria-label={t(locale, "page.story.ctaReserveAria")}
               >
                 {t(locale, "page.story.ctaReserve")}
-              </Link>
+              </BookTableWidgetButton>
               <Link
                 href="/contact"
                 className="inline-flex min-h-12 items-center justify-center rounded-none border border-paper/25 bg-transparent px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.18em] text-paper uppercase transition-colors hover:border-gold/45 hover:bg-paper/5 sm:px-10 sm:text-sm"

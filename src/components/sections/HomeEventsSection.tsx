@@ -3,6 +3,7 @@
 import { useMemo, useRef } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
+import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { OpeningHoursCard } from "@/components/OpeningHoursCard";
 import { LAUNCH_UI_OPENING_HOURS } from "@/config/launchUi";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
@@ -137,12 +138,12 @@ export function HomeEventsSection() {
                                   {t(locale, "page.reserve.fullyBooked")}
                                 </button>
                               ) : (
-                                <Link
-                                  href="/reserve"
+                                <BookTableWidgetButton
+                                  type="button"
                                   className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink bg-ink px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:px-4 sm:py-2.5 sm:text-xs"
                                 >
                                   {t(locale, "nav.reserve")}
-                                </Link>
+                                </BookTableWidgetButton>
                               )}
                             </div>
                           </div>

@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
+import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { PageShell } from "@/components/layout/PageShell";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
@@ -127,12 +128,12 @@ export function EventsPage({ heroImages }: EventsPageProps) {
                             {t(locale, "page.reserve.fullyBooked")}
                           </button>
                         ) : (
-                          <Link
-                            href="/reserve"
+                          <BookTableWidgetButton
+                            type="button"
                             className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink bg-ink px-4 py-2.5 text-xs font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:text-sm"
                           >
                             {t(locale, "nav.reserve")}
-                          </Link>
+                          </BookTableWidgetButton>
                         )}
                       </div>
                     </div>

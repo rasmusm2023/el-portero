@@ -5,6 +5,7 @@ import { Instagram } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
+import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { INSTAGRAM_PROFILE_URL } from "@/config/site";
 import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { t, type NavKey } from "@/i18n/strings";
@@ -223,13 +224,12 @@ export function SiteHeader() {
           </Link>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             <LanguageSwitcher variant="onDark" />
-            <Link
-              href="/reserve"
+            <BookTableWidgetButton
               className={bookTableNavButtonClass}
               title={t(locale, "nav.bookTable")}
             >
               {t(locale, "nav.bookTable")}
-            </Link>
+            </BookTableWidgetButton>
             <button
               type="button"
               className="group flex shrink-0 items-center gap-1.5"
@@ -319,9 +319,9 @@ export function SiteHeader() {
               ))}
             </nav>
             <div className="flex min-w-0 flex-1 items-center justify-end pl-4">
-              <Link href="/reserve" className={bookTableNavButtonClass}>
+              <BookTableWidgetButton className={bookTableNavButtonClass}>
                 {t(locale, "nav.bookTable")}
-              </Link>
+              </BookTableWidgetButton>
             </div>
           </div>
         </div>

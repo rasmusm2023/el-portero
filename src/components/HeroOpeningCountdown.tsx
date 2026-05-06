@@ -37,6 +37,8 @@ function computeParts(target: Date) {
 
 type Props = {
   targetDate: Date;
+  /** Default: centered overlay for home hero. `inline`: flow below content (e.g. coming soon). */
+  variant?: "overlay" | "inline";
 };
 
 function localeTag(locale: string) {
@@ -64,7 +66,7 @@ function Segment({ value, label }: { value: string | number; label: string }) {
   );
 }
 
-export function HeroOpeningCountdown({ targetDate }: Props) {
+export function HeroOpeningCountdown({ targetDate, variant = "overlay" }: Props) {
   const { locale } = useLocale();
   const parts = useCountdownParts(targetDate);
   const days = parts?.days ?? 0;
@@ -81,39 +83,53 @@ export function HeroOpeningCountdown({ targetDate }: Props) {
     [targetDate, locale],
   );
 
+  const body = (
+    <>
+      <p className="text-center font-sans text-[10px] font-medium uppercase tracking-[0.55em] text-paper/90 sm:text-[11px] sm:tracking-[0.62em]">
+        <span className="text-paper">
+          {t(locale, "page.home.countdownLabel")}
+        </span>
+        <span className="mx-2 text-paper/55" aria-hidden>
+          ·
+        </span>
+        <span className="text-paper">{dateCaption}</span>
+      </p>
+
+      <div
+        className={`flex w-full max-w-[min(100%,46rem)] items-stretch overflow-hidden rounded-2xl border border-paper/[0.09] bg-gradient-to-b from-paper/[0.07] to-transparent shadow-[0_28px_90px_-24px_rgba(0,0,0,0.65),inset_0_1px_0_0_rgba(255,255,255,0.07)] backdrop-blur-md transition-opacity duration-300 sm:rounded-3xl ${
+          parts === null ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        <Segment value={days} label="Days" />
+        <div
+          className="w-px shrink-0 bg-gradient-to-b from-transparent via-paper/18 to-transparent"
+          aria-hidden
+        />
+        <Segment value={pad2(hours)} label="Hours" />
+        <div
+          className="w-px shrink-0 bg-gradient-to-b from-transparent via-paper/18 to-transparent"
+          aria-hidden
+        />
+        <Segment value={pad2(minutes)} label="Min" />
+      </div>
+    </>
+  );
+
+  if (variant === "inline") {
+    return (
+      <div className="mt-10 w-full max-w-[min(100%,52rem)] sm:mt-12">
+        <div className="flex flex-col items-center gap-5 sm:gap-6">{body}</div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="pointer-events-none absolute inset-0 z-[4] flex items-center justify-center overflow-hidden px-3 sm:px-6"
       aria-hidden
     >
       <div className="flex max-w-[min(100%,52rem)] -translate-y-[clamp(6rem,26vh,15rem)] flex-col items-center gap-5 sm:gap-6 sm:-translate-y-[clamp(7.5rem,28vh,17rem)]">
-        <p className="text-center font-sans text-[10px] font-medium uppercase tracking-[0.55em] text-paper/90 sm:text-[11px] sm:tracking-[0.62em]">
-          <span className="text-paper">
-            {t(locale, "page.home.countdownLabel")}
-          </span>
-          <span className="mx-2 text-paper/55" aria-hidden>
-            ·
-          </span>
-          <span className="text-paper">{dateCaption}</span>
-        </p>
-
-        <div
-          className={`flex w-full max-w-[min(100%,46rem)] items-stretch overflow-hidden rounded-2xl border border-paper/[0.09] bg-gradient-to-b from-paper/[0.07] to-transparent shadow-[0_28px_90px_-24px_rgba(0,0,0,0.65),inset_0_1px_0_0_rgba(255,255,255,0.07)] backdrop-blur-md transition-opacity duration-300 sm:rounded-3xl ${
-            parts === null ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          <Segment value={days} label="Days" />
-          <div
-            className="w-px shrink-0 bg-gradient-to-b from-transparent via-paper/18 to-transparent"
-            aria-hidden
-          />
-          <Segment value={pad2(hours)} label="Hours" />
-          <div
-            className="w-px shrink-0 bg-gradient-to-b from-transparent via-paper/18 to-transparent"
-            aria-hidden
-          />
-          <Segment value={pad2(minutes)} label="Min" />
-        </div>
+        {body}
       </div>
     </div>
   );
