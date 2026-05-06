@@ -6,10 +6,8 @@ import {
 } from "next/font/google";
 import localFont from "next/font/local";
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
-import { BOKABORD_WIDGET_SCRIPT_SRC } from "@/config/bokabord";
 import { headers } from "next/headers";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -81,8 +79,6 @@ export default async function RootLayout({
       className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontCountdown.variable}`}
     >
       <body>
-        {/* Must load before DOMContentLoaded: vendor binds click handlers in a DOMContentLoaded callback; afterInteractive runs too late and bindEvents never runs. */}
-        <Script src={BOKABORD_WIDGET_SCRIPT_SRC} strategy="beforeInteractive" />
         <AppProviders>
           <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip">
             {!comingSoon ? <SiteHeader /> : null}
