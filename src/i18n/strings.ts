@@ -48,6 +48,7 @@ type PageKey =
   | "page.home.countdownLabel"
   | "page.comingSoon.title"
   | "page.comingSoon.heroAside"
+  | "page.comingSoon.lowerSectionAria"
   | "page.menu.title"
   | "page.menu.food"
   | "page.menu.drinks"
@@ -216,7 +217,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.countdownLabel": "Opening",
     "page.comingSoon.title": "Coming soon",
     "page.comingSoon.heroAside":
-      "Stay tuned. A culinary experience reaching from South America to Sweden is taking place in Torrevieja on the beautiful Costa Blanca.",
+      "Stay tuned. A new culinary experience reaching from South America to Sweden is taking shape in Torrevieja along beautiful Costa Blanca.",
+    "page.comingSoon.lowerSectionAria": "Updates, contact, and location",
     "page.menu.title": "Our menus",
     "page.menu.food": "Highlights",
     "page.menu.drinks": "Drinks",
@@ -415,7 +417,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.countdownLabel": "Apertura",
     "page.comingSoon.title": "Próximamente",
     "page.comingSoon.heroAside":
-      "Manteneos atentos: una experiencia culinaria que va de Sudamérica a Suecia cobra vida en Torrevieja, en la bella Costa Blanca.",
+      "Manteneos atentos. Una nueva experiencia culinaria que va de Sudamérica a Suecia está tomando forma en Torrevieja a lo largo de la hermosa Costa Blanca.",
+    "page.comingSoon.lowerSectionAria": "Novedades, contacto y ubicación",
     "page.menu.title": "Nuestras cartas",
     "page.menu.food": "Selección",
     "page.menu.drinks": "Bebidas",
@@ -614,7 +617,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.countdownLabel": "Öppning",
     "page.comingSoon.title": "Snart öppnar vi",
     "page.comingSoon.heroAside":
-      "Håll utkik. En kulinarisk upplevelse från Sydamerika till Sverige växer fram i Torrevieja på Costa Blanca.",
+      "Håll utkik. En ny kulinarisk upplevelse från Sydamerika till Sverige tar form i Torrevieja längs den vackra Costa Blanca.",
+    "page.comingSoon.lowerSectionAria": "Nyheter, kontakt och adress",
     "page.menu.title": "Våra menyer",
     "page.menu.food": "Höjdpunkter",
     "page.menu.drinks": "Dryck",
