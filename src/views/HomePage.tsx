@@ -5,25 +5,29 @@ import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
 import { PageHeroSection } from "@/components/PageHeroSection";
+import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
+import type { HeroMontageClip } from "@/lib/heroVideos";
 
 type HomePageProps = {
-  heroImages?: string[];
+  heroVideos: HeroMontageClip[];
 };
 
-export function HomePage({ heroImages = [] }: HomePageProps) {
+export function HomePage({ heroVideos }: HomePageProps) {
   const { locale } = useLocale();
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeroSection
-        heroImages={heroImages}
+        heroImages={[]}
+        heroVideos={heroVideos}
         accentVideo
+        showOpeningCountdown
         bottomCta={
           <Link
             href="/menu"
-            className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-paper via-white to-paper px-8 py-3.5 text-xs font-semibold tracking-[0.08em] text-ink shadow-[0_10px_34px_rgba(0,0,0,0.26)] ring-1 ring-white/60 transition-[filter,box-shadow] hover:brightness-105 hover:shadow-[0_14px_44px_rgba(0,0,0,0.28)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper/50 active:brightness-95 sm:px-10 sm:py-4 sm:text-sm sm:tracking-[0.1em]"
+            className={bookTableHeroHollowButtonClass}
           >
             {t(locale, "page.menu.title")}
           </Link>

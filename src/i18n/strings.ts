@@ -46,6 +46,16 @@ type PageKey =
   | "page.home.eventsLoading"
   | "page.home.heroReserveCta"
   | "page.home.heroTagline"
+  | "page.home.countdownLabel"
+  | "page.comingSoon.title"
+  | "page.comingSoon.subtitle"
+  | "page.comingSoon.contactCta"
+  | "page.comingSoon.instagramCta"
+  | "page.comingSoon.notifyTitle"
+  | "page.comingSoon.notifyBody"
+  | "page.comingSoon.notifyPlaceholder"
+  | "page.comingSoon.notifyCta"
+  | "page.comingSoon.notifyHint"
   | "page.menu.title"
   | "page.menu.food"
   | "page.menu.drinks"
@@ -212,6 +222,18 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.heroReserveCta": "Book a table",
     "page.home.heroTagline":
       "Latin American heart meets Nordic elegance in Torrevieja.\n— Just a throw-in from the Mediterranean.",
+    "page.home.countdownLabel": "Opening",
+    "page.comingSoon.title": "Coming soon",
+    "page.comingSoon.subtitle":
+      "We’re setting the room, polishing the glassware, and finalising the menu. Check back soon—or follow along for opening updates.",
+    "page.comingSoon.contactCta": "Contact us",
+    "page.comingSoon.instagramCta": "Follow on Instagram",
+    "page.comingSoon.notifyTitle": "Be the first to know",
+    "page.comingSoon.notifyBody":
+      "Leave your email and we’ll let you know when reservations and new menus go live.",
+    "page.comingSoon.notifyPlaceholder": "Email address",
+    "page.comingSoon.notifyCta": "Notify me",
+    "page.comingSoon.notifyHint": "Newsletter signup is coming soon.",
     "page.menu.title": "Our menus",
     "page.menu.food": "Highlights",
     "page.menu.drinks": "Drinks",
@@ -338,23 +360,23 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Opens your mail app with the subject “Contact from website” — add your message and send.",
     "page.gallery.srHeading": "A glimpse of El Portero",
     "page.gallery.imageAlt1":
-      "Dining room with warm light, set tables, and an inviting atmosphere",
+      "Grilled meat and vegetable skewers from the grill — South American–inspired cooking",
     "page.gallery.imageAlt2":
-      "Wine glasses and table setting for an evening at the restaurant",
+      "Swedish meatballs with mashed potatoes and cranberry sauce on the table",
     "page.gallery.imageAlt3":
-      "Chef carefully plating a dish at the pass",
+      "Bartender mixing cocktails at the bar counter",
     "page.gallery.caption1":
-      "Soft light, crisp linen, and a room made for long evenings by the sea.",
+      "South American soul, straight from the grill.",
     "page.gallery.caption2":
-      "Glassware and pairings chosen with the same care we bring to every course.",
+      "Swedish comfort meets Latin warmth — on one table.",
     "page.gallery.caption3":
-      "From the pass to your plate — seasonal, deliberate, never on autopilot.",
+      "A bar built for the long arc of the evening.",
     "page.gallery.body1":
-      "Anchored in Torrevieja, our dining room is dressed for unhurried conversation — the kind of evening that begins with a glass and ends with the lights low.",
+      "We are a restaurant shaped by South American cooking — charcoal, bold marinades, and generous plates made for passing and sharing. The grill is where our flavours come alive, steps from the Mediterranean.",
     "page.gallery.body2":
-      "Wines, cocktails, and pairings that keep pace with the kitchen — the coast gives us the ingredients; we give them a reason to dress up.",
+      "We also bring Swedish food to the table — honest classics and Nordic comfort — and fuse it with our South American kitchen so every dinner feels like two traditions talking across the same menu.",
     "page.gallery.body3":
-      "Every service is choreographed from the pass: timing, temperature, and the small gestures that turn a meal into a memory.",
+      "Our bar keeps pace with the kitchen: precise cocktails, warm service, and a counter where you can begin the night with a drink or settle in for one more after dessert.",
     "page.hours.title": "Opening hours",
     "page.hours.map": "Location",
     "page.hours.mapIframeTitle": "Map: El Portero, Torrevieja",
@@ -408,6 +430,18 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.heroReserveCta": "Reservar mesa",
     "page.home.heroTagline":
       "Corazón latinoamericano y elegancia nórdica en Torrevieja.\n— A solo un saque de banda del Mediterráneo.",
+    "page.home.countdownLabel": "Apertura",
+    "page.comingSoon.title": "Próximamente",
+    "page.comingSoon.subtitle":
+      "Estamos preparando la sala, puliendo las copas y cerrando la carta. Volved pronto o seguidnos para novedades de apertura.",
+    "page.comingSoon.contactCta": "Contactar",
+    "page.comingSoon.instagramCta": "Seguir en Instagram",
+    "page.comingSoon.notifyTitle": "Sé el primero en enterarte",
+    "page.comingSoon.notifyBody":
+      "Dejad vuestro correo y os avisaremos cuando las reservas y las nuevas cartas estén disponibles.",
+    "page.comingSoon.notifyPlaceholder": "Correo electrónico",
+    "page.comingSoon.notifyCta": "Avisadme",
+    "page.comingSoon.notifyHint": "La suscripción al boletín estará disponible pronto.",
     "page.menu.title": "Nuestras cartas",
     "page.menu.food": "Selección",
     "page.menu.drinks": "Bebidas",
@@ -542,23 +576,23 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Se abre el correo con el asunto «Contact from website» — añadid el mensaje y enviad.",
     "page.gallery.srHeading": "Un vistazo a El Portero",
     "page.gallery.imageAlt1":
-      "Comedor con luz cálida, mesas puestas y ambiente acogedor",
+      "Brochetas de carne y verdura a la parrilla — cocina con alma sudamericana",
     "page.gallery.imageAlt2":
-      "Copas y mesa preparada para una velada en el restaurante",
+      "Albóndigas suecas con puré y arándanos en la mesa",
     "page.gallery.imageAlt3":
-      "Chef emplatando con mimo en el paso de cocina",
+      "Camarero preparando cócteles en la barra",
     "page.gallery.caption1":
-      "Luz suave, mantelería impecable y un espacio para largas veladas junto al mar.",
+      "Alma sudamericana, directa desde la parrilla.",
     "page.gallery.caption2":
-      "Copas y maridajes elegidos con el mismo mimo que cada servicio.",
+      "Confort nórdico y calor latino — en la misma mesa.",
     "page.gallery.caption3":
-      "Del paso a vuestra mesa — de temporada, con criterio y nunca en piloto automático.",
+      "Una barra pensada para toda la velada.",
     "page.gallery.body1":
-      "En Torrevieja, el comedor se prepara para veladas sin prisa — copa al inicio, conversación al centro y la luz baja al final.",
+      "Somos un restaurante con la cocina sudamericana como brújula — brasa, marinados vivos y platos generosos para compartir. La parrilla es el corazón de cómo cocinamos, a un paso del Mediterráneo.",
     "page.gallery.body2":
-      "Vinos, cócteles y maridajes al ritmo de cocina — el Mediterráneo nos da el producto; nosotros le damos motivos para vestir bien la mesa.",
+      "También llevamos la cocina sueca a la mesa — clásicos sinceros y ese confort nórdico — y la fundimos con nuestra cocina sudamericana para que cada cena sea un diálogo entre dos orillas en la misma carta.",
     "page.gallery.body3":
-      "Cada servicio se orquesta en el paso: ritmo, temperatura y el detalle que convierte la cena en recuerdo.",
+      "Nuestra barra va al ritmo de cocina: cócteles cuidados, servicio cercano y un mostrador donde empezar la noche con un trago o quedaros para uno más después del postre.",
     "page.hours.title": "Horario",
     "page.hours.map": "Ubicación",
     "page.hours.mapIframeTitle": "Mapa: El Portero, Torrevieja",
@@ -604,6 +638,18 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.heroReserveCta": "Boka bord",
     "page.home.heroTagline":
       "Latinamerikanskt hjärta möter nordisk elegans i Torrevieja.\n— Bara ett inkast från Medelhavet.",
+    "page.home.countdownLabel": "Öppning",
+    "page.comingSoon.title": "Snart öppnar vi",
+    "page.comingSoon.subtitle":
+      "Vi dukar upp, putsar glasen och färdigställer menyn. Kom tillbaka snart – eller följ oss för öppningsnyheter.",
+    "page.comingSoon.contactCta": "Kontakta oss",
+    "page.comingSoon.instagramCta": "Följ på Instagram",
+    "page.comingSoon.notifyTitle": "Få besked först",
+    "page.comingSoon.notifyBody":
+      "Lämna din e-post så meddelar vi när bokning och nya menyer är live.",
+    "page.comingSoon.notifyPlaceholder": "E-postadress",
+    "page.comingSoon.notifyCta": "Meddela mig",
+    "page.comingSoon.notifyHint": "Nyhetsbrevet kommer snart.",
     "page.menu.title": "Våra menyer",
     "page.menu.food": "Höjdpunkter",
     "page.menu.drinks": "Dryck",
@@ -738,23 +784,23 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Öppnar din mejlklient med ämnet «Contact from website» — skriv meddelandet och skicka.",
     "page.gallery.srHeading": "En glimt av El Portero",
     "page.gallery.imageAlt1":
-      "Matsal i varmt ljus med dukade bord och inbjudande stämning",
+      "Grillade kött- och grönsaksspett — sydamerikanskt inspirerad mat från grillen",
     "page.gallery.imageAlt2":
-      "Vinglas och dukning för en kväll på restaurangen",
+      "Svenska köttbullar med potatismos och lingon på tallriken",
     "page.gallery.imageAlt3":
-      "Kock som varsamt lägger sista handen vid en rätt vid pass",
+      "Bartender som blandar drinkar i baren",
     "page.gallery.caption1":
-      "Mjukt ljus, skarp linneväv och ett rum för långa kvällar vid havet.",
+      "Sydamerikansk själ, rakt från grillen.",
     "page.gallery.caption2":
-      "Glas och maridage utvalda med samma omsorg som varje servering.",
+      "Svensk hemkänsla möter latinamerikansk värme — vid samma bord.",
     "page.gallery.caption3":
-      "Från passet till ert bord — säsong, omsorg och aldrig på autopilot.",
+      "En bar som hänger med hela kvällen.",
     "page.gallery.body1":
-      "I Torrevieja dukas rummet för långa kvällar — glas först, samtal längs vägen och dämpat ljus mot slutet.",
+      "Vi är en restaurang formad av sydamerikansk matlagning — kolglöd, tydliga marinader och generösa tallrikar att dela. Grillen är navet i hur vi lagar mat, ett stenkast från Medelhavet.",
     "page.gallery.body2":
-      "Vin, cocktails och maridage i takt med köket — kusten ger råvarorna; vi ger dem en anledning att klä upp sig.",
+      "Vi för också svensk mat till bordet — ärliga klassiker och nordisk trygghet — och smälter ihop den med vårt sydamerikanska kök så varje middag känns som två traditioner i samma meny.",
     "page.gallery.body3":
-      "Varje servering är regisserad vid passet: tempo, värme och de små gesterna som gör middagen minnesvärd.",
+      "Vår bar håller samma tempo som köket: genomtänkta cocktails, varm service och en disk där ni kan börja kvällen med en drink eller stanna för en sista efter desserten.",
     "page.hours.title": "Öppettider",
     "page.hours.map": "Plats",
     "page.hours.mapIframeTitle": "Karta: El Portero, Torrevieja",

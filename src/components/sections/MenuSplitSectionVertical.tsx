@@ -173,7 +173,7 @@ export function MenuSplitSectionVertical({
             ? "Välj meny (demo)"
             : "Choose a menu (demo)"
       }
-      className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-paper"
+      className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-ink"
     >
       <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,30%)_minmax(0,70%)] lg:items-stretch lg:gap-8">

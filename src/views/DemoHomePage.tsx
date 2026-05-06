@@ -17,9 +17,10 @@ import { LunchMenuExpandedPreview } from "@/components/menu/LunchMenuExpandedPre
 import type { MenuCategoryData } from "@/data/menuTypes";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
+import type { HeroMontageClip } from "@/lib/heroVideos";
 
 type DemoHomePageProps = {
-  heroImages?: string[];
+  heroVideos: HeroMontageClip[];
 };
 
 const MENU_SPLIT_KEYS: MenuSplitKey[] = [
@@ -42,7 +43,7 @@ const previewCategories: Record<
  * Experimental home layout: vertical left rail for menu strips (`/demo` only).
  * Production menus live on `/menu` (`MenusHubPage`).
  */
-export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
+export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
   const { locale } = useLocale();
   const [expandedMenu, setExpandedMenu] = useState<MenuSplitKey | null>(null);
   const menuPreviewRef = useRef<HTMLDivElement>(null);
@@ -50,7 +51,8 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <PageHeroSection
-        heroImages={heroImages}
+        heroImages={[]}
+        heroVideos={heroVideos}
         bottomAside={
           <p className="max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3">
             {t(locale, "page.home.heroTagline")}
@@ -102,7 +104,7 @@ export function DemoHomePage({ heroImages = [] }: DemoHomePageProps) {
                     ) : (
                       <>
                         <div className="min-w-0">
-                          <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-ink uppercase">
+                          <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
                             {expandedMenu === "drinks" &&
                               t(locale, "page.menu.drinksHeading")}
                             {expandedMenu === "brunch" &&

@@ -2,7 +2,11 @@
 
 import type { ReactNode, RefObject } from "react";
 import { useEffect, useRef } from "react";
+import { HeroOpeningCountdown } from "@/components/HeroOpeningCountdown";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
+import { HeroVideoMontage } from "@/components/HeroVideoMontage";
+import type { HeroMontageClip } from "@/lib/heroVideos";
+import { OPENING_COUNTDOWN_END } from "@/lib/openingCountdown";
 
 /** Scroll progress 0→1 as the user scrolls through / past the hero (drives object-position). */
 function heroScrollShift(containerRef: RefObject<HTMLElement | null>): number {
@@ -79,7 +83,7 @@ function HeroAccentVideo({ containerRef }: { containerRef: RefObject<HTMLElement
 
   return (
     <div
-      className="pointer-events-none absolute left-[max(0.5rem,9vw)] top-full z-[8] -translate-y-1/2 sm:left-[max(0.75rem,11vw)] md:left-[max(1rem,13vw)] lg:left-[max(1.25rem,14vw)]"
+      className="pointer-events-none absolute left-[max(0.5rem,9vw)] top-full z-[8] -translate-y-[calc(54%+0.28rem)] sm:left-[max(0.75rem,11vw)] sm:-translate-y-[calc(57%+0.38rem)] md:left-[max(1rem,13vw)] lg:left-[max(1.25rem,14vw)]"
       aria-hidden
     >
       <div className="aspect-[3/4] w-[clamp(7rem,28vw,18rem)] translate-x-[6%] overflow-hidden shadow-[0_22px_56px_-10px_rgba(0,0,0,0.55)] sm:w-[clamp(8rem,24vw,20rem)] sm:translate-x-[8%] md:w-[clamp(8.75rem,20vw,22rem)] md:translate-x-[10%] lg:w-[clamp(9.25rem,18vw,24rem)] lg:translate-x-[12%]">
@@ -106,7 +110,14 @@ const heroRadialOverlayStyle = {
 
 type PageHeroSectionProps = {
   heroImages: string[];
+  /**
+   * When non-empty, replaces the image slideshow with a muted, parallax video montage.
+   * Takes precedence over `heroImages` for the background layer.
+   */
+  heroVideos?: HeroMontageClip[];
   children: ReactNode;
+  /** Large opening countdown (May 14); sits above video, below logo. */
+  showOpeningCountdown?: boolean;
   /** Centered action(s) toward the lower third of the hero (e.g. primary CTA). */
   bottomCta?: ReactNode;
   /** Optional bottom-right block (e.g. home tagline). */
@@ -123,22 +134,30 @@ type PageHeroSectionProps = {
  */
 export function PageHeroSection({
   heroImages,
+  heroVideos,
   children,
   bottomCta,
   bottomAside,
   accentVideo = false,
+  showOpeningCountdown = false,
 }: PageHeroSectionProps) {
   const heroSectionRef = useRef<HTMLElement>(null);
+  const useVideoBg = heroVideos != null && heroVideos.length > 0;
+  const hasHeroMedia = useVideoBg || heroImages.length > 0;
 
   return (
     <section
       ref={heroSectionRef}
-      className="relative w-full overflow-x-clip bg-paper pb-6 pt-0 text-ink sm:pb-8"
+      className="relative w-full overflow-x-clip bg-ink pb-6 pt-0 text-paper sm:pb-8"
     >
       <div className="relative w-full">
         <div className="relative w-full overflow-visible bg-ink text-paper shadow-[0_28px_64px_-18px_rgba(10,10,10,0.18)]">
-          <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
-          {heroImages.length > 0 && (
+          {useVideoBg ? (
+            <HeroVideoMontage clips={heroVideos} containerRef={heroSectionRef} />
+          ) : (
+            <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
+          )}
+          {hasHeroMedia && (
             <div className="absolute inset-0 z-[1] bg-ink/50" aria-hidden />
           )}
           <div
@@ -146,12 +165,17 @@ export function PageHeroSection({
             style={heroRadialOverlayStyle}
             aria-hidden
           />
-          {heroImages.length > 0 && accentVideo ? (
+          {hasHeroMedia && showOpeningCountdown ? (
+            <HeroOpeningCountdown targetDate={OPENING_COUNTDOWN_END} />
+          ) : null}
+          {hasHeroMedia && accentVideo ? (
             <HeroAccentVideo containerRef={heroSectionRef} />
           ) : null}
           <div className="relative z-10 flex w-full min-h-[min(82vh,54rem)] flex-col items-center px-5 pb-14 pt-10 sm:px-10 sm:pb-20 sm:pt-12 md:pt-14 lg:px-14 xl:px-20">
             <div className="flex flex-1 flex-col items-center justify-center px-2 py-10 sm:py-14 md:py-16">
-              <div className="w-full max-w-5xl text-center text-paper">{children}</div>
+              <div className="relative z-[6] w-full max-w-5xl text-center text-paper">
+                {children}
+              </div>
             </div>
             {bottomCta ? (
               <div className="relative z-20 -mt-6 mb-6 flex w-full justify-center px-2 pb-2 sm:-mt-8 sm:mb-10 sm:pb-0 md:-mt-10">

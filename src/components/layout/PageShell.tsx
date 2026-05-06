@@ -30,12 +30,12 @@ export function PageShell({
 }: PageShellProps) {
   const titleClassName =
     titleVariant === "hero"
-      ? "font-hero-title text-[clamp(2.25rem,6vw,4.25rem)] font-normal leading-[1.05] tracking-[0.14em] text-ink uppercase"
-      : "font-display text-4xl font-medium tracking-tight text-ink sm:text-5xl";
+      ? "font-hero-title text-[clamp(2.25rem,6vw,4.25rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase"
+      : "font-display text-4xl font-medium tracking-tight text-paper sm:text-5xl";
 
   const introClassName =
     introVariant === "display"
-      ? "mt-4 max-w-4xl font-display text-2xl text-ink leading-relaxed"
+      ? "mt-4 max-w-4xl font-display text-2xl text-paper leading-relaxed"
       : "mt-4 text-lg text-ink-muted leading-relaxed";
 
   const headerMaxClass =

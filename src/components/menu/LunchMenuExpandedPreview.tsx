@@ -19,10 +19,10 @@ export function LunchMenuExpandedPreview() {
   return (
     <>
       <div className="min-w-0">
-        <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-ink uppercase">
+        <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
           {weeklyMenuWeekTitle(locale, isoWeek)}
         </h2>
-        <p className="mt-4 max-w-4xl font-display text-2xl text-ink leading-relaxed">
+        <p className="mt-4 max-w-4xl font-display text-2xl text-paper leading-relaxed">
           {t(locale, "page.menu.weeklyIntro")}
         </p>
       </div>

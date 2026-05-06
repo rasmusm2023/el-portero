@@ -4,15 +4,14 @@
 @layer base {
   html {
     @apply scroll-smooth antialiased;
-    color-scheme: light;
+    color-scheme: dark;
     /* Avoid horizontal jump when scrollbars appear/disappear (e.g. menu open). */
     scrollbar-gutter: stable;
     overflow-x: clip;
   }
 
   body {
-    @apply overflow-x-clip text-ink font-sans text-base font-normal leading-relaxed;
-    background-color: var(--color-paper);
+    @apply overflow-x-clip bg-ink text-paper font-sans text-base font-normal leading-relaxed;
     background-image: var(--bg-paper-texture);
   }
 
@@ -21,7 +20,7 @@
   }
 
   :focus-visible {
-    @apply outline-solid outline-2 outline-offset-2 outline-ink/35;
+    @apply outline-solid outline-2 outline-offset-2 outline-gold/45;
   }
 }
 
@@ -31,6 +30,12 @@
     font-style: normal;
     /* Between semibold (600) and bold (700) — Bricolage variable supports intermediate weights */
     font-weight: 650;
+  }
+
+  .font-countdown-heavy {
+    font-family: var(--font-countdown-heavy), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    font-style: normal;
   }
 
   @keyframes menus-reveal-ring-spin {

@@ -12,7 +12,7 @@ export function WeeklyMenuSection() {
 
   if (!ready) {
     return (
-      <section className="border-t border-border bg-paper" aria-busy="true">
+      <section className="border-t border-border bg-ink" aria-busy="true">
         <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
           <div className="mx-auto w-full max-w-[var(--container-max)]">
             <p className="text-sm font-medium text-ink-muted">{t(locale, "page.menu.weeklyLoading")}</p>
@@ -30,13 +30,13 @@ export function WeeklyMenuSection() {
         locale,
         getIsoWeekNumberFromYmd(menu.effectiveWeekStartDate || menu.weekStartDate),
       )}
-      className="border-t border-border bg-paper"
+      className="border-t border-border bg-ink"
     >
       <div className="w-full px-5 py-16 sm:px-10 sm:py-20 lg:px-14 xl:px-20">
         <div className="mx-auto w-full max-w-[var(--container-max)]">
           <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0">
-              <h2 className="font-display text-3xl font-medium tracking-tight text-ink uppercase sm:text-4xl">
+              <h2 className="font-display text-3xl font-medium tracking-tight text-paper uppercase sm:text-4xl">
                 {weeklyMenuWeekTitle(
                   locale,
                   getIsoWeekNumberFromYmd(menu.effectiveWeekStartDate || menu.weekStartDate),

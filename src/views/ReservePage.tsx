@@ -123,7 +123,7 @@ export function ReservePage() {
 
   const bookButtonClass =
     !formComplete
-      ? "border border-ink/15 bg-paper-dark/90 text-ink/45 shadow-none hover:bg-paper-dark/90"
+            ? "border border-paper/15 bg-paper-dark/50 text-paper/45 shadow-none hover:bg-paper-dark/50"
       : !RESERVATION_SYSTEM_LIVE
         ? "bg-[#2563eb] text-white opacity-[0.88] hover:bg-[#2563eb]"
         : "bg-[#2563eb] text-white hover:bg-[#1d4ed8]";
@@ -131,7 +131,7 @@ export function ReservePage() {
   return (
     <div className="mx-auto w-full max-w-[var(--container-max)] px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8 lg:pt-16">
       <header className="text-center">
-        <h1 className="font-hero-title text-[clamp(2.25rem,6vw,4.25rem)] font-normal leading-[1.05] tracking-[0.14em] text-ink uppercase">
+        <h1 className="font-hero-title text-[clamp(2.25rem,6vw,4.25rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
           {t(locale, "page.reserve.heroTitle")}
         </h1>
         <p className="mx-auto mt-10 max-w-2xl font-sans text-base leading-[1.75] text-ink-muted sm:mt-12 sm:text-lg">
@@ -155,8 +155,8 @@ export function ReservePage() {
           <div
             className={
               openMenu
-                ? "flex w-full min-w-0 flex-row flex-nowrap divide-x divide-ink/12 overflow-visible rounded-md border border-ink/15 bg-white shadow-[0_1px_3px_rgba(10,10,10,0.06)]"
-                : "flex w-full min-w-0 flex-row flex-nowrap divide-x divide-ink/12 overflow-x-auto rounded-md border border-ink/15 bg-white shadow-[0_1px_3px_rgba(10,10,10,0.06)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                ? "flex w-full min-w-0 flex-row flex-nowrap divide-x divide-paper/12 overflow-visible rounded-md border border-paper/15 bg-paper-dark/70 shadow-[0_8px_28px_-12px_rgba(0,0,0,0.45)]"
+                : "flex w-full min-w-0 flex-row flex-nowrap divide-x divide-paper/12 overflow-x-auto rounded-md border border-paper/15 bg-paper-dark/70 shadow-[0_8px_28px_-12px_rgba(0,0,0,0.45)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             }
             role="group"
             aria-label={t(locale, "page.reserve.title")}
@@ -164,7 +164,7 @@ export function ReservePage() {
             <div className="relative z-10 flex min-w-[10.5rem] shrink-0 flex-1 flex-col justify-center px-4 py-3 sm:min-w-0">
               <span
                 id="reserve-guests-label"
-                className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink/50"
+                className="text-[10px] font-semibold uppercase tracking-[0.14em] text-paper/45"
               >
                 {t(locale, "page.reserve.labelGuests")}
               </span>
@@ -186,7 +186,7 @@ export function ReservePage() {
             <div className="relative z-10 flex min-w-[11rem] shrink-0 flex-1 flex-col justify-center px-4 py-3 sm:min-w-0">
               <span
                 id="reserve-date-label"
-                className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink/50"
+                className="text-[10px] font-semibold uppercase tracking-[0.14em] text-paper/45"
               >
                 {t(locale, "page.reserve.labelDate")}
               </span>
@@ -212,7 +212,7 @@ export function ReservePage() {
             <div className="relative z-10 flex min-w-[10.5rem] shrink-0 flex-1 flex-col justify-center px-4 py-3 sm:min-w-0">
               <span
                 id="reserve-time-label"
-                className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink/50"
+                className="text-[10px] font-semibold uppercase tracking-[0.14em] text-paper/45"
               >
                 {t(locale, "page.reserve.labelTime")}
               </span>
@@ -264,7 +264,7 @@ export function ReservePage() {
             className="h-px min-w-[2.5rem] flex-1 max-w-[10rem] bg-border/90"
             aria-hidden
           />
-          <p className="shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.32em] text-ink/45">
+          <p className="shrink-0 font-sans text-[11px] font-semibold uppercase tracking-[0.32em] text-paper/40">
             {t(locale, "page.reserve.altBookingOr")}
           </p>
           <span
@@ -274,20 +274,20 @@ export function ReservePage() {
         </div>
         <h2
           id="reserve-alt-heading"
-          className="mt-8 text-center font-display text-xl font-medium tracking-tight text-ink sm:mt-10 sm:text-2xl"
+          className="mt-8 text-center font-display text-xl font-medium tracking-tight text-paper sm:mt-10 sm:text-2xl"
         >
           {t(locale, "page.reserve.altBookingTitle")}
         </h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:gap-8">
           <a
             href={bookingTelHref()}
-            className="group flex flex-col items-center rounded-2xl border border-ink/12 bg-linear-to-b from-paper to-paper-dark/60 px-6 py-10 text-center shadow-[0_16px_44px_-22px_rgba(10,10,10,0.14)] ring-1 ring-ink/[0.07] outline-none transition-[border-color,box-shadow,ring-color] duration-200 ease-out hover:border-ink/30 hover:shadow-[0_16px_44px_-20px_rgba(10,10,10,0.18)] hover:ring-ink/15 active:border-ink/18 active:shadow-[0_12px_36px_-22px_rgba(10,10,10,0.12)] focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:ring-offset-2 focus-visible:ring-offset-paper sm:rounded-3xl"
+            className="group flex flex-col items-center rounded-2xl border border-paper/12 bg-linear-to-b from-paper-dark/90 to-paper-dark/50 px-6 py-10 text-center shadow-[0_16px_44px_-22px_rgba(0,0,0,0.45)] ring-1 ring-paper/10 outline-none transition-[border-color,box-shadow,ring-color] duration-200 ease-out hover:border-gold/35 hover:shadow-[0_16px_44px_-20px_rgba(201,164,74,0.12)] hover:ring-gold/20 active:border-paper/20 focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:ring-offset-2 focus-visible:ring-offset-ink sm:rounded-3xl"
             aria-label={t(locale, "page.reserve.altCallAria")}
           >
-            <span className="flex size-16 items-center justify-center rounded-full bg-ink/6 ring-1 ring-ink/10 transition-colors duration-200 ease-out group-hover:bg-ink/12">
-              <Phone className="size-7 text-ink" strokeWidth={1.5} aria-hidden />
+            <span className="flex size-16 items-center justify-center rounded-full bg-gold/12 ring-1 ring-gold/25 transition-colors duration-200 ease-out group-hover:bg-gold/18">
+              <Phone className="size-7 text-gold-bright" strokeWidth={1.5} aria-hidden />
             </span>
-            <p className="mt-7 font-mono text-xl font-medium tracking-[0.12em] text-ink sm:text-2xl">
+            <p className="mt-7 font-mono text-xl font-medium tracking-[0.12em] text-paper sm:text-2xl">
               {BOOKING_PHONE_DISPLAY}
             </p>
             <span className="mt-9 inline-flex min-h-11 min-w-[8.5rem] items-center justify-center rounded-full border border-ink/25 bg-ink px-8 py-2.5 font-sans text-[11px] font-semibold tracking-[0.24em] text-paper uppercase shadow-sm transition-[background-color,border-color] duration-200 ease-out group-hover:border-gold group-hover:bg-gold">
@@ -329,7 +329,7 @@ export function ReservePage() {
       >
         <h2
           id="reserve-newsletter-heading"
-          className="font-hero-title text-2xl font-normal tracking-[0.16em] text-ink uppercase sm:text-3xl sm:tracking-[0.18em]"
+          className="font-hero-title text-2xl font-normal tracking-[0.16em] text-paper uppercase sm:text-3xl sm:tracking-[0.18em]"
         >
           {t(locale, "page.reserve.newsletterHeading")}
         </h2>
@@ -338,12 +338,12 @@ export function ReservePage() {
         </p>
 
         {newsletterThanks ? (
-          <p className="mt-10 font-display text-xl font-medium text-ink" role="status">
+          <p className="mt-10 font-display text-xl font-medium text-paper" role="status">
             {t(locale, "page.reserve.newsletterThanks")}
           </p>
         ) : (
           <form
-            className="mx-auto mt-10 flex max-w-xl flex-col gap-3 sm:mt-12 sm:flex-row sm:items-stretch sm:gap-0 sm:overflow-hidden sm:border sm:border-ink/12 sm:bg-paper sm:shadow-[inset_0_1px_0_rgba(255,255,255,0.6)]"
+            className="mx-auto mt-10 flex max-w-xl flex-col gap-3 sm:mt-12 sm:flex-row sm:items-stretch sm:gap-0 sm:overflow-hidden sm:border sm:border-paper/15 sm:bg-paper-dark/80 sm:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
             onSubmit={(e) => {
               e.preventDefault();
               setNewsletterThanks(true);
@@ -359,7 +359,7 @@ export function ReservePage() {
               autoComplete="email"
               required
               placeholder={t(locale, "page.reserve.newsletterEmailPlaceholder")}
-              className="min-h-13 w-full flex-1 border border-ink/12 bg-paper px-4 py-3.5 font-sans text-ink placeholder:text-ink-muted/45 focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/15 sm:border-0 sm:py-4"
+              className="min-h-13 w-full flex-1 border border-paper/15 bg-paper-dark px-4 py-3.5 font-sans text-paper placeholder:text-paper/40 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/25 sm:border-0 sm:py-4"
             />
             <button
               type="submit"

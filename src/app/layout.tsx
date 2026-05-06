@@ -1,4 +1,5 @@
 import {
+  Anton,
   Cormorant_Garamond,
   Jaro,
   Plus_Jakarta_Sans,
@@ -39,6 +40,14 @@ const fontLogo = Jaro({
   display: "swap",
 });
 
+/** Ultra-heavy display for hero countdown numerals (single weight; reads as “black”). */
+const fontCountdown = Anton({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-countdown-heavy",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "El Portero Restaurant & Bar · Welcome",
@@ -59,7 +68,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable}`}
+      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontCountdown.variable}`}
     >
       <body>
         <AppProviders>

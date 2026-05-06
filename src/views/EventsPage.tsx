@@ -30,7 +30,7 @@ export function EventsPage({ heroImages }: EventsPageProps) {
         <div className="mt-10 flex justify-center sm:mt-12">
           <Link
             href="/contact"
-            className="inline-flex min-h-12 items-center justify-center rounded-md border border-white/25 bg-paper px-10 py-3.5 font-sans text-xs font-bold tracking-[0.22em] text-ink uppercase shadow-[0_12px_36px_-12px_rgba(0,0,0,0.45)] outline-none transition-[background-color,box-shadow,border-color] duration-200 ease-out hover:border-white/50 hover:bg-paper hover:shadow-[0_14px_44px_-12px_rgba(0,0,0,0.38)] active:bg-paper/95 active:shadow-[0_10px_32px_-14px_rgba(0,0,0,0.42)] focus-visible:ring-2 focus-visible:ring-paper/55 focus-visible:ring-offset-2 focus-visible:ring-offset-ink/40 sm:min-h-13 sm:rounded-lg sm:px-12 sm:text-sm sm:tracking-[0.24em]"
+            className="inline-flex min-h-12 items-center justify-center rounded-md border border-gold-bright/35 bg-gradient-to-r from-gold-bright/95 via-gold to-gold-bright/95 px-10 py-3.5 font-sans text-xs font-bold tracking-[0.22em] text-ink uppercase shadow-[0_12px_36px_-12px_rgba(0,0,0,0.5)] outline-none transition-[background-color,box-shadow,border-color] duration-200 ease-out hover:border-gold-bright/55 hover:brightness-105 hover:shadow-[0_14px_44px_-12px_rgba(201,164,74,0.25)] active:brightness-95 focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-ink sm:min-h-13 sm:rounded-lg sm:px-12 sm:text-sm sm:tracking-[0.24em]"
             aria-label={t(locale, "page.events.heroInquiryAria")}
           >
             {t(locale, "page.events.heroInquiryCta")}
@@ -45,7 +45,7 @@ export function EventsPage({ heroImages }: EventsPageProps) {
         >
           <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
             <div>
-              <h3 className="font-display text-2xl font-medium tracking-tight text-ink sm:text-3xl">
+              <h3 className="font-display text-2xl font-medium tracking-tight text-paper sm:text-3xl">
                 {t(locale, "page.events.explainPublicTitle")}
               </h3>
               <p className="mt-4 text-ink-muted leading-relaxed sm:text-lg">
@@ -53,7 +53,7 @@ export function EventsPage({ heroImages }: EventsPageProps) {
               </p>
             </div>
             <div>
-              <h3 className="font-display text-2xl font-medium tracking-tight text-ink sm:text-3xl">
+              <h3 className="font-display text-2xl font-medium tracking-tight text-paper sm:text-3xl">
                 {t(locale, "page.events.explainPrivateTitle")}
               </h3>
               <p className="mt-4 text-ink-muted leading-relaxed sm:text-lg">
@@ -61,7 +61,7 @@ export function EventsPage({ heroImages }: EventsPageProps) {
               </p>
               <Link
                 href="/contact"
-                className="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-ink underline decoration-ink/25 underline-offset-[0.25em] transition-colors hover:decoration-ink/60"
+                className="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-paper underline decoration-paper/30 underline-offset-[0.25em] transition-colors hover:decoration-gold/55"
               >
                 {t(locale, "page.events.heroInquiryCta")}
                 <span aria-hidden>→</span>
@@ -73,7 +73,7 @@ export function EventsPage({ heroImages }: EventsPageProps) {
         <section className="pt-12 sm:pt-14" aria-labelledby="events-calendar-heading">
           <h2
             id="events-calendar-heading"
-            className="font-display text-2xl font-medium tracking-tight text-ink sm:text-3xl"
+            className="font-display text-2xl font-medium tracking-tight text-paper sm:text-3xl"
           >
             {t(locale, "page.events.listHeading")}
           </h2>
@@ -111,7 +111,7 @@ export function EventsPage({ heroImages }: EventsPageProps) {
                             {ev.timeDetail[locale]}
                           </p>
                         </div>
-                        <h2 className="mt-3 font-display text-2xl font-medium text-ink sm:text-3xl">
+                        <h2 className="mt-3 font-display text-2xl font-medium text-paper sm:text-3xl">
                           {ev.title[locale]}
                         </h2>
                         <p className="mt-4 text-ink-muted leading-relaxed">{ev.excerpt[locale]}</p>

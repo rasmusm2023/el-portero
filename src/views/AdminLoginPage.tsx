@@ -78,7 +78,7 @@ export function AdminLoginPage() {
     <PageShell title={t(locale, "page.admin.title")} intro={intro}>
       <form className="max-w-sm space-y-6" onSubmit={onSubmit}>
         <div>
-          <label htmlFor="admin-email" className="block text-sm font-medium text-ink">
+          <label htmlFor="admin-email" className="block text-sm font-medium text-paper">
             {locale === "es" ? "Correo" : locale === "sv" ? "E-post" : "Email"}
           </label>
           <input
@@ -88,11 +88,11 @@ export function AdminLoginPage() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
+            className="mt-2 w-full rounded-none border border-border bg-paper-dark px-3 py-2 text-paper shadow-sm placeholder:text-paper/45 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/25"
           />
         </div>
         <div>
-          <label htmlFor="admin-password" className="block text-sm font-medium text-ink">
+          <label htmlFor="admin-password" className="block text-sm font-medium text-paper">
             {locale === "es"
               ? "Contraseña"
               : locale === "sv"
@@ -106,7 +106,7 @@ export function AdminLoginPage() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 w-full rounded-none border border-border bg-paper px-3 py-2 text-ink shadow-sm focus:border-ink/35 focus:outline-none focus:ring-1 focus:ring-ink/20"
+            className="mt-2 w-full rounded-none border border-border bg-paper-dark px-3 py-2 text-paper shadow-sm placeholder:text-paper/45 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/25"
           />
         </div>
         <button type="submit" className={`w-full ${adminBtnBlue}`} disabled={busy}>
@@ -119,7 +119,7 @@ export function AdminLoginPage() {
       </form>
 
       {error ? (
-        <div className="mt-6 max-w-sm rounded-none border border-red-500/30 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mt-6 max-w-sm rounded-none border border-red-500/35 bg-red-950/40 px-4 py-3 text-sm text-red-300">
           {error}
         </div>
       ) : null}
