@@ -20,7 +20,7 @@ export default function MenuRouteLayout({
       return (
         <>
           <MenusPreLaunchPanel />
-          <div className="border-t border-border bg-paper">
+          <div className="border-t border-border bg-ink">
             {children}
           </div>
         </>

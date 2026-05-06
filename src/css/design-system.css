@@ -1,18 +1,18 @@
-/* Design tokens — El Portero: minimal grayscale + warm paper.
- * Legacy names `gold*` kept for Tailwind; values are neutral (no yellow accent for now).
- * Font variables --font-cormorant, --font-jakarta, --font-jaro (logo), --font-bricolage-grotesque (hero title) from next/font in layout.tsx */
+/* Design tokens — El Portero: dark venue foundation + warm gold accents.
+ * `ink` = near-black surfaces & dark ink on light chips; `paper` = light text/fills on dark & cream surfaces.
+ * Font variables from next/font in layout.tsx */
 @theme {
-  /* Color */
-  --color-ink: #0a0a0a;
-  --color-ink-muted: #3a3a3a;
-  --color-paper: #faf9f6;
-  --color-paper-dark: #f0ede6;
-  /* Accent slots — mapped to charcoal (use with text-paper on filled buttons). */
-  --color-gold: #2a2a2a;
-  --color-gold-bright: #3a3a3a;
-  --color-gold-dim: rgba(10, 10, 10, 0.06);
-  --color-border: rgba(10, 10, 10, 0.08);
-  --color-border-gold: rgba(10, 10, 10, 0.22);
+  /* Surfaces & text */
+  --color-ink: #0c0c0f;
+  --color-ink-muted: #a9a8a2;
+  --color-paper: #f1f0ea;
+  --color-paper-dark: #1a1a1f;
+  /* Gold — lounge / brass accent */
+  --color-gold: #c9a44a;
+  --color-gold-bright: #e6d48a;
+  --color-gold-dim: rgba(201, 164, 74, 0.14);
+  --color-border: rgba(255, 255, 255, 0.09);
+  --color-border-gold: rgba(201, 164, 74, 0.38);
 
   /* Typography — stacks pair with next/font CSS variables on <html> */
   --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
@@ -41,46 +41,44 @@
   /* Layout */
   --container-max: 72rem;
   /* Mobile: single bar. lg+: two-tier header — used for scroll-margin / anchors. */
-  /* Single bar + faded rule under it (see SiteHeader mobile layout). */
   --header-h: calc(4.5rem + 1px);
 }
 
 @media (min-width: 1024px) {
   :root {
-    /* Two-tier header + faded rule + nav row (incl. `py-3` on desktop nav band) — keep in sync with SiteHeader */
     --header-h: calc(9rem + 1px);
   }
 }
 
-/* Warm paper texture — fine grid + diagonal grain + neutral wash (no image assets). */
+/* Subtle grain on dark surfaces */
 :root {
   --bg-paper-texture:
     repeating-linear-gradient(
       0deg,
-      rgba(10, 10, 10, 0.016) 0px,
+      rgba(255, 255, 255, 0.018) 0px,
       transparent 1px,
       transparent 30px
     ),
     repeating-linear-gradient(
       90deg,
-      rgba(10, 10, 10, 0.016) 0px,
+      rgba(255, 255, 255, 0.018) 0px,
       transparent 1px,
       transparent 30px
     ),
     repeating-linear-gradient(
       125deg,
-      rgba(10, 10, 10, 0.009) 0px,
+      rgba(255, 255, 255, 0.012) 0px,
       transparent 1px,
       transparent 5px
     ),
     radial-gradient(
       ellipse 130% 90% at 50% -15%,
-      rgba(10, 10, 10, 0.035),
+      rgba(255, 255, 255, 0.04),
       transparent 58%
     ),
     radial-gradient(
       ellipse 100% 70% at 80% 100%,
-      rgba(10, 10, 10, 0.025),
+      rgba(201, 164, 74, 0.05),
       transparent 55%
     );
 }

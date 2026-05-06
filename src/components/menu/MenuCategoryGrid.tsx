@@ -14,7 +14,7 @@ export function MenuCategoryGrid({ categories, locale }: Props) {
     <div className="grid gap-14 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-16">
       {categories.map((cat) => (
         <section key={cat.title.en}>
-          <h2 className="font-display text-2xl text-ink">{cat.title[locale]}</h2>
+          <h2 className="font-display text-2xl text-paper">{cat.title[locale]}</h2>
           <ul className="mt-6 flex flex-col gap-y-8">
             {cat.items.map((item) => (
               <li
@@ -22,7 +22,7 @@ export function MenuCategoryGrid({ categories, locale }: Props) {
                 className="flex justify-between gap-6"
               >
                 <div className="min-w-0">
-                  <p className="font-medium text-ink">{item.name[locale]}</p>
+                  <p className="font-medium text-paper">{item.name[locale]}</p>
                   <p className="mt-1 text-sm italic text-ink-muted leading-relaxed">
                     {item.description[locale]}
                   </p>

@@ -71,7 +71,7 @@ type ReserveDateFieldProps = {
 };
 
 const PANEL =
-  "absolute left-0 right-0 top-[calc(100%+0.25rem)] z-[200] w-[min(100vw-2rem,20.5rem)] rounded-md border border-ink/12 bg-white p-3 shadow-[0_8px_24px_rgba(10,10,10,0.1)] ring-1 ring-ink/4";
+  "absolute left-0 right-0 top-[calc(100%+0.25rem)] z-[200] w-[min(100vw-2rem,20.5rem)] rounded-md border border-paper/15 bg-paper-dark p-3 shadow-[0_12px_40px_rgba(0,0,0,0.55)] ring-1 ring-black/30";
 
 /**
  * Custom date picker — same visual language as {@link ReserveInlineSelect}
@@ -178,18 +178,18 @@ export function ReserveDateField({
         aria-expanded={isOpen}
         aria-controls={isOpen ? panelId : undefined}
         aria-labelledby={labelId}
-        className="flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-sm py-0.5 text-left font-sans text-sm font-medium outline-none transition-colors hover:text-ink/90 focus-visible:ring-2 focus-visible:ring-[#2563eb]/35 focus-visible:ring-offset-1"
+        className="flex w-full min-w-0 cursor-pointer items-center justify-between gap-2 rounded-sm py-0.5 text-left font-sans text-sm font-medium text-paper outline-none transition-colors hover:text-paper/90 focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:ring-offset-1 focus-visible:ring-offset-paper-dark"
         onClick={(e) => {
           e.preventDefault();
           onOpenToggle();
         }}
       >
-        <span className={value ? "text-ink" : "text-ink/45"}>
+        <span className={value ? "text-paper" : "text-paper/45"}>
           {display || placeholder}
         </span>
         <ChevronDown
           strokeWidth={2.25}
-          className={`h-3.5 w-3.5 shrink-0 text-ink/40 transition-transform duration-200 ${
+          className={`h-3.5 w-3.5 shrink-0 text-paper/40 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
           }`}
           aria-hidden
@@ -208,7 +208,7 @@ export function ReserveDateField({
             <button
               type="button"
               disabled={!canPrevMonth}
-              className="rounded-sm p-1.5 text-ink/70 transition-colors hover:bg-paper-dark/90 hover:text-ink disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+              className="rounded-sm p-1.5 text-paper/70 transition-colors hover:bg-paper/10 hover:text-paper disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
               aria-label={
                 locale === "es"
                   ? "Mes anterior"
@@ -224,12 +224,12 @@ export function ReserveDateField({
             >
               <ChevronLeft className="h-4 w-4" strokeWidth={2} />
             </button>
-            <span className="min-w-0 flex-1 text-center font-sans text-sm font-semibold text-ink">
+            <span className="min-w-0 flex-1 text-center font-sans text-sm font-semibold text-paper">
               {monthTitle}
             </span>
             <button
               type="button"
-              className="rounded-sm p-1.5 text-ink/70 transition-colors hover:bg-paper-dark/90 hover:text-ink"
+              className="rounded-sm p-1.5 text-paper/70 transition-colors hover:bg-paper/10 hover:text-paper"
               aria-label={
                 locale === "es"
                   ? "Mes siguiente"
@@ -251,7 +251,7 @@ export function ReserveDateField({
             {weekDayLabels.map((wd) => (
               <div
                 key={wd}
-                className="pb-1 text-center font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/45"
+                className="pb-1 text-center font-sans text-[10px] font-semibold uppercase tracking-[0.12em] text-paper/45"
               >
                 {wd}
               </div>
@@ -286,11 +286,11 @@ export function ReserveDateField({
                       "flex h-9 w-9 items-center justify-center rounded-sm font-sans text-sm transition-colors",
                       dayDisabled
                         ? fullyBooked
-                          ? "cursor-not-allowed bg-ink/[0.04] text-ink/30 line-through decoration-ink/25"
-                          : "cursor-not-allowed text-ink/20"
-                        : "text-ink/90 hover:bg-paper-dark/90",
+                          ? "cursor-not-allowed bg-paper/[0.06] text-paper/30 line-through decoration-paper/25"
+                          : "cursor-not-allowed text-paper/20"
+                        : "text-paper/90 hover:bg-paper/10",
                       isSelected && !fullyBooked
-                        ? "bg-[#2563eb]/15 font-semibold text-ink ring-1 ring-[#2563eb]/35"
+                        ? "bg-gold/20 font-semibold text-paper ring-1 ring-gold/45"
                         : "",
                       !isSelected && !dayDisabled && isToday
                         ? "ring-1 ring-ink/15"

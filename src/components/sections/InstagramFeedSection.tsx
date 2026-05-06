@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Home-page Instagram mosaic. Not mounted when `LAUNCH_UI_INSTAGRAM` is false — see
+ * `HomePage` / `DemoHomePage` and `config/launchUi.ts`.
+ */
 import { Instagram } from "lucide-react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -110,7 +114,7 @@ export function InstagramFeedSection() {
   return (
     <section
       aria-label={t(locale, "page.home.instagramAria")}
-      className="border-t border-border bg-paper-dark/30"
+      className="border-t border-border bg-ink"
     >
       <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
@@ -130,7 +134,7 @@ export function InstagramFeedSection() {
                   href={INSTAGRAM_PROFILE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-0.5 font-sans transition-colors hover:text-ink"
+                  className="group inline-flex items-center gap-0.5 font-sans transition-colors hover:text-paper"
                   aria-label={INSTAGRAM_HANDLE}
                 >
                   <span
@@ -139,7 +143,7 @@ export function InstagramFeedSection() {
                   >
                     @
                   </span>
-                  <span className="text-xl font-bold tracking-[0.12em] text-ink group-hover:text-ink sm:text-2xl">
+                  <span className="text-xl font-bold tracking-[0.12em] text-paper group-hover:text-paper sm:text-2xl">
                     {INSTAGRAM_HANDLE.replace(/^@/, "")}
                   </span>
                 </a>
@@ -151,7 +155,7 @@ export function InstagramFeedSection() {
               href={INSTAGRAM_PROFILE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-none border border-ink/40 bg-transparent px-6 py-2.5 text-sm font-semibold tracking-[0.16em] text-ink uppercase transition-colors hover:border-ink hover:bg-ink/5"
+              className="inline-flex items-center justify-center rounded-none border border-paper/35 bg-transparent px-6 py-2.5 text-sm font-semibold tracking-[0.16em] text-paper uppercase transition-colors hover:border-gold/50 hover:bg-paper/5"
             >
               {t(locale, "page.home.instagramFollow")}
             </a>

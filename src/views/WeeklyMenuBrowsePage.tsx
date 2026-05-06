@@ -35,7 +35,7 @@ export function WeeklyMenuBrowsePage() {
         <div className="grid gap-14 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-16">
           <section className="min-w-0">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <h2 className="font-display text-2xl font-medium tracking-tight text-ink uppercase">
+              <h2 className="font-display text-2xl font-medium tracking-tight text-paper uppercase">
                 {weeklyMenuWeekTitle(
                   locale,
                   getIsoWeekNumberFromYmd(menu.effectiveWeekStartDate || menu.weekStartDate),

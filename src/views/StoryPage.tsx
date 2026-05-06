@@ -13,7 +13,7 @@ type StoryPageProps = {
   contentImages: StoryContentImages;
 };
 
-const h2 = "font-display text-2xl font-medium tracking-tight text-ink sm:text-3xl";
+const h2 = "font-display text-2xl font-medium tracking-tight text-paper sm:text-3xl";
 
 const body = "text-ink-muted leading-relaxed sm:text-lg";
 
@@ -174,7 +174,7 @@ export function StoryPage({ heroImages, contentImages }: StoryPageProps) {
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex min-h-12 items-center justify-center rounded-none border border-ink/25 bg-transparent px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.18em] text-ink uppercase transition-colors hover:border-ink/50 hover:bg-paper-dark/40 sm:px-10 sm:text-sm"
+                className="inline-flex min-h-12 items-center justify-center rounded-none border border-paper/25 bg-transparent px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.18em] text-paper uppercase transition-colors hover:border-gold/45 hover:bg-paper/5 sm:px-10 sm:text-sm"
               >
                 {t(locale, "page.contact.title")}
               </Link>

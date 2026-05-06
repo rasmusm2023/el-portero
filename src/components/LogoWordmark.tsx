@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { t } from "@/i18n/strings";
 import type { Locale } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
@@ -14,8 +15,20 @@ type LogoWordmarkProps = {
   align?: "center" | "start";
   /** When set, overrides hook locale (e.g. rare static use). */
   locale?: Locale;
-  /** Treat the SVG for the current surface (black logo on light, inverted on dark). */
+  /** Treat the SVG for the current surface (black on light; gold gradient on dark — matches primary CTAs). */
   tone?: "onLight" | "onDark";
+};
+
+/** Same asset as the Image `src` — used as a luminance mask over the gold gradient. */
+const LOGOTYPE_MASK_STYLE: CSSProperties = {
+  maskImage: "url('/logos/el-portero-logotype.svg')",
+  WebkitMaskImage: "url('/logos/el-portero-logotype.svg')",
+  maskSize: "contain",
+  WebkitMaskSize: "contain",
+  maskRepeat: "no-repeat",
+  WebkitMaskRepeat: "no-repeat",
+  maskPosition: "center",
+  WebkitMaskPosition: "center",
 };
 
 const logotypeSizeClasses: Record<LogoWordmarkProps["size"], string> = {
@@ -49,21 +62,32 @@ export function LogoWordmark({
   const alignClass = align === "start" ? "items-start" : "items-center";
   const taglineColorClass =
     tone === "onDark" ? "text-paper/75" : "text-ink/70";
-  const svgFilterClass = tone === "onDark" ? "invert" : "";
+
+  const goldWordmarkClass =
+    `block max-w-full select-none bg-gradient-to-r from-gold-bright/95 via-gold to-gold-bright/95 ${logotypeSizeClasses[size]} aspect-[13268/3443] w-auto`;
 
   return (
     <span
       className={`flex flex-col gap-1.5 leading-none ${alignClass} ${className}`}
     >
-      <Image
-        src="/logos/el-portero-logotype.svg"
-        alt="El Portero"
-        width={640}
-        height={160}
-        className={`block h-auto w-auto max-w-full select-none ${logotypeSizeClasses[size]} ${svgFilterClass}`}
-        draggable={false}
-        unoptimized
-      />
+      {tone === "onDark" ? (
+        <span
+          role="img"
+          aria-label="El Portero"
+          className={goldWordmarkClass}
+          style={LOGOTYPE_MASK_STYLE}
+        />
+      ) : (
+        <Image
+          src="/logos/el-portero-logotype.svg"
+          alt="El Portero"
+          width={640}
+          height={160}
+          className={`block h-auto w-auto max-w-full select-none ${logotypeSizeClasses[size]}`}
+          draggable={false}
+          unoptimized
+        />
+      )}
       {showTagline ? (
         <span className={`${taglineClasses[size]} ${taglineColorClass}`}>
           {t(locale, "brand.dinnerClub")}

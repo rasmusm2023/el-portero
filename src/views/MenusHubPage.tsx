@@ -84,7 +84,7 @@ export function MenusHubPage() {
                     ) : (
                       <>
                         <div className="min-w-0">
-                          <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-ink uppercase">
+                          <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
                             {expandedMenu === "drinks" &&
                               t(locale, "page.menu.drinksHeading")}
                             {expandedMenu === "brunch" &&

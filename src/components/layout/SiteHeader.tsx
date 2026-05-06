@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { INSTAGRAM_PROFILE_URL } from "@/config/site";
+import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { t, type NavKey } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
 import { LogoWordmark } from "@/components/LogoWordmark";
@@ -54,14 +55,14 @@ function isActivePath(pathname: string, href: string, locationHash: string) {
 /** Top nav accent: same `gold` as borders, but soft fade at left/right (not a solid stripe). */
 const navTopAccentBar =
   "relative before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-0.5 before:content-[''] " +
-  "before:bg-[linear-gradient(90deg,transparent_0%,rgba(42,42,42,0)_6%,rgba(42,42,42,0.55)_18%,var(--color-gold)_32%,var(--color-gold)_68%,rgba(42,42,42,0.55)_82%,rgba(42,42,42,0)_94%,transparent_100%)] " +
+  "before:bg-[linear-gradient(90deg,transparent_0%,rgba(201,164,74,0)_6%,rgba(201,164,74,0.45)_18%,var(--color-gold)_32%,var(--color-gold)_68%,rgba(201,164,74,0.45)_82%,rgba(201,164,74,0)_94%,transparent_100%)] " +
   "before:opacity-0 before:transition-opacity before:duration-700 before:ease-[cubic-bezier(0.22,1,0.36,1)] hover:before:opacity-100";
 
 /** Horizontal rule: solid in the center, fades to transparent at both ends. */
 function HeaderFadedRule() {
   return (
     <div
-      className="pointer-events-none h-px w-full shrink-0 bg-linear-to-r from-transparent via-ink/12 to-transparent"
+      className="pointer-events-none h-px w-full shrink-0 bg-linear-to-r from-transparent via-paper/12 to-transparent"
       aria-hidden
     />
   );
@@ -78,8 +79,8 @@ function desktopNavLinkClass(
     `inline-flex min-h-14 items-center px-6 font-sans text-base tracking-[0.02em] sm:px-7 ${navLinkTransition}`,
     navTopAccentBar,
     active
-      ? "font-bold text-ink before:opacity-100"
-      : "font-normal text-ink/62 hover:text-ink",
+      ? "font-bold text-paper before:opacity-100"
+      : "font-normal text-paper/62 hover:text-paper",
   ].join(" ");
 }
 
@@ -93,23 +94,37 @@ function overlayNavLinkClass(
     `mx-auto block w-fit px-8 py-4 text-center font-sans text-5xl tracking-tight sm:px-10 sm:py-5 sm:text-6xl md:text-7xl ${navLinkTransition}`,
     navTopAccentBar,
     active
-      ? "font-bold text-ink before:opacity-100"
-      : "font-medium text-ink/40 hover:text-ink",
+      ? "font-bold text-paper before:opacity-100"
+      : "font-medium text-paper/40 hover:text-paper",
   ].join(" ");
 }
 
 const headerInnerMax =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
-/** Square “double frame”: 2px ink, 2px paper gap, 2px outer ink (no rounding). */
-const bookTableNavButtonClass =
+/** Square “double frame”: 2px ink, 2px gap, 2px outer ink (no rounding). Hover gap matches dark header bg. */
+export const bookTableNavButtonClass =
   [
     "inline-flex max-w-[min(11.5rem,calc(100%-2rem))] shrink-0 items-center justify-center truncate rounded-none",
     "bg-paper px-3 py-2 font-sans text-[11px] font-semibold tracking-[0.06em] text-ink",
     "shadow-[0_0_0_2px_var(--color-ink),0_0_0_4px_var(--color-paper),0_0_0_6px_var(--color-ink)]",
-    "transition-[color,background-color,box-shadow] hover:bg-paper-dark/50",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/45 focus-visible:ring-offset-[8px] focus-visible:ring-offset-paper",
+    "transition-[color,background-color,box-shadow] duration-300 ease-out",
+    "hover:bg-paper-dark/35 hover:text-gold hover:shadow-[0_0_0_2px_var(--color-gold),0_0_0_4px_var(--color-ink),0_0_0_6px_var(--color-gold-bright)]",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/45 focus-visible:ring-offset-[8px] focus-visible:ring-offset-paper",
     "sm:max-w-none sm:px-5 sm:py-2.5 sm:text-sm sm:tracking-[0.08em]",
+  ].join(" ");
+
+/** Hero “Our menus” etc.: same double-frame rhythm as {@link bookTableNavButtonClass}, transparent fill. */
+export const bookTableHeroHollowButtonClass =
+  [
+    "inline-flex items-center justify-center rounded-none",
+    "bg-transparent px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.08em] text-paper",
+    "shadow-[0_0_0_2px_var(--color-paper),0_0_0_4px_var(--color-ink),0_0_0_6px_var(--color-paper)]",
+    "transition-[color,background-color,box-shadow] duration-300 ease-out",
+    "hover:bg-transparent hover:text-gold hover:shadow-[0_0_0_2px_var(--color-gold),0_0_0_4px_var(--color-ink),0_0_0_6px_var(--color-gold-bright)]",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/45 focus-visible:ring-offset-[8px] focus-visible:ring-offset-ink",
+    "active:brightness-95",
+    "sm:px-10 sm:py-4 sm:text-sm sm:tracking-[0.1em]",
   ].join(" ");
 
 /** Below fixed header bar (see `--header-h` in design-system.css, includes faded rule). */
@@ -179,14 +194,14 @@ export function SiteHeader() {
 
   /** Bottom edge uses {@link HeaderFadedRule} on desktop; mobile adds its own. */
   const headerSurface = [
-    "bg-paper",
-    atTop ? "" : "shadow-[0_1px_0_rgba(10,10,10,0.05)]",
+    "bg-ink",
+    atTop ? "" : "shadow-[0_1px_0_rgba(255,255,255,0.06)]",
     menuOpen ? "z-110" : "z-50",
   ]
     .filter(Boolean)
     .join(" ");
 
-  const headerInk = "text-ink";
+  const headerInk = "text-paper";
 
   return (
     <>
@@ -203,11 +218,11 @@ export function SiteHeader() {
               size="header"
               showTagline={false}
               align="start"
-              tone="onLight"
+              tone="onDark"
             />
           </Link>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-            <LanguageSwitcher variant="default" />
+            <LanguageSwitcher variant="onDark" />
             <Link
               href="/reserve"
               className={bookTableNavButtonClass}
@@ -232,7 +247,7 @@ export function SiteHeader() {
                 aria-hidden
               >
                 <span
-                  className={`inline-block -rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.35em] uppercase transition-colors duration-300 sm:text-[10px] sm:tracking-[0.4em] ${headerInk} group-hover:text-ink/65`}
+                  className={`inline-block -rotate-90 whitespace-nowrap text-[9px] font-bold tracking-[0.35em] uppercase transition-colors duration-300 sm:text-[10px] sm:tracking-[0.4em] ${headerInk} group-hover:text-paper/65`}
                 >
                   {t(locale, "header.menuLabel")}
                 </span>
@@ -240,7 +255,7 @@ export function SiteHeader() {
               <span className="relative flex size-7 shrink-0 items-center justify-center overflow-hidden sm:size-8">
                 <MenuToggleIcon
                   open={menuOpen}
-                  className={`transition-colors duration-300 ${headerInk} group-hover:text-ink/65`}
+                  className={`transition-colors duration-300 ${headerInk} group-hover:text-paper/65`}
                 />
               </span>
             </button>
@@ -255,15 +270,20 @@ export function SiteHeader() {
             className={`grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-3 ${headerInnerMax}`}
           >
             <div className="flex min-h-10 items-center justify-start">
-              <a
-                href={INSTAGRAM_PROFILE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex size-10 items-center justify-center text-ink/40 transition-colors hover:text-ink/75"
-                aria-label={t(locale, "page.home.instagramAria")}
-              >
-                <Instagram className="size-[1.35rem]" strokeWidth={1.5} />
-              </a>
+              {LAUNCH_UI_INSTAGRAM ? (
+                <a
+                  href={INSTAGRAM_PROFILE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex size-10 items-center justify-center text-paper/40 transition-colors hover:text-paper/75"
+                  aria-label={t(locale, "page.home.instagramAria")}
+                >
+                  <Instagram className="size-[1.35rem]" strokeWidth={1.5} />
+                </a>
+              ) : (
+                // Placeholder keeps logo centred in the 3-col grid (see `LAUNCH_UI_INSTAGRAM` in `config/launchUi.ts`).
+                <span className="inline-flex size-10 shrink-0" aria-hidden />
+              )}
             </div>
             <div className="flex justify-center">
               <Link href="/" className="flex" aria-label="El Portero">
@@ -271,12 +291,12 @@ export function SiteHeader() {
                   size="header"
                   showTagline={false}
                   align="center"
-                  tone="onLight"
+                  tone="onDark"
                 />
               </Link>
             </div>
             <div className="flex items-center justify-end">
-              <LanguageSwitcher variant="default" />
+              <LanguageSwitcher variant="onDark" />
             </div>
           </div>
 
@@ -324,7 +344,7 @@ export function SiteHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.26, ease: easeIn } }}
             transition={{ duration: 0.34, ease: easeOut }}
-            className={`fixed right-0 bottom-0 left-0 z-100 flex flex-col border-t border-border/60 bg-paper text-ink lg:hidden ${navOverlayTopClass}`}
+            className={`fixed right-0 bottom-0 left-0 z-100 flex flex-col border-t border-border/60 bg-ink text-paper lg:hidden ${navOverlayTopClass}`}
           >
             <motion.div
               className="flex min-h-0 flex-1 flex-col"

@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import { LAUNCH_UI_OPENING_HOURS } from "@/config/launchUi";
 
-/** Old URL: send visitors to the hours & map block on the home page. */
+/** Legacy `/hours` URL — forwards to home `#hours` when opening hours are live (`config/launchUi.ts`). */
 export default function HoursRedirectPage() {
   useEffect(() => {
-    window.location.replace("/#hours");
+    window.location.replace(LAUNCH_UI_OPENING_HOURS ? "/#hours" : "/");
   }, []);
   return null;
 }

@@ -1,5 +1,5 @@
 /**
- * Default slideshow for `/story` when `public/images/story/` is empty.
+ * Default slideshow for `/story` and `/story/full` when `public/images/story/` is empty.
  * Replace by adding files there (see `getStoryHeroSlideImages`).
  * Mood: Mediterranean dining, craft in the kitchen, warm room — swap URLs anytime.
  */

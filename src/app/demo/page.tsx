@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { DemoHomePage } from "@/views/DemoHomePage";
-import { getHeroSlideImages } from "@/lib/heroImages";
+import { getHeroMontageClips } from "@/lib/heroVideos";
 
 export const metadata: Metadata = {
   title: "Home layout demo",
@@ -8,6 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default async function DemoHomePageRoute() {
-  const heroImages = getHeroSlideImages();
-  return <DemoHomePage heroImages={heroImages} />;
+  return <DemoHomePage heroVideos={getHeroMontageClips()} />;
 }

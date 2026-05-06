@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Opening-hours + live open/closed strip for the home events column. Shown only when
+ * `LAUNCH_UI_OPENING_HOURS` is true — see `HomeEventsSection` and `config/launchUi.ts`.
+ */
 import { useEffect, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -136,10 +140,10 @@ export function OpeningHoursCard({
 
   return (
     <div id={id} className={["scroll-mt-[calc(var(--header-h)+1px)]", className].filter(Boolean).join(" ")}>
-      <div className="max-w-xl rounded-2xl bg-paper/75 px-6 py-6 shadow-[0_4px_28px_-8px_rgba(10,10,10,0.08)] ring-1 ring-ink/6 sm:px-7 sm:py-7 md:max-w-none">
+      <div className="max-w-xl rounded-2xl border border-border bg-paper-dark/65 px-6 py-6 shadow-[0_10px_40px_-14px_rgba(0,0,0,0.55)] ring-1 ring-paper/10 sm:px-7 sm:py-7 md:max-w-none">
         <h2
           id={headingId}
-          className="font-display text-3xl font-semibold tracking-tight text-ink/95 sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
+          className="font-display text-3xl font-semibold tracking-tight text-paper sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
         >
           {t(locale, "page.hours.title")}
         </h2>
@@ -154,7 +158,7 @@ export function OpeningHoursCard({
             }`}
             aria-hidden
           />
-          <span className="font-medium text-ink">{status.label}</span>
+          <span className="font-medium text-paper">{status.label}</span>
           <span className="font-normal"> — {status.detail}</span>
         </p>
 
@@ -167,7 +171,7 @@ export function OpeningHoursCard({
               <span className="min-w-11 text-[15px] font-normal text-ink-muted">
                 {row.day}
               </span>
-              <span className="text-[15px] tabular-nums font-medium text-ink sm:text-base">
+              <span className="text-[15px] tabular-nums font-medium text-paper sm:text-base">
                 {row.hours}
               </span>
             </li>

@@ -76,25 +76,33 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleShellTransitionEnd = useCallback((e: TransitionEvent<HTMLDivElement>) => {
-    if (e.propertyName !== "opacity") return;
-    if (e.target !== e.currentTarget) return;
+    try {
+      if (e.propertyName !== "opacity") return;
+      if (e.target !== e.currentTarget) return;
 
-    if (phaseRef.current === "exiting") {
-      const next = pendingRef.current;
-      if (!next) return;
-      pendingRef.current = null;
-      setLocaleState(next);
-      persistLocale(next);
-      phaseRef.current = "entering";
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setUiOpacity(1));
-      });
-      return;
-    }
+      if (phaseRef.current === "exiting") {
+        const next = pendingRef.current;
+        if (!next) return;
+        pendingRef.current = null;
+        setLocaleState(next);
+        persistLocale(next);
+        phaseRef.current = "entering";
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => setUiOpacity(1));
+        });
+        return;
+      }
 
-    if (phaseRef.current === "entering") {
+      if (phaseRef.current === "entering") {
+        phaseRef.current = "idle";
+        setBlockPointer(false);
+      }
+    } catch (err) {
+      console.error("[LocaleProvider] transition handler failed:", err);
       phaseRef.current = "idle";
+      pendingRef.current = null;
       setBlockPointer(false);
+      setUiOpacity(1);
     }
   }, []);
 

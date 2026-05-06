@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
 import { OpeningHoursCard } from "@/components/OpeningHoursCard";
+import { LAUNCH_UI_OPENING_HOURS } from "@/config/launchUi";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -19,15 +20,20 @@ export function HomeEventsSection() {
   return (
     <section
       aria-labelledby="home-events-heading"
-      className="border-t border-border bg-paper"
+      className="border-t border-border bg-ink"
     >
       <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-14 xl:gap-16">
+        <div
+          className={[
+            "flex flex-col gap-12",
+            LAUNCH_UI_OPENING_HOURS ? "lg:flex-row lg:items-start lg:gap-14 xl:gap-16" : "",
+          ].join(" ")}
+        >
           <div className="min-w-0 flex-1">
             <header className="max-w-xl">
               <h2
                 id="home-events-heading"
-                className="font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl"
+                className="font-display text-4xl font-semibold tracking-tight text-paper sm:text-5xl"
               >
                 {t(locale, "page.home.eventsHeading")}
               </h2>
@@ -37,7 +43,7 @@ export function HomeEventsSection() {
               <div className="mt-6 flex flex-col items-start gap-2">
                 <Link
                   href="/events"
-                  className="text-sm font-semibold tracking-[0.2em] text-ink uppercase underline decoration-ink/35 underline-offset-[0.35em] transition-colors hover:text-ink-muted hover:decoration-ink-muted"
+                  className="text-sm font-semibold tracking-[0.2em] text-paper uppercase underline decoration-paper/35 underline-offset-[0.35em] transition-colors hover:text-ink-muted hover:decoration-paper/25"
                 >
                   {t(locale, "page.home.eventsViewAll")}
                 </Link>
@@ -68,7 +74,7 @@ export function HomeEventsSection() {
                 >
                   <ol className="relative z-10 m-0 flex list-none flex-col gap-10 pb-2 pt-0">
                     <div
-                      className="pointer-events-none absolute left-4 top-0 bottom-0 z-0 w-px bg-[linear-gradient(to_bottom,transparent_0%,rgba(10,10,10,0.20)_10%,rgba(10,10,10,0.20)_90%,transparent_100%)]"
+                      className="pointer-events-none absolute left-4 top-0 bottom-0 z-0 w-px bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.14)_10%,rgba(255,255,255,0.14)_90%,transparent_100%)]"
                       aria-hidden
                     />
                     {sorted.map((ev) => (
@@ -84,7 +90,7 @@ export function HomeEventsSection() {
                         }}
                       >
                         <span
-                          className="absolute left-[0.875rem] top-0 z-10 flex h-3.5 w-3.5 -translate-x-1/2 shrink-0 rounded-full border-2 border-ink bg-paper shadow-[0_0_0_5px_rgb(250,249,246)] ring-1 ring-ink/10"
+                          className="absolute left-[0.875rem] top-0 z-10 flex h-3.5 w-3.5 -translate-x-1/2 shrink-0 rounded-full border-2 border-paper/70 bg-ink shadow-[0_0_0_5px_var(--color-ink)] ring-1 ring-paper/15"
                           aria-hidden
                         />
                         <time
@@ -104,13 +110,13 @@ export function HomeEventsSection() {
                               sizes="(max-width: 640px) 45vw, (max-width: 1024px) 280px, (max-width: 1280px) 320px, 380px"
                             />
                             <div
-                              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-ink/10"
+                              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-paper/8"
                               aria-hidden
                             />
                           </div>
                           <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-between gap-4 px-4 py-5 sm:gap-5 sm:px-6 sm:py-6">
                             <div className="min-w-0">
-                              <h3 className="font-display text-lg font-medium leading-snug tracking-tight text-ink sm:text-xl">
+                              <h3 className="font-display text-lg font-medium leading-snug tracking-tight text-paper sm:text-xl">
                                 {ev.title[locale]}
                               </h3>
                               <p className="mt-2 text-[11px] font-semibold leading-snug tracking-[0.18em] text-ink-muted uppercase sm:text-xs sm:tracking-[0.2em]">
@@ -138,12 +144,6 @@ export function HomeEventsSection() {
                                   {t(locale, "nav.reserve")}
                                 </Link>
                               )}
-                              <Link
-                                href="/events"
-                                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink/30 bg-paper px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-ink uppercase transition-colors hover:border-ink hover:bg-ink hover:text-paper sm:px-4 sm:py-2.5 sm:text-xs"
-                              >
-                                {t(locale, "page.home.eventsCta")}
-                              </Link>
                             </div>
                           </div>
                         </article>
@@ -154,16 +154,19 @@ export function HomeEventsSection() {
               )}
               {sorted.length > 0 ? (
                 <div
-                  className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-12 bg-gradient-to-t from-paper to-transparent"
+                  className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-12 bg-gradient-to-t from-ink to-transparent"
                   aria-hidden
                 />
               ) : null}
             </div>
           </div>
 
-          <aside className="w-full shrink-0 lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:w-[min(100%,22rem)] xl:w-[min(100%,24rem)]">
-            <OpeningHoursCard id="hours" headingId="home-hours-heading" />
-          </aside>
+          {LAUNCH_UI_OPENING_HOURS ? (
+            <aside className="w-full shrink-0 lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:w-[min(100%,22rem)] xl:w-[min(100%,24rem)]">
+              {/* Opening hours card + `#hours` anchor: flip `LAUNCH_UI_OPENING_HOURS` in `config/launchUi.ts`. */}
+              <OpeningHoursCard id="hours" headingId="home-hours-heading" />
+            </aside>
+          ) : null}
         </div>
       </div>
     </section>

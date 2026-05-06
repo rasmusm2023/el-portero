@@ -22,9 +22,9 @@ type MenuSplitSectionProps = {
 const contentGutterClass =
   "mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8";
 
-/** Matches hero image card radius; paper base so split seams match section (`bg-paper`). */
+/** Matches hero image card radius; elevated surface on dark page shell. */
 const insetCardShellClass =
-  "relative overflow-visible rounded-2xl bg-paper shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] sm:rounded-3xl";
+  "relative overflow-visible rounded-2xl bg-paper-dark shadow-[0_28px_64px_-18px_rgba(0,0,0,0.45)] sm:rounded-3xl";
 
 /** Same display face + uppercase tracking as `page.reserve.heroTitle` (Reserve hero). */
 const menuSplitTitleClass =
