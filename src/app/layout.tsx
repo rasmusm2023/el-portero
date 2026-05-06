@@ -81,7 +81,8 @@ export default async function RootLayout({
       className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontCountdown.variable}`}
     >
       <body>
-        <Script src={BOKABORD_WIDGET_SCRIPT_SRC} strategy="afterInteractive" />
+        {/* Must load before DOMContentLoaded: vendor binds click handlers in a DOMContentLoaded callback; afterInteractive runs too late and bindEvents never runs. */}
+        <Script src={BOKABORD_WIDGET_SCRIPT_SRC} strategy="beforeInteractive" />
         <AppProviders>
           <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip">
             {!comingSoon ? <SiteHeader /> : null}
