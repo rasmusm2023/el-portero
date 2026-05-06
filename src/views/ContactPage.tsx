@@ -53,9 +53,6 @@ export function ContactPage() {
               <span className="break-all font-display text-2xl font-medium text-paper group-hover:underline sm:text-3xl">
                 {CONTACT_EMAIL}
               </span>
-              <span className="mt-1 font-sans text-sm leading-relaxed text-ink-muted">
-                {t(locale, "page.contact.mailtoHint")}
-              </span>
             </a>
           </li>
         </ul>

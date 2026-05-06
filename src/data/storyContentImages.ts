@@ -1,5 +1,5 @@
 /**
- * Inline photography for `/story` body sections. Replace URLs or add files under
+ * Inline photography for `/story/full` body sections. Replace URLs or add files under
  * `public/images/story/body/` later if you wire a loader — for now these pair with copy.
  */
 export type StoryContentImages = {

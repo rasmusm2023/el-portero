@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Home-page Instagram mosaic. Not mounted when `LAUNCH_UI_INSTAGRAM` is false — see
+ * `HomePage` / `DemoHomePage` and `config/launchUi.ts`.
+ */
 import { Instagram } from "lucide-react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";

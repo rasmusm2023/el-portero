@@ -297,11 +297,11 @@ export function GallerySection() {
                 <div
                   className={`${beat.caption} ${imageLeft ? "" : "md:order-1"} ${overlap}`}
                 >
-                  <div className="w-full rounded-2xl border border-border bg-paper-dark/55 p-8 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.45)] backdrop-blur-md sm:rounded-3xl sm:p-10">
-                    <p className="font-display text-xl font-medium leading-snug text-paper sm:text-2xl">
+                  <div className="w-full rounded-2xl border border-border bg-paper-dark/55 p-8 shadow-[0_18px_48px_-12px_rgba(0,0,0,0.45)] backdrop-blur-md sm:rounded-3xl sm:p-11 md:p-12">
+                    <p className="font-display text-2xl font-medium leading-snug text-paper sm:text-3xl lg:text-4xl lg:leading-[1.12]">
                       {t(locale, row.captionKey)}
                     </p>
-                    <p className="mt-4 max-w-prose font-sans text-sm leading-relaxed text-ink-muted sm:text-[15px]">
+                    <p className="mt-5 max-w-prose font-sans text-base leading-relaxed text-ink-muted sm:mt-6 sm:text-lg lg:text-xl">
                       {t(locale, row.bodyKey)}
                     </p>
                   </div>

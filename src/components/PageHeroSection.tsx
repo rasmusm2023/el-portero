@@ -81,9 +81,10 @@ function HeroAccentVideo({ containerRef }: { containerRef: RefObject<HTMLElement
     };
   }, [containerRef]);
 
+  /* Vertical nudge: subtract 180px from the pull-up so the clip overlaps the hero edge a bit lower. */
   return (
     <div
-      className="pointer-events-none absolute left-[max(0.5rem,9vw)] top-full z-[8] -translate-y-[calc(54%+0.28rem)] sm:left-[max(0.75rem,11vw)] sm:-translate-y-[calc(57%+0.38rem)] md:left-[max(1rem,13vw)] lg:left-[max(1.25rem,14vw)]"
+      className="pointer-events-none absolute left-[max(0.5rem,9vw)] top-full z-[8] -translate-y-[calc(54%+0.28rem-180px)] sm:left-[max(0.75rem,11vw)] sm:-translate-y-[calc(57%+0.38rem-180px)] md:left-[max(1rem,13vw)] lg:left-[max(1.25rem,14vw)]"
       aria-hidden
     >
       <div className="aspect-[3/4] w-[clamp(7rem,28vw,18rem)] translate-x-[6%] overflow-hidden shadow-[0_22px_56px_-10px_rgba(0,0,0,0.55)] sm:w-[clamp(8rem,24vw,20rem)] sm:translate-x-[8%] md:w-[clamp(8.75rem,20vw,22rem)] md:translate-x-[10%] lg:w-[clamp(9.25rem,18vw,24rem)] lg:translate-x-[12%]">

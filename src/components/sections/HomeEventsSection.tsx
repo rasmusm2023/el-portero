@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
 import { OpeningHoursCard } from "@/components/OpeningHoursCard";
+import { LAUNCH_UI_OPENING_HOURS } from "@/config/launchUi";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -22,7 +23,12 @@ export function HomeEventsSection() {
       className="border-t border-border bg-ink"
     >
       <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-20 sm:px-6 sm:py-24 lg:px-8">
-        <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-14 xl:gap-16">
+        <div
+          className={[
+            "flex flex-col gap-12",
+            LAUNCH_UI_OPENING_HOURS ? "lg:flex-row lg:items-start lg:gap-14 xl:gap-16" : "",
+          ].join(" ")}
+        >
           <div className="min-w-0 flex-1">
             <header className="max-w-xl">
               <h2
@@ -138,12 +144,6 @@ export function HomeEventsSection() {
                                   {t(locale, "nav.reserve")}
                                 </Link>
                               )}
-                              <Link
-                                href="/events"
-                                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink/30 bg-paper px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-ink uppercase transition-colors hover:border-ink hover:bg-ink hover:text-paper sm:px-4 sm:py-2.5 sm:text-xs"
-                              >
-                                {t(locale, "page.home.eventsCta")}
-                              </Link>
                             </div>
                           </div>
                         </article>
@@ -161,9 +161,12 @@ export function HomeEventsSection() {
             </div>
           </div>
 
-          <aside className="w-full shrink-0 lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:w-[min(100%,22rem)] xl:w-[min(100%,24rem)]">
-            <OpeningHoursCard id="hours" headingId="home-hours-heading" />
-          </aside>
+          {LAUNCH_UI_OPENING_HOURS ? (
+            <aside className="w-full shrink-0 lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:w-[min(100%,22rem)] xl:w-[min(100%,24rem)]">
+              {/* Opening hours card + `#hours` anchor: flip `LAUNCH_UI_OPENING_HOURS` in `config/launchUi.ts`. */}
+              <OpeningHoursCard id="hours" headingId="home-hours-heading" />
+            </aside>
+          ) : null}
         </div>
       </div>
     </section>

@@ -15,6 +15,7 @@ import { brunchMenuCategories } from "@/data/brunchMenu";
 import { drinksMenuCategories } from "@/data/drinksMenu";
 import { LunchMenuExpandedPreview } from "@/components/menu/LunchMenuExpandedPreview";
 import type { MenuCategoryData } from "@/data/menuTypes";
+import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 import type { HeroMontageClip } from "@/lib/heroVideos";
@@ -136,7 +137,8 @@ export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
       <GallerySection />
 
       <HomeEventsSection />
-      <InstagramFeedSection />
+      {/* Instagram grid: gated by `LAUNCH_UI_INSTAGRAM` in `config/launchUi.ts`. */}
+      {LAUNCH_UI_INSTAGRAM ? <InstagramFeedSection /> : null}
     </div>
   );
 }

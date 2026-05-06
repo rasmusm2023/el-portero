@@ -7,6 +7,7 @@ import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { LogoWordmark } from "@/components/LogoWordmark";
+import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 import type { HeroMontageClip } from "@/lib/heroVideos";
@@ -50,7 +51,8 @@ export function HomePage({ heroVideos }: HomePageProps) {
 
       <GallerySection />
       <HomeEventsSection />
-      <InstagramFeedSection />
+      {/* Instagram grid: gated by `LAUNCH_UI_INSTAGRAM` in `config/launchUi.ts`. */}
+      {LAUNCH_UI_INSTAGRAM ? <InstagramFeedSection /> : null}
     </div>
   );
 }

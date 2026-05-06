@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { INSTAGRAM_PROFILE_URL } from "@/config/site";
+import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -29,14 +30,16 @@ export function ComingSoonPage({ heroImages }: ComingSoonPageProps) {
             <Link href="/contact" className={ctaClass}>
               {t(locale, "page.comingSoon.contactCta")}
             </Link>
-            <a
-              href={INSTAGRAM_PROFILE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={secondaryCtaClass}
-            >
-              {t(locale, "page.comingSoon.instagramCta")}
-            </a>
+            {LAUNCH_UI_INSTAGRAM ? (
+              <a
+                href={INSTAGRAM_PROFILE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={secondaryCtaClass}
+              >
+                {t(locale, "page.comingSoon.instagramCta")}
+              </a>
+            ) : null}
           </div>
         }
       >

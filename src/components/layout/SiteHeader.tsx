@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { INSTAGRAM_PROFILE_URL } from "@/config/site";
+import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { t, type NavKey } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
 import { LogoWordmark } from "@/components/LogoWordmark";
@@ -269,15 +270,20 @@ export function SiteHeader() {
             className={`grid grid-cols-[1fr_auto_1fr] items-center gap-4 py-3 ${headerInnerMax}`}
           >
             <div className="flex min-h-10 items-center justify-start">
-              <a
-                href={INSTAGRAM_PROFILE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex size-10 items-center justify-center text-paper/40 transition-colors hover:text-paper/75"
-                aria-label={t(locale, "page.home.instagramAria")}
-              >
-                <Instagram className="size-[1.35rem]" strokeWidth={1.5} />
-              </a>
+              {LAUNCH_UI_INSTAGRAM ? (
+                <a
+                  href={INSTAGRAM_PROFILE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex size-10 items-center justify-center text-paper/40 transition-colors hover:text-paper/75"
+                  aria-label={t(locale, "page.home.instagramAria")}
+                >
+                  <Instagram className="size-[1.35rem]" strokeWidth={1.5} />
+                </a>
+              ) : (
+                // Placeholder keeps logo centred in the 3-col grid (see `LAUNCH_UI_INSTAGRAM` in `config/launchUi.ts`).
+                <span className="inline-flex size-10 shrink-0" aria-hidden />
+              )}
             </div>
             <div className="flex justify-center">
               <Link href="/" className="flex" aria-label="El Portero">

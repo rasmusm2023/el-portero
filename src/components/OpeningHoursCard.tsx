@@ -1,5 +1,9 @@
 "use client";
 
+/**
+ * Opening-hours + live open/closed strip for the home events column. Shown only when
+ * `LAUNCH_UI_OPENING_HOURS` is true — see `HomeEventsSection` and `config/launchUi.ts`.
+ */
 import { useEffect, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";

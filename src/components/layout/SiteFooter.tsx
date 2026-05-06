@@ -14,6 +14,7 @@ import {
   bookingWhatsAppHref,
   contactMailtoHref,
 } from "@/config/site";
+import { LAUNCH_UI_INSTAGRAM, LAUNCH_UI_OPENING_HOURS } from "@/config/launchUi";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -79,11 +80,14 @@ export function SiteFooter() {
                 {t(locale, "footer.links")}
               </p>
               <ul className="mt-4 space-y-2 text-sm text-paper/85">
-                <li>
-                  <Link className="hover:text-paper" href="/#hours">
-                    {t(locale, "page.hours.title")}
-                  </Link>
-                </li>
+                {/* `/#hours` on home — show when `LAUNCH_UI_OPENING_HOURS` (`config/launchUi.ts`). */}
+                {LAUNCH_UI_OPENING_HOURS ? (
+                  <li>
+                    <Link className="hover:text-paper" href="/#hours">
+                      {t(locale, "page.hours.title")}
+                    </Link>
+                  </li>
+                ) : null}
                 <li>
                   <Link className="hover:text-paper" href="/reserve">
                     {t(locale, "nav.reserve")}
@@ -107,20 +111,23 @@ export function SiteFooter() {
               </ul>
 
               <div className="mt-5 flex flex-col gap-3">
-                <a
-                  href={INSTAGRAM_PROFILE_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="inline-flex items-center gap-2 text-sm text-paper/85 transition-colors hover:text-paper"
-                  aria-label={t(locale, "page.home.instagramAria")}
-                >
-                  <Instagram
-                    className="size-4 text-paper/60"
-                    strokeWidth={1.75}
-                    aria-hidden
-                  />
-                  {INSTAGRAM_HANDLE}
-                </a>
+                {/* Instagram — show when `LAUNCH_UI_INSTAGRAM` (`config/launchUi.ts`). */}
+                {LAUNCH_UI_INSTAGRAM ? (
+                  <a
+                    href={INSTAGRAM_PROFILE_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-2 text-sm text-paper/85 transition-colors hover:text-paper"
+                    aria-label={t(locale, "page.home.instagramAria")}
+                  >
+                    <Instagram
+                      className="size-4 text-paper/60"
+                      strokeWidth={1.75}
+                      aria-hidden
+                    />
+                    {INSTAGRAM_HANDLE}
+                  </a>
+                ) : null}
                 <a
                   href={bookingWhatsAppHref()}
                   target="_blank"

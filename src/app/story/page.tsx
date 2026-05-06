@@ -1,15 +1,14 @@
-import { STORY_CONTENT_PLACEHOLDERS } from "@/data/storyContentImages";
 import { getStoryHeroSlideImages } from "@/lib/heroImages";
-import { StoryPage } from "@/views/StoryPage";
+import { StoryComingSoonPage } from "@/views/StoryComingSoonPage";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Our history",
+  title: "Our story",
+  description:
+    "El Portero — our full story page is coming soon. Menus, reservations, and events are live.",
 };
 
 export default async function Page() {
   const heroImages = getStoryHeroSlideImages();
-  return (
-    <StoryPage heroImages={heroImages} contentImages={STORY_CONTENT_PLACEHOLDERS} />
-  );
+  return <StoryComingSoonPage heroImages={heroImages} />;
 }

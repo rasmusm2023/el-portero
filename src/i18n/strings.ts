@@ -40,7 +40,6 @@ type PageKey =
   | "page.home.eventsHeading"
   | "page.home.eventsIntro"
   | "page.home.eventsViewAll"
-  | "page.home.eventsCta"
   | "page.home.eventsScrollHint"
   | "page.home.eventsEmpty"
   | "page.home.eventsLoading"
@@ -126,6 +125,7 @@ type PageKey =
   | "page.story.photoAltTileB"
   | "page.story.photoAltTileC"
   | "page.story.photoAltCoast"
+  | "page.story.comingSoonBody"
   | "page.reserve.title"
   | "page.reserve.heroTitle"
   | "page.reserve.heroBody"
@@ -159,7 +159,6 @@ type PageKey =
   | "page.contact.heroBody"
   | "page.contact.phoneLabel"
   | "page.contact.emailLabel"
-  | "page.contact.mailtoHint"
   | "page.gallery.srHeading"
   | "page.gallery.imageAlt1"
   | "page.gallery.imageAlt2"
@@ -214,7 +213,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsIntro":
       "Nights to book early — tastings, one-off menus, and collaborations that won’t roll around twice.",
     "page.home.eventsViewAll": "All events",
-    "page.home.eventsCta": "Details",
     "page.home.eventsScrollHint": "Scroll sideways for more",
     "page.home.eventsEmpty":
       "There are no published public events at the moment. Check back soon, follow us on Instagram, or ask about a private dinner.",
@@ -323,6 +321,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.story.photoAltTileB": "A carefully plated dish",
     "page.story.photoAltTileC": "Mediterranean ingredients spread for sharing",
     "page.story.photoAltCoast": "Mediterranean shoreline and open water",
+    "page.story.comingSoonBody":
+      "We’re adding the final touch to our full story — you’ll find it here soon.",
     "page.reserve.title": "Reservations",
     "page.reserve.heroTitle": "Reserve your table",
     "page.reserve.heroBody":
@@ -356,8 +356,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Call us or send an email — we’ll get back as soon as we can. Reservations are not confirmed until we reply.",
     "page.contact.phoneLabel": "Phone",
     "page.contact.emailLabel": "Email",
-    "page.contact.mailtoHint":
-      "Opens your mail app with the subject “Contact from website” — add your message and send.",
     "page.gallery.srHeading": "A glimpse of El Portero",
     "page.gallery.imageAlt1":
       "Grilled meat and vegetable skewers from the grill — South American–inspired cooking",
@@ -398,7 +396,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsapp": "WhatsApp",
     "footer.whatsappAria": "Open WhatsApp chat with El Portero",
     "footer.tagline":
-      "Fine dining on the Costa Blanca with a dinner-club pulse — Latin generosity at the table, Nordic discipline in the kitchen, and the sea within walking distance.",
+      "A Torrevieja restaurant on Spain's Costa Blanca with dinner-club energy — Latin generosity at the table, Nordic discipline in the kitchen, and the Mediterranean a short walk away.",
     "footer.links": "Quick links",
     "footer.openInMaps": "Open in Google Maps",
     "brand.dinnerClub": "Dinner Club",
@@ -422,7 +420,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsIntro":
       "Noches para reservar con tiempo — catas, menús puntuales y colaboraciones que no se repiten.",
     "page.home.eventsViewAll": "Todos los eventos",
-    "page.home.eventsCta": "Detalles",
     "page.home.eventsScrollHint": "Desplázate horizontalmente para ver más",
     "page.home.eventsEmpty":
       "No hay eventos públicos publicados en este momento. Volved pronto, seguid en Instagram o escribid para una cena privada.",
@@ -531,6 +528,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.story.photoAltTileB": "Un plato servido con mimo",
     "page.story.photoAltTileC": "Ingredientes mediterráneos para compartir",
     "page.story.photoAltCoast": "Costa mediterránea y mar abierto",
+    "page.story.comingSoonBody":
+      "Estamos dando el toque final a nuestra historia completa — la encontraréis aquí en breve.",
     "page.reserve.title": "Reservas",
     "page.reserve.heroTitle": "Reservad mesa",
     "page.reserve.heroBody":
@@ -572,8 +571,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Llamad o escribid un correo — contestamos en cuanto podamos. Las reservas no quedan confirmadas hasta que os respondamos.",
     "page.contact.phoneLabel": "Teléfono",
     "page.contact.emailLabel": "Correo",
-    "page.contact.mailtoHint":
-      "Se abre el correo con el asunto «Contact from website» — añadid el mensaje y enviad.",
     "page.gallery.srHeading": "Un vistazo a El Portero",
     "page.gallery.imageAlt1":
       "Brochetas de carne y verdura a la parrilla — cocina con alma sudamericana",
@@ -600,7 +597,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsapp": "WhatsApp",
     "footer.whatsappAria": "Abrir chat de WhatsApp con El Portero",
     "footer.tagline":
-      "Alta cocina en la Costa Blanca con el pulso de un dinner club — generosidad latina en la mesa, disciplina nórdica en cocina y el mar a un paseo.",
+      "Restaurante en Torrevieja, en la Costa Blanca, con alma de dinner club — generosidad latina en la mesa, disciplina nórdica en cocina y el Mediterráneo a un paseo.",
     "footer.links": "Enlaces rápidos",
     "footer.openInMaps": "Abrir en Google Maps",
     "header.menuLabel": "MENÚ",
@@ -630,7 +627,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsIntro":
       "Kvällar att boka i förväg — provningar, engångsmenyer och samarbeten som inte kommer tillbaka på repeat.",
     "page.home.eventsViewAll": "Alla evenemang",
-    "page.home.eventsCta": "Läs mer",
     "page.home.eventsScrollHint": "Scrolla åt sidan för fler",
     "page.home.eventsEmpty":
       "Det finns inga publicerade publika evenemang just nu. Kom tillbaka snart, följ oss på Instagram eller hör av dig om en privat middag.",
@@ -739,6 +735,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.story.photoAltTileB": "En varsamt komponerad rätt",
     "page.story.photoAltTileC": "Medelhavsråvaror att dela",
     "page.story.photoAltCoast": "Medelhavskust och öppet vatten",
+    "page.story.comingSoonBody":
+      "Vi lägger sista touchen på hela vår berättelse — du hittar den här inom kort.",
     "page.reserve.title": "Bokning",
     "page.reserve.heroTitle": "Boka ert bord",
     "page.reserve.heroBody":
@@ -780,8 +778,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Ring eller mejla — vi återkommer så fort vi kan. Bokningar är inte bekräftade förrän vi hört av oss.",
     "page.contact.phoneLabel": "Telefon",
     "page.contact.emailLabel": "E-post",
-    "page.contact.mailtoHint":
-      "Öppnar din mejlklient med ämnet «Contact from website» — skriv meddelandet och skicka.",
     "page.gallery.srHeading": "En glimt av El Portero",
     "page.gallery.imageAlt1":
       "Grillade kött- och grönsaksspett — sydamerikanskt inspirerad mat från grillen",
@@ -808,7 +804,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.whatsapp": "WhatsApp",
     "footer.whatsappAria": "Öppna WhatsApp-chatt med El Portero",
     "footer.tagline":
-      "Fin gastronomi på Costa Blanca med dinner club-puls — latinamerikansk generositet vid bordet, nordisk disciplin i köket och havet inom gångavstånd.",
+      "Restaurang i Torrevieja på Costa Blanca med dinner club-känsla — latinamerikansk generositet vid bordet, nordisk disciplin i köket och Medelhavet inom gångavstånd.",
     "footer.links": "Snabblänkar",
     "footer.openInMaps": "Öppna i Google Maps",
     "header.menuLabel": "MENY",
