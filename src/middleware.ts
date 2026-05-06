@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const COMING_SOON =
-  process.env.NEXT_PUBLIC_COMING_SOON === "true" ||
-  process.env.NEXT_PUBLIC_COMING_SOON === "1";
+import { effectiveComingSoonForHost } from "@/config/siteMode";
 
 const STATIC_FILE =
   /\.(?:ico|svg|png|jpe?g|gif|webp|mp4|webm|woff2?|ttf|eot|json|xml|txt|webmanifest)$/i;
@@ -17,7 +14,10 @@ function isAllowedWhenComingSoon(pathname: string): boolean {
 }
 
 export function middleware(request: NextRequest): NextResponse {
-  if (!COMING_SOON) return NextResponse.next();
+  const host = request.headers.get("x-forwarded-host");
+  const fallbackHost = request.headers.get("host");
+  if (!effectiveComingSoonForHost(host, fallbackHost))
+    return NextResponse.next();
 
   const { pathname } = request.nextUrl;
 

@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { SITE_COMING_SOON } from "@/config/siteMode";
+import { headers } from "next/headers";
+import { effectiveComingSoonForHost } from "@/config/siteMode";
 import { ComingSoonPage } from "@/views/ComingSoonPage";
 import { HomePage } from "@/views/HomePage";
 import { getHeroSlideImages } from "@/lib/heroImages";
 import { getHeroMontageClips } from "@/lib/heroVideos";
 
+async function requestIsComingSoonLocked(): Promise<boolean> {
+  const hdrs = await headers();
+  return effectiveComingSoonForHost(
+    hdrs.get("x-forwarded-host"),
+    hdrs.get("host"),
+  );
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  if (SITE_COMING_SOON) {
+  if (await requestIsComingSoonLocked()) {
     return {
       title: "Coming soon",
       robots: { index: false, follow: false },
@@ -16,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  if (SITE_COMING_SOON) {
+  if (await requestIsComingSoonLocked()) {
     const heroImages = getHeroSlideImages();
     return <ComingSoonPage heroImages={heroImages} />;
   }

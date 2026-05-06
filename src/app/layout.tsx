@@ -8,9 +8,10 @@ import localFont from "next/font/local";
 import type { Metadata } from "next";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { headers } from "next/headers";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SITE_COMING_SOON } from "@/config/siteMode";
+import { effectiveComingSoonForHost } from "@/config/siteMode";
 
 const fontDisplay = Cormorant_Garamond({
   subsets: ["latin"],
@@ -61,11 +62,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const hdrs = await headers();
+  const comingSoon = effectiveComingSoonForHost(
+    hdrs.get("x-forwarded-host"),
+    hdrs.get("host"),
+  );
+
   return (
     <html
       lang="en"
@@ -74,18 +81,18 @@ export default function RootLayout({
       <body>
         <AppProviders>
           <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip">
-            {!SITE_COMING_SOON ? <SiteHeader /> : null}
+            {!comingSoon ? <SiteHeader /> : null}
             <main
               id="main"
               className={
-                SITE_COMING_SOON
+                comingSoon
                   ? "flex min-h-dvh min-w-0 flex-1 flex-col overflow-x-clip"
                   : "flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip pt-[var(--header-h)]"
               }
             >
               {children}
             </main>
-            {!SITE_COMING_SOON ? <SiteFooter /> : null}
+            {!comingSoon ? <SiteFooter /> : null}
           </div>
         </AppProviders>
       </body>
