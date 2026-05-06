@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { MenusRevealCountdown } from "@/components/MenusRevealCountdown";
+import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
@@ -23,12 +23,12 @@ export function MenusPreLaunchPanel() {
         <p className="mt-6 max-w-lg text-lg text-ink-muted leading-relaxed">
           {t(locale, "page.menu.preLaunchBody")}
         </p>
-        <Link
-          href="/reserve"
+        <BookTableWidgetButton
+          type="button"
           className="mt-10 inline-flex items-center justify-center rounded-none border border-ink bg-ink px-8 py-3.5 text-xs font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:text-sm"
         >
           {t(locale, "nav.reserve")}
-        </Link>
+        </BookTableWidgetButton>
       </div>
     </div>
   );
