@@ -56,9 +56,9 @@ export const metadata: Metadata = {
     template: "El Portero Restaurant & Bar · %s",
   },
   description:
-    "El Portero — restaurant and dinner club in Torrevieja. Seasonal cooking where Latin warmth meets Nordic precision, a short stroll from the Mediterranean.",
+    "El Portero — dinner club in Torrevieja where Peruvian, Spanish and Swedish flavours meet in a warm, lively atmosphere, minutes from the Mediterranean.",
   icons: {
-    icon: [{ url: "/favicon/el-portero-favicon.svg", type: "image/svg+xml" }],
+    icon: [{ url: "/assets/favicon/el-portero-favicon.svg", type: "image/svg+xml" }],
   },
 };
 

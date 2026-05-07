@@ -38,6 +38,6 @@ export function getEventsHeroSlideImages(): string[] {
 
 /** Story page hero: `public/images/story/` when present, otherwise curated fallbacks. */
 export function getStoryHeroSlideImages(): string[] {
-  const local = readImageDir("images", "story");
+  const local = readImageDir("assets", "images", "story", "hero");
   return local.length > 0 ? local : STORY_HERO_FALLBACK_URLS;
 }

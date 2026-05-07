@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
-import { adminBtnBlue, adminBtnNeutral } from "@/lib/adminUiStyles";
+import { adminBtnBlue, adminBtnSignOut } from "@/lib/adminUiStyles";
 
 export function AdminDashboardPage() {
   const router = useRouter();
@@ -25,18 +26,21 @@ export function AdminDashboardPage() {
 
   return (
     <PageShell
-      title="Overview"
+      title="Dashboard"
       intro="Choose what to edit."
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
-        <p className="text-sm text-ink-muted">
+        <p className="text-sm text-paper/75">
           Signed in as{" "}
-          <span className="font-medium text-ink">{user?.email ?? user?.uid ?? "—"}</span>
+          <span className="font-medium text-paper">{user?.email ?? user?.uid ?? "—"}</span>
         </p>
         <div className="flex flex-wrap gap-2">
-          <button type="button" className={adminBtnNeutral} onClick={() => void onSignOut()}>
-            Sign out
+          <button type="button" className={adminBtnSignOut} onClick={() => void onSignOut()}>
+            <span className="inline-flex items-center gap-2">
+              <LogOut className="size-4" aria-hidden />
+              Sign out
+            </span>
           </button>
         </div>
       </div>

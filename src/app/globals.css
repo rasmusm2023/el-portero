@@ -16,7 +16,8 @@
   }
 
   ::selection {
-    @apply bg-gold-dim text-ink;
+    background: color-mix(in srgb, var(--color-paper) 52%, transparent);
+    color: var(--color-ink);
   }
 
   :focus-visible {

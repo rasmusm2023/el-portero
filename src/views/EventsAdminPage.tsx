@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Copy, LogOut, Plus, Save, Trash2 } from "lucide-react";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { PageShell } from "@/components/layout/PageShell";
-import { adminBtnBlue, adminBtnCaution, adminBtnGreen, adminBtnNeutral, adminCalloutSuccess } from "@/lib/adminUiStyles";
+import { adminBtnBlue, adminBtnDanger, adminBtnGreen, adminBtnNeutral, adminBtnSignOut, adminCalloutSuccess } from "@/lib/adminUiStyles";
 import {
   DEFAULT_EVENT_PLACE,
   DEFAULT_EVENT_TIME_END,
@@ -67,7 +68,7 @@ function homeEventsEqual(a: HomeEvent, b: HomeEvent) {
 }
 
 const fieldInputClass =
-  "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-ink shadow-sm transition-shadow placeholder:text-slate-400 focus:border-sky-500/80 focus:outline-none focus:ring-2 focus:ring-sky-500/25";
+  "w-full rounded-md border border-paper/15 bg-paper/8 px-3 py-2 text-sm text-paper shadow-sm transition-shadow placeholder:text-paper/40 focus:border-gold/45 focus:outline-none focus:ring-2 focus:ring-gold/20";
 
 function LocaleBlock({
   label,
@@ -82,11 +83,11 @@ function LocaleBlock({
 }) {
   return (
     <div className="space-y-3">
-      <p className="text-sm font-semibold tracking-wide text-ink">{label}</p>
+      <p className="text-sm font-semibold tracking-wide text-paper">{label}</p>
       <div className="grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-3">
         {LOCALE_ORDER.map((k) => (
           <div key={k} className="min-w-0">
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-ink-muted">
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-paper/60">
               {LOCALE_LABELS[k]}
             </label>
             {multiline ? (
@@ -276,7 +277,7 @@ export function EventsAdminPage() {
   if (!ready || !user) {
     return (
       <PageShell title="Events" intro="Loading…">
-        <p className="text-sm text-ink-muted">Checking sign-in…</p>
+        <p className="text-sm text-paper/70">Checking sign-in…</p>
       </PageShell>
     );
   }
@@ -291,25 +292,35 @@ export function EventsAdminPage() {
         <Link href="/admin/dashboard" className={`inline-flex items-center ${adminBtnNeutral}`}>
           Dashboard
         </Link>
-        <button type="button" className={adminBtnCaution} onClick={onLogout} disabled={busy}>
-          Sign out
+        <button type="button" className={adminBtnSignOut} onClick={onLogout} disabled={busy}>
+          <span className="inline-flex items-center gap-2">
+            <LogOut className="size-4" aria-hidden />
+            Sign out
+          </span>
         </button>
       </div>
 
       {message ? <p className={`mb-4 text-sm ${adminCalloutSuccess}`}>{message}</p> : null}
-      {error ? <p className="mb-4 text-sm text-red-800">{error}</p> : null}
+      {error ? (
+        <p className="mb-4 rounded-none border border-red-400/25 bg-red-950/25 px-4 py-3 text-sm text-red-100">
+          {error}
+        </p>
+      ) : null}
 
       <div className="grid min-w-0 gap-8 xl:grid-cols-12 xl:gap-10 2xl:gap-12">
         <aside className="min-w-0 xl:col-span-4 2xl:col-span-3">
           <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-base font-semibold text-ink sm:text-lg">All events</h2>
+            <h2 className="text-base font-semibold text-paper sm:text-lg">All events</h2>
             <button type="button" className={adminBtnGreen} onClick={startNew} disabled={busy}>
-              New event
+              <span className="inline-flex items-center gap-2">
+                <Plus className="size-4" aria-hidden />
+                New event
+              </span>
             </button>
           </div>
-          <ul className="max-h-[min(50vh,24rem)] space-y-2 overflow-y-auto rounded-lg border border-slate-200/90 bg-slate-50/40 p-2 text-sm shadow-inner ring-1 ring-slate-200/50 xl:max-h-[min(72vh,40rem)] xl:p-3">
+          <ul className="max-h-[min(50vh,24rem)] space-y-2 overflow-y-auto rounded-lg border border-border bg-paper/4 p-2 text-sm shadow-inner ring-1 ring-border/60 xl:max-h-[min(72vh,40rem)] xl:p-3">
             {rows.length === 0 ? (
-              <li className="px-2 py-4 text-ink-muted">No events yet. Create one in Firestore.</li>
+              <li className="px-2 py-4 text-paper/60">No events yet. Create one in Firestore.</li>
             ) : (
               rows
                 .slice()
@@ -324,34 +335,37 @@ export function EventsAdminPage() {
                         className={[
                           "min-w-0 flex-1 rounded-md border px-3 py-2.5 text-left transition-colors",
                           past
-                            ? "border-red-300/90 bg-red-50/90 hover:border-red-400"
+                            ? "border-red-400/35 bg-red-950/25 hover:border-red-300/50"
                             : selected
-                              ? "border-ink/35 bg-ink/5 ring-1 ring-ink/10"
-                              : "border-transparent bg-paper hover:border-slate-200 hover:bg-paper/90",
+                              ? "border-paper/20 bg-paper/8 ring-1 ring-paper/10"
+                              : "border-paper/10 bg-paper/4 hover:border-paper/20 hover:bg-paper/6",
                         ].join(" ")}
                         onClick={() => startEdit(ev)}
                       >
-                        <p className="text-[10px] font-mono text-ink-muted">{ev.id}</p>
-                        <p className="mt-0.5 font-medium leading-snug text-ink">{ev.title.en}</p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-ink-muted">
+                        <p className="text-[10px] font-mono text-paper/55">{ev.id}</p>
+                        <p className="mt-0.5 font-medium leading-snug text-paper">{ev.title.en}</p>
+                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-paper/60">
                           <span>{ev.sortDate}</span>
                           {ev.published === false ? (
-                            <span className="rounded border border-amber-300/80 bg-amber-50 px-1.5 py-px text-[10px] font-semibold tracking-wide text-amber-900 uppercase">
+                            <span className="rounded border border-amber-300/25 bg-amber-950/20 px-1.5 py-px text-[10px] font-semibold tracking-wide text-amber-100 uppercase">
                               Draft
                             </span>
                           ) : null}
                           {past ? (
-                            <span className="text-[10px] font-semibold text-red-800">Past — remove</span>
+                            <span className="text-[10px] font-semibold text-red-200">Past — remove</span>
                           ) : null}
                         </div>
                       </button>
                       <button
                         type="button"
-                        className={`shrink-0 self-stretch rounded-md border border-slate-300/90 bg-white px-2 text-[11px] font-semibold tracking-wide text-ink uppercase transition-colors hover:bg-slate-50 disabled:opacity-50`}
+                        className="shrink-0 self-stretch rounded-md border border-paper/18 bg-paper/8 px-2 text-[11px] font-semibold tracking-wide text-paper uppercase transition-colors hover:bg-paper/12 disabled:opacity-50"
                         onClick={() => duplicateFrom(ev)}
                         disabled={busy}
                       >
-                        Duplicate
+                        <span className="inline-flex items-center gap-1.5">
+                          <Copy className="size-3.5" aria-hidden />
+                          Duplicate
+                        </span>
                       </button>
                     </li>
                   );
@@ -361,19 +375,19 @@ export function EventsAdminPage() {
         </aside>
 
         <div className="min-w-0 space-y-6 xl:col-span-8 2xl:col-span-9">
-          <div className="rounded-xl border border-slate-200/90 bg-paper p-5 shadow-md ring-1 ring-slate-200/30 sm:p-6 lg:p-8 xl:p-10">
-            <h2 className="mb-6 border-b border-slate-200/80 pb-3 text-lg font-semibold text-ink sm:text-xl">
+          <div className="rounded-xl border border-border bg-paper-dark/35 p-5 shadow-md ring-1 ring-border/60 sm:p-6 lg:p-8 xl:p-10">
+            <h2 className="mb-6 border-b border-border pb-3 text-lg font-semibold text-paper sm:text-xl">
               {isNew ? "New event" : "Edit event"}
             </h2>
 
             <div className="space-y-5 lg:space-y-6">
           <div>
-            <label className="text-xs font-semibold text-ink" htmlFor="ev-id">
+            <label className="text-xs font-semibold text-paper" htmlFor="ev-id">
               ID (slug)
             </label>
             <input
               id="ev-id"
-              className={`${fieldInputClass} mt-1 font-mono text-sm tracking-tight disabled:bg-slate-100/80`}
+              className={`${fieldInputClass} mt-1 font-mono text-sm tracking-tight disabled:bg-paper/6 disabled:text-paper/50`}
               value={draft.id}
               onChange={(e) => setDraft((d) => ({ ...d, id: e.target.value }))}
               disabled={!isNew}
@@ -381,13 +395,13 @@ export function EventsAdminPage() {
               placeholder="e.g. wine-night-june-2026"
             />
             {!isNew ? (
-              <p className="mt-1 text-xs text-ink-muted">ID cannot be changed after creation.</p>
+              <p className="mt-1 text-xs text-paper/55">ID cannot be changed after creation.</p>
             ) : null}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:items-end">
             <div className="sm:col-span-1">
-              <label className="text-xs font-semibold text-ink" htmlFor="ev-date">
+              <label className="text-xs font-semibold text-paper" htmlFor="ev-date">
                 Calendar date
               </label>
               <input
@@ -399,19 +413,39 @@ export function EventsAdminPage() {
               />
             </div>
             <div className="flex flex-col gap-3 pb-1 sm:col-span-1 lg:col-span-2">
-              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-ink">
+              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
                 <input
                   type="checkbox"
-                  className="size-4 rounded border-slate-300 text-ink focus:ring-sky-500/30"
+                  className="size-4 rounded border-paper/25 bg-paper/5 text-paper focus:ring-gold/30"
+                  checked={draft.hasSpecificTime !== false}
+                  onChange={(e) => {
+                    const on = e.target.checked;
+                    setDraft((d) =>
+                      applySlotsToTimeDetail({
+                        ...d,
+                        hasSpecificTime: on,
+                        timeSlotStart: on ? d.timeSlotStart : undefined,
+                        timeSlotEnd: on ? d.timeSlotEnd : undefined,
+                        eventPlace: on ? d.eventPlace : undefined,
+                      }),
+                    );
+                  }}
+                />
+                Specific event time
+              </label>
+              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
+                <input
+                  type="checkbox"
+                  className="size-4 rounded border-paper/25 bg-paper/5 text-paper focus:ring-gold/30"
                   checked={draft.fullyBooked ?? false}
                   onChange={(e) => setDraft((d) => ({ ...d, fullyBooked: e.target.checked }))}
                 />
                 Fully booked
               </label>
-              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-ink">
+              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
                 <input
                   type="checkbox"
-                  className="size-4 rounded border-slate-300 text-ink focus:ring-sky-500/30"
+                  className="size-4 rounded border-paper/25 bg-paper/5 text-paper focus:ring-gold/30"
                   checked={draft.published !== false}
                   onChange={(e) =>
                     setDraft((d) => ({
@@ -426,7 +460,7 @@ export function EventsAdminPage() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-ink" htmlFor="ev-img">
+            <label className="text-xs font-semibold text-paper" htmlFor="ev-img">
               Image URL
             </label>
             <input
@@ -443,15 +477,16 @@ export function EventsAdminPage() {
             onChange={(v) => setDraft((d) => ({ ...d, weekdayDate: v }))}
             multiline={false}
           />
+          {draft.hasSpecificTime !== false ? (
           <div className="space-y-3">
-            <p className="text-sm font-semibold tracking-wide text-ink">Time & place</p>
-            <p className="text-xs text-ink-muted">
+            <p className="text-sm font-semibold tracking-wide text-paper">Time & place</p>
+            <p className="text-xs text-paper/55">
               Start and end generate the line shown on the site (24h). Place is appended after the times for all
               languages.
             </p>
             <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <div>
-                <label className="mb-1 block text-xs font-semibold text-ink" htmlFor="ev-start">
+                <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-start">
                   Start time
                 </label>
                 <select
@@ -480,7 +515,7 @@ export function EventsAdminPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-ink" htmlFor="ev-end">
+                <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-end">
                   End time
                 </label>
                 <select
@@ -504,7 +539,7 @@ export function EventsAdminPage() {
                 </select>
               </div>
               <div className="min-w-0 sm:col-span-2 lg:col-span-1">
-                <label className="mb-1 block text-xs font-semibold text-ink" htmlFor="ev-place">
+                <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-place">
                   Place (after times)
                 </label>
                 <input
@@ -523,13 +558,14 @@ export function EventsAdminPage() {
                 />
               </div>
             </div>
-            <p className="text-xs text-ink-muted">
+            <p className="text-xs text-paper/55">
               Preview:{" "}
-              <span className="font-medium text-ink">
-                {draft.timeDetail.en || "—"}
+              <span className="font-medium text-paper">
+                {draft.timeDetail.en?.trim() ? draft.timeDetail.en : "—"}
               </span>
             </p>
           </div>
+          ) : null}
           <LocaleBlock
             label="Title"
             value={draft.title}
@@ -553,7 +589,7 @@ export function EventsAdminPage() {
             <button
               type="button"
               className={[
-                adminBtnBlue,
+                isNew ? adminBtnGreen : adminBtnBlue,
                 isDirty
                   ? "ring-2 ring-sky-400/55 ring-offset-2 ring-offset-paper"
                   : "",
@@ -572,19 +608,25 @@ export function EventsAdminPage() {
                     : "No unsaved changes — edit a field to save"
               }
             >
-              {isNew ? "Create" : "Save changes"}
+              <span className="inline-flex items-center gap-2">
+                {isNew ? <Plus className="size-4" aria-hidden /> : <Save className="size-4" aria-hidden />}
+                {isNew ? "Create" : "Save changes"}
+              </span>
             </button>
             {!isNew && editingId ? (
               <button
                 type="button"
-                className={adminBtnCaution}
+                className={adminBtnDanger}
                 onClick={(e) => {
                   e.preventDefault();
                   void onDelete();
                 }}
                 disabled={busy}
               >
-                Delete
+                <span className="inline-flex items-center gap-2">
+                  <Trash2 className="size-4" aria-hidden />
+                  Delete
+                </span>
               </button>
             ) : null}
           </div>

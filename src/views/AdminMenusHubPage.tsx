@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
-import { adminBtnGreen, adminBtnNeutral } from "@/lib/adminUiStyles";
+import { adminBtnNeutral } from "@/lib/adminUiStyles";
 
 /**
  * Second-level hub: edit lunch / weekly menu tools (weekly route redirects to lunch editor today).
@@ -47,7 +47,7 @@ export function AdminMenusHubPage() {
           </p>
           <Link
             href="/admin/lunch-menu"
-            className={`mt-6 inline-flex items-center ${adminBtnGreen}`}
+            className={`mt-6 inline-flex items-center ${adminBtnNeutral}`}
           >
             Go to lunch editor
           </Link>

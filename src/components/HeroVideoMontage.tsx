@@ -41,6 +41,25 @@ function applyClipFraming(el: HTMLVideoElement, clip: HeroMontageClip) {
   }
 }
 
+function applyClipSources(el: HTMLVideoElement, clip: HeroMontageClip) {
+  el.pause();
+  el.removeAttribute("src");
+  while (el.firstChild) {
+    el.removeChild(el.firstChild);
+  }
+  for (const s of clip.sources) {
+    const source = document.createElement("source");
+    source.src = s.src;
+    source.type = s.type;
+    el.appendChild(source);
+  }
+  if (clip.posterSrc) {
+    el.poster = clip.posterSrc;
+  } else {
+    el.removeAttribute("poster");
+  }
+}
+
 export function HeroVideoMontage({ clips, containerRef }: Props) {
   const [parallaxY, setParallaxY] = useState(0);
   const [opacities, setOpacities] = useState<[number, number]>([1, 0]);
@@ -151,12 +170,13 @@ export function HeroVideoMontage({ clips, containerRef }: Props) {
       setReduceMotionSingle(true);
       setOpacities([1, 0]);
       const first = list[0];
-      v0.src = first.src;
+      applyClipSources(v0, first);
       v0.playbackRate = first.playbackRate ?? 1;
       applyClipFraming(v0, first);
       v0.loop = true;
       v0.muted = true;
       v0.playsInline = true;
+      v0.load();
       void v0.play().catch(() => {});
       return () => {
         v0.pause();
@@ -207,7 +227,7 @@ export function HeroVideoMontage({ clips, containerRef }: Props) {
         return;
       }
 
-      backEl.src = nextClip.src;
+      applyClipSources(backEl, nextClip);
       backEl.playbackRate = nextClip.playbackRate ?? 1;
       applyClipFraming(backEl, nextClip);
       backEl.muted = true;
@@ -251,13 +271,19 @@ export function HeroVideoMontage({ clips, containerRef }: Props) {
       let fadeArmStarted = false;
 
       const onLoadError = () => {
-        console.warn("[HeroVideoMontage] Clip failed to load:", nextClip.src);
+        console.warn(
+          "[HeroVideoMontage] Clip failed to load:",
+          nextClip.sources[0]?.src,
+        );
         if (loadFallbackTimerRef.current != null) {
           clearTimeout(loadFallbackTimerRef.current);
           loadFallbackTimerRef.current = null;
         }
         try {
           backEl.removeAttribute("src");
+          while (backEl.firstChild) {
+            backEl.removeChild(backEl.firstChild);
+          }
           backEl.load();
         } catch {
           /* ignore */
@@ -306,7 +332,7 @@ export function HeroVideoMontage({ clips, containerRef }: Props) {
     }, 200);
 
     const first = list[0];
-    v0.src = first.src;
+    applyClipSources(v0, first);
     v0.playbackRate = first.playbackRate ?? 1;
     applyClipFraming(v0, first);
     v0.muted = true;
@@ -317,6 +343,7 @@ export function HeroVideoMontage({ clips, containerRef }: Props) {
       () => enqueueAdvanceWhenIdle(advance),
       { once: true },
     );
+    v0.load();
     void playWithTimeout(v0)
       .then(() => {
         markClipShownNow();

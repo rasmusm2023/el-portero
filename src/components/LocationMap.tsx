@@ -11,6 +11,8 @@ type LocationMapEmbedProps = {
 
 /**
  * Map iframe only — full-bleed; no frame chrome (Google’s own embed UI remains).
+ * The map is shown in grayscale via CSS so it matches the site’s dark, monochrome feel
+ * (the free embed URL has no official “mono map style” toggle).
  *
  * Browsers may log CSP / “partitioned cookie” notices for third-party Google embeds; that is normal
  * and not controlled by this app’s code unless you replace the embed with a static map image + link.
@@ -28,7 +30,7 @@ export function LocationMapEmbed({ locale, className }: LocationMapEmbedProps) {
         <iframe
           title={t(locale, "page.hours.mapIframeTitle")}
           src={embedSrc}
-          className="absolute inset-0 h-full w-full border-0"
+          className="absolute inset-0 h-full w-full border-0 grayscale"
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen

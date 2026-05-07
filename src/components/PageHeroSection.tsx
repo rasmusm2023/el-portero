@@ -23,18 +23,18 @@ function heroScrollShift(containerRef: RefObject<HTMLElement | null>): number {
   return Math.min(1, Math.max(0, t));
 }
 
-function HeroAccentVideo({
+function HeroAccentImage({
   containerRef,
 }: {
   containerRef: RefObject<HTMLElement | null>;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const smoothRef = useRef(0);
   const rafRef = useRef(0);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video || typeof window === "undefined") return;
+    const img = imgRef.current;
+    if (!img || typeof window === "undefined") return;
 
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -46,7 +46,7 @@ function HeroAccentVideo({
     const apply = (shift: number) => {
       const ox = 76 + shift * 14;
       const oy = 50 - shift * 10;
-      video.style.objectPosition = `${ox}% ${oy}%`;
+      img.style.objectPosition = `${ox}% ${oy}%`;
     };
 
     const tick = () => {
@@ -94,16 +94,16 @@ function HeroAccentVideo({
       aria-hidden
     >
       <div className="aspect-[3/4] w-[clamp(7rem,28vw,18rem)] translate-x-[6%] overflow-hidden shadow-[0_22px_56px_-10px_rgba(0,0,0,0.55)] sm:w-[clamp(8rem,24vw,20rem)] sm:translate-x-[8%] md:w-[clamp(8.75rem,20vw,22rem)] md:translate-x-[10%] lg:w-[clamp(9.25rem,18vw,24rem)] lg:translate-x-[12%]">
-        <video
-          ref={videoRef}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          ref={imgRef}
+          src="/assets/images/gallery/gallery-feature-tostada-closeup.webp"
+          alt=""
           className="h-full w-full object-cover will-change-[object-position]"
           style={{ objectPosition: "76% 50%" }}
-          src="/videos/bartender-making-drink.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
+          loading="lazy"
+          decoding="async"
+          draggable={false}
         />
       </div>
     </div>
@@ -115,12 +115,36 @@ const heroRadialOverlayStyle = {
     radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.04) 0%, transparent 50%)`,
 } as const;
 
-/** Bottom-right `<p>` in `/` hero and coming-soon hero — identical tracking and uppercase rhythm. */
+/** Font + tracking for hero tagline / aside (no white-space mode — add `whitespace-pre-line` for single-block copy). */
+const pageHeroTaglineTypographyCore =
+  "shrink text-left font-sans text-xs font-semibold leading-snug tracking-[0.14em] text-paper/85 uppercase sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:ps-2 xl:ps-3";
+
+/** Shared typography for bottom hero aside when using `\n` inside one `<p>`. */
+const pageHeroBottomAsideTextBase =
+  `${pageHeroTaglineTypographyCore} whitespace-pre-line`;
+
+/** @deprecated Kept for imports; same typography as home with a smaller max width. Prefer mobile/desktop tagline classes on `/`. */
 export const pageHeroBottomAsideTextClass =
-  "max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3";
+  `${pageHeroBottomAsideTextBase} max-w-[min(52rem,calc(100%-3rem))] sm:max-w-[min(52rem,calc(100%-4rem))]`;
+
+/** Mobile only — shorter copy, no line clamp. */
+export const pageHeroHomeTaglineMobileClass =
+  `${pageHeroBottomAsideTextBase} max-w-[min(36rem,calc(100%-2.5rem))] sm:hidden`;
+
+/**
+ * sm+ — home hero tagline: natural wrap, no line clamp; width steps up from tablet to large desktop.
+ */
+export const pageHeroHomeTaglineDesktopClass =
+  `${pageHeroTaglineTypographyCore} hidden whitespace-normal sm:block max-w-[min(36rem,calc(100%-2.5rem))] md:max-w-[min(42rem,calc(100%-3rem))] lg:max-w-[min(48rem,calc(100%-3.5rem))] xl:max-w-[min(56rem,calc(100%-4rem))]`;
+
+/** @deprecated Prefer {@link pageHeroHomeTaglineMobileClass} + {@link pageHeroHomeTaglineDesktopClass}. */
+export const pageHeroHomeTaglineTextClass =
+  `${pageHeroTaglineTypographyCore} whitespace-normal max-w-[min(36rem,calc(100%-2.5rem))] md:max-w-[min(42rem,calc(100%-3rem))] lg:max-w-[min(48rem,calc(100%-3.5rem))] xl:max-w-[min(56rem,calc(100%-4rem))]`;
 
 type PageHeroSectionProps = {
   heroImages: string[];
+  /** Default: `cover` (cinematic crop). `contain` shows full image (no crop) for pages like Story. */
+  heroImageFit?: "cover" | "contain";
   /**
    * When non-empty, replaces the image slideshow with a muted, parallax video montage.
    * Takes precedence over `heroImages` for the background layer.
@@ -131,7 +155,7 @@ type PageHeroSectionProps = {
   showOpeningCountdown?: boolean;
   /** Centered action(s) toward the lower third of the hero (e.g. primary CTA). */
   bottomCta?: ReactNode;
-  /** Optional bottom-right block (e.g. home tagline). */
+  /** Optional bottom-left block (e.g. home tagline). */
   bottomAside?: ReactNode;
   /**
    * Portrait video accent beside the hero (e.g. bartender clip). Use only on `/` — other routes
@@ -145,6 +169,7 @@ type PageHeroSectionProps = {
  */
 export function PageHeroSection({
   heroImages,
+  heroImageFit = "cover",
   heroVideos,
   children,
   bottomCta,
@@ -169,10 +194,14 @@ export function PageHeroSection({
               containerRef={heroSectionRef}
             />
           ) : (
-            <HeroSlideshow images={heroImages} containerRef={heroSectionRef} />
+            <HeroSlideshow
+              images={heroImages}
+              containerRef={heroSectionRef}
+              fit={heroImageFit}
+            />
           )}
           {hasHeroMedia && (
-            <div className="absolute inset-0 z-[1] bg-ink/62" aria-hidden />
+            <div className="absolute inset-0 z-[1] bg-ink/50" aria-hidden />
           )}
           <div
             className="absolute inset-0 z-[2] opacity-40"
@@ -183,7 +212,7 @@ export function PageHeroSection({
             <HeroOpeningCountdown targetDate={OPENING_COUNTDOWN_END} />
           ) : null}
           {hasHeroMedia && accentVideo ? (
-            <HeroAccentVideo containerRef={heroSectionRef} />
+            <HeroAccentImage containerRef={heroSectionRef} />
           ) : null}
           <div className="relative z-10 flex w-full min-h-[min(82vh,54rem)] flex-col items-center px-5 pb-14 pt-10 sm:px-10 sm:pb-20 sm:pt-12 md:pt-14 lg:px-14 xl:px-20">
             <div className="flex flex-1 flex-col items-center justify-center px-2 py-10 sm:py-14 md:py-16">
@@ -192,12 +221,12 @@ export function PageHeroSection({
               </div>
             </div>
             {bottomCta ? (
-              <div className="relative z-20 -mt-6 mb-6 flex w-full justify-center px-2 pb-2 sm:-mt-8 sm:mb-10 sm:pb-0 md:-mt-10">
+              <div className="relative z-20 -mt-10 mb-8 flex w-full justify-center px-2 pb-2 sm:-mt-14 sm:mb-10 sm:pb-0 md:-mt-16">
                 {bottomCta}
               </div>
             ) : null}
             {bottomAside ? (
-              <div className="absolute inset-x-5 bottom-8 z-20 box-border flex w-full min-w-0 justify-end pr-7 sm:inset-x-10 sm:bottom-10 sm:pr-10 lg:inset-x-14 lg:pr-14 xl:inset-x-20 xl:pr-16 2xl:pr-20">
+              <div className="absolute inset-x-5 bottom-8 z-20 box-border flex w-full min-w-0 justify-start pl-7 sm:inset-x-10 sm:bottom-10 sm:pl-10 lg:inset-x-14 lg:pl-14 xl:inset-x-20 xl:pl-16 2xl:pl-20">
                 {bottomAside}
               </div>
             ) : null}

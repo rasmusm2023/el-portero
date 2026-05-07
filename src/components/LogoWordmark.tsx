@@ -21,8 +21,8 @@ type LogoWordmarkProps = {
 
 /** Same asset as the Image `src` — used as a luminance mask over the gold gradient. */
 const LOGOTYPE_MASK_STYLE: CSSProperties = {
-  maskImage: "url('/logos/el-portero-logotype.svg')",
-  WebkitMaskImage: "url('/logos/el-portero-logotype.svg')",
+  maskImage: "url('/assets/logos/el-portero-logotype.svg')",
+  WebkitMaskImage: "url('/assets/logos/el-portero-logotype.svg')",
   maskSize: "contain",
   WebkitMaskSize: "contain",
   maskRepeat: "no-repeat",
@@ -79,7 +79,7 @@ export function LogoWordmark({
         />
       ) : (
         <Image
-          src="/logos/el-portero-logotype.svg"
+          src="/assets/logos/el-portero-logotype.svg"
           alt="El Portero"
           width={640}
           height={160}

@@ -29,7 +29,9 @@ export function BookTableWidgetButton({
       type={type}
       data-hash={BOKABORD_WIDGET_HASH}
       data-lang={locale}
-      className={[className, WIDGET_CLASS].filter(Boolean).join(" ")}
+      className={[className, "cursor-pointer", WIDGET_CLASS]
+        .filter(Boolean)
+        .join(" ")}
       onClick={(e) => {
         onClick?.(e);
         if (e.defaultPrevented) return;

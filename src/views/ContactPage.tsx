@@ -1,9 +1,8 @@
 "use client";
 
+import { Mail } from "lucide-react";
 import {
-  BOOKING_PHONE_DISPLAY,
   CONTACT_EMAIL,
-  bookingTelHref,
   contactMailtoHref,
 } from "@/config/site";
 import { useLocale } from "@/i18n/useLocale";
@@ -36,23 +35,22 @@ export function ContactPage() {
         </h2>
         <ul className="flex flex-col gap-4 sm:gap-5">
           <li>
-            <a href={bookingTelHref()} className={linkCardClass}>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/45">
-                {t(locale, "page.contact.phoneLabel")}
-              </span>
-              <span className="font-display text-2xl font-medium text-paper group-hover:underline sm:text-3xl">
-                {BOOKING_PHONE_DISPLAY}
-              </span>
-            </a>
-          </li>
-          <li>
             <a href={mailHref} className={linkCardClass}>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/45">
-                {t(locale, "page.contact.emailLabel")}
-              </span>
-              <span className="break-all font-display text-2xl font-medium text-paper group-hover:underline sm:text-3xl">
-                {CONTACT_EMAIL}
-              </span>
+              <div className="flex items-center gap-4 sm:gap-5">
+                <Mail
+                  className="size-9 shrink-0 text-paper/45 sm:size-11"
+                  strokeWidth={1.35}
+                  aria-hidden
+                />
+                <div className="min-w-0 flex flex-1 flex-col gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/45">
+                    {t(locale, "page.contact.emailLabel")}
+                  </span>
+                  <span className="break-all font-display text-2xl font-medium text-paper group-hover:underline sm:text-3xl">
+                    {CONTACT_EMAIL}
+                  </span>
+                </div>
+              </div>
             </a>
           </li>
         </ul>

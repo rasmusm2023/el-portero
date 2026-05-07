@@ -6,7 +6,7 @@ import { GallerySection } from "@/components/sections/GallerySection";
 import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
 import { MenuSplitSectionVertical } from "@/components/sections/MenuSplitSectionVertical";
-import { PageHeroSection } from "@/components/PageHeroSection";
+import { PageHeroSection, pageHeroHomeTaglineDesktopClass, pageHeroHomeTaglineMobileClass } from "@/components/PageHeroSection";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import type { MenuSplitKey } from "@/data/menuSplitPanels";
@@ -55,9 +55,18 @@ export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
         heroImages={[]}
         heroVideos={heroVideos}
         bottomAside={
-          <p className="max-w-[min(52rem,calc(100%-3rem))] shrink whitespace-pre-line text-right font-sans text-xs font-medium leading-snug tracking-[0.14em] text-paper/85 uppercase sm:max-w-[min(52rem,calc(100%-4rem))] sm:text-sm sm:tracking-[0.18em] lg:tracking-[0.22em] lg:pe-2 xl:pe-3">
-            {t(locale, "page.home.heroTagline")}
-          </p>
+          <div className="min-w-0 max-w-full">
+            <p className={[pageHeroHomeTaglineMobileClass, "font-medium", "text-sm"].join(" ")}>
+              {t(locale, "page.home.heroTaglineMobile")}
+            </p>
+            <p
+              className={[pageHeroHomeTaglineDesktopClass, "font-medium", "text-sm sm:text-base"].join(
+                " ",
+              )}
+            >
+              {t(locale, "page.home.heroTagline")}
+            </p>
+          </div>
         }
       >
         <div className="mx-auto flex w-full max-w-[46rem] flex-col items-center">

@@ -38,11 +38,20 @@ export function homeEventFromFirestoreData(id: string, v: Record<string, unknown
   const imageAlt = (v.imageAlt ?? { en: "", es: "", sv: "" }) as HomeEvent["imageAlt"];
   const sortDate = normalizeSortDateFromFirestore(v.sortDate) || String(v.sortDate ?? "").trim();
 
+  const timeLine =
+    String((timeDetail as { en?: unknown }).en ?? "").trim() ||
+    String((timeDetail as { sv?: unknown }).sv ?? "").trim() ||
+    String((timeDetail as { es?: unknown }).es ?? "").trim();
+  const hasSpecificTimeRaw = v.hasSpecificTime;
+  const hasSpecificTime =
+    typeof hasSpecificTimeRaw === "boolean" ? hasSpecificTimeRaw : Boolean(timeLine);
+
   return {
     id,
     sortDate,
     published: v.published !== false,
     fullyBooked: Boolean(v.fullyBooked ?? false),
+    hasSpecificTime,
     timeSlotStart: v.timeSlotStart != null ? String(v.timeSlotStart) : undefined,
     timeSlotEnd: v.timeSlotEnd != null ? String(v.timeSlotEnd) : undefined,
     eventPlace: v.eventPlace != null ? String(v.eventPlace) : undefined,

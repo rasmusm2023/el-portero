@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
 /** Subtle vertical parallax inside the crop; respects `prefers-reduced-motion`. */
 function GalleryParallaxVideo({
   src,
+  sources,
   ariaLabel,
   coverScale = 1.18,
   objectPosition = "50% 50%",
 }: {
   src: string;
+  sources?: { src: string; type?: string }[];
   ariaLabel: string;
   /** Combined with object-cover; lower = show more of the frame (“zoom out”). */
   coverScale?: number;
@@ -67,20 +69,27 @@ function GalleryParallaxVideo({
           minWidth: "100%",
           objectPosition,
         }}
-        src={src}
         aria-label={ariaLabel}
         muted
         playsInline
         loop
         autoPlay
         preload="metadata"
-      />
+      >
+        {(sources ?? [{ src }]).map((s) => (
+          <source key={s.src} src={s.src} type={s.type} />
+        ))}
+      </video>
     </div>
   );
 }
 
-/** Zoom for rotated landscape→portrait arepas; keep low so the full dish reads in-frame. */
-const BASE_ROTATED_SCALE = 1.04;
+/**
+ * Base zoom for “rotated image inside crop” gallery tiles.
+ * Mobile needs to show more of the frame (less zoom) for the first image.
+ */
+const BASE_ROTATED_SCALE_DESKTOP = 1.01;
+const BASE_ROTATED_SCALE_MOBILE = 1.0;
 
 /** Landscape asset shown as portrait: rotate (e.g. 90°) + zoom so the frame fills. */
 function GalleryParallaxRotatedImage({
@@ -102,8 +111,13 @@ function GalleryParallaxRotatedImage({
     if (!wrap || !img) return;
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mobileMq = window.matchMedia("(max-width: 639px)");
+    const baseScale =
+      rotateDeg === 0 && mobileMq.matches
+        ? BASE_ROTATED_SCALE_MOBILE
+        : BASE_ROTATED_SCALE_DESKTOP;
     if (mq.matches) {
-      img.style.transform = `rotate(${rotateDeg}deg) scale(${BASE_ROTATED_SCALE})`;
+      img.style.transform = `rotate(${rotateDeg}deg) scale(${baseScale})`;
       img.style.transformOrigin = "center center";
       return;
     }
@@ -112,7 +126,7 @@ function GalleryParallaxRotatedImage({
     const strength = 0.3;
 
     const apply = (y: number) => {
-      img.style.transform = `translate3d(0,${y.toFixed(2)}px,0) rotate(${rotateDeg}deg) scale(${BASE_ROTATED_SCALE})`;
+      img.style.transform = `translate3d(0,${y.toFixed(2)}px,0) rotate(${rotateDeg}deg) scale(${baseScale})`;
       img.style.transformOrigin = "center center";
     };
 
@@ -155,9 +169,9 @@ function GalleryParallaxRotatedImage({
         alt={alt}
         className="pointer-events-none max-h-none max-w-none shrink-0 object-cover"
         style={{
-          minHeight: "104%",
-          minWidth: "104%",
-          transform: `rotate(${rotateDeg}deg) scale(${BASE_ROTATED_SCALE})`,
+          minHeight: rotateDeg === 0 ? "100%" : "104%",
+          minWidth: rotateDeg === 0 ? "100%" : "104%",
+          transform: `rotate(${rotateDeg}deg) scale(${BASE_ROTATED_SCALE_DESKTOP})`,
           transformOrigin: "center center",
         }}
         loading="lazy"
@@ -175,10 +189,12 @@ type GalleryMedia =
   | {
       kind: "video";
       src: string;
+      sources?: { src: string; type?: string }[];
       coverScale?: number;
       objectPosition?: string;
     }
-  | { kind: "image"; src: string; rotateDeg: number };
+  | { kind: "image"; src: string; rotateDeg: number }
+  | { kind: "imageCycle"; srcs: string[]; rotateDeg: number };
 
 const ROWS: {
   media: GalleryMedia;
@@ -188,9 +204,14 @@ const ROWS: {
 }[] = [
   {
     media: {
-      kind: "image",
-      src: "/images/delicious-homemade-arepas-with-avocado-and-cheese-toppings-SBI-351110372-preview.jpg",
-      rotateDeg: 90,
+      kind: "imageCycle",
+      srcs: [
+        "/assets/images/hero-accent/hero-accent-dish-closeup.webp",
+        "/assets/images/gallery/gallery-feature-tostada-closeup.webp",
+        "/assets/images/story/hero/story-hero-paella-closeup.webp",
+        "/assets/images/story/hero/story-hero-wine-and-seafood.webp",
+      ],
+      rotateDeg: 0,
     },
     captionKey: "page.gallery.caption1",
     bodyKey: "page.gallery.body1",
@@ -199,7 +220,8 @@ const ROWS: {
   {
     media: {
       kind: "video",
-      src: "/videos/delicious-swedish-meatballs-with-mashed-potatoes-and-cranberry-sauce-SBV-349166281-preview.mp4",
+      src: "/assets/videos/gallery/clip-1/video.webm",
+      sources: [{ src: "/assets/videos/gallery/clip-1/video.webm", type: "video/webm" }],
       coverScale: 1.06,
       objectPosition: "50% 46%",
     },
@@ -210,7 +232,13 @@ const ROWS: {
   {
     media: {
       kind: "video",
-      src: "/videos/skilled-bartender-expertly-mixing-cocktail-ingredients-at-bar-counter-SBV-333451099-preview.mp4",
+      src: "/assets/videos/gallery/clip-3/video.webm",
+      sources: [
+        { src: "/assets/videos/gallery/clip-3/video.webm", type: "video/webm" },
+        { src: "/assets/videos/gallery/clip-3/video.mp4", type: "video/mp4" },
+      ],
+      coverScale: 1.02,
+      objectPosition: "50% 50%",
     },
     captionKey: "page.gallery.caption3",
     bodyKey: "page.gallery.body3",
@@ -240,17 +268,134 @@ const RHYTHM = [
     captionBoxRev: "md:-mr-10 md:pr-1 lg:-mr-14 lg:pr-3",
   },
   {
-    row: "",
-    image: `relative z-0 aspect-[3/4] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[3/5] md:w-[38%] md:max-w-none ${GALLERY_IMAGE_FRAME}`,
+    row: "md:items-center",
+    image: `relative z-0 aspect-[5/4] w-full shrink-0 overflow-hidden bg-paper-dark md:aspect-[16/10] md:w-[66%] md:max-w-none ${GALLERY_IMAGE_FRAME}`,
     caption:
       "relative z-10 flex w-full flex-1 items-center md:w-0 md:min-w-0 md:py-4",
-    captionBox: "md:-ml-14 md:pl-2 lg:-ml-20 lg:pl-5",
-    captionBoxRev: "md:-mr-14 md:pr-2 lg:-mr-20 lg:pr-5",
+    captionBox: "md:-ml-10 md:pl-1 lg:-ml-14 lg:pl-3",
+    captionBoxRev: "md:-mr-10 md:pr-1 lg:-mr-14 lg:pr-3",
   },
 ] as const;
 
 function galleryRowKey(media: GalleryMedia): string {
-  return media.kind === "video" ? media.src : `${media.src}-${media.rotateDeg}`;
+  if (media.kind === "video") return media.src;
+  if (media.kind === "image") return `${media.src}-${media.rotateDeg}`;
+  return `${media.srcs.join("|")}-${media.rotateDeg}`;
+}
+
+function GalleryParallaxFadingImage({
+  srcs,
+  alt,
+  rotateDeg,
+  durationMs = 3000,
+  fadeMs = 900,
+}: {
+  srcs: string[];
+  alt: string;
+  rotateDeg: number;
+  durationMs?: number;
+  fadeMs?: number;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const imgRefs = useRef<(HTMLImageElement | null)[]>([]);
+  const parallaxCleanupImgsRef = useRef<(HTMLImageElement | null)[]>([]);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (srcs.length <= 1) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+    const id = window.setInterval(() => {
+      setActive((i) => (i + 1) % srcs.length);
+    }, durationMs);
+    return () => window.clearInterval(id);
+  }, [durationMs, srcs.length]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq.matches) return;
+
+    const mobileMq = window.matchMedia("(max-width: 639px)");
+    const baseScale =
+      rotateDeg === 0 && mobileMq.matches
+        ? BASE_ROTATED_SCALE_MOBILE
+        : BASE_ROTATED_SCALE_DESKTOP;
+
+    let raf = 0;
+    const strength = 0.3;
+
+    const apply = (y: number) => {
+      const imgs = imgRefs.current;
+      parallaxCleanupImgsRef.current = imgs;
+      for (const img of imgs) {
+        if (!img) continue;
+        img.style.transform = `translate3d(0,${y.toFixed(2)}px,0) rotate(${rotateDeg}deg) scale(${baseScale})`;
+        img.style.transformOrigin = "center center";
+      }
+    };
+
+    const tick = () => {
+      const rect = wrap.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const centerOffset = rect.top + rect.height / 2 - vh / 2;
+      const y = (-centerOffset / vh) * rect.height * strength;
+      apply(y);
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(tick);
+    };
+
+    tick();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(raf);
+      for (const img of parallaxCleanupImgsRef.current) {
+        if (!img) continue;
+        img.style.removeProperty("transform");
+        img.style.removeProperty("transform-origin");
+      }
+    };
+  }, [rotateDeg, srcs.length]);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="absolute inset-0 flex items-center justify-center overflow-hidden bg-ink"
+    >
+      {srcs.map((src, i) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={src}
+          ref={(el) => {
+            imgRefs.current[i] = el;
+          }}
+          src={src}
+          alt={alt}
+          className="pointer-events-none absolute inset-0 h-full w-full max-h-none max-w-none shrink-0 object-cover"
+          style={{
+            minHeight: rotateDeg === 0 ? "100%" : "104%",
+            minWidth: rotateDeg === 0 ? "100%" : "104%",
+            opacity: i === active ? 1 : 0,
+            transition: `opacity ${fadeMs}ms ease-in-out`,
+          }}
+          loading={i === 0 ? "eager" : "lazy"}
+          decoding="async"
+          draggable={false}
+        />
+      ))}
+    </div>
+  );
 }
 
 export function GallerySection() {
@@ -282,9 +427,16 @@ export function GallerySection() {
                   {row.media.kind === "video" ? (
                     <GalleryParallaxVideo
                       src={row.media.src}
+                      sources={row.media.sources}
                       ariaLabel={t(locale, row.altKey)}
                       coverScale={row.media.coverScale}
                       objectPosition={row.media.objectPosition}
+                    />
+                  ) : row.media.kind === "imageCycle" ? (
+                    <GalleryParallaxFadingImage
+                      srcs={row.media.srcs}
+                      alt={t(locale, row.altKey)}
+                      rotateDeg={row.media.rotateDeg}
                     />
                   ) : (
                     <GalleryParallaxRotatedImage
