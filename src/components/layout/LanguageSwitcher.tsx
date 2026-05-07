@@ -25,7 +25,7 @@ export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps)
     "inline-flex h-10 shrink-0 items-center gap-1 rounded-md bg-paper/12 px-2.5 py-2 text-paper/90 transition-[background-color,color] hover:bg-paper/20";
 
   const listClass =
-    "absolute right-0 z-[70] mt-1 min-w-[12.5rem] overflow-hidden rounded-md border border-paper/20 bg-ink shadow-lg shadow-black/40";
+    "absolute right-0 z-[200] mt-1 min-w-[12.5rem] overflow-hidden rounded-md border border-paper/20 bg-ink shadow-lg shadow-black/40";
 
   const itemBase =
     "flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-sm";
@@ -37,7 +37,7 @@ export function LanguageSwitcher({ variant = "default" }: LanguageSwitcherProps)
   const currentLabel = localeLabels[locale];
 
   return (
-    <div className="relative z-[60]" ref={rootRef}>
+    <div className="relative z-[190]" ref={rootRef}>
       <button
         type="button"
         className={triggerClass}

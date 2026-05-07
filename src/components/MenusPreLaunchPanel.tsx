@@ -1,6 +1,8 @@
 "use client";
 
-import { MenusRevealCountdown } from "@/components/MenusRevealCountdown";
+import { HeroOpeningCountdown } from "@/components/HeroOpeningCountdown";
+import { getMenusRevealTargetMs } from "@/config/menusLaunch";
+import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -15,7 +17,13 @@ export function MenusPreLaunchPanel() {
       />
 
       <div className="relative z-10 flex w-full max-w-xl flex-col items-center text-center">
-        <MenusRevealCountdown />
+        <p className="mx-auto mb-8 max-w-[22rem] text-center font-sans text-[11px] font-semibold leading-snug tracking-[0.28em] text-paper/80 uppercase sm:mb-10 sm:max-w-none sm:text-xs sm:tracking-[0.22em]">
+          MENUS AVAILABLE IN
+        </p>
+        <HeroOpeningCountdown
+          targetDate={new Date(getMenusRevealTargetMs())}
+          variant="inline"
+        />
 
         <h1 className="mt-12 font-display text-3xl font-medium tracking-tight text-paper sm:mt-14 sm:text-4xl">
           {t(locale, "page.menu.preLaunchTitle")}
@@ -25,7 +33,7 @@ export function MenusPreLaunchPanel() {
         </p>
         <BookTableWidgetButton
           type="button"
-          className="mt-10 inline-flex items-center justify-center rounded-none border border-ink bg-ink px-8 py-3.5 text-xs font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:text-sm"
+          className={`mt-10 ${bookTableHeroHollowButtonClass}`}
         >
           {t(locale, "nav.reserve")}
         </BookTableWidgetButton>

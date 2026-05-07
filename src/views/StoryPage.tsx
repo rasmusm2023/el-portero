@@ -47,12 +47,13 @@ function StoryImageFrame({
   );
 }
 
-export function StoryPage({ heroImages, contentImages }: StoryPageProps) {
+export function StoryPage({ heroImages: _heroImages, contentImages }: StoryPageProps) {
   const { locale } = useLocale();
+  void _heroImages;
 
   return (
     <>
-      <PageHeroSection heroImages={heroImages}>
+      <PageHeroSection heroImages={[]}>
         <h1 className="font-hero-title text-[clamp(2.25rem,6vw,4.25rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
           {t(locale, "page.story.title")}
         </h1>

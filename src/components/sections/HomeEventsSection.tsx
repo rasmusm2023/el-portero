@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useRef } from "react";
 import Link from "next/link";
 import { EventImage } from "@/components/events/EventImage";
 import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
@@ -9,14 +8,11 @@ import { LAUNCH_UI_OPENING_HOURS } from "@/config/launchUi";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
+import { eventCardDateLabel } from "@/lib/eventDisplayDate";
 
 export function HomeEventsSection() {
   const { locale } = useLocale();
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useMemo(() => new Map<string, HTMLLIElement>(), []);
-
   const { events, ready } = usePublicEvents();
-  const sorted = useMemo(() => events, [events]);
 
   return (
     <section
@@ -56,74 +52,57 @@ export function HomeEventsSection() {
                 <p className="max-w-md text-base text-ink-muted leading-relaxed">
                   {t(locale, "page.home.eventsLoading")}
                 </p>
-              ) : sorted.length === 0 ? (
+              ) : events.length === 0 ? (
                 <p className="max-w-md text-base text-ink-muted leading-relaxed">
                   {t(locale, "page.home.eventsEmpty")}
                 </p>
               ) : (
-                <div
-                  className={[
-                    "relative w-full max-h-[min(72vh,46rem)] overflow-y-auto overscroll-y-contain scroll-smooth pr-2 pt-0",
-                    "snap-y snap-mandatory",
-                    "touch-pan-y",
-                    "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-                  ].join(" ")}
-                  ref={viewportRef}
-                  tabIndex={0}
-                  role="region"
-                  aria-label={t(locale, "page.home.eventsHeading")}
-                >
-                  <ol className="relative z-10 m-0 flex list-none flex-col gap-10 pb-2 pt-0">
+                <div className="w-full">
+                  <ol className="relative z-10 m-0 flex list-none flex-col gap-10">
                     <div
                       className="pointer-events-none absolute left-4 top-0 bottom-0 z-0 w-px bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.14)_10%,rgba(255,255,255,0.14)_90%,transparent_100%)]"
                       aria-hidden
                     />
-                    {sorted.map((ev) => (
+                    {events.map((ev) => (
                       <li
                         key={ev.id}
-                        className="relative w-full snap-start pl-10"
-                        ref={(node) => {
-                          if (!node) {
-                            itemRefs.delete(ev.id);
-                            return;
-                          }
-                          itemRefs.set(ev.id, node);
-                        }}
+                        className="relative w-full pl-10 lg:max-w-[50%]"
                       >
                         <span
                           className="absolute left-[0.875rem] top-0 z-10 flex h-3.5 w-3.5 -translate-x-1/2 shrink-0 rounded-full border-2 border-paper/70 bg-ink shadow-[0_0_0_5px_var(--color-ink)] ring-1 ring-paper/15"
                           aria-hidden
                         />
-                        <time
-                          className="mb-3 block text-left text-[10px] font-semibold leading-snug tracking-[0.2em] text-ink-muted uppercase sm:text-[11px]"
-                          dateTime={ev.sortDate}
-                        >
-                          {ev.weekdayDate[locale]}
-                        </time>
-
-                        <article className="flex w-full min-h-[13.5rem] flex-row overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:min-h-[15rem] sm:rounded-3xl">
-                          <div className="relative w-[44%] min-w-[9rem] max-w-[18rem] shrink-0 self-stretch bg-ink/5 sm:w-[46%] sm:min-w-[11rem] sm:max-w-[22rem] xl:max-w-[26rem]">
+                        <article className="flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:rounded-3xl md:flex-row md:min-h-[15rem]">
+                          <div className="relative aspect-[16/10] w-full shrink-0 bg-ink/5 md:aspect-auto md:w-[46%] md:min-w-[11rem] md:max-w-[22rem] xl:max-w-[26rem]">
                             <EventImage
                               src={ev.imageSrc}
                               alt={ev.imageAlt[locale]}
                               fill
                               className="object-cover"
-                              sizes="(max-width: 640px) 45vw, (max-width: 1024px) 280px, (max-width: 1280px) 320px, 380px"
+                              sizes="(max-width: 767px) 100vw, (max-width: 1024px) 420px, 380px"
                             />
                             <div
-                              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-paper/8"
+                              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/35 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-paper/8"
                               aria-hidden
                             />
                           </div>
-                          <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-between gap-4 px-4 py-5 sm:gap-5 sm:px-6 sm:py-6">
+                          <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-between gap-4 px-5 py-6 sm:gap-5 sm:px-6 sm:py-7">
                             <div className="min-w-0">
+                              <time
+                                className="mb-3 block text-left text-[10px] font-semibold leading-snug tracking-[0.2em] text-ink-muted uppercase sm:text-[11px]"
+                                dateTime={ev.sortDate}
+                              >
+                                {eventCardDateLabel(ev, locale)}
+                              </time>
                               <h3 className="font-display text-lg font-medium leading-snug tracking-tight text-paper sm:text-xl">
                                 {ev.title[locale]}
                               </h3>
-                              <p className="mt-2 text-[11px] font-semibold leading-snug tracking-[0.18em] text-ink-muted uppercase sm:text-xs sm:tracking-[0.2em]">
-                                {ev.timeDetail[locale]}
-                              </p>
-                              <p className="mt-2 line-clamp-4 text-sm leading-relaxed text-ink-muted sm:line-clamp-3 sm:mt-2.5">
+                              {ev.hasSpecificTime !== false && ev.timeDetail[locale]?.trim() ? (
+                                <p className="mt-2 text-[11px] font-semibold leading-snug tracking-[0.18em] text-ink-muted uppercase sm:text-xs sm:tracking-[0.2em]">
+                                  {ev.timeDetail[locale]}
+                                </p>
+                              ) : null}
+                              <p className="mt-2.5 text-sm leading-relaxed text-ink-muted">
                                 {ev.excerpt[locale]}
                               </p>
                             </div>
@@ -153,12 +132,6 @@ export function HomeEventsSection() {
                   </ol>
                 </div>
               )}
-              {sorted.length > 0 ? (
-                <div
-                  className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-12 bg-gradient-to-t from-ink to-transparent"
-                  aria-hidden
-                />
-              ) : null}
             </div>
           </div>
 

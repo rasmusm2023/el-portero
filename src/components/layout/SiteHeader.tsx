@@ -120,9 +120,9 @@ export const bookTableHeroHollowButtonClass =
   [
     "inline-flex items-center justify-center rounded-none",
     "bg-transparent px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.08em] text-paper",
-    "shadow-[0_0_0_2px_var(--color-paper),0_0_0_4px_var(--color-ink),0_0_0_6px_var(--color-paper)]",
-    "transition-[color,background-color,box-shadow] duration-300 ease-out",
-    "hover:bg-transparent hover:text-gold hover:shadow-[0_0_0_2px_var(--color-gold),0_0_0_4px_var(--color-ink),0_0_0_6px_var(--color-gold-bright)]",
+    "border-2 border-paper outline outline-2 outline-paper outline-offset-4",
+    "transition-[color,background-color,border-color,outline-color] duration-300 ease-out",
+    "hover:bg-transparent hover:text-gold hover:border-gold hover:outline-gold-bright",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/45 focus-visible:ring-offset-[8px] focus-visible:ring-offset-ink",
     "active:brightness-95",
     "sm:px-10 sm:py-4 sm:text-sm sm:tracking-[0.1em]",
@@ -223,7 +223,6 @@ export function SiteHeader() {
             />
           </Link>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-            <LanguageSwitcher variant="onDark" />
             <BookTableWidgetButton
               className={bookTableNavButtonClass}
               title={t(locale, "nav.bookTable")}
@@ -394,6 +393,12 @@ export function SiteHeader() {
                   </motion.div>
                 ))}
               </motion.nav>
+
+              <div className="pointer-events-none absolute top-4 right-4 z-[140] sm:top-6 sm:right-6">
+                <div className="pointer-events-auto">
+                  <LanguageSwitcher variant="onDark" />
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         ) : null}

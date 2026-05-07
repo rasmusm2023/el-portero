@@ -9,12 +9,12 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
-  /** Browsers request `/favicon.ico` by default; we only ship an SVG under `/favicon/`. */
+  /** Browsers request `/favicon.ico` by default; route to the SVG under `public/assets/favicon/`. */
   async rewrites() {
     return [
       {
         source: "/favicon.ico",
-        destination: "/favicon/el-portero-favicon.svg",
+        destination: "/assets/favicon/el-portero-favicon.svg",
       },
     ];
   },

@@ -42,12 +42,22 @@ function sameTrio(t: LocaleTrio, line: string): LocaleTrio {
 
 /** Sync `timeDetail` from slot fields + place. */
 export function applySlotsToTimeDetail(ev: HomeEvent): HomeEvent {
+  if (ev.hasSpecificTime === false) {
+    return {
+      ...ev,
+      timeSlotStart: undefined,
+      timeSlotEnd: undefined,
+      eventPlace: undefined,
+      timeDetail: sameTrio(ev.timeDetail, ""),
+    };
+  }
   const start = ev.timeSlotStart?.trim() || DEFAULT_EVENT_TIME_START;
   const end = ev.timeSlotEnd?.trim() || DEFAULT_EVENT_TIME_END;
   const place = ev.eventPlace?.trim() || DEFAULT_EVENT_PLACE;
   const line = formatTimeDetailLine(start, end, place);
   return {
     ...ev,
+    hasSpecificTime: ev.hasSpecificTime ?? true,
     timeSlotStart: start,
     timeSlotEnd: end,
     eventPlace: place,
@@ -82,6 +92,24 @@ export function normalizeEventForEditor(ev: HomeEvent): HomeEvent {
   let end = ev.timeSlotEnd?.trim();
   let place = ev.eventPlace?.trim();
 
+  const timeDetailLine =
+    (ev.timeDetail?.en ?? "").trim() ||
+    (ev.timeDetail?.sv ?? "").trim() ||
+    (ev.timeDetail?.es ?? "").trim();
+
+  const hasSpecificTime = ev.hasSpecificTime ?? Boolean(timeDetailLine || start || end || place);
+
+  if (!hasSpecificTime) {
+    return applySlotsToTimeDetail({
+      ...ev,
+      hasSpecificTime: false,
+      timeSlotStart: undefined,
+      timeSlotEnd: undefined,
+      eventPlace: undefined,
+      timeDetail: sameTrio(ev.timeDetail, ""),
+    });
+  }
+
   if (!start || !end) {
     const parsed =
       parseTimeLine(ev.timeDetail.en) ??
@@ -100,6 +128,7 @@ export function normalizeEventForEditor(ev: HomeEvent): HomeEvent {
 
   const withSlots: HomeEvent = {
     ...ev,
+    hasSpecificTime: true,
     timeSlotStart: start,
     timeSlotEnd: end,
     eventPlace: place,

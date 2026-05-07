@@ -12,6 +12,11 @@ export type HomeEvent = {
   sortDate: string;
   /** When false, hidden on the public site (draft). Missing in older Firestore docs = published. */
   published?: boolean;
+  /**
+   * When false, the event has no specific time/place and the public UI should not display a time line.
+   * Kept optional so older Firestore docs default to “true”.
+   */
+  hasSpecificTime?: boolean;
   /** HH:mm (24h). Drives the shared `timeDetail` line together with `timeSlotEnd` and `eventPlace`. */
   timeSlotStart?: string;
   timeSlotEnd?: string;
@@ -30,6 +35,7 @@ export type PublicEventApiDto = {
   id: string;
   sortDate: string;
   fullyBooked: boolean;
+  hasSpecificTime?: boolean;
   weekdayDate: { en: string; es: string; sv: string };
   timeDetail: { en: string; es: string; sv: string };
   title: { en: string; es: string; sv: string };
@@ -45,6 +51,7 @@ export function publicEventFromDto(d: PublicEventApiDto): HomeEvent {
     sortDate: d.sortDate,
     published: true,
     fullyBooked: d.fullyBooked,
+    hasSpecificTime: d.hasSpecificTime ?? true,
     weekdayDate: { en: d.weekdayDate.en, es: d.weekdayDate.es, sv: d.weekdayDate.sv },
     timeDetail: { en: d.timeDetail.en, es: d.timeDetail.es, sv: d.timeDetail.sv },
     title: { en: d.title.en, es: d.title.es, sv: d.title.sv },
@@ -59,6 +66,7 @@ export function toUpsertBody(ev: HomeEvent) {
     id: ev.id,
     sortDate: ev.sortDate,
     published: ev.published !== false,
+    hasSpecificTime: ev.hasSpecificTime ?? true,
     timeSlotStart: ev.timeSlotStart ?? DEFAULT_EVENT_TIME_START,
     timeSlotEnd: ev.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
     eventPlace: ev.eventPlace ?? DEFAULT_EVENT_PLACE,
@@ -79,6 +87,7 @@ export function emptyHomeEvent(ymd: string): HomeEvent {
     id: "",
     sortDate: ymd,
     published: true,
+    hasSpecificTime: true,
     timeSlotStart: DEFAULT_EVENT_TIME_START,
     timeSlotEnd: DEFAULT_EVENT_TIME_END,
     eventPlace: DEFAULT_EVENT_PLACE,

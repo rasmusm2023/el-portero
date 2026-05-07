@@ -9,14 +9,23 @@ const FADE_MS = 1200;
 /** Scroll multiplier for background vs foreground (slower movement). */
 const PARALLAX_FACTOR = 0.32;
 /** Extra scale so parallax does not reveal edges. */
-const PARALLAX_SCALE = 1.12;
+const PARALLAX_SCALE_DEFAULT = 1.12;
 
 type Props = {
   images: string[];
   containerRef: RefObject<HTMLElement | null>;
+  /** Default `cover`. Use `contain` when you must show full image without cropping. */
+  fit?: "cover" | "contain";
+  /** Default: 1.12. Prefer ~1.0 when using `contain`. */
+  parallaxScale?: number;
 };
 
-export function HeroSlideshow({ images, containerRef }: Props) {
+export function HeroSlideshow({
+  images,
+  containerRef,
+  fit = "cover",
+  parallaxScale,
+}: Props) {
   const [index, setIndex] = useState(0);
   const [parallaxY, setParallaxY] = useState(0);
 
@@ -59,7 +68,9 @@ export function HeroSlideshow({ images, containerRef }: Props) {
       <div
         className="absolute inset-0 will-change-transform"
         style={{
-          transform: `translate3d(0, ${parallaxY}px, 0) scale(${PARALLAX_SCALE})`,
+          transform: `translate3d(0, ${parallaxY}px, 0) scale(${
+            parallaxScale ?? (fit === "contain" ? 1 : PARALLAX_SCALE_DEFAULT)
+          })`,
         }}
       >
         {images.map((src, i) => (
@@ -76,7 +87,7 @@ export function HeroSlideshow({ images, containerRef }: Props) {
               src={src}
               alt=""
               fill
-              className="object-cover"
+              className={fit === "contain" ? "object-contain" : "object-cover"}
               sizes="100vw"
               priority={i === 0}
               draggable={false}

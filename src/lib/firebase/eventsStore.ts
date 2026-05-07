@@ -89,6 +89,7 @@ export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
     sortDate: ev.sortDate,
     published: ev.published !== false,
     fullyBooked: Boolean(ev.fullyBooked ?? false),
+    hasSpecificTime: ev.hasSpecificTime !== false,
     weekdayDate: ev.weekdayDate,
     timeDetail: ev.timeDetail,
     title: ev.title,
@@ -97,13 +98,13 @@ export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
     imageAlt: ev.imageAlt,
     updatedAt: serverTimestamp(),
   };
-  if (ev.timeSlotStart != null && ev.timeSlotStart !== "") {
+  if (ev.hasSpecificTime !== false && ev.timeSlotStart != null && ev.timeSlotStart !== "") {
     payload.timeSlotStart = ev.timeSlotStart;
   }
-  if (ev.timeSlotEnd != null && ev.timeSlotEnd !== "") {
+  if (ev.hasSpecificTime !== false && ev.timeSlotEnd != null && ev.timeSlotEnd !== "") {
     payload.timeSlotEnd = ev.timeSlotEnd;
   }
-  if (ev.eventPlace != null && ev.eventPlace !== "") {
+  if (ev.hasSpecificTime !== false && ev.eventPlace != null && ev.eventPlace !== "") {
     payload.eventPlace = ev.eventPlace;
   }
   await setDoc(doc(db, PUBLIC_EVENTS_COLLECTION, id), payload as FirestorePublicEvent, {

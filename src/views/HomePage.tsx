@@ -5,11 +5,12 @@ import { HomeEventsSection } from "@/components/sections/HomeEventsSection";
 import { InstagramFeedSection } from "@/components/sections/InstagramFeedSection";
 import {
   PageHeroSection,
-  pageHeroBottomAsideTextClass,
+  pageHeroHomeTaglineDesktopClass,
+  pageHeroHomeTaglineMobileClass,
 } from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { LogoWordmark } from "@/components/LogoWordmark";
-import { contactMailtoHref } from "@/config/site";
+import Link from "next/link";
 import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -26,20 +27,32 @@ export function HomePage({ heroVideos }: HomePageProps) {
       <PageHeroSection
         heroImages={[]}
         heroVideos={heroVideos}
-        accentVideo
         showOpeningCountdown
         bottomCta={
-          <a
-            href={contactMailtoHref()}
-            className={bookTableHeroHollowButtonClass}
+          <Link
+            href="/menu"
+            className={[bookTableHeroHollowButtonClass, "-translate-y-16 sm:-translate-y-11 md:-translate-y-14"]
+              .filter(Boolean)
+              .join(" ")}
           >
-            {t(locale, "page.contact.title")}
-          </a>
+            {t(locale, "page.menu.title")}
+          </Link>
         }
         bottomAside={
-          <p className={pageHeroBottomAsideTextClass}>
-            {t(locale, "page.home.heroTagline")}
-          </p>
+          <div className="min-w-0 max-w-full">
+            <p
+              className={[pageHeroHomeTaglineMobileClass, "text-sm"].filter(Boolean).join(" ")}
+            >
+              {t(locale, "page.home.heroTaglineMobile")}
+            </p>
+            <p
+              className={[pageHeroHomeTaglineDesktopClass, "text-sm sm:text-base"]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              {t(locale, "page.home.heroTagline")}
+            </p>
+          </div>
         }
       >
         <div className="mx-auto flex w-full max-w-[46rem] flex-col items-center">

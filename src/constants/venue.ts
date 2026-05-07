@@ -12,5 +12,5 @@ export function googleMapsSearchUrl(): string {
  */
 export function googleMapsEmbedUrl(): string {
   const q = encodeURIComponent(VENUE_ADDRESS);
-  return `https://www.google.com/maps?q=${q}&z=14&output=embed`;
+  return `https://www.google.com/maps?q=${q}&z=15&output=embed`;
 }
