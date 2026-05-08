@@ -19,6 +19,9 @@ type LogoWordmarkProps = {
   tone?: "onLight" | "onDark";
 };
 
+/** viewBox width ÷ height — mask box needs explicit size; empty masked spans get 0 intrinsic width in flex (WebKit). */
+const LOGOTYPE_HW_RATIO = 13268 / 3443;
+
 /** Same asset as the Image `src` — used as a luminance mask over the gold gradient. */
 const LOGOTYPE_MASK_STYLE: CSSProperties = {
   maskImage: "url('/assets/logos/el-portero-logotype.svg')",
@@ -35,6 +38,14 @@ const logotypeSizeClasses: Record<LogoWordmarkProps["size"], string> = {
   header: "h-7 sm:h-8 lg:h-9 xl:h-10",
   hero: "h-14 sm:h-16 md:h-20 lg:h-24 xl:h-28",
   footer: "h-10 sm:h-11",
+};
+
+/** Pixel height token for `onDark` mask (must match {@link logotypeSizeClasses} breakpoints). */
+const onDarkHeightVarClasses: Record<LogoWordmarkProps["size"], string> = {
+  header:
+    "[--ep-logo-h:1.75rem] sm:[--ep-logo-h:2rem] lg:[--ep-logo-h:2.25rem] xl:[--ep-logo-h:2.5rem]",
+  hero: "[--ep-logo-h:3.5rem] sm:[--ep-logo-h:4rem] md:[--ep-logo-h:5rem] lg:[--ep-logo-h:6rem] xl:[--ep-logo-h:7rem]",
+  footer: "[--ep-logo-h:2.5rem] sm:[--ep-logo-h:2.75rem]",
 };
 
 const taglineClasses: Record<LogoWordmarkProps["size"], string> = {
@@ -64,7 +75,13 @@ export function LogoWordmark({
     tone === "onDark" ? "text-paper/75" : "text-ink/70";
 
   const goldWordmarkClass =
-    `block max-w-full select-none bg-gradient-to-r from-gold-bright/95 via-gold to-gold-bright/95 ${logotypeSizeClasses[size]} aspect-[13268/3443] w-auto`;
+    `block max-w-full shrink-0 select-none bg-gradient-to-r from-gold-bright/95 via-gold to-gold-bright/95 ${onDarkHeightVarClasses[size]}`;
+
+  const goldWordmarkStyle: CSSProperties = {
+    ...LOGOTYPE_MASK_STYLE,
+    height: "var(--ep-logo-h)",
+    width: `calc(var(--ep-logo-h) * ${LOGOTYPE_HW_RATIO})`,
+  };
 
   return (
     <span
@@ -75,7 +92,7 @@ export function LogoWordmark({
           role="img"
           aria-label="El Portero"
           className={goldWordmarkClass}
-          style={LOGOTYPE_MASK_STYLE}
+          style={goldWordmarkStyle}
         />
       ) : (
         <Image

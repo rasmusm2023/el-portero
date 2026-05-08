@@ -399,7 +399,7 @@ export function HeroVideoMontage({ clips, containerRef }: Props) {
                 muted
                 playsInline
                 preload={reduceMotionSingle && i === 1 ? "none" : "metadata"}
-                autoPlay={i === 0 && reduceMotionSingle}
+                autoPlay={i === 0}
               />
             </div>
           );
