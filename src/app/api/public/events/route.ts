@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
-import { getAdminFirestore } from "@/lib/firebase/adminNode";
-import { repairMisalignedPublishedFields } from "@/lib/firebase/publicEventsRepair";
+import {
+  getDatastoreAccessToken,
+  repairMisalignedPublishedFieldsRest,
+  runQueryAllPublicEvents,
+  runQueryPublishedEvents,
+} from "@/lib/firebase/firestoreRest";
 import { homeEventFromFirestoreData } from "@/lib/firebase/publicEventDoc";
-import { PUBLIC_EVENTS_COLLECTION } from "@/lib/firebase/publicEventsConstants";
 
 export const dynamic = "force-dynamic";
 
@@ -10,26 +13,15 @@ export const dynamic = "force-dynamic";
 let bootstrapPublicEventsRepairDone = false;
 let warnedMissingServiceAccount = false;
 
-async function loadPublishedBooleanTrue(db: NonNullable<ReturnType<typeof getAdminFirestore>>) {
-  const snap = await db.collection(PUBLIC_EVENTS_COLLECTION).where("published", "==", true).get();
-  const events = snap.docs.map((d) => homeEventFromFirestoreData(d.id, d.data() as Record<string, unknown>));
-  events.sort((a, b) => a.sortDate.localeCompare(b.sortDate));
-  return events;
-}
-
 /**
- * Published public events (Admin SDK). When `FIREBASE_SERVICE_ACCOUNT_JSON` is unset, returns `[]`
- * with 200 so dev logs stay quiet; the browser still uses Firestore first (`usePublicEvents`).
- *
- * If the strict `published == true` query is empty but the collection has documents, runs a one-time
- * coercion pass for non-boolean `published` values (Console imports / legacy docs), then retries the query.
- *
- * On the **first** successful Admin connection per server instance, runs that repair proactively so
- * anonymous visitors do not depend on someone opening the admin Events editor first.
+ * Published public events via Firestore REST + OAuth (no `firebase-admin` / gRPC — fits Netlify limits).
+ * When `FIREBASE_SERVICE_ACCOUNT_JSON` is unset, returns `[]` with 200; the browser still uses Firestore first.
  */
 export async function GET() {
-  const db = getAdminFirestore();
-  if (!db) {
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
+  const session = raw ? await getDatastoreAccessToken(raw) : null;
+
+  if (!session) {
     if (!warnedMissingServiceAccount) {
       warnedMissingServiceAccount = true;
       console.warn(
@@ -42,11 +34,13 @@ export async function GET() {
     return NextResponse.json([]);
   }
 
+  const { projectId, token } = session;
+
   try {
     if (!bootstrapPublicEventsRepairDone) {
       bootstrapPublicEventsRepairDone = true;
       try {
-        const fixed = await repairMisalignedPublishedFields(db);
+        const fixed = await repairMisalignedPublishedFieldsRest(projectId, token);
         if (fixed > 0) {
           console.info(
             `[api/public/events] Bootstrap repair wrote boolean \`published\` on ${fixed} document(s).`,
@@ -58,16 +52,21 @@ export async function GET() {
       }
     }
 
-    let events = await loadPublishedBooleanTrue(db);
-    if (events.length === 0) {
-      const anySnap = await db.collection(PUBLIC_EVENTS_COLLECTION).limit(1).get();
-      if (!anySnap.empty) {
-        const fixed = await repairMisalignedPublishedFields(db);
+    let rows = await runQueryPublishedEvents(projectId, token);
+    if (rows.length === 0) {
+      const any = await runQueryAllPublicEvents(projectId, token);
+      if (any.length > 0) {
+        const fixed = await repairMisalignedPublishedFieldsRest(projectId, token);
         if (fixed > 0) {
-          events = await loadPublishedBooleanTrue(db);
+          rows = await runQueryPublishedEvents(projectId, token);
         }
       }
     }
+
+    const events = rows
+      .map((r) => homeEventFromFirestoreData(r.id, r.data))
+      .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+
     return NextResponse.json(events);
   } catch (e) {
     console.error("[api/public/events]", e);

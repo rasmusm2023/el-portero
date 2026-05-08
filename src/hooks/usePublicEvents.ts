@@ -49,7 +49,7 @@ async function loadEventsViaApi(signal: AbortSignal): Promise<HomeEvent[] | null
 /**
  * Published `publicEvents` for the home page and `/events`.
  *
- * **Two sources:** (1) `GET /api/public/events` on mount (Admin SDK when configured). (2) Firestore
+ * **Two sources:** (1) `GET /api/public/events` on mount (Firestore REST when `FIREBASE_SERVICE_ACCOUNT_JSON` is set). (2) Firestore
  * listener for live updates.
  *
  * **Display:** prefer the listener when it has rows; otherwise fall back to the last API payload so

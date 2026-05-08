@@ -7,7 +7,6 @@
 # Teaser-only mode on the live domain: set NEXT_PUBLIC_COMING_SOON=1 in Netlify + redeploy (clear cache recommended).
 # Localhost / loopback ignores the flag so full site stays available in development.
 #
-# Large Firebase Admin / Firestore on the server: keep `serverExternalPackages` in next.config.ts so the
-# OpenNext handler zip stays under Netlify’s upload limit (avoid webpack-inlining gRPC / google-cloud).
+# Large server bundles: public events API uses Firestore REST + OAuth only (no firebase-admin).
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_FIREBASE_API_KEY,NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,NEXT_PUBLIC_FIREBASE_PROJECT_ID,NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,NEXT_PUBLIC_FIREBASE_APP_ID"

@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { getAdminFirestore } from "@/lib/firebase/adminNode";
+import {
+  getDatastoreAccessToken,
+  parseServiceAccountJson,
+  runQueryAllPublicEvents,
+  runQueryPublishedEvents,
+} from "@/lib/firebase/firestoreRest";
 import { publishedFieldNeedsRepair } from "@/lib/publicEventPublishedCoercion";
 import { PUBLIC_EVENTS_COLLECTION } from "@/lib/firebase/publicEventsConstants";
 
@@ -25,51 +30,59 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const db = getAdminFirestore();
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
   const base: Record<string, unknown> = {
     ok: true,
-    adminFirestoreConfigured: Boolean(db),
+    adminFirestoreConfigured: Boolean(raw && parseServiceAccountJson(raw)),
     nextPublicFirebaseProjectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? null,
     nodeEnv: process.env.NODE_ENV,
   };
 
-  if (!db) {
+  if (!raw) {
     base.recommendation =
       "Set FIREBASE_SERVICE_ACCOUNT_JSON on the server. Without it, GET /api/public/events returns [] and anonymous tabs cannot get the bootstrap `published` boolean repair.";
     return NextResponse.json(base);
   }
 
-  try {
-    const all = await db.collection(PUBLIC_EVENTS_COLLECTION).get();
-    const publishedTrue = await db.collection(PUBLIC_EVENTS_COLLECTION).where("published", "==", true).get();
+  const session = await getDatastoreAccessToken(raw);
+  if (!session) {
+    base.ok = false;
+    base.recommendation = "FIREBASE_SERVICE_ACCOUNT_JSON could not be parsed or OAuth failed.";
+    return NextResponse.json(base);
+  }
 
-    const samples = all.docs.slice(0, 30).map((d) => {
-      const p = d.get("published");
-      const sd = d.get("sortDate");
+  const { projectId, token } = session;
+
+  try {
+    const all = await runQueryAllPublicEvents(projectId, token);
+    const publishedRows = await runQueryPublishedEvents(projectId, token);
+
+    const samples = all.slice(0, 30).map((d) => {
+      const p = d.data.published;
       return {
         id: d.id,
         publishedJsType: p === null || p === undefined ? "nullish" : typeof p,
         publishedNeedsBooleanRepair: publishedFieldNeedsRepair(p),
-        sortDatePresent: sd != null && String(sd).length > 0,
+        sortDatePresent: d.data.sortDate != null && String(d.data.sortDate).length > 0,
       };
     });
 
     const repairable = samples.filter((s) => s.publishedNeedsBooleanRepair).length;
-    let recommendation = "Firestore + Admin SDK reachable.";
+    let recommendation = "Firestore REST + OAuth reachable.";
     if (repairable > 0) {
       recommendation = `${repairable} doc(s) have non-boolean \`published\`. First GET /api/public/events runs bootstrap repair; visiting Admin → Events also fixes via client updateDoc.`;
-    } else if (publishedTrue.size === 0 && all.size > 0) {
+    } else if (publishedRows.length === 0 && all.length > 0) {
       recommendation =
         "Documents exist but `where(published==true)` returns none — fields may be missing `published`, or values are not boolean `true` (repair should have run on /api/public/events).";
-    } else if (all.size === 0) {
+    } else if (all.length === 0) {
       recommendation = "Collection is empty.";
     }
 
     return NextResponse.json({
       ...base,
       collection: PUBLIC_EVENTS_COLLECTION,
-      totalDocuments: all.size,
-      publishedBooleanTrueQueryCount: publishedTrue.size,
+      totalDocuments: all.length,
+      publishedBooleanTrueQueryCount: publishedRows.length,
       sampleDocuments: samples,
       recommendation,
     });
