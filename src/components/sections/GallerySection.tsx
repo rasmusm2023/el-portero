@@ -220,8 +220,13 @@ const ROWS: {
   {
     media: {
       kind: "video",
-      src: "/assets/videos/gallery/clip-1/video.webm",
-      sources: [{ src: "/assets/videos/gallery/clip-1/video.webm", type: "video/webm" }],
+      src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200265/delicious-swedish-meatballs-with-mashed-potatoes-and-cranberry-sauce_tegqt6.webm",
+      sources: [
+        {
+          src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200265/delicious-swedish-meatballs-with-mashed-potatoes-and-cranberry-sauce_tegqt6.webm",
+          type: "video/webm",
+        },
+      ],
       coverScale: 1.06,
       objectPosition: "50% 46%",
     },
@@ -232,10 +237,12 @@ const ROWS: {
   {
     media: {
       kind: "video",
-      src: "/assets/videos/gallery/clip-3/video.webm",
+      src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue.webm",
       sources: [
-        { src: "/assets/videos/gallery/clip-3/video.webm", type: "video/webm" },
-        { src: "/assets/videos/gallery/clip-3/video.mp4", type: "video/mp4" },
+        {
+          src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue.webm",
+          type: "video/webm",
+        },
       ],
       coverScale: 1.02,
       objectPosition: "50% 50%",
