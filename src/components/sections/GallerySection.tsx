@@ -197,10 +197,6 @@ type GalleryMedia =
   | { kind: "image"; src: string; rotateDeg: number }
   | { kind: "imageCycle"; srcs: string[]; rotateDeg: number };
 
-const galleryMeatballsSources = cloudinaryAdaptiveVideoSources(
-  "v1778200265/delicious-swedish-meatballs-with-mashed-potatoes-and-cranberry-sauce_tegqt6",
-);
-
 const galleryBarSources = cloudinaryAdaptiveVideoSources(
   "v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue",
 );
@@ -228,11 +224,9 @@ const ROWS: {
   },
   {
     media: {
-      kind: "video",
-      src: galleryMeatballsSources[1].src,
-      sources: galleryMeatballsSources,
-      coverScale: 1.06,
-      objectPosition: "50% 46%",
+      kind: "image",
+      src: "/images/food.png",
+      rotateDeg: 0,
     },
     captionKey: "page.gallery.caption2",
     bodyKey: "page.gallery.body2",
