@@ -354,8 +354,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.gallery.srHeading": "A glimpse of El Portero",
     "page.gallery.imageAlt1":
       "Grilled meat and vegetable skewers from the grill — Peruvian- and Spanish-inspired cooking",
-    "page.gallery.imageAlt2":
-      "Swedish meatballs with mashed potatoes and cranberry sauce on the table",
+    "page.gallery.imageAlt2": "Seasonal dish from the El Portero kitchen",
     "page.gallery.imageAlt3": "Bartender mixing cocktails at the bar counter",
     "page.gallery.caption1": "Peruvian soul and Spanish heat from the grill.",
     "page.gallery.caption2":
@@ -566,7 +565,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.gallery.imageAlt1":
       "Brochetas de carne y verdura a la parrilla — cocina con acento peruano y español",
     "page.gallery.imageAlt2":
-      "Albóndigas suecas con puré y arándanos en la mesa",
+      "Plato de temporada de la cocina de El Portero",
     "page.gallery.imageAlt3": "Camarero preparando cócteles en la barra",
     "page.gallery.caption1": "Alma peruana y calor español desde la parrilla.",
     "page.gallery.caption2":
@@ -766,7 +765,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.gallery.imageAlt1":
       "Grillade kött- och grönsaksspett — peruansk- och spanskinspirerad mat från grillen",
     "page.gallery.imageAlt2":
-      "Svenska köttbullar med potatismos och lingon på tallriken",
+      "Säsongsrätt från El Porteros kök",
     "page.gallery.imageAlt3": "Bartender som blandar drinkar i baren",
     "page.gallery.caption1": "Peruansk själ och spansk värme från grillen.",
     "page.gallery.caption2":
