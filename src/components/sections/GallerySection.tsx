@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { cloudinaryAdaptiveVideoSources } from "@/lib/cloudinaryAdaptiveVideoSources";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
@@ -196,6 +197,14 @@ type GalleryMedia =
   | { kind: "image"; src: string; rotateDeg: number }
   | { kind: "imageCycle"; srcs: string[]; rotateDeg: number };
 
+const galleryMeatballsSources = cloudinaryAdaptiveVideoSources(
+  "v1778200265/delicious-swedish-meatballs-with-mashed-potatoes-and-cranberry-sauce_tegqt6",
+);
+
+const galleryBarSources = cloudinaryAdaptiveVideoSources(
+  "v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue",
+);
+
 const ROWS: {
   media: GalleryMedia;
   captionKey: MessageKey;
@@ -220,13 +229,8 @@ const ROWS: {
   {
     media: {
       kind: "video",
-      src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200265/delicious-swedish-meatballs-with-mashed-potatoes-and-cranberry-sauce_tegqt6.webm",
-      sources: [
-        {
-          src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200265/delicious-swedish-meatballs-with-mashed-potatoes-and-cranberry-sauce_tegqt6.webm",
-          type: "video/webm",
-        },
-      ],
+      src: galleryMeatballsSources[1].src,
+      sources: galleryMeatballsSources,
       coverScale: 1.06,
       objectPosition: "50% 46%",
     },
@@ -237,13 +241,8 @@ const ROWS: {
   {
     media: {
       kind: "video",
-      src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue.webm",
-      sources: [
-        {
-          src: "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto/v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue.webm",
-          type: "video/webm",
-        },
-      ],
+      src: galleryBarSources[1].src,
+      sources: galleryBarSources,
       coverScale: 1.02,
       objectPosition: "50% 50%",
     },

@@ -1,13 +1,15 @@
 /**
- * Curated hero montage — Cloudinary-delivered WebM (plus local poster for first clip).
+ * Curated hero montage — Cloudinary WebM plus uploaded H.264 MP4 for WebKit / iOS (see `cloudinaryAdaptiveVideoSources`).
  *
  * `playbackRate` stretches or compresses the visible slice; each clip still shows at most
  * ~{@link HERO_MONTAGE_CLIP_MS} of wall-clock time.
  */
+import { cloudinaryAdaptiveVideoSources } from "@/lib/cloudinaryAdaptiveVideoSources";
+
 export const HERO_MONTAGE_CLIP_MS = 3000;
 
 export type HeroMontageClip = {
-  /** Prefer WebM first, then MP4 fallback when provided. */
+  /** WebM first; second source is uploaded MP4 (see `CLOUDINARY_MOBILE_MP4_UPLOAD_VERSION`). */
   sources: { src: string; type: "video/webm" | "video/mp4" }[];
   /** Optional poster image shown before first frame is ready. */
   posterSrc?: string;
@@ -31,78 +33,98 @@ export type HeroMontageClip = {
   transformOrigin?: string;
 };
 
-const CU = "https://res.cloudinary.com/dovyrycsh/video/upload/q_auto/f_auto";
-
 /** Local poster while first Cloudinary frame loads. */
 const HERO_CLIP_1_POSTER = "/assets/videos/hero-sequence/clip-1/poster.webp";
-
-function w(url: string): { src: string; type: "video/webm" } {
-  return { src: url, type: "video/webm" };
-}
 
 /**
  * 13 clips: old local clip-5 removed; former clip-14 plays in that slot (index 5).
  */
 const HERO_VIDEO_MONTAGE_CLIPS: readonly HeroMontageClip[] = [
   {
-    sources: [w(`${CU}/v1778200314/two-guests-enjoying-restaurant-dinner-and-wine-with-cozy-lighting_yputhv.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200314/two-guests-enjoying-restaurant-dinner-and-wine-with-cozy-lighting_yputhv",
+    ),
     posterSrc: HERO_CLIP_1_POSTER,
     playbackRate: 1.05,
   },
   {
-    sources: [w(`${CU}/v1778200254/professional-chef-preparing-meal-flambing-indoors-in-restaurant-kitchen_y0dujr.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200254/professional-chef-preparing-meal-flambing-indoors-in-restaurant-kitchen_y0dujr",
+    ),
     playbackRate: 1.05,
     objectPosition: "35% 55%",
     objectScale: 1.72,
     transformOrigin: "35% 55%",
   },
   {
-    sources: [w(`${CU}/v1778200262/skilled-bartender-expertly-mixing-cocktail-ingredients-at-bar-counter_p6rnow.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200262/skilled-bartender-expertly-mixing-cocktail-ingredients-at-bar-counter_p6rnow",
+    ),
     playbackRate: 1.1,
   },
   {
-    sources: [w(`${CU}/v1778200347/steak-cooking-in-pan-and-being-basted-with-butter-and-rosemary-stalk_cylbbu.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200347/steak-cooking-in-pan-and-being-basted-with-butter-and-rosemary-stalk_cylbbu",
+    ),
     playbackRate: 1.1,
   },
   // Former local clip-14 asset in place of removed clip-5.
   {
-    sources: [w(`${CU}/v1778200259/professional-chef-is-preparing-meal-2_ojq8ie.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200259/professional-chef-is-preparing-meal-2_ojq8ie",
+    ),
     playbackRate: 1.02,
     objectPosition: "50% 70%",
   },
   {
-    sources: [w(`${CU}/v1778200327/aerial-view-of-torrevieja-spain-at-a-popular-tourist-promenade-in-torrevieja_t15yrg.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200327/aerial-view-of-torrevieja-spain-at-a-popular-tourist-promenade-in-torrevieja_t15yrg",
+    ),
     playbackRate: 0.95,
   },
   {
-    sources: [w(`${CU}/v1778200263/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night_sj5eq1.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200263/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night_sj5eq1",
+    ),
     playbackRate: 1.12,
   },
   {
-    sources: [w(`${CU}/v1778200266/grilled-meat-and-vegetable-skewers-on-plate_gjxfi3.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200266/grilled-meat-and-vegetable-skewers-on-plate_gjxfi3",
+    ),
     playbackRate: 1.05,
   },
   {
-    sources: [w(`${CU}/v1778200256/unrecognizable-chef-cutting-vegetables-indoors-in-restaurant-kitchen_lffelw.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200256/unrecognizable-chef-cutting-vegetables-indoors-in-restaurant-kitchen_lffelw",
+    ),
     playbackRate: 1.1,
   },
   {
-    sources: [w(`${CU}/v1778200319/chefs-final-touches-on-plate-adding-garnish-on-meat_jwdl1m.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200319/chefs-final-touches-on-plate-adding-garnish-on-meat_jwdl1m",
+    ),
     playbackRate: 1.02,
     objectPosition: "50% 62%",
   },
   {
-    sources: [w(`${CU}/v1778200260/male-hands-pouring-souce-and-seasoning-avocado-salad-in-restaurant-kitchen_utpzaq.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200260/male-hands-pouring-souce-and-seasoning-avocado-salad-in-restaurant-kitchen_utpzaq",
+    ),
     playbackRate: 1.06,
     objectPosition: "50% 62%",
   },
   {
-    sources: [w(`${CU}/v1778200263/pouring-souce-on-avocado-salad-with-grilled-chicken-meat-in-restaurant-kitchen_vtdnh4.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200263/pouring-souce-on-avocado-salad-with-grilled-chicken-meat-in-restaurant-kitchen_vtdnh4",
+    ),
     playbackRate: 1.05,
     objectPosition: "50% 62%",
   },
   {
-    sources: [w(`${CU}/v1778200260/professional-chef-is-preparing-meal_h9kveu.webm`)],
+    sources: cloudinaryAdaptiveVideoSources(
+      "v1778200260/professional-chef-is-preparing-meal_h9kveu",
+    ),
     playbackRate: 1.05,
     objectPosition: "50% 68%",
   },
