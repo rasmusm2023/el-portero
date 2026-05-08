@@ -29,7 +29,7 @@ export function normalizeSortDateFromFirestore(raw: unknown): string {
   return "";
 }
 
-/** Map a Firestore `publicEvents` document (client or Admin SDK) to `HomeEvent`. */
+/** Map a Firestore `publicEvents` document (client or REST/JSON) to `HomeEvent`. */
 export function homeEventFromFirestoreData(id: string, v: Record<string, unknown>): HomeEvent {
   const weekdayDate = (v.weekdayDate ?? { en: "", es: "", sv: "" }) as HomeEvent["weekdayDate"];
   const timeDetail = (v.timeDetail ?? { en: "", es: "", sv: "" }) as HomeEvent["timeDetail"];
