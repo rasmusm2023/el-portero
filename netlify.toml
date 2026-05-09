@@ -4,9 +4,6 @@
 # shape in build output — list the env *names* here so scans allow them.
 # https://ntl.fyi/configure-secrets-scanning
 #
-# Teaser-only mode on the live domain: set NEXT_PUBLIC_COMING_SOON=1 in Netlify + redeploy (clear cache recommended).
-# Localhost / loopback ignores the flag so full site stays available in development.
-#
 # Large server bundles: public events API uses Firestore REST + OAuth only (no firebase-admin).
 # Next.js: `images.unoptimized` in next.config.ts avoids shipping **sharp** inside `___netlify-server-handler`
 # (common cause of >50MB function zips on Netlify). Your `public/` videos/images are static assets, not

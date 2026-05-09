@@ -1,5 +1,5 @@
-import { WeeklyMenuBrowsePage } from "@/views/WeeklyMenuBrowsePage";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <WeeklyMenuBrowsePage />;
+  redirect("/menu");
 }

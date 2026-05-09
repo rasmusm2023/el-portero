@@ -19,14 +19,6 @@ function readImageDir(...segments: string[]): string[] {
   }
 }
 
-/** Single launch hero — `public/images/home-hero-img.jpg`. */
-const LAUNCH_HERO_IMAGE = "/images/home-hero-img.jpg";
-
-/** Home (and demo) hero slideshow: one image for launch. */
-export function getHeroSlideImages(): string[] {
-  return [LAUNCH_HERO_IMAGE];
-}
-
 /**
  * Event page hero: `public/images/events/` when present, otherwise curated fallbacks
  * (festivities / larger bookings — see `eventsHeroFallback.ts`).

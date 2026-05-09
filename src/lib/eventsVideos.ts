@@ -1,7 +1,8 @@
 import type { HeroMontageClip } from "@/lib/heroVideos";
 import { cloudinaryAdaptiveVideoSources } from "@/lib/cloudinaryAdaptiveVideoSources";
+import { CLOUDINARY_IMG } from "@/lib/cloudinaryStillImages";
 
-const EVENTS_CLIP_1_POSTER = "/assets/videos/events-sequence/clip-1/poster.webp";
+const EVENTS_CLIP_1_POSTER = CLOUDINARY_IMG.eventsClip1Poster.webp;
 
 const EVENTS_VIDEO_MONTAGE_CLIPS: readonly HeroMontageClip[] = [
   {

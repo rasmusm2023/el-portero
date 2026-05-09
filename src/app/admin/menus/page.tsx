@@ -1,5 +1,5 @@
-import { AdminMenusHubPage } from "@/views/AdminMenusHubPage";
+import { EditableMenusAdminPage } from "@/views/EditableMenusAdminPage";
 
 export default function Page() {
-  return <AdminMenusHubPage />;
+  return <EditableMenusAdminPage />;
 }

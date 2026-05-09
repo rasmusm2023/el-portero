@@ -2,8 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
-import { LunchMenuExpandedPreview } from "@/components/menu/LunchMenuExpandedPreview";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
+import { SimpleMenuCategoryGrid } from "@/components/menu/SimpleMenuCategoryGrid";
 import {
   MenuSplitSection,
   type MenuSplitKey,
@@ -12,33 +12,45 @@ import { alacarteMenuCategories } from "@/data/alacarteMenu";
 import { brunchMenuCategories } from "@/data/brunchMenu";
 import { drinksMenuCategories } from "@/data/drinksMenu";
 import type { MenuCategoryData } from "@/data/menuTypes";
+import { useEditablePublishedMenu } from "@/hooks/useEditablePublishedMenu";
+import { editableDocToSimpleCategories } from "@/lib/editableMenuDisplay";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
-const MENU_SPLIT_KEYS: MenuSplitKey[] = [
-  "lunch",
-  "alacarte",
-  "brunch",
-  "drinks",
-];
+const MENU_SPLIT_KEYS: MenuSplitKey[] = ["alacarte", "brunch", "drinks"];
 
-const previewCategories: Record<
-  Exclude<MenuSplitKey, "lunch">,
-  MenuCategoryData[]
-> = {
+const previewCategories: Record<MenuSplitKey, MenuCategoryData[]> = {
   drinks: drinksMenuCategories,
   brunch: brunchMenuCategories,
   alacarte: alacarteMenuCategories,
 };
 
 /**
- * Full-width menu cards + inline previews — no hero; first content below the site header.
- * Shown at `/menu` when `areMenusPublished()` in `app/menu/layout.tsx` is true.
+ * Full-width menu cards + inline previews — first content below the site header at `/menu`.
  */
 export function MenusHubPage() {
   const { locale } = useLocale();
   const [expandedMenu, setExpandedMenu] = useState<MenuSplitKey | null>(null);
   const menuPreviewRef = useRef<HTMLDivElement>(null);
+
+  const alacarteState = useEditablePublishedMenu("alacarte");
+  const brunchState = useEditablePublishedMenu("brunch");
+  const drinksState = useEditablePublishedMenu("drinks");
+
+  function stateFor(key: MenuSplitKey) {
+    if (key === "alacarte") return alacarteState;
+    if (key === "brunch") return brunchState;
+    return drinksState;
+  }
+
+  function previewHeading(key: MenuSplitKey): string {
+    const st = stateFor(key);
+    const live = Boolean(st.remote?.isPublished && st.remote.categories?.length);
+    if (live && st.remote?.title?.trim()) return st.remote.title.trim();
+    if (key === "drinks") return t(locale, "page.menu.drinksHeading");
+    if (key === "brunch") return t(locale, "page.menu.brunchHeading");
+    return t(locale, "page.menu.alacarteHeading");
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -79,35 +91,37 @@ export function MenusHubPage() {
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    {expandedMenu === "lunch" ? (
-                      <LunchMenuExpandedPreview />
-                    ) : (
-                      <>
-                        <div className="min-w-0">
-                          <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
-                            {expandedMenu === "drinks" &&
-                              t(locale, "page.menu.drinksHeading")}
-                            {expandedMenu === "brunch" &&
-                              t(locale, "page.menu.brunchHeading")}
-                            {expandedMenu === "alacarte" &&
-                              t(locale, "page.menu.alacarteHeading")}
-                          </h2>
-                        </div>
+                    <div className="min-w-0">
+                      <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
+                        {previewHeading(expandedMenu)}
+                      </h2>
+                    </div>
 
-                        <motion.div
-                          transition={{
-                            duration: 0.55,
-                            ease: [0.22, 1, 0.36, 1],
-                          }}
-                          className="mt-10"
-                        >
+                    <motion.div
+                      transition={{
+                        duration: 0.55,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="mt-10"
+                    >
+                      {(() => {
+                        const st = stateFor(expandedMenu);
+                        const live = Boolean(st.remote?.isPublished && st.remote.categories?.length);
+                        if (live && st.remote) {
+                          return (
+                            <SimpleMenuCategoryGrid
+                              categories={editableDocToSimpleCategories(st.remote)}
+                            />
+                          );
+                        }
+                        return (
                           <MenuCategoryGrid
                             categories={previewCategories[expandedMenu]}
                             locale={locale}
                           />
-                        </motion.div>
-                      </>
-                    )}
+                        );
+                      })()}
+                    </motion.div>
                   </motion.div>
                 </AnimatePresence>
               </div>

@@ -1,5 +1,5 @@
-import { LunchMenuAdminPage } from "@/views/LunchMenuAdminPage";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <LunchMenuAdminPage />;
+  redirect("/admin/menus");
 }

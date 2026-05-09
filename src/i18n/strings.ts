@@ -801,11 +801,3 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
 export function t(locale: Locale, key: MessageKey): string {
   return messages[locale][key];
 }
-
-/** e.g. "Lunch week 16" — pair with `uppercase` + tracking classes for "LUNCH WEEK 16". */
-export function weeklyMenuWeekTitle(locale: Locale, isoWeek: number): string {
-  return messages[locale]["page.menu.weeklyWeekTitle"].replace(
-    "{week}",
-    String(isoWeek),
-  );
-}

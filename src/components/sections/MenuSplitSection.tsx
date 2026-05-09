@@ -52,8 +52,8 @@ const panelBaseClass =
 const panelMinHeightClass =
   "min-h-[min(28vh,13rem)] sm:min-h-[min(30vh,15rem)] md:min-h-[min(34vh,17rem)] lg:min-h-[min(32vh,16rem)]";
 
-/** Desktop: one row of four equal columns. */
-const desktopFourColHeightClass =
+/** Desktop: one row of three equal columns. */
+const desktopThreeColHeightClass =
   "min-h-[min(28vh,14rem)] sm:min-h-[min(34vh,17rem)] lg:min-h-[min(38vh,20rem)] xl:min-h-[min(40vh,21rem)]";
 
 /** Horizontal run of each seam vs panel width — keep small so splits read as a hint, not a wide band. */
@@ -67,13 +67,14 @@ function clipPathStyle(
 }
 
 /** Trapezoid clips for equal-width quarters: first/last only cut one side; middles cut both. */
-function splitLeanPolygon(quarterIndex: number): string {
+/** Trapezoid clips for three equal columns (first / middle / last). */
+function splitLeanThirds(index: number): string {
   const d = 100 * SPLIT_LEAN_FRAC;
   const br = 100 - d;
-  if (quarterIndex === 0) {
+  if (index === 0) {
     return `polygon(0 0, 100% 0, ${br}% 100%, 0 100%)`;
   }
-  if (quarterIndex === 3) {
+  if (index === 2) {
     return `polygon(${d}% 0, 100% 0, 100% 100%, 0 100%)`;
   }
   return `polygon(${d}% 0, 100% 0, ${br}% 100%, 0 100%)`;
@@ -251,19 +252,19 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
             ? "Välj meny"
             : "Choose a menu"
       }
-      className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-paper"
+      className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-ink"
     >
       <div className={`${contentGutterClass} py-6 sm:py-8`}>
         <div className={insetCardShellClass}>
-          <div className="overflow-hidden rounded-2xl bg-paper sm:rounded-3xl">
-            <div className="flex flex-col gap-0 bg-paper">
+          <div className="overflow-hidden rounded-2xl bg-paper-dark sm:rounded-3xl">
+            <div className="flex flex-col gap-0 bg-paper-dark">
               <div className="flex flex-col gap-0 sm:hidden">
               {MENU_SPLIT_PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
                 const sizes =
-                  "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1279px) 50vw, 25vw";
+                  "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1279px) 50vw, 33vw";
 
                 const inner = (
                   <>
@@ -307,13 +308,13 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 );
               })}
             </div>
-              <div className="hidden w-full grid-cols-4 gap-0 bg-paper sm:grid">
+              <div className="hidden w-full grid-cols-3 gap-0 bg-paper-dark sm:grid">
                 {MENU_SPLIT_PANELS.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
                 const sizes =
-                  "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1023px) 25vw, 25vw";
+                  "(max-width: 639px) min(100vw - 2rem, 112rem), (max-width: 1023px) 33vw, 33vw";
 
                 const inner = (
                   <>
@@ -337,9 +338,9 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 const selectedClass = hasSelection && isSelected ? "z-[2] ring-paper/40" : "";
                 const unselectedClass = hasSelection && !isSelected ? "z-[1] opacity-95" : "";
 
-                const cellClass = `${panelBaseClass} ${desktopFourColHeightClass} min-w-0 bg-ink ${selectedClass} ${unselectedClass}`;
+                const cellClass = `${panelBaseClass} ${desktopThreeColHeightClass} min-w-0 bg-ink ${selectedClass} ${unselectedClass}`;
 
-                const leanStyle = clipPathStyle(splitLeanPolygon(index), index);
+                const leanStyle = clipPathStyle(splitLeanThirds(index), index);
 
                 return interactive ? (
                   <button

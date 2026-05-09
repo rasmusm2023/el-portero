@@ -2,18 +2,36 @@
 
 import { MenuPager } from "@/components/menu/MenuPager";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
+import { SimpleMenuCategoryGrid } from "@/components/menu/SimpleMenuCategoryGrid";
 import { PageShell } from "@/components/layout/PageShell";
 import { alacarteMenuCategories } from "@/data/alacarteMenu";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
+import { useEditablePublishedMenu } from "@/hooks/useEditablePublishedMenu";
+import { editableDocToSimpleCategories } from "@/lib/editableMenuDisplay";
+import { isFirebaseConfigured } from "@/lib/firebase/client";
 
 export function AlacarteMenuPage() {
   const { locale } = useLocale();
+  const { remote, ready } = useEditablePublishedMenu("alacarte");
+  const publishedLive = Boolean(remote?.isPublished && remote.categories?.length);
+  const simple = remote && publishedLive ? editableDocToSimpleCategories(remote) : null;
+  const shellTitle =
+    publishedLive && remote?.title?.trim()
+      ? remote.title.trim()
+      : t(locale, "page.menu.title");
 
   return (
-    <PageShell title={t(locale, "page.menu.title")} titleVariant="hero">
+    <PageShell title={shellTitle} titleVariant="hero">
       <MenuPager />
-      <MenuCategoryGrid categories={alacarteMenuCategories} locale={locale} />
+      {!ready && isFirebaseConfigured() ? (
+        <p className="mb-8 text-sm text-ink-muted">Loading…</p>
+      ) : null}
+      {ready && simple ? (
+        <SimpleMenuCategoryGrid categories={simple} />
+      ) : ready ? (
+        <MenuCategoryGrid categories={alacarteMenuCategories} locale={locale} />
+      ) : null}
     </PageShell>
   );
 }

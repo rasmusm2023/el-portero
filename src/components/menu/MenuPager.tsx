@@ -6,11 +6,9 @@ import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
 const items = [
-  { href: "/menu/weekly", labelKey: "page.menu.weekly" as const },
   { href: "/menu/alacarte", labelKey: "page.menu.alacarte" as const },
   { href: "/menu/brunch", labelKey: "page.menu.brunch" as const },
   { href: "/menu/drinks", labelKey: "page.menu.drinks" as const },
-  { href: "/menu/food", labelKey: "page.menu.food" as const },
 ];
 
 export function MenuPager() {
@@ -32,8 +30,8 @@ export function MenuPager() {
             className={[
               "inline-flex items-center justify-center rounded-none border px-4 py-2 text-xs font-semibold tracking-[0.18em] uppercase transition-colors",
               active
-                ? "border-ink bg-ink text-paper"
-                : "border-border bg-paper text-ink hover:border-ink/35",
+                ? "border-gold/45 bg-paper-dark text-paper ring-1 ring-gold/20"
+                : "border-border bg-paper-dark/45 text-paper/85 hover:border-paper/25 hover:bg-paper-dark/75 hover:text-paper",
             ].join(" ")}
           >
             {t(locale, item.labelKey)}

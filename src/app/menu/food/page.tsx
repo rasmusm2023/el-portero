@@ -1,5 +1,5 @@
-import { FoodMenuPage } from "@/views/FoodMenuPage";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <FoodMenuPage />;
+  redirect("/menu/alacarte");
 }
