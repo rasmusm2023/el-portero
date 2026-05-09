@@ -122,10 +122,10 @@ const ROWS: {
     media: {
       kind: "imageCycle",
       slides: [
+        { src: "https://el-portero.b-cdn.net/images/oysters-shrimps.jpg" },
+        { src: "https://el-portero.b-cdn.net/images/paella.jpg" },
         BUNNY_IMG.heroAccentDish,
         BUNNY_IMG.galleryTostada,
-        { src: "/assets/images/story/hero/story-hero-paella-closeup.webp" },
-        { src: "/assets/images/story/hero/story-hero-wine-and-seafood.webp" },
       ],
       rotateDeg: 0,
     },

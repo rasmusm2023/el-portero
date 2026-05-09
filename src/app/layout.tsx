@@ -1,6 +1,7 @@
 import {
   Anton,
   Cormorant_Garamond,
+  Dancing_Script,
   Jaro,
   Plus_Jakarta_Sans,
 } from "next/font/google";
@@ -22,6 +23,12 @@ const fontDisplay = Cormorant_Garamond({
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta",
+  display: "swap",
+});
+
+const fontSignature = Dancing_Script({
+  subsets: ["latin"],
+  variable: "--font-signature",
   display: "swap",
 });
 
@@ -68,7 +75,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontCountdown.variable}`}
+      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontCountdown.variable} ${fontSignature.variable}`}
     >
       <body>
         <AppProviders>
