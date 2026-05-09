@@ -80,6 +80,8 @@ type PageKey =
   | "page.menu.weeklyEffectiveLabel"
   | "page.menu.weeklyMadridNote"
   | "page.menu.hubHint"
+  | "page.menu.comingSoonTitle"
+  | "page.menu.comingSoonBody"
   | "page.menu.preLaunchTitle"
   | "page.menu.preLaunchBody"
   | "page.menu.countdownHeading"
@@ -260,6 +262,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyMadridNote": "Lunch week anchor (Sat, Madrid)",
     "page.menu.hubHint":
       "Choose a menu above — each section opens in full beneath, dishes, pairings, and all.",
+    "page.menu.comingSoonTitle": "Menus are coming soon",
+    "page.menu.comingSoonBody":
+      "We’re finalizing them now — they’ll be here when we open the doors on 14 May.",
     "page.menu.preLaunchTitle": "Menus publish on opening night",
     "page.menu.preLaunchBody":
       "All our menus go live here on 14 May — the same evening we raise the curtain in Torrevieja.",
@@ -463,6 +468,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Ancla de la semana de almuerzo (sáb., Madrid)",
     "page.menu.hubHint":
       "Elegid una carta arriba — cada sección se abre completa debajo, con platos, maridajes y todo el detalle.",
+    "page.menu.comingSoonTitle": "Las cartas, muy pronto",
+    "page.menu.comingSoonBody":
+      "Las estamos finalizando — estarán aquí cuando abramos el 14 de mayo.",
     "page.menu.preLaunchTitle": "Las cartas se publican el día de la apertura",
     "page.menu.preLaunchBody":
       "Todas nuestras cartas se publican aquí el 14 de mayo — la misma noche del estreno en Torrevieja.",
@@ -564,8 +572,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.gallery.srHeading": "Un vistazo a El Portero",
     "page.gallery.imageAlt1":
       "Brochetas de carne y verdura a la parrilla — cocina con acento peruano y español",
-    "page.gallery.imageAlt2":
-      "Plato de temporada de la cocina de El Portero",
+    "page.gallery.imageAlt2": "Plato de temporada de la cocina de El Portero",
     "page.gallery.imageAlt3": "Camarero preparando cócteles en la barra",
     "page.gallery.caption1": "Alma peruana y calor español desde la parrilla.",
     "page.gallery.caption2":
@@ -665,6 +672,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.weeklyMadridNote": "Lunchveckans ankare (lör, Madrid)",
     "page.menu.hubHint":
       "Välj meny ovan — varje del öppnas i full längd nedanför, med rätter, maridage och allt du behöver.",
+    "page.menu.comingSoonTitle": "Menyerna kommer snart",
+    "page.menu.comingSoonBody":
+      "Vi slutför menyerna nu — de publiceras när vi öppnar dörrarna den 14 maj.",
     "page.menu.preLaunchTitle": "Menyerna publiceras på öppningskvällen",
     "page.menu.preLaunchBody":
       "Alla våra menyer släpps här den 14 maj — samma kväll som vi drar upp ridån i Torrevieja.",
@@ -764,8 +774,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.gallery.srHeading": "En glimt av El Portero",
     "page.gallery.imageAlt1":
       "Grillade kött- och grönsaksspett — peruansk- och spanskinspirerad mat från grillen",
-    "page.gallery.imageAlt2":
-      "Säsongsrätt från El Porteros kök",
+    "page.gallery.imageAlt2": "Säsongsrätt från El Porteros kök",
     "page.gallery.imageAlt3": "Bartender som blandar drinkar i baren",
     "page.gallery.caption1": "Peruansk själ och spansk värme från grillen.",
     "page.gallery.caption2":

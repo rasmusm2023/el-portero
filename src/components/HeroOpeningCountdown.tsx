@@ -39,6 +39,8 @@ type Props = {
   targetDate: Date;
   /** Default: centered overlay for home hero. `inline`: flow below content (e.g. coming soon). */
   variant?: "overlay" | "inline";
+  /** Merged onto the inline variant outer wrapper (e.g. `mt-0` when first in column). */
+  className?: string;
 };
 
 function localeTag(locale: string) {
@@ -66,7 +68,11 @@ function Segment({ value, label }: { value: string | number; label: string }) {
   );
 }
 
-export function HeroOpeningCountdown({ targetDate, variant = "overlay" }: Props) {
+export function HeroOpeningCountdown({
+  targetDate,
+  variant = "overlay",
+  className,
+}: Props) {
   const { locale } = useLocale();
   const parts = useCountdownParts(targetDate);
   const days = parts?.days ?? 0;
@@ -117,7 +123,14 @@ export function HeroOpeningCountdown({ targetDate, variant = "overlay" }: Props)
 
   if (variant === "inline") {
     return (
-      <div className="mt-10 w-full max-w-[min(100%,52rem)] sm:mt-12">
+      <div
+        className={[
+          "mt-10 w-full max-w-[min(100%,52rem)] sm:mt-12",
+          className ?? "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <div className="flex flex-col items-center gap-5 sm:gap-6">{body}</div>
       </div>
     );

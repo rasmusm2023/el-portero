@@ -203,7 +203,7 @@ export function PageHeroSection({
               fit={heroImageFit}
             />
           )}
-          {hasHeroMedia && (
+          {(hasHeroMedia || showOpeningCountdown) && (
             <div className="absolute inset-0 z-[1] bg-ink/50" aria-hidden />
           )}
           <div
@@ -211,7 +211,7 @@ export function PageHeroSection({
             style={heroRadialOverlayStyle}
             aria-hidden
           />
-          {hasHeroMedia && showOpeningCountdown ? (
+          {showOpeningCountdown ? (
             <HeroOpeningCountdown targetDate={OPENING_COUNTDOWN_END} />
           ) : null}
           {hasHeroMedia && accentVideo ? (
