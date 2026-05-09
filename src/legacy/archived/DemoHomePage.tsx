@@ -1,5 +1,12 @@
 "use client";
 
+/**
+ * Archived experimental layout kept for documentation/case-study reference.
+ *
+ * IMPORTANT: This file is intentionally NOT imported anywhere in production so it
+ * does not affect bundle size or route surface area.
+ */
+
 import { AnimatePresence, motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { GallerySection } from "@/components/sections/GallerySection";
@@ -77,9 +84,7 @@ export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
               {t(locale, "page.home.heroTaglineMobile")}
             </p>
             <p
-              className={[pageHeroHomeTaglineDesktopClass, "font-medium", "text-sm sm:text-base"].join(
-                " ",
-              )}
+              className={[pageHeroHomeTaglineDesktopClass, "font-medium", "text-sm sm:text-base"].join(" ")}
             >
               {t(locale, "page.home.heroTagline")}
             </p>
@@ -143,18 +148,9 @@ export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
                         const st = stateFor(expandedMenu);
                         const live = Boolean(st.remote?.isPublished && st.remote.categories?.length);
                         if (live && st.remote) {
-                          return (
-                            <SimpleMenuCategoryGrid
-                              categories={editableDocToSimpleCategories(st.remote)}
-                            />
-                          );
+                          return <SimpleMenuCategoryGrid categories={editableDocToSimpleCategories(st.remote)} />;
                         }
-                        return (
-                          <MenuCategoryGrid
-                            categories={previewCategories[expandedMenu]}
-                            locale={locale}
-                          />
-                        );
+                        return <MenuCategoryGrid categories={previewCategories[expandedMenu]} locale={locale} />;
                       })()}
                     </motion.div>
                   </motion.div>
@@ -172,3 +168,4 @@ export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
     </div>
   );
 }
+
