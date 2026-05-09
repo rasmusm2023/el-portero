@@ -1,6 +1,5 @@
-import { WeeklyMenuAdminPage } from "@/views/WeeklyMenuAdminPage";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <WeeklyMenuAdminPage />;
+  redirect("/admin/menus");
 }
-

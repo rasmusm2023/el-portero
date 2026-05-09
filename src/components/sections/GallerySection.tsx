@@ -2,8 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cloudinaryAdaptiveVideoSources } from "@/lib/cloudinaryAdaptiveVideoSources";
+import { CLOUDINARY_IMG } from "@/lib/cloudinaryStillImages";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
+
+/** Cloudinary WebP + JPEG pair (`<picture>` loads only one) or a single local path. */
+type GalleryImageSlide =
+  | { webp: string; jpeg: string }
+  | { src: string };
+
+function isCloudinarySlide(s: GalleryImageSlide): s is { webp: string; jpeg: string } {
+  return "webp" in s && "jpeg" in s;
+}
 
 /** Subtle vertical parallax inside the crop; respects `prefers-reduced-motion`. */
 function GalleryParallaxVideo({
@@ -92,97 +102,6 @@ function GalleryParallaxVideo({
 const BASE_ROTATED_SCALE_DESKTOP = 1.01;
 const BASE_ROTATED_SCALE_MOBILE = 1.0;
 
-/** Landscape asset shown as portrait: rotate (e.g. 90°) + zoom so the frame fills. */
-function GalleryParallaxRotatedImage({
-  src,
-  alt,
-  rotateDeg,
-}: {
-  src: string;
-  alt: string;
-  rotateDeg: number;
-}) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const wrap = wrapRef.current;
-    const img = imgRef.current;
-    if (!wrap || !img) return;
-
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const mobileMq = window.matchMedia("(max-width: 639px)");
-    const baseScale =
-      rotateDeg === 0 && mobileMq.matches
-        ? BASE_ROTATED_SCALE_MOBILE
-        : BASE_ROTATED_SCALE_DESKTOP;
-    if (mq.matches) {
-      img.style.transform = `rotate(${rotateDeg}deg) scale(${baseScale})`;
-      img.style.transformOrigin = "center center";
-      return;
-    }
-
-    let raf = 0;
-    const strength = 0.3;
-
-    const apply = (y: number) => {
-      img.style.transform = `translate3d(0,${y.toFixed(2)}px,0) rotate(${rotateDeg}deg) scale(${baseScale})`;
-      img.style.transformOrigin = "center center";
-    };
-
-    const tick = () => {
-      const rect = wrap.getBoundingClientRect();
-      const vh = window.innerHeight || 1;
-      if (rect.bottom < 0 || rect.top > vh) return;
-      const centerOffset = rect.top + rect.height / 2 - vh / 2;
-      const y = (-centerOffset / vh) * rect.height * strength;
-      apply(y);
-    };
-
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(tick);
-    };
-
-    tick();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(raf);
-      img.style.removeProperty("transform");
-      img.style.removeProperty("transform-origin");
-    };
-  }, [rotateDeg]);
-
-  return (
-    <div
-      ref={wrapRef}
-      className="absolute inset-0 flex items-center justify-center overflow-hidden bg-ink"
-    >
-      {/* Raw img: composed rotate + parallax transform; next/image fights fill+transform in this layout. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        ref={imgRef}
-        src={src}
-        alt={alt}
-        className="pointer-events-none max-h-none max-w-none shrink-0 object-cover"
-        style={{
-          minHeight: rotateDeg === 0 ? "100%" : "104%",
-          minWidth: rotateDeg === 0 ? "100%" : "104%",
-          transform: `rotate(${rotateDeg}deg) scale(${BASE_ROTATED_SCALE_DESKTOP})`,
-          transformOrigin: "center center",
-        }}
-        loading="lazy"
-        decoding="async"
-        draggable={false}
-      />
-    </div>
-  );
-}
-
 const GALLERY_IMAGE_FRAME =
   "shadow-[0_28px_64px_-18px_rgba(10,10,10,0.12)] ring-1 ring-ink/10";
 
@@ -194,8 +113,7 @@ type GalleryMedia =
       coverScale?: number;
       objectPosition?: string;
     }
-  | { kind: "image"; src: string; rotateDeg: number }
-  | { kind: "imageCycle"; srcs: string[]; rotateDeg: number };
+  | { kind: "imageCycle"; slides: GalleryImageSlide[]; rotateDeg: number };
 
 const galleryBarSources = cloudinaryAdaptiveVideoSources(
   "v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue",
@@ -210,11 +128,11 @@ const ROWS: {
   {
     media: {
       kind: "imageCycle",
-      srcs: [
-        "/assets/images/hero-accent/hero-accent-dish-closeup.webp",
-        "/assets/images/gallery/gallery-feature-tostada-closeup.webp",
-        "/assets/images/story/hero/story-hero-paella-closeup.webp",
-        "/assets/images/story/hero/story-hero-wine-and-seafood.webp",
+      slides: [
+        CLOUDINARY_IMG.heroAccentDish,
+        CLOUDINARY_IMG.galleryTostada,
+        { src: "/assets/images/story/hero/story-hero-paella-closeup.webp" },
+        { src: "/assets/images/story/hero/story-hero-wine-and-seafood.webp" },
       ],
       rotateDeg: 0,
     },
@@ -224,8 +142,13 @@ const ROWS: {
   },
   {
     media: {
-      kind: "image",
-      src: "/images/food.png",
+      kind: "imageCycle",
+      slides: [
+        CLOUDINARY_IMG.sevenTonguedDish,
+        CLOUDINARY_IMG.galleryDish1,
+        CLOUDINARY_IMG.galleryDish2,
+        CLOUDINARY_IMG.galleryDish3,
+      ],
       rotateDeg: 0,
     },
     captionKey: "page.gallery.caption2",
@@ -279,18 +202,17 @@ const RHYTHM = [
 
 function galleryRowKey(media: GalleryMedia): string {
   if (media.kind === "video") return media.src;
-  if (media.kind === "image") return `${media.src}-${media.rotateDeg}`;
-  return `${media.srcs.join("|")}-${media.rotateDeg}`;
+  return `${media.slides.map((s) => (isCloudinarySlide(s) ? s.webp : s.src)).join("|")}-${media.rotateDeg}`;
 }
 
 function GalleryParallaxFadingImage({
-  srcs,
+  slides,
   alt,
   rotateDeg,
   durationMs = 3000,
   fadeMs = 900,
 }: {
-  srcs: string[];
+  slides: GalleryImageSlide[];
   alt: string;
   rotateDeg: number;
   durationMs?: number;
@@ -303,14 +225,14 @@ function GalleryParallaxFadingImage({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (srcs.length <= 1) return;
+    if (slides.length <= 1) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mq.matches) return;
     const id = window.setInterval(() => {
-      setActive((i) => (i + 1) % srcs.length);
+      setActive((i) => (i + 1) % slides.length);
     }, durationMs);
     return () => window.clearInterval(id);
-  }, [durationMs, srcs.length]);
+  }, [durationMs, slides.length]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -366,34 +288,57 @@ function GalleryParallaxFadingImage({
         img.style.removeProperty("transform-origin");
       }
     };
-  }, [rotateDeg, srcs.length]);
+  }, [rotateDeg, slides.length]);
 
   return (
     <div
       ref={wrapRef}
       className="absolute inset-0 flex items-center justify-center overflow-hidden bg-ink"
     >
-      {srcs.map((src, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          key={src}
-          ref={(el) => {
-            imgRefs.current[i] = el;
-          }}
-          src={src}
-          alt={alt}
-          className="pointer-events-none absolute inset-0 h-full w-full max-h-none max-w-none shrink-0 object-cover"
-          style={{
-            minHeight: rotateDeg === 0 ? "100%" : "104%",
-            minWidth: rotateDeg === 0 ? "100%" : "104%",
-            opacity: i === active ? 1 : 0,
-            transition: `opacity ${fadeMs}ms ease-in-out`,
-          }}
-          loading={i === 0 ? "eager" : "lazy"}
-          decoding="async"
-          draggable={false}
-        />
-      ))}
+      {slides.map((slide, i) => {
+        const key = isCloudinarySlide(slide) ? slide.webp : slide.src;
+        const imgClass =
+          "pointer-events-none absolute inset-0 h-full w-full max-h-none max-w-none shrink-0 object-cover";
+        const imgStyle = {
+          minHeight: rotateDeg === 0 ? ("100%" as const) : ("104%" as const),
+          minWidth: rotateDeg === 0 ? ("100%" as const) : ("104%" as const),
+          opacity: i === active ? 1 : 0,
+          transition: `opacity ${fadeMs}ms ease-in-out`,
+        } as const;
+        const z = i === active ? "z-[2]" : "z-[1]";
+        return isCloudinarySlide(slide) ? (
+          <picture key={key} className={`pointer-events-none absolute inset-0 ${z}`}>
+            <source srcSet={slide.webp} type="image/webp" />
+            <img
+              ref={(el) => {
+                imgRefs.current[i] = el;
+              }}
+              src={slide.jpeg}
+              alt={alt}
+              className={imgClass}
+              style={imgStyle}
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
+              draggable={false}
+            />
+          </picture>
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={key}
+            ref={(el) => {
+              imgRefs.current[i] = el;
+            }}
+            src={slide.src}
+            alt={alt}
+            className={`${imgClass} ${z}`}
+            style={imgStyle}
+            loading={i === 0 ? "eager" : "lazy"}
+            decoding="async"
+            draggable={false}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -432,15 +377,9 @@ export function GallerySection() {
                       coverScale={row.media.coverScale}
                       objectPosition={row.media.objectPosition}
                     />
-                  ) : row.media.kind === "imageCycle" ? (
-                    <GalleryParallaxFadingImage
-                      srcs={row.media.srcs}
-                      alt={t(locale, row.altKey)}
-                      rotateDeg={row.media.rotateDeg}
-                    />
                   ) : (
-                    <GalleryParallaxRotatedImage
-                      src={row.media.src}
+                    <GalleryParallaxFadingImage
+                      slides={row.media.slides}
                       alt={t(locale, row.altKey)}
                       rotateDeg={row.media.rotateDeg}
                     />

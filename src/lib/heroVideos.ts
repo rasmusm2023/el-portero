@@ -5,6 +5,7 @@
  * ~{@link HERO_MONTAGE_CLIP_MS} of wall-clock time.
  */
 import { cloudinaryAdaptiveVideoSources } from "@/lib/cloudinaryAdaptiveVideoSources";
+import { CLOUDINARY_IMG } from "@/lib/cloudinaryStillImages";
 
 export const HERO_MONTAGE_CLIP_MS = 3000;
 
@@ -34,7 +35,7 @@ export type HeroMontageClip = {
 };
 
 /** Local poster while first Cloudinary frame loads. */
-const HERO_CLIP_1_POSTER = "/assets/videos/hero-sequence/clip-1/poster.webp";
+const HERO_CLIP_1_POSTER = CLOUDINARY_IMG.heroClip1Poster.webp;
 
 /**
  * 13 clips: old local clip-5 removed; former clip-14 plays in that slot (index 5).

@@ -1,6 +1,6 @@
 import type { MessageKey } from "@/i18n/strings";
 
-export type MenuSplitKey = "lunch" | "drinks" | "brunch" | "alacarte";
+export type MenuSplitKey = "drinks" | "brunch" | "alacarte";
 
 export type MenuSplitPanel = {
   key: MenuSplitKey;
@@ -12,8 +12,6 @@ export type MenuSplitPanel = {
   scheduleKey: MessageKey;
 };
 
-const FOOD_BG =
-  "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=2400&q=80";
 const DRINKS_BG =
   "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=2400&q=80";
 const BRUNCH_BG =
@@ -23,14 +21,6 @@ const ALACARTE_BG =
 
 /** Shared config for horizontal (`MenuSplitSection`) and vertical demo (`MenuSplitSectionVertical`). */
 export const MENU_SPLIT_PANELS: MenuSplitPanel[] = [
-  {
-    key: "lunch",
-    src: FOOD_BG,
-    href: "/menu/weekly",
-    labelKey: "page.menu.weekly",
-    srKey: "page.menu.weeklyHeading",
-    scheduleKey: "page.menu.scheduleLunch",
-  },
   {
     key: "alacarte",
     src: ALACARTE_BG,

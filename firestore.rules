@@ -44,8 +44,17 @@ service cloud.firestore {
     }
 
     match /weeklyMenus/{docId} {
-      allow read: if resource.data.isPublished == true;
-      allow read: if isAdmin();
+      // `resource` is unset when the doc does not exist — never read `resource.data` unless the doc exists.
+      allow read: if isAdmin()
+        || (exists(/databases/$(database)/documents/weeklyMenus/$(docId))
+            && resource.data.isPublished == true);
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /editableMenus/{docId} {
+      allow read: if isAdmin()
+        || (exists(/databases/$(database)/documents/editableMenus/$(docId))
+            && resource.data.isPublished == true);
       allow create, update, delete: if isAdmin();
     }
   }

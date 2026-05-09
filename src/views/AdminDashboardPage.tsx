@@ -66,10 +66,9 @@ export function AdminDashboardPage() {
           className="group rounded-xl border border-emerald-200 border-l-[6px] border-l-emerald-600 bg-gradient-to-br from-emerald-50/90 to-paper p-8 shadow-sm transition-colors hover:border-emerald-400"
         >
           <p className="text-xs font-semibold tracking-[0.18em] text-emerald-900 uppercase">Menus</p>
-          <h2 className="mt-2 font-display text-2xl font-medium text-ink">Lunch & menus</h2>
+          <h2 className="mt-2 font-display text-2xl font-medium text-ink">À la carte, drinks & brunch</h2>
           <p className="mt-3 text-sm text-ink-muted leading-relaxed">
-            Set lunch (Mon–Fri): week rolls on <span className="font-medium text-ink/80">Saturday</span> (Madrid),
-            then publish when ready.
+            Edit sections and dishes, save drafts, then publish when guests should see them on the site.
           </p>
           <p className="mt-6 text-sm font-semibold text-emerald-800 group-hover:underline">
             Open menus →
