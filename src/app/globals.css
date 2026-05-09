@@ -33,6 +33,12 @@
     font-weight: 650;
   }
 
+  .font-signature {
+    font-family: var(--font-signature), ui-serif, Georgia, serif;
+    font-style: normal;
+    font-weight: 500;
+  }
+
   .font-countdown-heavy {
     font-family: var(--font-countdown-heavy), ui-sans-serif, system-ui, sans-serif;
     font-weight: 400;

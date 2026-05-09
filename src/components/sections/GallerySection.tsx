@@ -1,19 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { cloudinaryAdaptiveVideoSources } from "@/lib/cloudinaryAdaptiveVideoSources";
-import { CLOUDINARY_IMG } from "@/lib/cloudinaryStillImages";
+import { BUNNY_IMG, bunnyVideoSources } from "@/lib/bunnyMedia";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
-/** Cloudinary WebP + JPEG pair (`<picture>` loads only one) or a single local path. */
-type GalleryImageSlide =
-  | { webp: string; jpeg: string }
-  | { src: string };
-
-function isCloudinarySlide(s: GalleryImageSlide): s is { webp: string; jpeg: string } {
-  return "webp" in s && "jpeg" in s;
-}
+type GalleryImageSlide = { src: string };
 
 /** Subtle vertical parallax inside the crop; respects `prefers-reduced-motion`. */
 function GalleryParallaxVideo({
@@ -115,8 +107,9 @@ type GalleryMedia =
     }
   | { kind: "imageCycle"; slides: GalleryImageSlide[]; rotateDeg: number };
 
-const galleryBarSources = cloudinaryAdaptiveVideoSources(
-  "v1778200255/barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue",
+const galleryBarSources = bunnyVideoSources(
+  "https://el-portero.b-cdn.net/videos/8s_barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue.webm",
+  "https://el-portero.b-cdn.net/videos/8s_barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red.mp4",
 );
 
 const ROWS: {
@@ -129,10 +122,10 @@ const ROWS: {
     media: {
       kind: "imageCycle",
       slides: [
-        CLOUDINARY_IMG.heroAccentDish,
-        CLOUDINARY_IMG.galleryTostada,
-        { src: "/assets/images/story/hero/story-hero-paella-closeup.webp" },
-        { src: "/assets/images/story/hero/story-hero-wine-and-seafood.webp" },
+        { src: "https://el-portero.b-cdn.net/images/oysters-shrimps.jpg" },
+        { src: "https://el-portero.b-cdn.net/images/paella.jpg" },
+        BUNNY_IMG.heroAccentDish,
+        BUNNY_IMG.galleryTostada,
       ],
       rotateDeg: 0,
     },
@@ -144,10 +137,10 @@ const ROWS: {
     media: {
       kind: "imageCycle",
       slides: [
-        CLOUDINARY_IMG.sevenTonguedDish,
-        CLOUDINARY_IMG.galleryDish1,
-        CLOUDINARY_IMG.galleryDish2,
-        CLOUDINARY_IMG.galleryDish3,
+        BUNNY_IMG.sevenTonguedDish,
+        BUNNY_IMG.galleryDish1,
+        BUNNY_IMG.galleryDish2,
+        BUNNY_IMG.galleryDish3,
       ],
       rotateDeg: 0,
     },
@@ -202,7 +195,7 @@ const RHYTHM = [
 
 function galleryRowKey(media: GalleryMedia): string {
   if (media.kind === "video") return media.src;
-  return `${media.slides.map((s) => (isCloudinarySlide(s) ? s.webp : s.src)).join("|")}-${media.rotateDeg}`;
+  return `${media.slides.map((s) => s.src).join("|")}-${media.rotateDeg}`;
 }
 
 function GalleryParallaxFadingImage({
@@ -296,7 +289,7 @@ function GalleryParallaxFadingImage({
       className="absolute inset-0 flex items-center justify-center overflow-hidden bg-ink"
     >
       {slides.map((slide, i) => {
-        const key = isCloudinarySlide(slide) ? slide.webp : slide.src;
+        const key = slide.src;
         const imgClass =
           "pointer-events-none absolute inset-0 h-full w-full max-h-none max-w-none shrink-0 object-cover";
         const imgStyle = {
@@ -306,23 +299,7 @@ function GalleryParallaxFadingImage({
           transition: `opacity ${fadeMs}ms ease-in-out`,
         } as const;
         const z = i === active ? "z-[2]" : "z-[1]";
-        return isCloudinarySlide(slide) ? (
-          <picture key={key} className={`pointer-events-none absolute inset-0 ${z}`}>
-            <source srcSet={slide.webp} type="image/webp" />
-            <img
-              ref={(el) => {
-                imgRefs.current[i] = el;
-              }}
-              src={slide.jpeg}
-              alt={alt}
-              className={imgClass}
-              style={imgStyle}
-              loading={i === 0 ? "eager" : "lazy"}
-              decoding="async"
-              draggable={false}
-            />
-          </picture>
-        ) : (
+        return (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={key}

@@ -124,6 +124,36 @@ type PageKey =
   | "page.story.photoAltTileC"
   | "page.story.photoAltCoast"
   | "page.story.comingSoonBody"
+  | "page.storyDraft.badge"
+  | "page.storyDraft.title"
+  | "page.storyDraft.lead"
+  | "page.storyDraft.dreamKicker"
+  | "page.storyDraft.dreamTitle"
+  | "page.storyDraft.dreamP1"
+  | "page.storyDraft.dreamP2"
+  | "page.storyDraft.twoDreamsKicker"
+  | "page.storyDraft.twoDreamsTitle"
+  | "page.storyDraft.twoDreamsP1"
+  | "page.storyDraft.twoDreamsP2"
+  | "page.storyDraft.placeKicker"
+  | "page.storyDraft.placeTitle"
+  | "page.storyDraft.placeP1"
+  | "page.storyDraft.placeP2"
+  | "page.storyDraft.nameKicker"
+  | "page.storyDraft.nameTitle"
+  | "page.storyDraft.nameP1"
+  | "page.storyDraft.nameP2"
+  | "page.storyDraft.nameP3"
+  | "page.storyDraft.welcomeTitle"
+  | "page.storyDraft.welcomeP1"
+  | "page.storyDraft.welcomeP2"
+  | "page.storyDraft.signatureLead"
+  | "page.storyDraft.altDream"
+  | "page.storyDraft.altTwoDreams"
+  | "page.storyDraft.altPlace"
+  | "page.storyDraft.altName"
+  | "page.storyDraft.altWelcome"
+  | "page.storyDraft.altPortrait"
   | "page.reserve.title"
   | "page.reserve.heroTitle"
   | "page.reserve.heroBody"
@@ -323,6 +353,45 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.story.photoAltCoast": "Mediterranean shoreline and open water",
     "page.story.comingSoonBody":
       "The dream of opening a restaurant wasn’t formed overnight. Neither is this page that will tell you that very story. Stay tuned — soon you can explore it here.",
+    "page.storyDraft.badge": "Story draft",
+    "page.storyDraft.title": "Our story",
+    "page.storyDraft.lead": "It all started with a dream.",
+    "page.storyDraft.dreamKicker": "Where it began",
+    "page.storyDraft.dreamTitle": "A feeling I never forgot",
+    "page.storyDraft.dreamP1":
+      "When I was 10, I was at a restaurant with my mum, looking around. I don’t remember exactly what I ate that night — but I remember the feeling.",
+    "page.storyDraft.dreamP2":
+      "The light. The people. The hum of the room. The laughter. And how a restaurant can make people feel something together.",
+    "page.storyDraft.twoDreamsKicker": "Two dreams",
+    "page.storyDraft.twoDreamsTitle": "Football — and a restaurant of my own",
+    "page.storyDraft.twoDreamsP1":
+      "Right then and there, two dreams were born: to become a professional footballer, and one day to open my own restaurant.",
+    "page.storyDraft.twoDreamsP2":
+      "The football dream came true and took me around the world — through stadiums and dressing rooms, highs and lows. But the other dream always lived on inside me.",
+    "page.storyDraft.placeKicker": "A place",
+    "page.storyDraft.placeTitle": "An evening you don’t want to end",
+    "page.storyDraft.placeP1":
+      "The dream was to create a place where people meet, celebrate life, laugh a little louder, and stay a little longer than they planned.",
+    "page.storyDraft.placeP2":
+      "To me, a restaurant is more than food and drink. It’s the feeling when you walk through the door. The music. The energy. The people around the table.",
+    "page.storyDraft.nameKicker": "The name",
+    "page.storyDraft.nameTitle": "el PORTERO",
+    "page.storyDraft.nameP1": "el PORTERO is the result of that dream.",
+    "page.storyDraft.nameP2":
+      "The name means “the goalkeeper” in Spanish — a nod to my background, but also to the role of protecting, welcoming, and creating a sense of safety.",
+    "page.storyDraft.nameP3":
+      "We want el PORTERO to be a place where elegance meets warmth. Where dinner slowly turns into an evening you don’t want to end — and every guest feels seen and welcome.",
+    "page.storyDraft.welcomeTitle": "From a boy’s dream to reality",
+    "page.storyDraft.welcomeP1":
+      "From a 10-year-old boy’s dream, to reality in Torrevieja.",
+    "page.storyDraft.welcomeP2": "A warm welcome to el PORTERO.",
+    "page.storyDraft.signatureLead": "With warmth,",
+    "page.storyDraft.altDream": "Restaurant atmosphere",
+    "page.storyDraft.altTwoDreams": "Magnus Hedman during his football career",
+    "page.storyDraft.altPlace": "El Portero outside patio",
+    "page.storyDraft.altName": "El Portero bar",
+    "page.storyDraft.altWelcome": "Torrevieja beach walk",
+    "page.storyDraft.altPortrait": "Portrait of Magnus Hedman",
     "page.reserve.title": "Reservations",
     "page.reserve.heroTitle": "Reserve your table",
     "page.reserve.heroBody":
@@ -529,6 +598,45 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.story.photoAltCoast": "Costa mediterránea y mar abierto",
     "page.story.comingSoonBody":
       "El sueño de abrir un restaurante no se formó de la noche a la mañana. Tampoco esta página que contará esa historia. Mantente atento: pronto podrás descubrirla aquí.",
+    "page.storyDraft.badge": "Borrador",
+    "page.storyDraft.title": "Nuestra historia",
+    "page.storyDraft.lead": "Todo empezó con un sueño.",
+    "page.storyDraft.dreamKicker": "El comienzo",
+    "page.storyDraft.dreamTitle": "Una sensación que no olvidé",
+    "page.storyDraft.dreamP1":
+      "Cuando tenía 10 años, estaba en un restaurante con mi madre mirando a mi alrededor. No recuerdo exactamente qué comí esa noche — pero sí recuerdo la sensación.",
+    "page.storyDraft.dreamP2":
+      "La luz. La gente. El murmullo de la sala. Las risas. Y cómo un restaurante puede hacer que la gente sienta algo en común.",
+    "page.storyDraft.twoDreamsKicker": "Dos sueños",
+    "page.storyDraft.twoDreamsTitle": "Fútbol — y un restaurante propio",
+    "page.storyDraft.twoDreamsP1":
+      "En ese momento nacieron dos sueños: ser futbolista profesional y, algún día, abrir mi propio restaurante.",
+    "page.storyDraft.twoDreamsP2":
+      "El sueño del fútbol se hizo realidad y me llevó por el mundo — estadios y vestuarios, victorias y derrotas. Pero el otro sueño siempre siguió conmigo.",
+    "page.storyDraft.placeKicker": "Un lugar",
+    "page.storyDraft.placeTitle": "Una noche que no quieres que termine",
+    "page.storyDraft.placeP1":
+      "El sueño era crear un lugar donde la gente se encuentre, celebre la vida, ría un poco más alto y se quede un poco más de lo que pensaba.",
+    "page.storyDraft.placeP2":
+      "Para mí, un restaurante es más que comida y bebida. Es la sensación al cruzar la puerta. La música. La energía. La gente alrededor de la mesa.",
+    "page.storyDraft.nameKicker": "El nombre",
+    "page.storyDraft.nameTitle": "el PORTERO",
+    "page.storyDraft.nameP1": "el PORTERO es el resultado de ese sueño.",
+    "page.storyDraft.nameP2":
+      "El nombre significa “el portero” en español — un guiño a mi pasado, pero también al papel de proteger, dar la bienvenida y crear un lugar seguro.",
+    "page.storyDraft.nameP3":
+      "Queremos que el PORTERO sea un lugar donde la elegancia se encuentre con la calidez. Donde la cena se convierta poco a poco en una noche que no quieres que termine — y cada invitado se sienta visto y bienvenido.",
+    "page.storyDraft.welcomeTitle": "De un sueño a la realidad",
+    "page.storyDraft.welcomeP1":
+      "De un sueño de un niño de 10 años, a hacerse realidad en Torrevieja.",
+    "page.storyDraft.welcomeP2": "Bienvenidos a el PORTERO.",
+    "page.storyDraft.signatureLead": "Con cariño,",
+    "page.storyDraft.altDream": "Ambiente del restaurante",
+    "page.storyDraft.altTwoDreams": "Magnus Hedman en su carrera futbolística",
+    "page.storyDraft.altPlace": "Terraza exterior de El Portero",
+    "page.storyDraft.altName": "Bar de El Portero",
+    "page.storyDraft.altWelcome": "Paseo por la playa de Torrevieja",
+    "page.storyDraft.altPortrait": "Retrato de Magnus Hedman",
     "page.reserve.title": "Reservas",
     "page.reserve.heroTitle": "Reservad mesa",
     "page.reserve.heroBody":
@@ -732,6 +840,45 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.story.photoAltCoast": "Medelhavskust och öppet vatten",
     "page.story.comingSoonBody":
       "Drömmen om att öppna en restaurang växte inte fram över en natt. Det gör inte heller den här sidan som kommer att berätta den historien. Håll utkik – snart kan du utforska den här.",
+    "page.storyDraft.badge": "Utkast",
+    "page.storyDraft.title": "Vår story",
+    "page.storyDraft.lead": "Allt började med en dröm.",
+    "page.storyDraft.dreamKicker": "Allt började",
+    "page.storyDraft.dreamTitle": "En känsla jag aldrig glömde",
+    "page.storyDraft.dreamP1":
+      "När jag var 10 år satt jag på restaurang med min mamma och tittade mig omkring. Jag minns inte exakt vad jag åt den kvällen — men jag minns känslan.",
+    "page.storyDraft.dreamP2":
+      "Ljuset. Människorna. Sorlet. Skratten. Och hur en restaurang kan få människor att känna något tillsammans.",
+    "page.storyDraft.twoDreamsKicker": "Två drömmar",
+    "page.storyDraft.twoDreamsTitle": "Fotboll — och en egen restaurang",
+    "page.storyDraft.twoDreamsP1":
+      "Där och då föddes två drömmar: att bli fotbollsproffs, och att en dag öppna en egen restaurang.",
+    "page.storyDraft.twoDreamsP2":
+      "Fotbollsdrömmen blev verklighet och tog mig runt världen — genom arenor och omklädningsrum, medgångar och motgångar. Men den andra drömmen levde alltid kvar inom mig.",
+    "page.storyDraft.placeKicker": "En plats",
+    "page.storyDraft.placeTitle": "En kväll man inte vill ska ta slut",
+    "page.storyDraft.placeP1":
+      "Drömmen var att skapa en plats där människor möts, firar livet, skrattar lite högre och stannar lite längre än de tänkt.",
+    "page.storyDraft.placeP2":
+      "För mig handlar en restaurang om mer än mat och dryck. Det handlar om känslan när du kliver in genom dörren. Musiken. Energin. Människorna runt bordet.",
+    "page.storyDraft.nameKicker": "Namnet",
+    "page.storyDraft.nameTitle": "el PORTERO",
+    "page.storyDraft.nameP1": "el PORTERO är resultatet av den drömmen.",
+    "page.storyDraft.nameP2":
+      "Namnet betyder “målvakten” på spanska. Det är en hyllning till min bakgrund — men också till rollen att skydda, välkomna och skapa trygghet.",
+    "page.storyDraft.nameP3":
+      "Vi vill att el PORTERO ska vara en plats där elegans möter värme. Där middagen långsamt förvandlas till en kväll man inte vill ska ta slut. Där varje gäst känner sig sedd och välkommen.",
+    "page.storyDraft.welcomeTitle": "Från en pojkes dröm till verklighet",
+    "page.storyDraft.welcomeP1":
+      "Från en 10-årig pojkes dröm, till verklighet i Torrevieja.",
+    "page.storyDraft.welcomeP2": "Varmt välkomna till el PORTERO.",
+    "page.storyDraft.signatureLead": "Med värme,",
+    "page.storyDraft.altDream": "Restaurangstämning",
+    "page.storyDraft.altTwoDreams": "Magnus Hedman under sin fotbollskarriär",
+    "page.storyDraft.altPlace": "Uteservering på El Portero",
+    "page.storyDraft.altName": "Baren på El Portero",
+    "page.storyDraft.altWelcome": "Promenad på stranden i Torrevieja",
+    "page.storyDraft.altPortrait": "Porträtt av Magnus Hedman",
     "page.reserve.title": "Bokning",
     "page.reserve.heroTitle": "Boka ert bord",
     "page.reserve.heroBody":

@@ -6,7 +6,7 @@ import { HeroOpeningCountdown } from "@/components/HeroOpeningCountdown";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
 import { HeroVideoMontage } from "@/components/HeroVideoMontage";
 import type { HeroMontageClip } from "@/lib/heroVideos";
-import { CLOUDINARY_IMG } from "@/lib/cloudinaryStillImages";
+import { BUNNY_IMG } from "@/lib/bunnyMedia";
 import { OPENING_COUNTDOWN_END } from "@/lib/openingCountdown";
 
 /** Scroll progress 0→1 as the user scrolls through / past the hero (drives object-position). */
@@ -95,19 +95,17 @@ function HeroAccentImage({
       aria-hidden
     >
       <div className="aspect-[3/4] w-[clamp(7rem,28vw,18rem)] translate-x-[6%] overflow-hidden shadow-[0_22px_56px_-10px_rgba(0,0,0,0.55)] sm:w-[clamp(8rem,24vw,20rem)] sm:translate-x-[8%] md:w-[clamp(8.75rem,20vw,22rem)] md:translate-x-[10%] lg:w-[clamp(9.25rem,18vw,24rem)] lg:translate-x-[12%]">
-        <picture className="block h-full w-full">
-          <source srcSet={CLOUDINARY_IMG.galleryTostada.webp} type="image/webp" />
-          <img
-            ref={imgRef}
-            src={CLOUDINARY_IMG.galleryTostada.jpeg}
-            alt=""
-            className="h-full w-full object-cover will-change-[object-position]"
-            style={{ objectPosition: "76% 50%" }}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-          />
-        </picture>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          ref={imgRef}
+          src={BUNNY_IMG.galleryTostada.src}
+          alt=""
+          className="h-full w-full object-cover will-change-[object-position]"
+          style={{ objectPosition: "76% 50%" }}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+        />
       </div>
     </div>
   );

@@ -53,11 +53,15 @@ function isActivePath(pathname: string, href: string, locationHash: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-/** Top nav accent: same `gold` as borders, but soft fade at left/right (not a solid stripe). */
-const navTopAccentBar =
-  "relative before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-0.5 before:content-[''] " +
-  "before:bg-[linear-gradient(90deg,transparent_0%,rgba(201,164,74,0)_6%,rgba(201,164,74,0.45)_18%,var(--color-gold)_32%,var(--color-gold)_68%,rgba(201,164,74,0.45)_82%,rgba(201,164,74,0)_94%,transparent_100%)] " +
-  "before:opacity-0 before:transition-opacity before:duration-700 before:ease-[cubic-bezier(0.22,1,0.36,1)] hover:before:opacity-100";
+/**
+ * Nav underline: line grows from center on hover; stays visible + gold when active.
+ * Uses pseudo-element so layout doesn't shift.
+ */
+const navUnderlineBase =
+  "relative after:pointer-events-none after:absolute after:left-1/2 after:-translate-x-1/2 after:content-[''] " +
+  "after:h-[2px] after:rounded-full after:w-0 after:opacity-100 " +
+  "after:transition-[width,background-color,opacity] after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)] " +
+  "hover:after:w-[78%]";
 
 /** Horizontal rule: solid in the center, fades to transparent at both ends. */
 function HeaderFadedRule() {
@@ -78,10 +82,10 @@ function desktopNavLinkClass(
   const active = isActivePath(pathname, href, locationHash);
   return [
     `inline-flex min-h-14 items-center px-6 font-sans text-base tracking-[0.02em] sm:px-7 ${navLinkTransition}`,
-    navTopAccentBar,
+    `${navUnderlineBase} after:bottom-2`,
     active
-      ? "font-bold text-paper before:opacity-100"
-      : "font-normal text-paper/62 hover:text-paper",
+      ? "font-bold text-paper after:w-[78%] after:bg-gold"
+      : "font-normal text-paper/62 after:bg-paper/35 hover:text-paper hover:after:bg-paper/70",
   ].join(" ");
 }
 
@@ -93,10 +97,10 @@ function overlayNavLinkClass(
   const active = isActivePath(pathname, href, locationHash);
   return [
     `mx-auto block w-fit px-8 py-4 text-center font-sans text-5xl tracking-tight sm:px-10 sm:py-5 sm:text-6xl md:text-7xl ${navLinkTransition}`,
-    navTopAccentBar,
+    `${navUnderlineBase} after:bottom-1`,
     active
-      ? "font-bold text-paper before:opacity-100"
-      : "font-medium text-paper/40 hover:text-paper",
+      ? "font-bold text-paper after:w-[78%] after:bg-gold"
+      : "font-medium text-paper/40 after:bg-paper/25 hover:text-paper hover:after:bg-paper/60",
   ].join(" ");
 }
 

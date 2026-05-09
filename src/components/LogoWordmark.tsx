@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import { t } from "@/i18n/strings";
 import type { Locale } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
@@ -17,6 +18,8 @@ type LogoWordmarkProps = {
   locale?: Locale;
   /** Treat the SVG for the current surface (black on light; gold gradient on dark — matches primary CTAs). */
   tone?: "onLight" | "onDark";
+  /** Fade in smoothly once the client is ready (default: true). */
+  fadeInOnMount?: boolean;
 };
 
 /** viewBox width ÷ height — mask box needs explicit size; empty masked spans get 0 intrinsic width in flex (WebKit). */
@@ -66,9 +69,15 @@ export function LogoWordmark({
   align = "center",
   locale: localeProp,
   tone = "onLight",
+  fadeInOnMount = true,
 }: LogoWordmarkProps) {
   const { locale: localeHook } = useLocale();
   const locale = localeProp ?? localeHook;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const alignClass = align === "start" ? "items-start" : "items-center";
   const taglineColorClass =
@@ -85,7 +94,19 @@ export function LogoWordmark({
 
   return (
     <span
-      className={`flex flex-col gap-1.5 leading-none ${alignClass} ${className}`}
+      className={[
+        "flex flex-col gap-1.5 leading-none",
+        alignClass,
+        fadeInOnMount
+          ? [
+              "will-change-[opacity] transition-opacity duration-700 ease-out motion-reduce:transition-none",
+              mounted ? "opacity-100" : "opacity-0",
+            ].join(" ")
+          : "opacity-100",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {tone === "onDark" ? (
         <span

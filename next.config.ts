@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/dovyrycsh/**",
       },
+      {
+        protocol: "https",
+        hostname: "el-portero.b-cdn.net",
+        pathname: "/images/**",
+      },
     ],
   },
   /**
