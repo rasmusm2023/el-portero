@@ -46,7 +46,6 @@ type PageKey =
   | "page.home.heroReserveCta"
   | "page.home.heroTagline"
   | "page.home.heroTaglineMobile"
-  | "page.home.countdownLabel"
   | "page.comingSoon.title"
   | "page.comingSoon.subtitle"
   | "page.comingSoon.heroAside"
@@ -54,20 +53,16 @@ type PageKey =
   | "page.menu.title"
   | "page.menu.food"
   | "page.menu.drinks"
-  | "page.menu.brunch"
-  | "page.menu.alacarte"
+  | "page.menu.dinner"
   | "page.menu.foodHeading"
   | "page.menu.drinksHeading"
-  | "page.menu.brunchHeading"
-  | "page.menu.alacarteHeading"
+  | "page.menu.dinnerHeading"
   | "page.menu.drinksIntro"
   | "page.menu.foodIntro"
-  | "page.menu.brunchIntro"
-  | "page.menu.alacarteIntro"
+  | "page.menu.dinnerIntro"
   | "page.menu.seeMenu"
   | "page.menu.scheduleLunch"
-  | "page.menu.scheduleAlacarte"
-  | "page.menu.scheduleBrunch"
+  | "page.menu.scheduleDinner"
   | "page.menu.scheduleDrinks"
   | "page.menu.weekly"
   | "page.menu.weeklyHeading"
@@ -84,12 +79,6 @@ type PageKey =
   | "page.menu.comingSoonBody"
   | "page.menu.preLaunchTitle"
   | "page.menu.preLaunchBody"
-  | "page.menu.countdownHeading"
-  | "page.menu.countdownDays"
-  | "page.menu.countdownHours"
-  | "page.menu.countdownMinutes"
-  | "page.menu.countdownSeconds"
-  | "page.menu.countdownLive"
   | "page.menu.subnavAria"
   | "page.events.title"
   | "page.events.heroSubtitle"
@@ -251,7 +240,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "At El Portero, flavours from Peru, Spain and Sweden come together in a warm, lively dinner-club atmosphere, with the Mediterranean just a throw-in away.",
     "page.home.heroTaglineMobile":
       "Peru, Spain & Sweden — warm dinner club in Torrevieja with the Mediterranean just steps away.",
-    "page.home.countdownLabel": "Opening",
     "page.comingSoon.title": "Coming soon",
     "page.comingSoon.subtitle": "IN THE WORKS",
     "page.comingSoon.heroAside":
@@ -260,24 +248,19 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.title": "Our menus",
     "page.menu.food": "Highlights",
     "page.menu.drinks": "Drinks",
-    "page.menu.brunch": "Brunch",
-    "page.menu.alacarte": "À la carte",
+    "page.menu.dinner": "Dinner",
     "page.menu.foodHeading": "Seasonal highlights",
     "page.menu.drinksHeading": "Drinks menu",
-    "page.menu.brunchHeading": "Brunch menu",
-    "page.menu.alacarteHeading": "À la carte",
+    "page.menu.dinnerHeading": "Dinner",
     "page.menu.drinksIntro":
       "Wines by the glass and bottle, apéritifs, and pairings — our list evolves with the cellar and the seasons.",
     "page.menu.foodIntro":
       "A rotating snapshot of how we cook — for this week’s set lunch menu, open Lunch.",
-    "page.menu.brunchIntro":
-      "Weekend brunch — pastries, eggs, and lighter plates. Times and dishes may change with the season.",
-    "page.menu.alacarteIntro":
+    "page.menu.dinnerIntro":
       "Order by course or choose the chef’s tasting — ingredients follow the market and the kitchen’s daily prep.",
     "page.menu.seeMenu": "See menu",
     "page.menu.scheduleLunch": "Mon–Fri · 11:00–15:00",
-    "page.menu.scheduleAlacarte": "Mon–Sat · 15:00–22:00",
-    "page.menu.scheduleBrunch": "Sat–Sun · 10:00–14:00",
+    "page.menu.scheduleDinner": "Mon–Sat · 15:00–22:00",
     "page.menu.scheduleDrinks": "Daily · 12:00–00:00",
     "page.menu.weekly": "Lunch",
     "page.menu.weeklyHeading": "Lunch",
@@ -298,12 +281,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.preLaunchTitle": "Menus publish on opening night",
     "page.menu.preLaunchBody":
       "All our menus go live here on 14 May — the same evening we raise the curtain in Torrevieja.",
-    "page.menu.countdownHeading": "Menus go live in",
-    "page.menu.countdownDays": "Days",
-    "page.menu.countdownHours": "Hours",
-    "page.menu.countdownMinutes": "Minutes",
-    "page.menu.countdownSeconds": "Seconds",
-    "page.menu.countdownLive": "Days remaining until menus are published",
     "page.menu.subnavAria": "Menu sections",
     "page.events.title": "Events",
     "page.events.heroSubtitle":
@@ -495,7 +472,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "En El Portero, sabores de Perú, España y Suecia se encuentran en un ambiente cálido y lleno de vida de dinner club, con el Mediterráneo a un saque de banda.",
     "page.home.heroTaglineMobile":
       "Perú, España y Suecia — dinner club en Torrevieja.\nMediterráneo a un paso.",
-    "page.home.countdownLabel": "Apertura",
     "page.comingSoon.title": "Próximamente",
     "page.comingSoon.subtitle": "EN PROCESO",
     "page.comingSoon.heroAside":
@@ -504,24 +480,19 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.title": "Nuestras cartas",
     "page.menu.food": "Selección",
     "page.menu.drinks": "Bebidas",
-    "page.menu.brunch": "Brunch",
-    "page.menu.alacarte": "A la carta",
+    "page.menu.dinner": "Cena",
     "page.menu.foodHeading": "Selección de temporada",
     "page.menu.drinksHeading": "Carta de bebidas",
-    "page.menu.brunchHeading": "Brunch",
-    "page.menu.alacarteHeading": "A la carta",
+    "page.menu.dinnerHeading": "Cena",
     "page.menu.drinksIntro":
       "Vinos por copa y botella, aperitivos y maridajes — la carta evoluciona con la bodega y la temporada.",
     "page.menu.foodIntro":
       "Una muestra viva de nuestra cocina — para el menú de almuerzo de la semana, abrid Almuerzo.",
-    "page.menu.brunchIntro":
-      "Brunch de fin de semana — bollería, huevos y platos ligeros. Horarios y carta pueden variar con la temporada.",
-    "page.menu.alacarteIntro":
+    "page.menu.dinnerIntro":
       "Elige por platos o el menú degustación del chef — el producto sigue el mercado y el día a día de cocina.",
     "page.menu.seeMenu": "Ver carta",
     "page.menu.scheduleLunch": "Lun–Vie · 11:00–15:00",
-    "page.menu.scheduleAlacarte": "Lun–Sáb · 15:00–22:00",
-    "page.menu.scheduleBrunch": "Sáb–Dom · 10:00–14:00",
+    "page.menu.scheduleDinner": "Lun–Sáb · 15:00–22:00",
     "page.menu.scheduleDrinks": "Diario · 12:00–00:00",
     "page.menu.weekly": "Almuerzo",
     "page.menu.weeklyHeading": "Almuerzo",
@@ -543,12 +514,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.preLaunchTitle": "Las cartas se publican el día de la apertura",
     "page.menu.preLaunchBody":
       "Todas nuestras cartas se publican aquí el 14 de mayo — la misma noche del estreno en Torrevieja.",
-    "page.menu.countdownHeading": "Publicación de cartas en",
-    "page.menu.countdownDays": "Días",
-    "page.menu.countdownHours": "Horas",
-    "page.menu.countdownMinutes": "Minutos",
-    "page.menu.countdownSeconds": "Segundos",
-    "page.menu.countdownLive": "Días restantes hasta publicar las cartas",
     "page.menu.subnavAria": "Secciones de la carta",
     "page.events.title": "Eventos",
     "page.events.heroSubtitle":
@@ -739,7 +704,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "På El Portero möts smaker från Peru, Spanien och Sverige i en varm och levande dinner club-atmosfär, med Medelhavet bara ett inkast bort.",
     "page.home.heroTaglineMobile":
       "Peru, Spanien & Sverige — dinner club i Torrevieja.\nMedelhavet nära.",
-    "page.home.countdownLabel": "Öppning",
     "page.comingSoon.title": "Snart öppnar vi",
     "page.comingSoon.subtitle": "UNDER ARBETE",
     "page.comingSoon.heroAside":
@@ -748,24 +712,19 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.title": "Våra menyer",
     "page.menu.food": "Höjdpunkter",
     "page.menu.drinks": "Dryck",
-    "page.menu.brunch": "Brunch",
-    "page.menu.alacarte": "À la carte",
+    "page.menu.dinner": "Middag",
     "page.menu.foodHeading": "Säsongens höjdpunkter",
     "page.menu.drinksHeading": "Dryckesmeny",
-    "page.menu.brunchHeading": "Brunchmeny",
-    "page.menu.alacarteHeading": "À la carte",
+    "page.menu.dinnerHeading": "Middag",
     "page.menu.drinksIntro":
       "Vin på glas och flaska, aperitifer och maridage — listan följer vinkällaren och säsongen.",
     "page.menu.foodIntro":
       "Ett levande urval av vårt kök — veckans lunchmeny finns under Lunch.",
-    "page.menu.brunchIntro":
-      "Helgbrunch — bakverk, ägg och lättare rätter. Tider och utbud kan ändras med säsongen.",
-    "page.menu.alacarteIntro":
+    "page.menu.dinnerIntro":
       "Välj rätter fristående eller kockens avsmakning — råvaror följer marknad och kökets dagsform.",
     "page.menu.seeMenu": "Se menyn",
     "page.menu.scheduleLunch": "Mån–Fre · 11:00–15:00",
-    "page.menu.scheduleAlacarte": "Mån–Lör · 15:00–22:00",
-    "page.menu.scheduleBrunch": "Lör–Sön · 10:00–14:00",
+    "page.menu.scheduleDinner": "Mån–Lör · 15:00–22:00",
     "page.menu.scheduleDrinks": "Dagligen · 12:00–00:00",
     "page.menu.weekly": "Lunch",
     "page.menu.weeklyHeading": "Lunch",
@@ -786,12 +745,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.menu.preLaunchTitle": "Menyerna publiceras på öppningskvällen",
     "page.menu.preLaunchBody":
       "Alla våra menyer släpps här den 14 maj — samma kväll som vi drar upp ridån i Torrevieja.",
-    "page.menu.countdownHeading": "Menyerna publiceras om",
-    "page.menu.countdownDays": "Dagar",
-    "page.menu.countdownHours": "Timmar",
-    "page.menu.countdownMinutes": "Minuter",
-    "page.menu.countdownSeconds": "Sekunder",
-    "page.menu.countdownLive": "Dagar kvar tills menyerna publiceras",
     "page.menu.subnavAria": "Menydelar",
     "page.events.title": "Events",
     "page.events.heroSubtitle":

@@ -22,8 +22,7 @@ import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
 import { SimpleMenuCategoryGrid } from "@/components/menu/SimpleMenuCategoryGrid";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import type { MenuSplitKey } from "@/data/menuSplitPanels";
-import { alacarteMenuCategories } from "@/data/alacarteMenu";
-import { brunchMenuCategories } from "@/data/brunchMenu";
+import { dinnerMenuCategories } from "@/data/dinnerMenu";
 import { drinksMenuCategories } from "@/data/drinksMenu";
 import type { MenuCategoryData } from "@/data/menuTypes";
 import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
@@ -37,12 +36,11 @@ type DemoHomePageProps = {
   heroVideos: HeroMontageClip[];
 };
 
-const MENU_SPLIT_KEYS: MenuSplitKey[] = ["alacarte", "brunch", "drinks"];
+const MENU_SPLIT_KEYS: MenuSplitKey[] = ["dinner", "drinks"];
 
 const previewCategories: Record<MenuSplitKey, MenuCategoryData[]> = {
   drinks: drinksMenuCategories,
-  brunch: brunchMenuCategories,
-  alacarte: alacarteMenuCategories,
+  dinner: dinnerMenuCategories,
 };
 
 /**
@@ -54,13 +52,11 @@ export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
   const [expandedMenu, setExpandedMenu] = useState<MenuSplitKey | null>(null);
   const menuPreviewRef = useRef<HTMLDivElement>(null);
 
-  const alacarteState = useEditablePublishedMenu("alacarte");
-  const brunchState = useEditablePublishedMenu("brunch");
+  const dinnerState = useEditablePublishedMenu("dinner");
   const drinksState = useEditablePublishedMenu("drinks");
 
   function stateFor(key: MenuSplitKey) {
-    if (key === "alacarte") return alacarteState;
-    if (key === "brunch") return brunchState;
+    if (key === "dinner") return dinnerState;
     return drinksState;
   }
 
@@ -69,8 +65,7 @@ export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
     const live = Boolean(st.remote?.isPublished && st.remote.categories?.length);
     if (live && st.remote?.title?.trim()) return st.remote.title.trim();
     if (key === "drinks") return t(locale, "page.menu.drinksHeading");
-    if (key === "brunch") return t(locale, "page.menu.brunchHeading");
-    return t(locale, "page.menu.alacarteHeading");
+    return t(locale, "page.menu.dinnerHeading");
   }
 
   return (

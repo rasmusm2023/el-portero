@@ -1,6 +1,6 @@
 import type { MessageKey } from "@/i18n/strings";
 
-export type MenuSplitKey = "drinks" | "brunch" | "alacarte";
+export type MenuSplitKey = "drinks" | "dinner";
 
 export type MenuSplitPanel = {
   key: MenuSplitKey;
@@ -14,28 +14,18 @@ export type MenuSplitPanel = {
 
 const DRINKS_BG =
   "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=2400&q=80";
-const BRUNCH_BG =
-  "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=2400&q=80";
-const ALACARTE_BG =
+const DINNER_BG =
   "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2400&q=80";
 
 /** Shared config for horizontal (`MenuSplitSection`) and vertical demo (`MenuSplitSectionVertical`). */
 export const MENU_SPLIT_PANELS: MenuSplitPanel[] = [
   {
-    key: "alacarte",
-    src: ALACARTE_BG,
-    href: "/menu/alacarte",
-    labelKey: "page.menu.alacarte",
-    srKey: "page.menu.alacarteHeading",
-    scheduleKey: "page.menu.scheduleAlacarte",
-  },
-  {
-    key: "brunch",
-    src: BRUNCH_BG,
-    href: "/menu/brunch",
-    labelKey: "page.menu.brunch",
-    srKey: "page.menu.brunchHeading",
-    scheduleKey: "page.menu.scheduleBrunch",
+    key: "dinner",
+    src: DINNER_BG,
+    href: "/menu/dinner",
+    labelKey: "page.menu.dinner",
+    srKey: "page.menu.dinnerHeading",
+    scheduleKey: "page.menu.scheduleDinner",
   },
   {
     key: "drinks",

@@ -1,140 +1,116 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
 import { SimpleMenuCategoryGrid } from "@/components/menu/SimpleMenuCategoryGrid";
-import {
-  MenuSplitSection,
-  type MenuSplitKey,
-} from "@/components/sections/MenuSplitSection";
-import { alacarteMenuCategories } from "@/data/alacarteMenu";
-import { brunchMenuCategories } from "@/data/brunchMenu";
+import { AllergenLegend } from "@/components/menu/AllergenLegend";
+import { PageShell } from "@/components/layout/PageShell";
+import { dinnerMenuCategories } from "@/data/dinnerMenu";
 import { drinksMenuCategories } from "@/data/drinksMenu";
 import type { MenuCategoryData } from "@/data/menuTypes";
-import { MENUS_PUBLIC_LIVE } from "@/config/menusPublic";
 import { useEditablePublishedMenu } from "@/hooks/useEditablePublishedMenu";
+import { useMenusPublicVisibility } from "@/hooks/useMenusPublicVisibility";
 import { editableDocToSimpleCategories } from "@/lib/editableMenuDisplay";
 import { useLocale } from "@/i18n/useLocale";
-import { t } from "@/i18n/strings";
+import { t, type MessageKey } from "@/i18n/strings";
+import { isFirebaseConfigured } from "@/lib/firebase/client";
 import { MenusComingSoonPage } from "@/views/MenusComingSoonPage";
+import { MENU_TAB_NAV_CLASS } from "@/components/menu/menuPageTypography";
 
-const MENU_SPLIT_KEYS: MenuSplitKey[] = ["alacarte", "brunch", "drinks"];
+type MenuTab = "dinner" | "drinks";
 
-const previewCategories: Record<MenuSplitKey, MenuCategoryData[]> = {
+const TABS: { key: MenuTab; labelKey: MessageKey }[] = [
+  { key: "dinner", labelKey: "page.menu.dinner" },
+  { key: "drinks", labelKey: "page.menu.drinks" },
+];
+
+const previewCategories: Record<MenuTab, MenuCategoryData[]> = {
+  dinner: dinnerMenuCategories,
   drinks: drinksMenuCategories,
-  brunch: brunchMenuCategories,
-  alacarte: alacarteMenuCategories,
 };
 
 /**
- * Full-width menu cards + inline previews — first content below the site header at `/menu`.
+ * `/menu` hub. Tabbed text nav (no images) — Dinner is the default tab so the page
+ * is never empty. Switching tabs swaps the menu content inline; no route change.
  */
 export function MenusHubPage() {
   const { locale } = useLocale();
-  const [expandedMenu, setExpandedMenu] = useState<MenuSplitKey | null>(null);
-  const menuPreviewRef = useRef<HTMLDivElement>(null);
+  const [activeKey, setActiveKey] = useState<MenuTab>("dinner");
 
-  const alacarteState = useEditablePublishedMenu("alacarte");
-  const brunchState = useEditablePublishedMenu("brunch");
+  const dinnerState = useEditablePublishedMenu("dinner");
   const drinksState = useEditablePublishedMenu("drinks");
+  const visibility = useMenusPublicVisibility();
 
-  if (!MENUS_PUBLIC_LIVE) {
+  if (visibility.ready && !visibility.showFullMenu) {
     return <MenusComingSoonPage />;
   }
 
-  function stateFor(key: MenuSplitKey) {
-    if (key === "alacarte") return alacarteState;
-    if (key === "brunch") return brunchState;
+  function stateFor(key: MenuTab) {
+    if (key === "dinner") return dinnerState;
     return drinksState;
   }
 
-  function previewHeading(key: MenuSplitKey): string {
-    const st = stateFor(key);
-    const live = Boolean(st.remote?.isPublished && st.remote.categories?.length);
-    if (live && st.remote?.title?.trim()) return st.remote.title.trim();
-    if (key === "drinks") return t(locale, "page.menu.drinksHeading");
-    if (key === "brunch") return t(locale, "page.menu.brunchHeading");
-    return t(locale, "page.menu.alacarteHeading");
-  }
+  const activeState = stateFor(activeKey);
+  const activeReady = activeState.ready;
+  const showLoading = !visibility.ready || (!activeReady && isFirebaseConfigured());
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <MenuSplitSection
-        activeKey={expandedMenu}
-        onSelect={(key) => {
-          if (!MENU_SPLIT_KEYS.includes(key)) return;
-          setExpandedMenu((prev) => (prev === key ? null : key));
-        }}
+    <PageShell showDocumentHeader={false}>
+      <nav
+        aria-label={t(locale, "page.menu.subnavAria")}
+        className="mb-10 flex flex-wrap items-end justify-center gap-x-10 gap-y-3 border-b border-border pb-4 sm:gap-x-14"
       >
-        {!expandedMenu ? (
-          <div className="mx-auto w-full max-w-[var(--container-max)] pb-2 pt-6 sm:pt-8">
-            <p className="max-w-2xl text-lg text-ink-muted leading-relaxed">
-              {t(locale, "page.menu.hubHint")}
-            </p>
-          </div>
-        ) : null}
-        <AnimatePresence initial={false}>
-          {expandedMenu ? (
-            <motion.div
-              key="menu-preview"
-              ref={menuPreviewRef}
-              role="region"
-              aria-label="Menu preview"
-              className="pt-6 pb-2 sm:pt-8"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              style={{ overflow: "hidden" }}
+        {TABS.map((tab) => {
+          const active = tab.key === activeKey;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveKey(tab.key)}
+              aria-pressed={active}
+              data-active={active}
+              className={MENU_TAB_NAV_CLASS}
             >
-              <div className="mx-auto w-full max-w-[var(--container-max)]">
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.div
-                    key={expandedMenu}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 8 }}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <div className="min-w-0">
-                      <h2 className="font-hero-title text-[clamp(1.75rem,4.5vw,3rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
-                        {previewHeading(expandedMenu)}
-                      </h2>
-                    </div>
+              {t(locale, tab.labelKey)}
+            </button>
+          );
+        })}
+      </nav>
 
-                    <motion.div
-                      transition={{
-                        duration: 0.55,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                      className="mt-10"
-                    >
-                      {(() => {
-                        const st = stateFor(expandedMenu);
-                        const live = Boolean(st.remote?.isPublished && st.remote.categories?.length);
-                        if (live && st.remote) {
-                          return (
-                            <SimpleMenuCategoryGrid
-                              categories={editableDocToSimpleCategories(st.remote)}
-                            />
-                          );
-                        }
-                        return (
-                          <MenuCategoryGrid
-                            categories={previewCategories[expandedMenu]}
-                            locale={locale}
-                          />
-                        );
-                      })()}
-                    </motion.div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          ) : null}
+      {showLoading ? (
+        <p className="mb-8 text-sm text-ink-muted">Loading…</p>
+      ) : (
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activeKey}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {(() => {
+              const live = Boolean(
+                activeState.remote?.isPublished && activeState.remote.categories?.length,
+              );
+              if (live && activeState.remote) {
+                return (
+                  <SimpleMenuCategoryGrid
+                    categories={editableDocToSimpleCategories(activeState.remote)}
+                  />
+                );
+              }
+              return (
+                <MenuCategoryGrid
+                  categories={previewCategories[activeKey]}
+                  locale={locale}
+                />
+              );
+            })()}
+            {activeKey !== "drinks" ? <AllergenLegend /> : null}
+          </motion.div>
         </AnimatePresence>
-      </MenuSplitSection>
-    </div>
+      )}
+    </PageShell>
   );
 }

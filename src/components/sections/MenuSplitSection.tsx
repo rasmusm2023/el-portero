@@ -279,7 +279,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       srKey={panel.srKey}
                       scheduleKey={panel.scheduleKey}
                       seeMenu={seeMenu}
-                      titleSingleLine={panel.key === "alacarte"}
+                      titleSingleLine={panel.key === "dinner"}
                       selected={isSelected}
                     />
                   </>
@@ -329,7 +329,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                       srKey={panel.srKey}
                       scheduleKey={panel.scheduleKey}
                       seeMenu={seeMenu}
-                      titleSingleLine={panel.key === "alacarte"}
+                      titleSingleLine={panel.key === "dinner"}
                       selected={isSelected}
                     />
                   </>

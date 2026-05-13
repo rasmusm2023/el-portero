@@ -1,7 +1,8 @@
 import {
-  Anton,
   Cormorant_Garamond,
+  Courier_Prime,
   Dancing_Script,
+  Figtree,
   Jaro,
   Plus_Jakarta_Sans,
 } from "next/font/google";
@@ -47,11 +48,20 @@ const fontLogo = Jaro({
   display: "swap",
 });
 
-/** Ultra-heavy display for hero countdown numerals (single weight; reads as “black”). */
-const fontCountdown = Anton({
+/** Menu typography: typewriter face for section titles, dish names, descriptions. */
+const fontMenuType = Courier_Prime({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-countdown-heavy",
+  weight: ["400", "700"],
+  style: ["normal"],
+  variable: "--font-courier",
+  display: "swap",
+});
+
+/** Menu typography: clean geometric sans for prices (semibold). */
+const fontMenuPrice = Figtree({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-figtree",
   display: "swap",
 });
 
@@ -75,7 +85,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontCountdown.variable} ${fontSignature.variable}`}
+      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontSignature.variable} ${fontMenuType.variable} ${fontMenuPrice.variable}`}
     >
       <body>
         <AppProviders>

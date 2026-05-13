@@ -13,7 +13,7 @@ export function MenusComingSoonPage() {
   const { locale } = useLocale();
 
   return (
-    <PageHeroSection heroImages={[]} showOpeningCountdown>
+    <PageHeroSection heroImages={[]}>
       <div className="mx-auto w-full max-w-3xl pt-[min(34vh,13.5rem)] sm:pt-[min(36vh,15rem)]">
         <h1 className="font-hero-title text-[clamp(2.25rem,6vw,4.25rem)] font-normal leading-[1.05] tracking-[0.14em] text-paper uppercase">
           {t(locale, "page.menu.comingSoonTitle")}

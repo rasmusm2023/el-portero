@@ -27,7 +27,6 @@ export function HomePage({ heroVideos }: HomePageProps) {
       <PageHeroSection
         heroImages={[]}
         heroVideos={heroVideos}
-        showOpeningCountdown
         bottomCta={
           <Link
             href="/menu"

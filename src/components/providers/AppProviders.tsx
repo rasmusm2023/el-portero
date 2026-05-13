@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+import { AdminAuthProvider } from "@/components/admin/AdminAuthProvider";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
 
 export function AppProviders({ children }: { children: ReactNode }) {
@@ -17,5 +18,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("unhandledrejection", onUnhandledRejection);
   }, []);
 
-  return <LocaleProvider>{children}</LocaleProvider>;
+  /**
+   * AdminAuthProvider lives at the root so non-admin chrome (site header sign-out,
+   * coming-soon override on /menu/*) can react to the admin session. The admin layout
+   * no longer needs its own provider — AdminGate just consumes the same context.
+   */
+  return (
+    <LocaleProvider>
+      <AdminAuthProvider>{children}</AdminAuthProvider>
+    </LocaleProvider>
+  );
 }
