@@ -3,41 +3,39 @@
 import { MenuPager } from "@/components/menu/MenuPager";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
 import { SimpleMenuCategoryGrid } from "@/components/menu/SimpleMenuCategoryGrid";
+import { AllergenLegend } from "@/components/menu/AllergenLegend";
 import { PageShell } from "@/components/layout/PageShell";
-import { MENUS_PUBLIC_LIVE } from "@/config/menusPublic";
-import { alacarteMenuCategories } from "@/data/alacarteMenu";
+import { dinnerMenuCategories } from "@/data/dinnerMenu";
 import { useLocale } from "@/i18n/useLocale";
-import { t } from "@/i18n/strings";
 import { useEditablePublishedMenu } from "@/hooks/useEditablePublishedMenu";
+import { useMenusPublicVisibility } from "@/hooks/useMenusPublicVisibility";
 import { editableDocToSimpleCategories } from "@/lib/editableMenuDisplay";
 import { isFirebaseConfigured } from "@/lib/firebase/client";
 import { MenusComingSoonSubpage } from "@/views/MenusComingSoonSubpage";
 
-export function AlacarteMenuPage() {
+export function DinnerMenuPage() {
   const { locale } = useLocale();
-  const { remote, ready } = useEditablePublishedMenu("alacarte");
+  const { remote, ready } = useEditablePublishedMenu("dinner");
+  const visibility = useMenusPublicVisibility();
 
-  if (!MENUS_PUBLIC_LIVE) {
+  if (visibility.ready && !visibility.showFullMenu) {
     return <MenusComingSoonSubpage />;
   }
   const publishedLive = Boolean(remote?.isPublished && remote.categories?.length);
   const simple = remote && publishedLive ? editableDocToSimpleCategories(remote) : null;
-  const shellTitle =
-    publishedLive && remote?.title?.trim()
-      ? remote.title.trim()
-      : t(locale, "page.menu.title");
+
+  const showLoading = !visibility.ready || (!ready && isFirebaseConfigured());
 
   return (
-    <PageShell title={shellTitle} titleVariant="hero">
+    <PageShell showDocumentHeader={false}>
       <MenuPager />
-      {!ready && isFirebaseConfigured() ? (
-        <p className="mb-8 text-sm text-ink-muted">Loading…</p>
-      ) : null}
-      {ready && simple ? (
+      {showLoading ? <p className="mb-8 text-sm text-ink-muted">Loading…</p> : null}
+      {!showLoading && simple ? (
         <SimpleMenuCategoryGrid categories={simple} />
-      ) : ready ? (
-        <MenuCategoryGrid categories={alacarteMenuCategories} locale={locale} />
+      ) : !showLoading ? (
+        <MenuCategoryGrid categories={dinnerMenuCategories} locale={locale} />
       ) : null}
+      {!showLoading ? <AllergenLegend /> : null}
     </PageShell>
   );
 }

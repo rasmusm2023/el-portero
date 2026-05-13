@@ -32,7 +32,7 @@ export type DietaryTagOption = {
  * Icons: vegan = sprout, vegetarian = leafy green, gluten-free = wheat-off,
  * lactose-free = milk-off (“no milk”).
  */
-/** À la carte + brunch: labels guests expect on food. */
+/** Dinner: labels guests expect on food. */
 export const FOOD_MENU_DIETARY_TAG_IDS: readonly DietaryTagId[] = [
   "vegan",
   "vegetarian",

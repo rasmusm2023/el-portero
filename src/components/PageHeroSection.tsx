@@ -2,12 +2,10 @@
 
 import type { ReactNode, RefObject } from "react";
 import { useEffect, useRef } from "react";
-import { HeroOpeningCountdown } from "@/components/HeroOpeningCountdown";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
 import { HeroVideoMontage } from "@/components/HeroVideoMontage";
 import type { HeroMontageClip } from "@/lib/heroVideos";
 import { BUNNY_IMG } from "@/lib/bunnyMedia";
-import { OPENING_COUNTDOWN_END } from "@/lib/openingCountdown";
 
 /** Scroll progress 0→1 as the user scrolls through / past the hero (drives object-position). */
 function heroScrollShift(containerRef: RefObject<HTMLElement | null>): number {
@@ -152,8 +150,6 @@ type PageHeroSectionProps = {
    */
   heroVideos?: HeroMontageClip[];
   children: ReactNode;
-  /** Large opening countdown (May 14); sits above video, below logo. */
-  showOpeningCountdown?: boolean;
   /** Centered action(s) toward the lower third of the hero (e.g. primary CTA). */
   bottomCta?: ReactNode;
   /** Optional bottom-left block (e.g. home tagline). */
@@ -176,7 +172,6 @@ export function PageHeroSection({
   bottomCta,
   bottomAside,
   accentVideo = false,
-  showOpeningCountdown = false,
 }: PageHeroSectionProps) {
   const heroSectionRef = useRef<HTMLElement>(null);
   const useVideoBg = heroVideos != null && heroVideos.length > 0;
@@ -201,7 +196,7 @@ export function PageHeroSection({
               fit={heroImageFit}
             />
           )}
-          {(hasHeroMedia || showOpeningCountdown) && (
+          {hasHeroMedia && (
             <div className="absolute inset-0 z-[1] bg-ink/50" aria-hidden />
           )}
           <div
@@ -209,9 +204,6 @@ export function PageHeroSection({
             style={heroRadialOverlayStyle}
             aria-hidden
           />
-          {showOpeningCountdown ? (
-            <HeroOpeningCountdown targetDate={OPENING_COUNTDOWN_END} />
-          ) : null}
           {hasHeroMedia && accentVideo ? (
             <HeroAccentImage containerRef={heroSectionRef} />
           ) : null}

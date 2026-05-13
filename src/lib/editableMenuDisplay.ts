@@ -6,9 +6,12 @@ export function editableDocToSimpleCategories(doc: EditableMenuDoc): SimpleMenuC
     title: c.title,
     items: c.items.map((it) => ({
       name: it.name,
+      nameExtension: it.nameExtension,
       description: it.description,
       price: it.price,
+      priceOptions: it.priceOptions,
       dietaryTagIds: it.dietaryTagIds,
+      allergenIds: it.allergenIds,
     })),
   }));
 }

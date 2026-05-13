@@ -12,9 +12,12 @@ export function staticCategoriesToEditableDraft(categories: MenuCategoryData[]):
       items: cat.items.map((it, ii) => ({
         position: ii,
         name: it.name.en,
+        nameExtension: "",
         description: it.description.en,
         price: it.priceEur === 0 ? "" : String(it.priceEur),
+        priceOptions: [],
         dietaryTagIds: [],
+        allergenIds: [],
       })),
     })),
   };

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
+import { HeaderAdminSignOut } from "@/components/admin/HeaderAdminSignOut";
 import { INSTAGRAM_PROFILE_URL } from "@/config/site";
 import { LAUNCH_UI_INSTAGRAM } from "@/config/launchUi";
 import { t, type NavKey } from "@/i18n/strings";
@@ -298,7 +299,8 @@ export function SiteHeader() {
                 />
               </Link>
             </div>
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-end gap-2">
+              <HeaderAdminSignOut variant="desktop" />
               <LanguageSwitcher variant="onDark" />
             </div>
           </div>
@@ -397,6 +399,13 @@ export function SiteHeader() {
                   </motion.div>
                 ))}
               </motion.nav>
+
+              {/* Mobile admin sign-out: renders nothing for non-admins, pinned to the bottom for admins. */}
+              <div className="px-6 pb-8 sm:px-10 sm:pb-10">
+                <div className="mx-auto w-full max-w-sm">
+                  <HeaderAdminSignOut variant="mobile" onAfterSignOut={closeMenu} />
+                </div>
+              </div>
 
               <div className="pointer-events-none absolute top-4 right-4 z-[140] sm:top-6 sm:right-6">
                 <div className="pointer-events-auto">

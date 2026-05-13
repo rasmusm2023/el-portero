@@ -11,7 +11,12 @@ import {
   normalizeDietaryTagIds,
   type DietaryTagId,
 } from "@/lib/dietaryTags";
-import type { EditableMenuDoc, EditableMenuKind } from "@/lib/editableMenuTypes";
+import { normalizeAllergenIds } from "@/lib/menuAllergens";
+import {
+  normalizePriceOptions,
+  type EditableMenuDoc,
+  type EditableMenuKind,
+} from "@/lib/editableMenuTypes";
 
 export const EDITABLE_MENUS_COLLECTION = "editableMenus";
 
@@ -47,12 +52,18 @@ function normalizeDoc(raw: Record<string, unknown> | undefined): EditableMenuDoc
     const items = itemsIn.map((it, ii) => {
       const item = it as Record<string, unknown>;
       const dietaryTagIds = normalizeItemDietaryTags(item);
+      const allergenIds = normalizeAllergenIds(item.allergenIds);
+      const priceOptions = normalizePriceOptions(item.priceOptions);
       return {
         position: typeof item.position === "number" ? item.position : ii,
         name: typeof item.name === "string" ? item.name : "",
+        nameExtension:
+          typeof item.nameExtension === "string" ? item.nameExtension.trim() : "",
         description: typeof item.description === "string" ? item.description : "",
         price: typeof item.price === "string" ? item.price : "",
+        priceOptions,
         dietaryTagIds,
+        allergenIds,
       };
     });
     items.sort((a, b) => a.position - b.position);

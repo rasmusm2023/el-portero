@@ -1,0 +1,47 @@
+# title: Dinner
+section,name,description,price,dietary_tags,allergens
+
+SNACKS,Olives,With our own marinade of various herbs and garlic.,3,,
+SNACKS,Chips with Dip CHIMICHILLI,Crispy chips served with our signature Chimichilli dip.,3,,7;10;12
+SNACKS,Roasted Nuts,"Roasted nut mix based on el PORTERO'S own recipe. Macadamia, pistachio, hazelnuts, almonds, and roasted corn.",4,,3;6;7
+SNACKS,Fries with a Little Extra,"Homemade fries topped with pork belly, manchego cheese, and truffle aioli.",9,,3;10;12
+
+STARTERS,Garlic Shrimp "Estilo del Portero",Garlic shrimp prepared in el PORTERO’s style.,18,,1;2
+STARTERS,Tuna Tiradito with "Nikkei" Sauce,Sliced raw tuna served with a Japanese-Peruvian Nikkei sauce.,14,,4;9;12
+STARTERS,"Ceviche, Peruvian style in ""Leche de Tigre""",Peruvian style ceviche marinated in citrus-based leche de tigre.,16,,4;7;9;12
+STARTERS,The Goalkeeper's Charcuteria,"Pata negra (100% Ibérico ham), manchego cheese, fried sourdough, and white bean puree.",20,,1;9;12;13
+STARTERS,Argentinian Pride,Grilled entrana (skirt steak) with chimichurri and mango salad.,14,,8;9;12
+STARTERS,Toast Skagen,Traditional Swedish shrimp salad on toasted bread.,15,,1;2;3;9;10;12
+STARTERS,Vendace Roe Toast,Bleak roe served on toast with traditional accompaniments.,14,,1;3;4;7;12
+STARTERS,“Surf AND Turf” Beef Tartare,Beef tartare with diced scallops and crispy serrano ham.,15,,3;6;8;9;10;11;12;14
+
+MAIN COURSES,Shrimp Sandwich a'la Gothenburg,A classic large shrimp sandwich styled after the city of Gothenburg.,22,,1;2;3;9;10;12
+MAIN COURSES,Wallenbergare,Traditional Swedish veal patties served with peas and lingonberries.,28,,1;3;7;12
+MAIN COURSES,Skomakarlåda,"Sirloin steak served with red wine sauce, mashed potatoes, and leeks.",30,,7;12
+MAIN COURSES,Salmon Loin,"Seared salmon loin with fried potatoes, tossed vegetables, and smoked salmon aioli.",28,,3;4;9;12
+MAIN COURSES,Churrasco a lo macho,"Grilled entrecote served with Peruvian rice, sautéed onions, bell peppers, and el PORTERO'S gravy.",29,,6;9;12
+MAIN COURSES,Pescado en salsa marisco,White fish fillet served in a rich seafood-based sauce.,26,,2;4;9;12
+MAIN COURSES,"PORTERO Selección Ibérico, 800g","A selection of our finest high-quality Ibérico cuts, grilled to perfection and served to be shared. Share 2-4 people.",79,,3;7;9;12
+
+SALADS & PASTA,Quinoa Salad,"Salad with quinoa, beans, leeks, tomatoes, bell peppers, and chili mango dressing. Add-ons: Chicken +€2 or hand-peeled shrimp +€4.",16,,12
+SALADS & PASTA,Frutti di Mare,Seafood pasta with delicacies from the sea.,22,,1;2;3;4;6;9;12;14
+SALADS & PASTA,Truffle Pasta,Mixed mushrooms in a rich sauce topped with fresh truffle.,18,,1;3;6;7;9;10;12
+
+KIDS MENU,Hamburger,90g house-ground beef with the goalkeeper's fries and homemade ketchup.,9,,1;3;9;12
+KIDS MENU,Bolognese,Homemade beef bolognese sauce with tagliatelle.,9,,1;3;6;9;12
+KIDS MENU,Chicken Bits,Fried chicken with the goalkeeper's fries and homemade ketchup.,9,,9;12
+KIDS MENU,Cleo’s Choice,"Homemade marshmallows with vanilla ice cream, caramel sauce, sprinkles, and fresh berries. Ask the staff for more ice cream flavors.",9,,
+
+SIDES,Smoked Tomato Salad,,3,,
+SIDES,Sun-dried Tomato & Basil Spread,,4,,
+SIDES,Bearnaise (Homemade),,3,,
+SIDES,White Bean Puree,,3,,
+SIDES,Ketchup (Homemade),,2,,
+SIDES,The Goalkeeper's “Triple Fried” Fries,Baked in roasted beef tallow and fried to order.,5,,
+
+DESSERTS,Brownie,"With a pistachio glaze, whipped cream, and strawberries",8,,1;3;7;8;12
+DESSERTS,Classic Crème Brûlée,,8,,3;7
+DESSERTS,Lime-marinated Strawberries,Served with fluffy crème anglaise foam in el PORTERO’s style.,8,,3;7;12
+DESSERTS,Ice Cream Scoops with Topping,"Two scoops of ice cream served with or without topping (raspberry sauce and salted caramel sauce). Ask the staff for today's flavors.",6,,3;7
+DESSERTS,The Goalkeeper's Truffles,Two homemade truffles. Ask the staff for this week's flavors.,4,,7;12
+DESSERTS,GOLDEN BALL,"Chocolate, vanilla, salted caramel, and cognac presented in several different textures. el PORTERO’s interpretation of the Swedish football award “Guldbollen.”",24,,1;3;7;8

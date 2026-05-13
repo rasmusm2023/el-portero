@@ -1,0 +1,85 @@
+# title: Drinks
+# ---------------------------------------------------------------------------
+# Price column reference:
+#   Single price          → 5
+#   Two sizes (pipe `|`)  → Small=4|Large=6
+#                           33cl=4.5|50cl=6.5
+#                           Glass=7|Bottle=32
+#   You can add as many sizes as you need (pipe-separated, Label=Price each).
+#   Labels are free text — pick what reads cleanly on the printed menu.
+#
+# CSV gotcha: any description that contains a comma MUST be wrapped in
+# "double quotes" — otherwise the parser splits the row mid-sentence.
+# ---------------------------------------------------------------------------
+section,name,description,price,dietary_tags,allergens
+
+CHAMPAGNE SELECTION,Louis Roederer,"An elegant and well-balanced champagne with classic French finesse. Fresh notes of citrus, green apples, and brioche meet a soft and sophisticated finish. A timeless choice for long dinners and special moments.",Bottle=90,,
+CHAMPAGNE SELECTION,Moët & Chandon Ice Impérial,"Created to be enjoyed over ice. Fruity, lively, and modern with notes of tropical fruit, caramel, and fresh citrus. Perfect for late nights and festive atmospheres in true el PORTERO spirit.",Bottle=99,,
+CHAMPAGNE SELECTION,Moët & Chandon N.I.R,"Nectar Impérial Rosé in its most exclusive night version. Intense, sensual, and glamorous with deep notes of red berries, exotic fruits, and an elegant sweetness.",Bottle=129,,
+CHAMPAGNE SELECTION,Dom Pérignon Vintage,"A masterpiece of precision and craftsmanship. Complex and silky with layers of white flowers, citrus, roasted nuts, and minerality. For the big moments where only the best is enough.",Bottle=279,,
+CHAMPAGNE SELECTION,Dom Pérignon Rosé,"Exceptional, powerful, and seductive. Intense notes of raspberry, dark berries, and subtle spiciness meet Dom Pérignon’s iconic elegance. A champagne for unforgettable nights.",Bottle=499,,
+
+CERVEZAS,Heineken (Draught),Crisp premium lager.,Small=3|Large=4.50,,
+CERVEZAS,Águila Dorada (Draught),Classic Spanish lager.,Small=3|Large=5,,
+CERVEZAS,Heineken Lager,,Bottle=2.20,,
+CERVEZAS,Heineken 0.0 (Alcohol-free),,Bottle=3.50,alcoholFree,
+CERVEZAS,Sol,Mexican lager.,Bottle=4,,
+CERVEZAS,Desperados Original,Tequila flavored beer.,Bottle=3.50,,
+CERVEZAS,Desperados Mojito,Mojito flavored beer.,Bottle=3.50,,
+CERVEZAS,Amstel Tostada 0.0 (Alcohol-free),Toasted non-alcoholic beer.,Bottle=3,alcoholFree,
+CERVEZAS,Cruzcampo (Gluten-free),,Bottle=3.50,glutenFree,
+CERVEZAS,Águila Sin Filtrar 0.0 (Alcohol-free),Unfiltered non-alcoholic lager.,Bottle=4.50,alcoholFree,
+
+CIDER,Ladrón de Manzana,Crisp and refreshing apple cider.,Bottle=4,,
+CIDER,Ladrón de Verano (Tinto de Verano Limón),Red wine spritzer with a touch of lemon.,Bottle=3,,
+
+SIGNATURE COCKTAILS,Kontiki,"Norwegian aquavit, pisco, orgeat, lemon, and pineapple juice. A tropical and elegant cocktail inspired by Thor Heyerdahl’s legendary expedition.",12,,3
+SIGNATURE COCKTAILS,Göteblu,"Pisco, limoncello, blue curaçao, and lime juice. Vibrant citrus meets tropical notes in a cocktail with electric character.",11,,
+SIGNATURE COCKTAILS,Gröna Lund,"Limoncello, basil syrup, lime juice, and egg white. Fresh, green, and summery with a silky texture and subtle elegance.",11,,3
+SIGNATURE COCKTAILS,El Chirulín,"Pisco, cinnamon syrup, and grapefruit juice. Fruity and lightly spiced with a warm character.",10,,
+SIGNATURE COCKTAILS,Pisco Sour,"Pisco, citrus, and egg white creating a silky and elegant classic.",10,,3
+SIGNATURE COCKTAILS,Humo,"Smoked whisky, maraschino liqueur, lime juice, and Peychaud’s bitters. Dark, smoky, and sophisticated.",11,,
+SIGNATURE COCKTAILS,Rojo Matador,"Pisco, gin, lime juice, ginger syrup, and beetroot syrup. Powerful and colorful with fresh heat and elegant depth.",11,,
+SIGNATURE COCKTAILS,White Dragon,"Vodka, lychee liqueur, lemon, and chili syrup. Exotic, sensual, and elegant with a subtle heat.",11,,
+SIGNATURE COCKTAILS,La Vie En Rose,"Gin, lime juice, syrup, and egg white. Topped with dried raspberries for a romantic and soft finish.",10,,3
+SIGNATURE COCKTAILS,Taste Of Samba,"Limoncello, cachaça, passion fruit, lime, and grenadine. Topped with mango juice for a tropical explosion of Brazilian energy.",12,,
+
+CLÁSICOS,Sangría,"An elegant and fruity Spanish classic with flavors of sun-ripened fruits, citrus, and red wine.",8,,
+CLÁSICOS,Mojito Clásico,"Rum, fresh lime, mint, and soda water in perfect harmony.",9,,
+CLÁSICOS,Mojito de Sabores,"A tropical twist on the Cuban classic. Choose between strawberry, raspberry, passion fruit, coconut, or lychee.",10,,
+CLÁSICOS,Caipirinha,"Cachaça, fresh lime, and raw sugar. Fresh, powerful, and vibrant.",9,,
+CLÁSICOS,Pisco Sour,"Pisco, citrus, and egg white creating a silky and elegant cocktail.",10,,3
+CLÁSICOS,Negroni,"Gin, vermouth, and Campari in a perfectly balanced classic.",10,,
+CLÁSICOS,Gin & Tonic,"Premium gin, tonic, and carefully selected garnishes for maximum elegance.",9,,
+CLÁSICOS,Margarita,"Tequila, lime, and orange liqueur with a perfectly salted rim.",9,,
+CLÁSICOS,Old Fashioned,"Whiskey, bitters, and sugar with deep notes and an elegant finish.",10,,
+CLÁSICOS,Bloody Mary,"Vodka, tomato juice, spices, and citrus. Bold and powerful.",9,,
+
+COFFEE COCKTAILS,Mammelina,"Midori, crème de banane, and Malibu. Topped with whipped coconut cream and dried pineapple.",12,,
+COFFEE COCKTAILS,El Port-ero,"Port wine, dark rum, espresso, and vanilla. Served with egg yolk for an even smoother and richer experience.",11,,3
+COFFEE COCKTAILS,Espresso Martini (el PORTERO Signature Recipe),"Espresso, vodka, and coffee liqueur in our own perfectly balanced version.",10,,
+COFFEE COCKTAILS,Irish Coffee,"Coffee, whiskey, and soft whipped cream. A timeless classic.",10,,7
+COFFEE COCKTAILS,Kaffe Karlsson,"Coffee, liqueur, and cream with a round and warm character.",10,,7
+
+CAFÉ & TE,Café Solo,An intense and classic Spanish espresso with a rich aroma and bold flavor.,2.20,,
+CAFÉ & TE,Americano,A smoother espresso with hot water for a round and elegant coffee experience.,2.20,,
+CAFÉ & TE,Café con Leche,Perfectly balanced espresso with smooth steamed milk in a classic Spanish style.,2.60,,7
+CAFÉ & TE,Café Bombón,A luxurious combination of espresso and sweet condensed milk with a velvety finish.,2.80,,7
+CAFÉ & TE,Capuccino,Creamy milk foam meets intense espresso topped with a touch of cocoa.,3.20,,7
+CAFÉ & TE,Café Latte,Soft and silky with extra steamed milk for a sophisticated coffee experience.,3.20,,7
+CAFÉ & TE,Café Carajillo,A Spanish favorite where espresso meets a warm touch of liqueur for a deep and bold profile.,4,,
+CAFÉ & TE,Infusiones,A selection of carefully curated teas and infusions for calm and elegant moments.,2.20,,
+
+LÄSK & JUICE,Coca-Cola,,3,,
+LÄSK & JUICE,Fanta,,3,,
+LÄSK & JUICE,Sprite,,3,,
+LÄSK & JUICE,Coca-Cola Zero,,3,,
+LÄSK & JUICE,Pepsi Max,,3,,
+LÄSK & JUICE,Numen Premium Water,,2.50,,
+LÄSK & JUICE,Aquarius,,3,,
+LÄSK & JUICE,Aquarius Naranja,,3,,
+LÄSK & JUICE,Iced Tea,,3,,
+LÄSK & JUICE,Schweppes,,3.50,,
+LÄSK & JUICE,Apple Juice,,2.50,,
+LÄSK & JUICE,Orange Juice,,2.50,,
+LÄSK & JUICE,Pineapple Juice,,2.50,,

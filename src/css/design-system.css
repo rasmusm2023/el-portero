@@ -19,6 +19,9 @@
   --font-logo: var(--font-jaro), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-hero-title: var(--font-bricolage-grotesque), var(--font-sans);
+  /* Menu typography (digital + printed lists) */
+  --font-menu-type: var(--font-courier), ui-monospace, "Courier New", monospace;
+  --font-menu-price: var(--font-figtree), var(--font-sans);
 
   /* Type scale (modular) */
   --text-xs: 0.75rem;

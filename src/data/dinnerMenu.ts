@@ -1,7 +1,7 @@
 import type { MenuCategoryData } from "@/data/menuTypes";
 
-/** Sample à la carte — replace with CMS later. Meat sourcing and ageing called out explicitly. */
-export const alacarteMenuCategories: MenuCategoryData[] = [
+/** Sample dinner menu — replace with CMS later. Meat sourcing and ageing called out explicitly. */
+export const dinnerMenuCategories: MenuCategoryData[] = [
   {
     title: {
       en: "Chef’s selection",
@@ -24,9 +24,9 @@ export const alacarteMenuCategories: MenuCategoryData[] = [
       },
       {
         name: {
-          en: "À la carte mains",
-          es: "Principales a la carta",
-          sv: "Huvudrätter à la carte",
+          en: "Dinner mains",
+          es: "Principales de cena",
+          sv: "Huvudrätter till middag",
         },
         description: {
           en: "Choose individually — your server will walk through tonight’s beef ageing, Ibérico cuts, and whole fish.",

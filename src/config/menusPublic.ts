@@ -1,7 +1,8 @@
 /**
- * When false, public `/menu` routes show coming soon only — no à la carte / brunch / drinks
- * content from Firestore or static seed data.
+ * Master gate for the public `/menu` routes. When `true`, every visitor sees the
+ * full dinner / drinks menus. When `false`, guests see the coming-soon page and
+ * only signed-in admins get a preview (via `useMenusPublicVisibility`).
  *
- * Set to `true` when menus should be visible on the site.
+ * Flip back to `false` if we ever need to pull menus offline pre-relaunch.
  */
-export const MENUS_PUBLIC_LIVE = false;
+export const MENUS_PUBLIC_LIVE = true;
