@@ -6,7 +6,7 @@ import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
 /**
- * Standalone `/menu` hub when {@link MENUS_PUBLIC_LIVE} is false — matches the prior
+ * Standalone `/menus` hub when {@link MENUS_PUBLIC_LIVE} is false — matches the prior
  * coming-soon treatment (hero block, no menu grids or split panels).
  */
 export function MenusComingSoonPage() {

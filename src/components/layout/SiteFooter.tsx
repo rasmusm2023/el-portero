@@ -89,7 +89,7 @@ export function SiteFooter() {
                     </BookTableWidgetButton>
                   </li>
                   <li>
-                    <Link className="hover:text-paper" href="/menu">
+                    <Link className="hover:text-paper" href="/menus">
                       {t(locale, "nav.menu")}
                     </Link>
                   </li>

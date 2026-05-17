@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MenuCategoryGrid } from "@/components/menu/MenuCategoryGrid";
 import { SimpleMenuCategoryGrid } from "@/components/menu/SimpleMenuCategoryGrid";
 import { AllergenLegend } from "@/components/menu/AllergenLegend";
@@ -12,9 +12,13 @@ import type { MenuCategoryData } from "@/data/menuTypes";
 import { useEditablePublishedMenu } from "@/hooks/useEditablePublishedMenu";
 import { useMenusPublicVisibility } from "@/hooks/useMenusPublicVisibility";
 import { editableDocToSimpleCategories } from "@/lib/editableMenuDisplay";
+import { isFirebaseConfigured } from "@/lib/firebase/client";
+import {
+  isEditableMenuPublished,
+  showGuestMenuTab,
+} from "@/lib/editableMenuPublished";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
-import { isFirebaseConfigured } from "@/lib/firebase/client";
 import { MenusComingSoonPage } from "@/views/MenusComingSoonPage";
 import { MENU_TAB_NAV_CLASS } from "@/components/menu/menuPageTypography";
 
@@ -31,8 +35,8 @@ const previewCategories: Record<MenuTab, MenuCategoryData[]> = {
 };
 
 /**
- * `/menu` hub. Tabbed text nav (no images) — Dinner is the default tab so the page
- * is never empty. Switching tabs swaps the menu content inline; no route change.
+ * `/menus` hub. Tabbed text nav — only tabs for menus that are published (when Firebase
+ * is on). No static fallback for an unpublished slot. Firebase off: both tabs + seed data.
  */
 export function MenusHubPage() {
   const { locale } = useLocale();
@@ -41,6 +45,22 @@ export function MenusHubPage() {
   const dinnerState = useEditablePublishedMenu("dinner");
   const drinksState = useEditablePublishedMenu("drinks");
   const visibility = useMenusPublicVisibility();
+  const showDinner = showGuestMenuTab(dinnerState.ready, dinnerState.remote);
+  const showDrinks = showGuestMenuTab(drinksState.ready, drinksState.remote);
+  const tabs = useMemo(
+    () =>
+      TABS.filter(
+        (tab) =>
+          (tab.key !== "dinner" || showDinner) && (tab.key !== "drinks" || showDrinks),
+      ),
+    [showDinner, showDrinks],
+  );
+
+  useEffect(() => {
+    if (tabs.some((tab) => tab.key === activeKey)) return;
+    const first = tabs[0]?.key;
+    if (first) setActiveKey(first);
+  }, [tabs, activeKey]);
 
   if (visibility.ready && !visibility.showFullMenu) {
     return <MenusComingSoonPage />;
@@ -61,7 +81,7 @@ export function MenusHubPage() {
         aria-label={t(locale, "page.menu.subnavAria")}
         className="mb-10 flex flex-wrap items-end justify-center gap-x-10 gap-y-3 border-b border-border pb-4 sm:gap-x-14"
       >
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const active = tab.key === activeKey;
           return (
             <button
@@ -90,15 +110,16 @@ export function MenusHubPage() {
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           >
             {(() => {
-              const live = Boolean(
-                activeState.remote?.isPublished && activeState.remote.categories?.length,
-              );
+              const live = isEditableMenuPublished(activeState.remote);
               if (live && activeState.remote) {
                 return (
                   <SimpleMenuCategoryGrid
                     categories={editableDocToSimpleCategories(activeState.remote)}
                   />
                 );
+              }
+              if (isFirebaseConfigured() && activeReady && !live) {
+                return null;
               }
               return (
                 <MenuCategoryGrid

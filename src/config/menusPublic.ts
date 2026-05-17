@@ -1,5 +1,5 @@
 /**
- * Master gate for the public `/menu` routes. When `true`, every visitor sees the
+ * Master gate for the public `/menus` routes. When `true`, every visitor sees the
  * full dinner / drinks menus. When `false`, guests see the coming-soon page and
  * only signed-in admins get a preview (via `useMenusPublicVisibility`).
  *

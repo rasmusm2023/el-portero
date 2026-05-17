@@ -5,10 +5,16 @@ import { usePathname } from "next/navigation";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 import { MENU_TAB_NAV_CLASS } from "@/components/menu/menuPageTypography";
+import { useEditablePublishedMenu } from "@/hooks/useEditablePublishedMenu";
+import { showGuestMenuTab } from "@/lib/editableMenuPublished";
+import {
+  MENUS_DINNER_PATH,
+  MENUS_DRINKS_PATH,
+} from "@/lib/menusRoutes";
 
 const items = [
-  { href: "/menu/dinner", labelKey: "page.menu.dinner" as const },
-  { href: "/menu/drinks", labelKey: "page.menu.drinks" as const },
+  { href: MENUS_DINNER_PATH, labelKey: "page.menu.dinner" as const },
+  { href: MENUS_DRINKS_PATH, labelKey: "page.menu.drinks" as const },
 ];
 
 type MenuPagerProps = {
@@ -19,6 +25,15 @@ type MenuPagerProps = {
 export function MenuPager({ className }: MenuPagerProps) {
   const pathname = usePathname();
   const { locale } = useLocale();
+  const dinner = useEditablePublishedMenu("dinner");
+  const drinks = useEditablePublishedMenu("drinks");
+  const showDinner = showGuestMenuTab(dinner.ready, dinner.remote);
+  const showDrinks = showGuestMenuTab(drinks.ready, drinks.remote);
+  const visibleItems = items.filter((item) => {
+    if (item.href === MENUS_DRINKS_PATH) return showDrinks;
+    if (item.href === MENUS_DINNER_PATH) return showDinner;
+    return true;
+  });
 
   return (
     <nav
@@ -30,7 +45,7 @@ export function MenuPager({ className }: MenuPagerProps) {
         .filter(Boolean)
         .join(" ")}
     >
-      {items.map((item) => {
+      {visibleItems.map((item) => {
         const active =
           pathname === item.href || pathname.startsWith(`${item.href}/`);
         return (

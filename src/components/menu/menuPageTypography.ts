@@ -1,5 +1,5 @@
 /**
- * Shared typography for `/menu` hub + `/menu/*` subpages. The tab nav doubles as the
+ * Shared typography for `/menus` hub + `/menus/*` subpages. The tab nav doubles as the
  * page title row, so there is no separate document hero title underneath.
  */
 
