@@ -20,7 +20,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   /**
    * AdminAuthProvider lives at the root so non-admin chrome (site header sign-out,
-   * coming-soon override on /menu/*) can react to the admin session. The admin layout
+   * coming-soon override on /menus/*) can react to the admin session. The admin layout
    * no longer needs its own provider — AdminGate just consumes the same context.
    */
   return (

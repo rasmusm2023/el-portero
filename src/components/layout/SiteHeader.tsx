@@ -18,7 +18,7 @@ import { MenuToggleIcon } from "./MenuToggleIcon";
 /** Legacy split (used only to build {@link primaryNavItems} order). */
 const navLeftItems: { href: string; labelKey: NavKey }[] = [
   { href: "/", labelKey: "nav.home" },
-  { href: "/menu", labelKey: "nav.menu" },
+  { href: "/menus", labelKey: "nav.menu" },
   { href: "/events", labelKey: "nav.events" },
 ];
 

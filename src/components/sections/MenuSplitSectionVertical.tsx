@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   MENU_SPLIT_PANELS,
+  type MenuSplitPanel,
   type MenuSplitKey,
 } from "@/data/menuSplitPanels";
 import { useLocale } from "@/i18n/useLocale";
@@ -14,6 +15,7 @@ type MenuSplitSectionVerticalProps = {
   onSelect?: (key: MenuSplitKey) => void;
   activeKey?: MenuSplitKey | null;
   children?: ReactNode;
+  panels?: MenuSplitPanel[];
 };
 
 /** Shared easing: smooth deceleration for flex height + opacity changes. */
@@ -155,6 +157,7 @@ export function MenuSplitSectionVertical({
   onSelect,
   activeKey = null,
   children,
+  panels = MENU_SPLIT_PANELS,
 }: MenuSplitSectionVerticalProps) {
   const { locale } = useLocale();
   const seeMenu = t(locale, "page.menu.seeMenu");
@@ -179,7 +182,7 @@ export function MenuSplitSectionVertical({
         <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,30%)_minmax(0,70%)] lg:items-stretch lg:gap-8">
           <div className="flex min-w-0 w-full flex-col">
             <div className="flex h-[min(720px,78vh)] flex-col gap-2.5 sm:h-[min(780px,80vh)] sm:gap-3 lg:h-[min(880px,82vh)]">
-              {MENU_SPLIT_PANELS.map((panel, index) => {
+              {panels.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const dimmed = hasSelection && !isSelected;
 

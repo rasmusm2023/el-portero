@@ -60,6 +60,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  /** Old paths from the `/menu` segment — keep bookmarks and external links working. */
+  async redirects() {
+    return [
+      { source: "/menu", destination: "/menus", permanent: true },
+      { source: "/menu/:path*", destination: "/menus/:path*", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

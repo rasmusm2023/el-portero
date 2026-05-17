@@ -15,7 +15,7 @@ export type MenusPublicVisibility = {
 };
 
 /**
- * Centralises the launch gate for `/menu/*`. While Firebase auth is still resolving we
+ * Centralises the launch gate for `/menus/*`. While Firebase auth is still resolving we
  * report `ready=false` so the page can render a brief loading state instead of flashing
  * the coming-soon screen for a signed-in admin who reloads directly on a menu route.
  */

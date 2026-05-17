@@ -15,7 +15,7 @@ const GROUPS: SitemapGroup[] = [
     title: "Pages",
     items: [
       { href: "/", label: "Home" },
-      { href: "/menu", label: "Menus" },
+      { href: "/menus", label: "Menus" },
       { href: "/events", label: "Events" },
       { href: "/gallery", label: "Gallery" },
       { href: "/hours", label: "Opening hours" },

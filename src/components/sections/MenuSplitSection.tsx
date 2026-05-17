@@ -4,7 +4,12 @@ import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { MENU_SPLIT_PANELS, type MenuSplitKey } from "@/data/menuSplitPanels";
+import {
+  MENU_SPLIT_PANELS,
+  splitLeanClipPath,
+  type MenuSplitPanel,
+  type MenuSplitKey,
+} from "@/data/menuSplitPanels";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
@@ -16,6 +21,8 @@ type MenuSplitSectionProps = {
   activeKey?: MenuSplitKey | null;
   /** Renders below the menu cards, inside the same section (e.g. expanded menu preview on home). */
   children?: ReactNode;
+  /** Defaults to all split panels; pass `visibleMenuSplitPanels(...)` to hide unpublished drinks. */
+  panels?: MenuSplitPanel[];
 };
 
 /** Matches hero + header horizontal inset. */
@@ -56,28 +63,11 @@ const panelMinHeightClass =
 const desktopThreeColHeightClass =
   "min-h-[min(28vh,14rem)] sm:min-h-[min(34vh,17rem)] lg:min-h-[min(38vh,20rem)] xl:min-h-[min(40vh,21rem)]";
 
-/** Horizontal run of each seam vs panel width — keep small so splits read as a hint, not a wide band. */
-const SPLIT_LEAN_FRAC = 0.05;
-
 function clipPathStyle(
   clipPath: string,
   zIndex: number,
 ): { clipPath: string; WebkitClipPath: string; zIndex: number } {
   return { clipPath, WebkitClipPath: clipPath, zIndex };
-}
-
-/** Trapezoid clips for equal-width quarters: first/last only cut one side; middles cut both. */
-/** Trapezoid clips for three equal columns (first / middle / last). */
-function splitLeanThirds(index: number): string {
-  const d = 100 * SPLIT_LEAN_FRAC;
-  const br = 100 - d;
-  if (index === 0) {
-    return `polygon(0 0, 100% 0, ${br}% 100%, 0 100%)`;
-  }
-  if (index === 2) {
-    return `polygon(${d}% 0, 100% 0, 100% 100%, 0 100%)`;
-  }
-  return `polygon(${d}% 0, 100% 0, ${br}% 100%, 0 100%)`;
 }
 
 /**
@@ -237,10 +227,18 @@ function PanelContent({
   );
 }
 
-export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuSplitSectionProps) {
+export function MenuSplitSection({
+  onSelect,
+  activeKey = null,
+  children,
+  panels = MENU_SPLIT_PANELS,
+}: MenuSplitSectionProps) {
   const { locale } = useLocale();
   const seeMenu = t(locale, "page.menu.seeMenu");
   const interactive = Boolean(onSelect);
+  const panelCount = panels.length;
+  const desktopGridClass =
+    panelCount === 2 ? "hidden w-full grid-cols-2 gap-0 bg-paper-dark sm:grid" : "hidden w-full grid-cols-3 gap-0 bg-paper-dark sm:grid";
 
   return (
     <section
@@ -259,7 +257,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
           <div className="overflow-hidden rounded-2xl bg-paper-dark sm:rounded-3xl">
             <div className="flex flex-col gap-0 bg-paper-dark">
               <div className="flex flex-col gap-0 sm:hidden">
-              {MENU_SPLIT_PANELS.map((panel, index) => {
+              {panels.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
@@ -308,8 +306,8 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
                 );
               })}
             </div>
-              <div className="hidden w-full grid-cols-3 gap-0 bg-paper-dark sm:grid">
-                {MENU_SPLIT_PANELS.map((panel, index) => {
+              <div className={desktopGridClass}>
+                {panels.map((panel, index) => {
                 const isSelected = activeKey === panel.key;
                 const hasSelection = activeKey != null;
                 const dimmed = hasSelection && !isSelected;
@@ -340,7 +338,7 @@ export function MenuSplitSection({ onSelect, activeKey = null, children }: MenuS
 
                 const cellClass = `${panelBaseClass} ${desktopThreeColHeightClass} min-w-0 bg-ink ${selectedClass} ${unselectedClass}`;
 
-                const leanStyle = clipPathStyle(splitLeanThirds(index), index);
+                const leanStyle = clipPathStyle(splitLeanClipPath(index, panelCount), index);
 
                 return interactive ? (
                   <button

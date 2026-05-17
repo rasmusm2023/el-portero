@@ -45,7 +45,7 @@ const previewCategories: Record<MenuSplitKey, MenuCategoryData[]> = {
 
 /**
  * Experimental home layout: vertical left rail for menu strips (`/demo` only).
- * Production menus live on `/menu` (`MenusHubPage`).
+ * Production menus live on `/menus` (`MenusHubPage`).
  */
 export function DemoHomePage({ heroVideos }: DemoHomePageProps) {
   const { locale } = useLocale();

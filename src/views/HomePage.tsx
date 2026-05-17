@@ -29,7 +29,7 @@ export function HomePage({ heroVideos }: HomePageProps) {
         heroVideos={heroVideos}
         bottomCta={
           <Link
-            href="/menu"
+            href="/menus"
             className={[bookTableHeroHollowButtonClass, "-translate-y-16 sm:-translate-y-11 md:-translate-y-14"]
               .filter(Boolean)
               .join(" ")}

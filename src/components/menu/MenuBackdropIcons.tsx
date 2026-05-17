@@ -3,7 +3,7 @@
  * `public/assets/images/menus/`. Black artwork is inverted to soft paper-toned
  * silhouettes at very low opacity so the menu stays legible.
  *
- * Mounted from `app/menu/layout.tsx` behind `relative z-10` page content.
+ * Mounted from `app/menus/layout.tsx` behind `relative z-10` page content.
  */
 
 const MENU_BACKDROP_SVGS = [
