@@ -23,11 +23,11 @@ export function HomeEventsSection() {
         <div
           className={[
             "flex flex-col gap-12",
-            LAUNCH_UI_OPENING_HOURS ? "lg:flex-row lg:items-start lg:gap-14 xl:gap-16" : "",
+            LAUNCH_UI_OPENING_HOURS ? "lg:flex-row lg:items-start lg:gap-16 xl:gap-20 2xl:gap-24" : "",
           ].join(" ")}
         >
           <div className="min-w-0 flex-1">
-            <header className="max-w-xl">
+            <header className="max-w-4xl 2xl:max-w-5xl">
               <h2
                 id="home-events-heading"
                 className="font-display text-4xl font-semibold tracking-tight text-paper sm:text-5xl"
@@ -66,20 +66,20 @@ export function HomeEventsSection() {
                     {events.map((ev) => (
                       <li
                         key={ev.id}
-                        className="relative w-full pl-10 lg:max-w-[50%]"
+                        className="relative w-full pl-10"
                       >
                         <span
                           className="absolute left-[0.875rem] top-0 z-10 flex h-3.5 w-3.5 -translate-x-1/2 shrink-0 rounded-full border-2 border-paper/70 bg-ink shadow-[0_0_0_5px_var(--color-ink)] ring-1 ring-paper/15"
                           aria-hidden
                         />
                         <article className="flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:rounded-3xl md:flex-row md:min-h-[15rem]">
-                          <div className="relative aspect-[16/10] w-full shrink-0 bg-ink/5 md:aspect-auto md:w-[46%] md:min-w-[11rem] md:max-w-[22rem] xl:max-w-[26rem]">
+                          <div className="relative aspect-[16/10] w-full shrink-0 bg-ink/5 md:aspect-auto md:w-[46%] md:min-w-[11rem] md:max-w-[28rem] xl:max-w-[34rem] 2xl:max-w-[38rem]">
                             <EventImage
                               src={ev.imageSrc}
                               alt={ev.imageAlt[locale]}
                               fill
                               className="object-cover"
-                              sizes="(max-width: 767px) 100vw, (max-width: 1024px) 420px, 380px"
+                              sizes="(max-width: 767px) 100vw, (max-width: 1024px) 90vw, (max-width: 1536px) 45vw, 640px"
                             />
                             <div
                               className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/35 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-paper/8"
@@ -136,7 +136,7 @@ export function HomeEventsSection() {
           </div>
 
           {LAUNCH_UI_OPENING_HOURS ? (
-            <aside className="w-full shrink-0 lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:w-[min(100%,22rem)] xl:w-[min(100%,24rem)]">
+            <aside className="w-full shrink-0 lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:w-[min(100%,32rem)] xl:w-[min(100%,40rem)] 2xl:w-[min(100%,44rem)]">
               {/* Opening hours card + `#hours` anchor: flip `LAUNCH_UI_OPENING_HOURS` in `config/launchUi.ts`. */}
               <OpeningHoursCard id="hours" headingId="home-hours-heading" />
             </aside>
