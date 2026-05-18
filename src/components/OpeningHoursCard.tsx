@@ -8,6 +8,11 @@ import { useEffect, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 
+/** Madrid time; venue open 17:00–01:00 every day (session crosses midnight). */
+const OPEN_START_MIN = 17 * 60;
+/** First minute we consider closed after night service (01:00). */
+const NIGHT_END_MIN = 1 * 60;
+
 type VenueStatus = {
   isOpen: boolean;
   label: string;
@@ -24,29 +29,15 @@ function getMadridNowParts() {
   });
 
   const parts = dtf.formatToParts(new Date());
-  const weekday = parts.find((p) => p.type === "weekday")?.value ?? "Mon";
   const hour = Number(parts.find((p) => p.type === "hour")?.value ?? "0");
   const minute = Number(parts.find((p) => p.type === "minute")?.value ?? "0");
 
-  return { weekday, hour, minute };
+  return { hour, minute };
 }
 
 function getVenueStatus(locale: string): VenueStatus {
-  const { weekday, hour, minute } = getMadridNowParts();
+  const { hour, minute } = getMadridNowParts();
   const minutes = hour * 60 + minute;
-
-  const OPEN_18 = 18 * 60;
-  const CLOSE_23 = 23 * 60;
-  const CLOSE_24 = 24 * 60;
-
-  const isSun = weekday.startsWith("Sun");
-  const isFri = weekday.startsWith("Fri");
-  const isSat = weekday.startsWith("Sat");
-  const isMonThu =
-    weekday.startsWith("Mon") ||
-    weekday.startsWith("Tue") ||
-    weekday.startsWith("Wed") ||
-    weekday.startsWith("Thu");
 
   const strings =
     locale === "es"
@@ -56,7 +47,6 @@ function getVenueStatus(locale: string): VenueStatus {
           closesAt: "Cierra a las",
           opensAt: "Abre a las",
           today: "hoy",
-          sunClosed: "Domingo cerrado",
         }
       : locale === "sv"
         ? {
@@ -64,56 +54,45 @@ function getVenueStatus(locale: string): VenueStatus {
             closed: "Stängt nu",
             closesAt: "Stänger",
             opensAt: "Öppnar",
-            today: "idag",
-            sunClosed: "Söndag stängt",
+            today: "i dag",
           }
         : {
             open: "Open now",
             closed: "Closed now",
             closesAt: "Closes at",
             opensAt: "Opens at",
-            today: "today",
-            sunClosed: "Sunday closed",
+            today: "tonight",
           };
 
-  const fmt = (m: number) => {
-    const h = Math.floor(m / 60) % 24;
-    const mm = String(m % 60).padStart(2, "0");
-    return `${String(h).padStart(2, "0")}:${mm}`;
-  };
+  const fmt = (h: number, m: number) =>
+    `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 
-  if (isSun) {
-    return { isOpen: false, label: strings.closed, detail: strings.sunClosed };
-  }
-
-  const close = isFri || isSat ? CLOSE_24 : isMonThu ? CLOSE_23 : CLOSE_23;
-  const open = OPEN_18;
-
-  const isOpen = minutes >= open && minutes < close;
+  const isOpen =
+    minutes >= OPEN_START_MIN || minutes < NIGHT_END_MIN;
 
   if (isOpen) {
     return {
       isOpen: true,
       label: strings.open,
-      detail: `${strings.closesAt} ${fmt(close)} (${strings.today})`,
+      detail: `${strings.closesAt} ${fmt(1, 0)} (${strings.today})`,
     };
   }
 
   return {
     isOpen: false,
     label: strings.closed,
-    detail: `${strings.opensAt} ${fmt(open)} (${strings.today})`,
+    detail: `${strings.opensAt} ${fmt(17, 0)} (${strings.today})`,
   };
 }
 
 const WEEK_ROWS = [
-  { day: "Mon", hours: "18:00 – 23:00" },
-  { day: "Tue", hours: "18:00 – 23:00" },
-  { day: "Wed", hours: "18:00 – 23:00" },
-  { day: "Thu", hours: "18:00 – 23:00" },
-  { day: "Fri", hours: "18:00 – 00:00" },
-  { day: "Sat", hours: "18:00 – 00:00" },
-  { day: "Sun", hours: "Closed" },
+  { day: "Mon", hours: "17:00 – 01:00" },
+  { day: "Tue", hours: "17:00 – 01:00" },
+  { day: "Wed", hours: "17:00 – 01:00" },
+  { day: "Thu", hours: "17:00 – 01:00" },
+  { day: "Fri", hours: "17:00 – 01:00" },
+  { day: "Sat", hours: "17:00 – 01:00" },
+  { day: "Sun", hours: "17:00 – 01:00" },
 ] as const;
 
 type OpeningHoursCardProps = {
@@ -139,21 +118,21 @@ export function OpeningHoursCard({
   const status = getVenueStatus(locale);
 
   return (
-    <div id={id} className={["scroll-mt-[calc(var(--header-h)+1px)]", className].filter(Boolean).join(" ")}>
-      <div className="max-w-xl rounded-2xl border border-border bg-paper-dark/65 px-6 py-6 shadow-[0_10px_40px_-14px_rgba(0,0,0,0.55)] ring-1 ring-paper/10 sm:px-7 sm:py-7 md:max-w-none">
+    <div id={id} className={["w-full scroll-mt-[calc(var(--header-h)+1px)]", className].filter(Boolean).join(" ")}>
+      <div className="w-full rounded-2xl border border-border bg-paper-dark/65 px-8 py-8 shadow-[0_10px_40px_-14px_rgba(0,0,0,0.55)] ring-1 ring-paper/10 sm:rounded-3xl sm:px-10 sm:py-10 lg:px-12 lg:py-12">
         <h2
           id={headingId}
-          className="font-display text-3xl font-semibold tracking-tight text-paper sm:text-[2rem] lg:text-[2.125rem] lg:font-medium"
+          className="font-display text-[clamp(1.875rem,2.8vw,2.75rem)] font-semibold tracking-tight text-paper sm:font-medium"
         >
           {t(locale, "page.hours.title")}
         </h2>
 
         <p
-          className="mt-5 font-sans text-sm leading-relaxed text-ink-muted sm:text-[15px] lg:mt-6"
+          className="mt-6 font-sans text-base leading-relaxed text-ink-muted sm:mt-7 sm:text-[17px] lg:text-lg"
           role="status"
         >
           <span
-            className={`mr-2 inline-block size-2 translate-y-px rounded-full ${
+            className={`mr-2.5 inline-block size-2.5 translate-y-px rounded-full ${
               status.isOpen ? "bg-emerald-600/80" : "bg-rose-500/75"
             }`}
             aria-hidden
@@ -162,16 +141,16 @@ export function OpeningHoursCard({
           <span className="font-normal"> — {status.detail}</span>
         </p>
 
-        <ul className="mt-6 space-y-2.5 font-sans sm:space-y-3">
+        <ul className="mt-8 space-y-3.5 font-sans sm:mt-10 sm:space-y-4">
           {WEEK_ROWS.map((row) => (
             <li
               key={row.day}
-              className="flex items-baseline justify-between gap-4"
+              className="flex items-baseline justify-between gap-6 border-b border-paper/10 pb-3.5 last:border-b-0 last:pb-0 sm:gap-8 sm:pb-4"
             >
-              <span className="min-w-11 text-[15px] font-normal text-ink-muted">
+              <span className="min-w-13 text-base font-normal text-ink-muted sm:min-w-16 sm:text-lg">
                 {row.day}
               </span>
-              <span className="text-[15px] tabular-nums font-medium text-paper sm:text-base">
+              <span className="text-base tabular-nums font-medium text-paper sm:text-lg">
                 {row.hours}
               </span>
             </li>
