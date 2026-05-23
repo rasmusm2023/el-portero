@@ -111,14 +111,14 @@ export function LogoWordmark({
       {tone === "onDark" ? (
         <span
           role="img"
-          aria-label="El Portero"
+          aria-label="el PORTERO"
           className={goldWordmarkClass}
           style={goldWordmarkStyle}
         />
       ) : (
         <Image
           src="/assets/logos/el-portero-logotype.svg"
-          alt="El Portero"
+          alt="el PORTERO"
           width={640}
           height={160}
           className={`block h-auto w-auto max-w-full select-none ${logotypeSizeClasses[size]}`}

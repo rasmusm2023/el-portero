@@ -191,6 +191,144 @@ type PageKey =
   | "page.hours.mapIframeTitle"
   | "page.admin.title";
 
+type AdminKey =
+  | "admin.signOut"
+  | "admin.signOutAria"
+  | "admin.dashboard"
+  | "admin.dashboard.title"
+  | "admin.dashboard.intro"
+  | "admin.dashboard.signedInAs"
+  | "admin.dashboard.eventsLabel"
+  | "admin.dashboard.eventsHeading"
+  | "admin.dashboard.eventsDescription"
+  | "admin.dashboard.eventsLink"
+  | "admin.dashboard.menusLabel"
+  | "admin.dashboard.menusHeading"
+  | "admin.dashboard.menusDescription"
+  | "admin.dashboard.menusLink"
+  | "admin.dashboard.backToSite"
+  | "admin.loading"
+  | "admin.checkingSignIn"
+  | "admin.events.title"
+  | "admin.events.introLead"
+  | "admin.events.introBulletNewEvent"
+  | "admin.events.introBulletEditList"
+  | "admin.events.introBulletDuplicate"
+  | "admin.events.introBulletPublished"
+  | "admin.events.introBulletSpecificTime"
+  | "admin.events.introBulletFullyBooked"
+  | "admin.events.allEvents"
+  | "admin.events.newEvent"
+  | "admin.events.emptyList"
+  | "admin.events.draft"
+  | "admin.events.pastRemove"
+  | "admin.events.duplicate"
+  | "admin.events.formNew"
+  | "admin.events.formEdit"
+  | "admin.events.idLabel"
+  | "admin.events.idPlaceholder"
+  | "admin.events.idLocked"
+  | "admin.events.calendarDate"
+  | "admin.events.specificTime"
+  | "admin.events.fullyBooked"
+  | "admin.events.published"
+  | "admin.events.imageUrl"
+  | "admin.events.imageUrlHint"
+  | "admin.events.datePreviewHint"
+  | "admin.events.timeOnly"
+  | "admin.events.timeOnlyHint"
+  | "admin.events.startTime"
+  | "admin.events.endTime"
+  | "admin.events.preview"
+  | "admin.events.titleField"
+  | "admin.events.excerpt"
+  | "admin.events.imageAlt"
+  | "admin.events.create"
+  | "admin.events.saveChanges"
+  | "admin.events.delete"
+  | "admin.events.saveNewTooltip"
+  | "admin.events.saveEditTooltip"
+  | "admin.events.saveNewDisabledTooltip"
+  | "admin.events.saveEditDisabledTooltip"
+  | "admin.events.duplicateLoaded"
+  | "admin.events.created"
+  | "admin.events.updated"
+  | "admin.events.deleted"
+  | "admin.events.deleteConfirm"
+  | "admin.events.loadError"
+  | "admin.events.saveError"
+  | "admin.events.deleteError"
+  | "admin.events.invalidId"
+  | "admin.events.invalidTime"
+  | "admin.events.loadingTitle"
+  | "admin.events.loadingIntro"
+  | "admin.menus.title"
+  | "admin.menus.intro"
+  | "admin.menus.reload"
+  | "admin.menus.tabDinner"
+  | "admin.menus.tabDrinks"
+  | "admin.menus.status"
+  | "admin.menus.statusIntro"
+  | "admin.menus.publishedLabel"
+  | "admin.menus.yes"
+  | "admin.menus.no"
+  | "admin.menus.publish"
+  | "admin.menus.unpublish"
+  | "admin.menus.menuTitleLabel"
+  | "admin.menus.menuTitlePlaceholder"
+  | "admin.menus.sectionTitleLabel"
+  | "admin.menus.removeSection"
+  | "admin.menus.removeDish"
+  | "admin.menus.removeDrink"
+  | "admin.menus.addDish"
+  | "admin.menus.addSection"
+  | "admin.menus.addDrink"
+  | "admin.menus.dragSection"
+  | "admin.menus.dragItem"
+  | "admin.menus.expandSection"
+  | "admin.menus.collapseSection"
+  | "admin.menus.expandItem"
+  | "admin.menus.collapseItem"
+  | "admin.menus.nameLabel"
+  | "admin.menus.nameExtensionLabel"
+  | "admin.menus.optional"
+  | "admin.menus.nameExtensionPlaceholder"
+  | "admin.menus.descriptionLabel"
+  | "admin.menus.priceLabel"
+  | "admin.menus.priceExamplePlaceholder"
+  | "admin.menus.priceHiddenPlaceholder"
+  | "admin.menus.priceHiddenNote"
+  | "admin.menus.sizeVariantsTitle"
+  | "admin.menus.sizeVariantsHint"
+  | "admin.menus.sizeLabelPlaceholder"
+  | "admin.menus.priceFieldPlaceholder"
+  | "admin.menus.removeVariant"
+  | "admin.menus.removeVariantAria"
+  | "admin.menus.addSize"
+  | "admin.menus.dietaryTagsTitle"
+  | "admin.menus.dietaryHintDrinks"
+  | "admin.menus.dietaryHintFood"
+  | "admin.menus.allergensTitle"
+  | "admin.menus.allergensHint"
+  | "admin.menus.loadError"
+  | "admin.menus.saved"
+  | "admin.menus.saveError"
+  | "admin.menus.publishedSuccess"
+  | "admin.menus.publishError"
+  | "admin.menus.unpublishedSuccess"
+  | "admin.menus.unpublishError"
+  | "admin.menus.removeSectionConfirm"
+  | "admin.menus.removeDishConfirm"
+  | "admin.menus.removeDrinkConfirm"
+  | "admin.menus.untitledSection"
+  | "admin.menus.untitledDish"
+  | "admin.menus.untitledDrink"
+  | "admin.confirm.title"
+  | "admin.confirm.cancel"
+  | "admin.confirm.proceed"
+  | "admin.confirm.delete"
+  | "admin.confirm.remove";
+
 type FooterKey =
   | "footer.whatsapp"
   | "footer.whatsappAria"
@@ -209,7 +347,7 @@ type HeaderKey =
 
 type BrandKey = "brand.dinnerClub";
 
-export type MessageKey = NavKey | PageKey | FooterKey | HeaderKey | BrandKey;
+export type MessageKey = NavKey | PageKey | AdminKey | FooterKey | HeaderKey | BrandKey;
 
 const messages: Record<Locale, Record<MessageKey, string>> = {
   en: {
@@ -237,7 +375,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsLoading": "Loading events…",
     "page.home.heroReserveCta": "Book a table",
     "page.home.heroTagline":
-      "At El Portero, flavours from Peru, Spain and Sweden come together in a warm, lively dinner-club atmosphere, with the Mediterranean just a throw-in away.",
+      "At el PORTERO, flavours from Peru, Spain and Sweden come together in a warm, lively dinner-club atmosphere, with the Mediterranean just a throw-in away.",
     "page.home.heroTaglineMobile":
       "Peru, Spain & Sweden — warm dinner club in Torrevieja with the Mediterranean just steps away.",
     "page.comingSoon.title": "Coming soon",
@@ -304,12 +442,12 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "A dinner club on the Costa Blanca where Peruvian, Spanish and Swedish flavours meet — warm, lively evenings a short walk from the Mediterranean.",
     "page.story.sectionOriginTitle": "What brings us together",
     "page.story.sectionOriginP1":
-      "El Portero began with a simple idea: a restaurant that feels both celebratory and precise. Flavours from Peru, Spain and Sweden meet at the table — Mediterranean seasons, honest sourcing, and service that stays in step with a warm, lively room.",
+      "el PORTERO began with a simple idea: a restaurant that feels both celebratory and precise. Flavours from Peru, Spain and Sweden meet at the table — Mediterranean seasons, honest sourcing, and service that stays in step with a warm, lively room.",
     "page.story.sectionOriginP2":
       "We chose Torrevieja because the light, the produce, and the sea set the tone. Whether you are here for a long tasting menu or a lively evening with friends, we want every visit to feel intentional.",
     "page.story.sectionMagnusTitle": "The keeper of the house",
     "page.story.sectionMagnusP1":
-      "El Portero is led by Magnus Hedman — former professional goalkeeper, capped for Sweden, and trusted between the posts at the highest level of the game. A career spent reading the room, holding the line, and delivering under pressure translates naturally to hospitality: calm pacing, trust at the table, and a team that moves as one.",
+      "el PORTERO is led by Magnus Hedman — former professional goalkeeper, capped for Sweden, and trusted between the posts at the highest level of the game. A career spent reading the room, holding the line, and delivering under pressure translates naturally to hospitality: calm pacing, trust at the table, and a team that moves as one.",
     "page.story.sectionMagnusP2":
       "Today Magnus brings that same focus to welcoming guests, shaping the room, and keeping the restaurant’s character: warm, disciplined, and never ordinary.",
     "page.story.sectionPhilosophyTitle": "How we cook & host",
@@ -317,10 +455,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "We build menus around seasonal ingredients, thoughtful wines, and the moment you are in — from tasting journeys to generous plates meant to share. Big-match nights, private celebrations, and quiet midweek dinners all belong here; the through-line is care you can taste, in the open, sociable spirit of a dinner club.",
     "page.story.sectionCoastTitle": "On the Mediterranean",
     "page.story.sectionCoastBody":
-      "A short walk from the water in Torrevieja, Alicante, El Portero welcomes travellers and locals alike. Book ahead when you can, and tell us if you are celebrating — we will do our best to make it memorable.",
+      "A short walk from the water in Torrevieja, Alicante, el PORTERO welcomes travellers and locals alike. Book ahead when you can, and tell us if you are celebrating — we will do our best to make it memorable.",
     "page.story.ctaReserve": "Reserve a table",
     "page.story.ctaReserveAria":
-      "Go to reservations — book a table at El Portero",
+      "Go to reservations — book a table at el PORTERO",
     "page.story.photoAltOrigin": "Cooking at the pass — energy in the kitchen",
     "page.story.photoAltMagnus":
       "A football pitch from above — focus, lines, and teamwork",
@@ -365,8 +503,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.storyDraft.signatureLead": "With warmth,",
     "page.storyDraft.altDream": "Restaurant atmosphere",
     "page.storyDraft.altTwoDreams": "Magnus Hedman during his football career",
-    "page.storyDraft.altPlace": "El Portero outside patio",
-    "page.storyDraft.altName": "El Portero bar",
+    "page.storyDraft.altPlace": "el PORTERO outside patio",
+    "page.storyDraft.altName": "el PORTERO bar",
     "page.storyDraft.altWelcome": "Torrevieja beach walk",
     "page.storyDraft.altPortrait": "Portrait of Magnus Hedman",
     "page.reserve.title": "Reservations",
@@ -402,10 +540,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Send us an email — we’ll get back as soon as we can.",
     "page.contact.phoneLabel": "Email",
     "page.contact.emailLabel": "Email",
-    "page.gallery.srHeading": "A glimpse of El Portero",
+    "page.gallery.srHeading": "A glimpse of el PORTERO",
     "page.gallery.imageAlt1":
       "Grilled meat and vegetable skewers from the grill — Peruvian- and Spanish-inspired cooking",
-    "page.gallery.imageAlt2": "Seasonal dish from the El Portero kitchen",
+    "page.gallery.imageAlt2": "Seasonal dish from the el PORTERO kitchen",
     "page.gallery.imageAlt3": "Bartender mixing cocktails at the bar counter",
     "page.gallery.caption1": "Peruvian soul and Spanish heat from the grill.",
     "page.gallery.caption2":
@@ -419,8 +557,168 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Our bar keeps pace with the kitchen: precise cocktails, warm service, and a counter where you can begin the night with a drink or settle in for one more after dessert.",
     "page.hours.title": "Opening hours",
     "page.hours.map": "Location",
-    "page.hours.mapIframeTitle": "Map: El Portero, Torrevieja",
+    "page.hours.mapIframeTitle": "Map: el PORTERO, Torrevieja",
     "page.admin.title": "Admin sign-in",
+    "admin.signOut": "Sign out",
+    "admin.signOutAria": "Sign out of admin",
+    "admin.dashboard": "Dashboard",
+    "admin.dashboard.title": "Dashboard",
+    "admin.dashboard.intro": "Choose what you want to edit.",
+    "admin.dashboard.signedInAs": "Signed in as",
+    "admin.dashboard.eventsLabel": "Events",
+    "admin.dashboard.eventsHeading": "Public events",
+    "admin.dashboard.eventsDescription":
+      "Add and update evenings and happenings on the home page and Events page. Keep drafts hidden until you are ready for guests to see them.",
+    "admin.dashboard.eventsLink": "Open events →",
+    "admin.dashboard.menusLabel": "Menus",
+    "admin.dashboard.menusHeading": "Dinner & drinks",
+    "admin.dashboard.menusDescription":
+      "Edit dinner and drinks menus section by section. Save your draft, then publish when guests should see the menu on the website.",
+    "admin.dashboard.menusLink": "Open menus →",
+    "admin.dashboard.backToSite": "← Back to site",
+    "admin.loading": "Loading…",
+    "admin.checkingSignIn": "Checking sign-in…",
+    "admin.events.title": "Events",
+    "admin.events.introLead":
+      "Here you manage the evenings and happenings that guests see on the home page and Events page.",
+    "admin.events.introBulletNewEvent":
+      "**New event** — start with a blank form.",
+    "admin.events.introBulletEditList":
+      "**Pick an event from the list** — edit it in the form on the right.",
+    "admin.events.introBulletDuplicate":
+      "**Duplicate** — copy an existing event; remember to change the date, title, and photo.",
+    "admin.events.introBulletPublished":
+      "**Published on website** — when unchecked, the event is a draft and stays hidden from guests until you check this again and save.",
+    "admin.events.introBulletSpecificTime":
+      "**Show start and end time** — when checked, guests see start and end times; when unchecked, only the date line is shown.",
+    "admin.events.introBulletFullyBooked":
+      "**Fully booked** — tells guests the event is full on the website (they can still contact the restaurant as usual).",
+    "admin.events.allEvents": "All events",
+    "admin.events.newEvent": "New event",
+    "admin.events.emptyList": "No events yet. Tap New event above to add the first one.",
+    "admin.events.draft": "Draft",
+    "admin.events.pastRemove": "Past — you can delete",
+    "admin.events.duplicate": "Duplicate",
+    "admin.events.formNew": "New event",
+    "admin.events.formEdit": "Edit event",
+    "admin.events.idLabel": "Short name (ID)",
+    "admin.events.idPlaceholder": "e.g. wine-night-june-2026",
+    "admin.events.idLocked": "The short name cannot be changed after the event is created.",
+    "admin.events.calendarDate": "Date on calendar",
+    "admin.events.specificTime": "Show start and end time",
+    "admin.events.fullyBooked": "Fully booked",
+    "admin.events.published": "Published on website",
+    "admin.events.imageUrl": "Event photo link",
+    "admin.events.imageUrlHint":
+      "Upload the photo at www.imgbox.com (no account needed). When it appears, right-click the image → Get link (or Copy image address) and paste that link here. It must start with https:// and end with .jpg, .jpeg, or .png — not the imgbox page address.",
+    "admin.events.datePreviewHint":
+      "Date shown to guests (filled in automatically from the calendar date above):",
+    "admin.events.timeOnly": "Time",
+    "admin.events.timeOnlyHint":
+      "Start and end times appear on the website (24-hour clock). The venue is always el PORTERO in Torrevieja.",
+    "admin.events.startTime": "Start time",
+    "admin.events.endTime": "End time",
+    "admin.events.preview": "Preview",
+    "admin.events.titleField": "Title",
+    "admin.events.excerpt": "Short description",
+    "admin.events.imageAlt": "Photo description (for accessibility)",
+    "admin.events.create": "Create",
+    "admin.events.saveChanges": "Save changes",
+    "admin.events.delete": "Delete",
+    "admin.events.saveNewTooltip": "Save new event",
+    "admin.events.saveEditTooltip": "Save your edits",
+    "admin.events.saveNewDisabledTooltip": "Change the form to create an event",
+    "admin.events.saveEditDisabledTooltip": "No unsaved changes — edit a field to save",
+    "admin.events.duplicateLoaded":
+      "Copy loaded — check the short name (ID) and date, then tap Create.",
+    "admin.events.created": "Event created.",
+    "admin.events.updated": "Event updated.",
+    "admin.events.deleted": "Event deleted.",
+    "admin.events.deleteConfirm": "Delete “{id}”? This cannot be undone.",
+    "admin.events.loadError": "Could not load events. Try refreshing the page.",
+    "admin.events.saveError": "Could not save. Check your connection and try again.",
+    "admin.events.deleteError": "Could not delete. Try again.",
+    "admin.events.invalidId":
+      "Short name (ID): use 1–64 characters — lowercase letters, numbers, and hyphens only (e.g. summer-dinner-2026).",
+    "admin.events.invalidTime": "End time must be the same as or after the start time.",
+    "admin.events.loadingTitle": "Events",
+    "admin.events.loadingIntro": "Loading…",
+    "admin.menus.title": "Menus",
+    "admin.menus.intro":
+      "Choose dinner or drinks. Save keeps your draft; Publish shows it on the site.",
+    "admin.menus.reload": "Reload",
+    "admin.menus.tabDinner": "Dinner",
+    "admin.menus.tabDrinks": "Drinks",
+    "admin.menus.status": "Status",
+    "admin.menus.statusIntro":
+      "Unpublished menus fall back to demo content on the public site until you publish.",
+    "admin.menus.publishedLabel": "Published:",
+    "admin.menus.yes": "Yes",
+    "admin.menus.no": "No",
+    "admin.menus.publish": "Publish",
+    "admin.menus.unpublish": "Unpublish",
+    "admin.menus.menuTitleLabel": "Menu title (shown on the page when set)",
+    "admin.menus.menuTitlePlaceholder": "e.g. Spring dinner menu",
+    "admin.menus.sectionTitleLabel": "Section title",
+    "admin.menus.removeSection": "Remove section",
+    "admin.menus.removeDish": "Remove dish",
+    "admin.menus.removeDrink": "Remove drink",
+    "admin.menus.addDish": "Add dish",
+    "admin.menus.addSection": "Add section",
+    "admin.menus.addDrink": "Add drink",
+    "admin.menus.dragSection": "Drag to reorder section",
+    "admin.menus.dragItem": "Drag to reorder item",
+    "admin.menus.expandSection": "Expand section",
+    "admin.menus.collapseSection": "Collapse section",
+    "admin.menus.expandItem": "Expand item",
+    "admin.menus.collapseItem": "Collapse item",
+    "admin.menus.nameLabel": "Name",
+    "admin.menus.nameExtensionLabel": "Name extension",
+    "admin.menus.optional": "(optional)",
+    "admin.menus.nameExtensionPlaceholder":
+      "Shown below the name, same style, smaller — e.g. region or vintage",
+    "admin.menus.descriptionLabel": "Description",
+    "admin.menus.priceLabel": "Price",
+    "admin.menus.priceExamplePlaceholder": "e.g. 24 or 24.50",
+    "admin.menus.priceHiddenPlaceholder": "Hidden — size variants below override this",
+    "admin.menus.priceHiddenNote":
+      "The single price above is hidden on the public menu while size variants are set.",
+    "admin.menus.sizeVariantsTitle": "Size variants (optional)",
+    "admin.menus.sizeVariantsHint":
+      "For drinks sold in multiple sizes (e.g. Small / Large, 33cl / 50cl, Glass / Bottle). When set, these replace the single price on the public menu.",
+    "admin.menus.sizeLabelPlaceholder": "Label (e.g. Small)",
+    "admin.menus.priceFieldPlaceholder": "Price",
+    "admin.menus.removeVariant": "Remove",
+    "admin.menus.removeVariantAria": "Remove size variant {n}",
+    "admin.menus.addSize": "Add size",
+    "admin.menus.dietaryTagsTitle": "Dietary tags",
+    "admin.menus.dietaryHintDrinks":
+      "Optional — e.g. alcohol-free mocktails, gluten-free beer, vegan or dairy-free ingredients.",
+    "admin.menus.dietaryHintFood": "Optional — select any that apply.",
+    "admin.menus.allergensTitle": "Allergens (EU 1–14)",
+    "admin.menus.allergensHint":
+      "Tap the numbered circles for any allergens present. Numbers match the legend shown on the public menu.",
+    "admin.menus.loadError": "Could not load menu.",
+    "admin.menus.saved": "Saved. Guests only see published menus.",
+    "admin.menus.saveError": "Could not save. Check your connection and try again.",
+    "admin.menus.publishedSuccess": "Published — visible on the website.",
+    "admin.menus.publishError": "Could not publish. Try again.",
+    "admin.menus.unpublishedSuccess": "Unpublished — hidden from guests (draft kept).",
+    "admin.menus.unpublishError": "Could not unpublish. Try again.",
+    "admin.menus.removeSectionConfirm":
+      "Remove the section «{section}»?\n\nThis deletes the section heading and every dish listed under it ({countPhrase}) — not just the title. Guests will not see the change on the website until you tap Save changes.",
+    "admin.menus.removeDishConfirm":
+      "Remove the dish «{dish}» from this section?\n\nIt will be removed from your draft. Tap Save changes when you are finished editing.",
+    "admin.menus.removeDrinkConfirm":
+      "Remove the drink «{dish}» from this section?\n\nIt will be removed from your draft. Tap Save changes when you are finished editing.",
+    "admin.menus.untitledSection": "Untitled section",
+    "admin.menus.untitledDish": "Untitled dish",
+    "admin.menus.untitledDrink": "Untitled drink",
+    "admin.confirm.title": "Warning",
+    "admin.confirm.cancel": "Cancel",
+    "admin.confirm.proceed": "Yes, continue",
+    "admin.confirm.delete": "Delete",
+    "admin.confirm.remove": "Remove",
     "header.menuLabel": "MENU",
     "header.closeNav": "Close menu",
     "header.openNav": "Open menu",
@@ -436,9 +734,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.altCallAria": "Email to reserve a table",
     "page.reserve.altWhatsAppAria": "Reserve via WhatsApp",
     "footer.whatsapp": "WhatsApp",
-    "footer.whatsappAria": "Open WhatsApp chat with El Portero",
+    "footer.whatsappAria": "Open WhatsApp chat with el PORTERO",
     "footer.tagline":
-      "El Portero in Torrevieja — Peruvian, Spanish and Swedish flavours in a warm, lively dinner-club setting on the Costa Blanca, minutes from the Mediterranean.",
+      "el PORTERO in Torrevieja — Peruvian, Spanish and Swedish flavours in a warm, lively dinner-club setting on the Costa Blanca, minutes from the Mediterranean.",
     "footer.links": "Quick links",
     "footer.sitemap": "Sitemap",
     "footer.openInMaps": "Open in Google Maps",
@@ -469,7 +767,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsLoading": "Cargando eventos…",
     "page.home.heroReserveCta": "Reservar mesa",
     "page.home.heroTagline":
-      "En El Portero, sabores de Perú, España y Suecia se encuentran en un ambiente cálido y lleno de vida de dinner club, con el Mediterráneo a un saque de banda.",
+      "En el PORTERO, sabores de Perú, España y Suecia se encuentran en un ambiente cálido y lleno de vida de dinner club, con el Mediterráneo a un saque de banda.",
     "page.home.heroTaglineMobile":
       "Perú, España y Suecia — dinner club en Torrevieja.\nMediterráneo a un paso.",
     "page.comingSoon.title": "Próximamente",
@@ -538,12 +836,12 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Un dinner club en la Costa Blanca donde se dan cita sabores de Perú, España y Suecia — veladas cálidas y llenas de vida a pasos del Mediterráneo.",
     "page.story.sectionOriginTitle": "Lo que nos une",
     "page.story.sectionOriginP1":
-      "El Portero nació de una idea sencilla: un restaurante que sea a la vez festivo y preciso. Los sabores de Perú, España y Suecia se encuentran en la mesa — estaciones mediterráneas, producto honesto y servicio al ritmo de una sala acogedora y animada.",
+      "el PORTERO nació de una idea sencilla: un restaurante que sea a la vez festivo y preciso. Los sabores de Perú, España y Suecia se encuentran en la mesa — estaciones mediterráneas, producto honesto y servicio al ritmo de una sala acogedora y animada.",
     "page.story.sectionOriginP2":
       "Estamos en Torrevieja porque la luz, el producto y el mar marcan el tono. Vengáis para un menú degustación largo o una velada animada con amigos, queremos que cada visita se sienta intencionada.",
-    "page.story.sectionMagnusTitle": "El portero de la casa",
+    "page.story.sectionMagnusTitle": "el PORTERO de la casa",
     "page.story.sectionMagnusP1":
-      "El Portero lo dirige Magnus Hedman — ex portero profesional, internacional con Suecia y habituado a la exigencia bajo palos al máximo nivel. Una carrera leyendo la sala, cerrando línea y respondiendo bajo presión encaja con la hospitalidad: ritmo sereno, confianza en la mesa y un equipo que juega como uno.",
+      "el PORTERO lo dirige Magnus Hedman — ex portero profesional, internacional con Suecia y habituado a la exigencia bajo palos al máximo nivel. Una carrera leyendo la sala, cerrando línea y respondiendo bajo presión encaja con la hospitalidad: ritmo sereno, confianza en la mesa y un equipo que juega como uno.",
     "page.story.sectionMagnusP2":
       "Hoy Magnus lleva esa misma exigencia a acoger a los invitados, marcar el ambiente y conservar el carácter del restaurante: cálido, disciplinado y nunca ordinario.",
     "page.story.sectionPhilosophyTitle": "Cómo cocinamos y recibimos",
@@ -551,9 +849,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Montamos cartas alrededor de ingredientes de temporada, vinos con criterio y el momento que vivís — desde recorridos de degustación hasta platos generosos para compartir. Noches de partido, celebraciones privadas y cenas tranquilas de entre semana tienen cabida; el hilo conductor es el cuidado que se nota en el plato, con el espíritu abierto y sociable de un dinner club.",
     "page.story.sectionCoastTitle": "Frente al Mediterráneo",
     "page.story.sectionCoastBody":
-      "A un paso del mar en Torrevieja, Alicante, El Portero recibe a viajeros y vecinos. Reservad con antelación cuando podáis y contadnos si celebráis algo especial — haremos lo posible para que sea memorable.",
+      "A un paso del mar en Torrevieja, Alicante, el PORTERO recibe a viajeros y vecinos. Reservad con antelación cuando podáis y contadnos si celebráis algo especial — haremos lo posible para que sea memorable.",
     "page.story.ctaReserve": "Reservar mesa",
-    "page.story.ctaReserveAria": "Ir a reservas — reservar mesa en El Portero",
+    "page.story.ctaReserveAria": "Ir a reservas — reservar mesa en el PORTERO",
     "page.story.photoAltOrigin": "Cocina al paso — energía detrás del fuego",
     "page.story.photoAltMagnus":
       "Campo de fútbol visto desde arriba — foco, líneas y trabajo en equipo",
@@ -598,8 +896,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.storyDraft.signatureLead": "Con cariño,",
     "page.storyDraft.altDream": "Ambiente del restaurante",
     "page.storyDraft.altTwoDreams": "Magnus Hedman en su carrera futbolística",
-    "page.storyDraft.altPlace": "Terraza exterior de El Portero",
-    "page.storyDraft.altName": "Bar de El Portero",
+    "page.storyDraft.altPlace": "Terraza exterior de el PORTERO",
+    "page.storyDraft.altName": "Bar de el PORTERO",
     "page.storyDraft.altWelcome": "Paseo por la playa de Torrevieja",
     "page.storyDraft.altPortrait": "Retrato de Magnus Hedman",
     "page.reserve.title": "Reservas",
@@ -642,10 +940,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Escribid un correo — contestamos en cuanto podamos.",
     "page.contact.phoneLabel": "Correo",
     "page.contact.emailLabel": "Correo",
-    "page.gallery.srHeading": "Un vistazo a El Portero",
+    "page.gallery.srHeading": "Un vistazo a el PORTERO",
     "page.gallery.imageAlt1":
       "Brochetas de carne y verdura a la parrilla — cocina con acento peruano y español",
-    "page.gallery.imageAlt2": "Plato de temporada de la cocina de El Portero",
+    "page.gallery.imageAlt2": "Plato de temporada de la cocina de el PORTERO",
     "page.gallery.imageAlt3": "Camarero preparando cócteles en la barra",
     "page.gallery.caption1": "Alma peruana y calor español desde la parrilla.",
     "page.gallery.caption2":
@@ -659,12 +957,172 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Nuestra barra va al ritmo de cocina: cócteles cuidados, servicio cercano y un mostrador donde empezar la noche con un trago o quedaros para uno más después del postre.",
     "page.hours.title": "Horario",
     "page.hours.map": "Ubicación",
-    "page.hours.mapIframeTitle": "Mapa: El Portero, Torrevieja",
+    "page.hours.mapIframeTitle": "Mapa: el PORTERO, Torrevieja",
     "page.admin.title": "Acceso admin",
+    "admin.signOut": "Cerrar sesión",
+    "admin.signOutAria": "Cerrar sesión de administración",
+    "admin.dashboard": "Panel",
+    "admin.dashboard.title": "Panel",
+    "admin.dashboard.intro": "Elegid qué queréis editar.",
+    "admin.dashboard.signedInAs": "Sesión iniciada como",
+    "admin.dashboard.eventsLabel": "Eventos",
+    "admin.dashboard.eventsHeading": "Eventos públicos",
+    "admin.dashboard.eventsDescription":
+      "Añadid y actualizad veladas y actividades en la página de inicio y en Eventos. Dejad los borradores ocultos hasta que estén listos para los clientes.",
+    "admin.dashboard.eventsLink": "Abrir eventos →",
+    "admin.dashboard.menusLabel": "Cartas",
+    "admin.dashboard.menusHeading": "Cena y bebidas",
+    "admin.dashboard.menusDescription":
+      "Editad las cartas de cena y bebidas por secciones. Guardad el borrador y publicad cuando los clientes deban ver la carta en la web.",
+    "admin.dashboard.menusLink": "Abrir cartas →",
+    "admin.dashboard.backToSite": "← Volver al sitio",
+    "admin.loading": "Cargando…",
+    "admin.checkingSignIn": "Comprobando acceso…",
+    "admin.events.title": "Eventos",
+    "admin.events.introLead":
+      "Aquí gestionáis las veladas y actividades que ven los clientes en la página de inicio y en Eventos.",
+    "admin.events.introBulletNewEvent":
+      "**Nuevo evento** — empezad con un formulario en blanco.",
+    "admin.events.introBulletEditList":
+      "**Elegid un evento de la lista** — editadlo en el formulario de la derecha.",
+    "admin.events.introBulletDuplicate":
+      "**Duplicar** — copia un evento existente; acordaos de cambiar fecha, título y foto.",
+    "admin.events.introBulletPublished":
+      "**Publicado en la web** — si está desmarcado, el evento es un borrador y los clientes no lo ven hasta que lo volváis a marcar y guardéis.",
+    "admin.events.introBulletSpecificTime":
+      "**Mostrar hora de inicio y fin** — marcado: los clientes ven las horas; desmarcado: solo la fecha.",
+    "admin.events.introBulletFullyBooked":
+      "**Completo** — indica a los clientes que el evento está lleno en la web (pueden seguir contactando con el restaurante).",
+    "admin.events.allEvents": "Todos los eventos",
+    "admin.events.newEvent": "Nuevo evento",
+    "admin.events.emptyList": "Aún no hay eventos. Pulsad Nuevo evento arriba para añadir el primero.",
+    "admin.events.draft": "Borrador",
+    "admin.events.pastRemove": "Pasado — podéis borrarlo",
+    "admin.events.duplicate": "Duplicar",
+    "admin.events.formNew": "Nuevo evento",
+    "admin.events.formEdit": "Editar evento",
+    "admin.events.idLabel": "Nombre corto (ID)",
+    "admin.events.idPlaceholder": "p. ej. cena-vino-junio-2026",
+    "admin.events.idLocked": "El nombre corto no se puede cambiar después de crear el evento.",
+    "admin.events.calendarDate": "Fecha en el calendario",
+    "admin.events.specificTime": "Mostrar hora de inicio y fin",
+    "admin.events.fullyBooked": "Completo",
+    "admin.events.published": "Publicado en la web",
+    "admin.events.imageUrl": "Enlace de la foto del evento",
+    "admin.events.imageUrlHint":
+      "Subid la foto en www.imgbox.com (no hace falta cuenta). Cuando aparezca, clic derecho en la imagen → Get link (o Copiar dirección de la imagen) y pegad ese enlace aquí. Debe empezar por https:// y terminar en .jpg, .jpeg o .png — no la página de imgbox.",
+    "admin.events.datePreviewHint":
+      "Fecha que verán los clientes (se rellena sola según la fecha del calendario):",
+    "admin.events.timeOnly": "Hora",
+    "admin.events.timeOnlyHint":
+      "Las horas de inicio y fin se muestran en la web (24 h). El lugar es siempre el PORTERO en Torrevieja.",
+    "admin.events.startTime": "Hora de inicio",
+    "admin.events.endTime": "Hora de fin",
+    "admin.events.preview": "Vista previa",
+    "admin.events.titleField": "Título",
+    "admin.events.excerpt": "Descripción breve",
+    "admin.events.imageAlt": "Descripción de la foto (accesibilidad)",
+    "admin.events.create": "Crear",
+    "admin.events.saveChanges": "Guardar cambios",
+    "admin.events.delete": "Eliminar",
+    "admin.events.saveNewTooltip": "Guardar nuevo evento",
+    "admin.events.saveEditTooltip": "Guardar cambios",
+    "admin.events.saveNewDisabledTooltip": "Rellenad el formulario para crear un evento",
+    "admin.events.saveEditDisabledTooltip": "Sin cambios pendientes — editad un campo para guardar",
+    "admin.events.duplicateLoaded":
+      "Copia cargada — revisad el nombre corto (ID) y la fecha, luego pulsad Crear.",
+    "admin.events.created": "Evento creado.",
+    "admin.events.updated": "Evento actualizado.",
+    "admin.events.deleted": "Evento eliminado.",
+    "admin.events.deleteConfirm": "¿Eliminar «{id}»? No se puede deshacer.",
+    "admin.events.loadError": "No se pudieron cargar los eventos. Actualizad la página.",
+    "admin.events.saveError": "No se pudo guardar. Comprobad la conexión e intentad de nuevo.",
+    "admin.events.deleteError": "No se pudo eliminar. Intentad de nuevo.",
+    "admin.events.invalidId":
+      "Nombre corto (ID): de 1 a 64 caracteres — solo letras minúsculas, números y guiones (p. ej. cena-verano-2026).",
+    "admin.events.invalidTime": "La hora de fin debe ser igual o posterior a la de inicio.",
+    "admin.events.loadingTitle": "Eventos",
+    "admin.events.loadingIntro": "Cargando…",
+    "admin.menus.title": "Cartas",
+    "admin.menus.intro":
+      "Elegid cena o bebidas. Guardar conserva el borrador; Publicar lo muestra en la web.",
+    "admin.menus.reload": "Recargar",
+    "admin.menus.tabDinner": "Cena",
+    "admin.menus.tabDrinks": "Bebidas",
+    "admin.menus.status": "Estado",
+    "admin.menus.statusIntro":
+      "Las cartas no publicadas muestran contenido de demostración en la web hasta que publiquéis.",
+    "admin.menus.publishedLabel": "Publicado:",
+    "admin.menus.yes": "Sí",
+    "admin.menus.no": "No",
+    "admin.menus.publish": "Publicar",
+    "admin.menus.unpublish": "Despublicar",
+    "admin.menus.menuTitleLabel": "Título de la carta (se muestra en la página si se rellena)",
+    "admin.menus.menuTitlePlaceholder": "p. ej. Carta de primavera",
+    "admin.menus.sectionTitleLabel": "Título de sección",
+    "admin.menus.removeSection": "Eliminar sección",
+    "admin.menus.removeDish": "Eliminar plato",
+    "admin.menus.removeDrink": "Eliminar bebida",
+    "admin.menus.addDish": "Añadir plato",
+    "admin.menus.addSection": "Añadir sección",
+    "admin.menus.addDrink": "Añadir bebida",
+    "admin.menus.dragSection": "Arrastrar para reordenar sección",
+    "admin.menus.dragItem": "Arrastrar para reordenar elemento",
+    "admin.menus.expandSection": "Expandir sección",
+    "admin.menus.collapseSection": "Contraer sección",
+    "admin.menus.expandItem": "Expandir elemento",
+    "admin.menus.collapseItem": "Contraer elemento",
+    "admin.menus.nameLabel": "Nombre",
+    "admin.menus.nameExtensionLabel": "Complemento del nombre",
+    "admin.menus.optional": "(opcional)",
+    "admin.menus.nameExtensionPlaceholder":
+      "Debajo del nombre, mismo estilo, más pequeño — p. ej. región o añada",
+    "admin.menus.descriptionLabel": "Descripción",
+    "admin.menus.priceLabel": "Precio",
+    "admin.menus.priceExamplePlaceholder": "p. ej. 24 o 24,50",
+    "admin.menus.priceHiddenPlaceholder": "Oculto — las variantes de tamaño abajo lo sustituyen",
+    "admin.menus.priceHiddenNote":
+      "El precio único de arriba no se muestra en la carta pública mientras haya variantes de tamaño.",
+    "admin.menus.sizeVariantsTitle": "Variantes de tamaño (opcional)",
+    "admin.menus.sizeVariantsHint":
+      "Para bebidas en varios tamaños (p. ej. Pequeño / Grande, 33cl / 50cl, Copa / Botella). Si se rellenan, sustituyen al precio único en la web.",
+    "admin.menus.sizeLabelPlaceholder": "Etiqueta (p. ej. Pequeño)",
+    "admin.menus.priceFieldPlaceholder": "Precio",
+    "admin.menus.removeVariant": "Quitar",
+    "admin.menus.removeVariantAria": "Quitar variante de tamaño {n}",
+    "admin.menus.addSize": "Añadir tamaño",
+    "admin.menus.dietaryTagsTitle": "Etiquetas dietéticas",
+    "admin.menus.dietaryHintDrinks":
+      "Opcional — p. ej. mocktails sin alcohol, cerveza sin gluten, vegano o sin lácteos.",
+    "admin.menus.dietaryHintFood": "Opcional — marcá las que correspondan.",
+    "admin.menus.allergensTitle": "Alérgenos (UE 1–14)",
+    "admin.menus.allergensHint":
+      "Pulsad los círculos numerados de los alérgenos presentes. Los números coinciden con la leyenda de la carta pública.",
+    "admin.menus.loadError": "No se pudo cargar la carta.",
+    "admin.menus.saved": "Guardado. Los clientes solo ven cartas publicadas.",
+    "admin.menus.saveError": "No se pudo guardar. Comprobad la conexión e intentad de nuevo.",
+    "admin.menus.publishedSuccess": "Publicado — visible en la web.",
+    "admin.menus.publishError": "No se pudo publicar. Intentad de nuevo.",
+    "admin.menus.unpublishedSuccess": "Despublicado — oculto para clientes (borrador conservado).",
+    "admin.menus.unpublishError": "No se pudo despublicar. Intentad de nuevo.",
+    "admin.menus.removeSectionConfirm":
+      "¿Eliminar la sección «{section}»?\n\nSe borra el título de la sección y todos los platos que hay debajo ({countPhrase}) — no solo el título. Los clientes no verán el cambio en la web hasta que pulséis Guardar cambios.",
+    "admin.menus.removeDishConfirm":
+      "¿Eliminar el plato «{dish}» de esta sección?\n\nSe quita del borrador. Pulsad Guardar cambios cuando terminéis de editar.",
+    "admin.menus.removeDrinkConfirm":
+      "¿Eliminar la bebida «{dish}» de esta sección?\n\nSe quita del borrador. Pulsad Guardar cambios cuando terminéis de editar.",
+    "admin.menus.untitledSection": "Sección sin título",
+    "admin.menus.untitledDish": "Plato sin nombre",
+    "admin.menus.untitledDrink": "Bebida sin nombre",
+    "admin.confirm.title": "Atención",
+    "admin.confirm.cancel": "Cancelar",
+    "admin.confirm.proceed": "Sí, continuar",
+    "admin.confirm.delete": "Eliminar",
+    "admin.confirm.remove": "Quitar",
     "footer.whatsapp": "WhatsApp",
-    "footer.whatsappAria": "Abrir chat de WhatsApp con El Portero",
+    "footer.whatsappAria": "Abrir chat de WhatsApp con el PORTERO",
     "footer.tagline":
-      "El Portero en Torrevieja — sabores de Perú, España y Suecia en un dinner club cálido y lleno de vida en la Costa Blanca, a minutos del Mediterráneo.",
+      "el PORTERO en Torrevieja — sabores de Perú, España y Suecia en un dinner club cálido y lleno de vida en la Costa Blanca, a minutos del Mediterráneo.",
     "footer.links": "Enlaces rápidos",
     "footer.sitemap": "Mapa del sitio",
     "footer.openInMaps": "Abrir en Google Maps",
@@ -701,7 +1159,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsLoading": "Laddar evenemang…",
     "page.home.heroReserveCta": "Boka bord",
     "page.home.heroTagline":
-      "På El Portero möts smaker från Peru, Spanien och Sverige i en varm och levande dinner club-atmosfär, med Medelhavet bara ett inkast bort.",
+      "På el PORTERO möts smaker från Peru, Spanien och Sverige i en varm och levande dinner club-atmosfär, med Medelhavet bara ett inkast bort.",
     "page.home.heroTaglineMobile":
       "Peru, Spanien & Sverige — dinner club i Torrevieja.\nMedelhavet nära.",
     "page.comingSoon.title": "Snart öppnar vi",
@@ -768,12 +1226,12 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "En dinner club på Costa Blanca där smaker från Peru, Spanien och Sverige möts — varma, levande kvällar ett stenkast från Medelhavet.",
     "page.story.sectionOriginTitle": "Det som förenar oss",
     "page.story.sectionOriginP1":
-      "El Portero växte ur en enkel tanke: en restaurang som känns både festlig och precis. Smaker från Peru, Spanien och Sverige möts vid bordet — medelhavssäsong, ärliga råvaror och service som följer en varm och levande salong.",
+      "el PORTERO växte ur en enkel tanke: en restaurang som känns både festlig och precis. Smaker från Peru, Spanien och Sverige möts vid bordet — medelhavssäsong, ärliga råvaror och service som följer en varm och levande salong.",
     "page.story.sectionOriginP2":
       "Vi finns i Torrevieja för att ljuset, råvarorna och havet sätter stämningen. Oavsett om du kommer för en lång avsmakningsmeny eller en livlig kväll med vänner vill vi att varje besök ska kännas genomtänkt.",
     "page.story.sectionMagnusTitle": "Husets målvakt",
     "page.story.sectionMagnusP1":
-      "El Portero leds av Magnus Hedman — före detta professionell målvakt, landslagsman för Sverige och van vid trycket mellan stolparna på högsta nivå. Ett liv av att läsa spelet, hålla linjen och leverera när det gäller översätter väl till gästfrihet: lugnt tempo, förtroende vid bordet och ett lag som rör sig som ett.",
+      "el PORTERO leds av Magnus Hedman — före detta professionell målvakt, landslagsman för Sverige och van vid trycket mellan stolparna på högsta nivå. Ett liv av att läsa spelet, hålla linjen och leverera när det gäller översätter väl till gästfrihet: lugnt tempo, förtroende vid bordet och ett lag som rör sig som ett.",
     "page.story.sectionMagnusP2":
       "I dag kanaliserar Magnus samma fokus till att välkomna gäster, forma salongen och bevara restaurangens särprägel — varm, tydlig och alltid mer än vardag.",
     "page.story.sectionPhilosophyTitle": "Hur vi lagar och värdskapar",
@@ -781,9 +1239,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Vi bygger menyer kring säsong, viner med omsorg och stunden du är i — från smakresor till generösa rätter att dela. Stora matcher, privata firanden och tysta vardagskvällar får plats här; den röda tråden är omsorg du känner på tallriken — och den öppna, sociala känslan i en dinner club.",
     "page.story.sectionCoastTitle": "Vid Medelhavet",
     "page.story.sectionCoastBody":
-      "På promenadavstånd från vattnet i Torrevieja, Alicante, välkomnar El Portero både resenärer och grannar. Boka gärna i förväg och berätta om ni firar något särskilt — vi gör vårt bästa för att göra kvällen minnesvärd.",
+      "På promenadavstånd från vattnet i Torrevieja, Alicante, välkomnar el PORTERO både resenärer och grannar. Boka gärna i förväg och berätta om ni firar något särskilt — vi gör vårt bästa för att göra kvällen minnesvärd.",
     "page.story.ctaReserve": "Boka bord",
-    "page.story.ctaReserveAria": "Gå till bokning — boka bord på El Portero",
+    "page.story.ctaReserveAria": "Gå till bokning — boka bord på el PORTERO",
     "page.story.photoAltOrigin": "Tillagning vid pass — energi i köket",
     "page.story.photoAltMagnus":
       "Fotbollsplan ovanifrån — fokus, linjer och lagarbete",
@@ -828,8 +1286,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.storyDraft.signatureLead": "Med värme,",
     "page.storyDraft.altDream": "Restaurangstämning",
     "page.storyDraft.altTwoDreams": "Magnus Hedman under sin fotbollskarriär",
-    "page.storyDraft.altPlace": "Uteservering på El Portero",
-    "page.storyDraft.altName": "Baren på El Portero",
+    "page.storyDraft.altPlace": "Uteservering på el PORTERO",
+    "page.storyDraft.altName": "Baren på el PORTERO",
     "page.storyDraft.altWelcome": "Promenad på stranden i Torrevieja",
     "page.storyDraft.altPortrait": "Porträtt av Magnus Hedman",
     "page.reserve.title": "Bokning",
@@ -871,10 +1329,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.heroBody": "Mejla — vi återkommer så fort vi kan.",
     "page.contact.phoneLabel": "E-post",
     "page.contact.emailLabel": "E-post",
-    "page.gallery.srHeading": "En glimt av El Portero",
+    "page.gallery.srHeading": "En glimt av el PORTERO",
     "page.gallery.imageAlt1":
       "Grillade kött- och grönsaksspett — peruansk- och spanskinspirerad mat från grillen",
-    "page.gallery.imageAlt2": "Säsongsrätt från El Porteros kök",
+    "page.gallery.imageAlt2": "Säsongsrätt från el PORTEROs kök",
     "page.gallery.imageAlt3": "Bartender som blandar drinkar i baren",
     "page.gallery.caption1": "Peruansk själ och spansk värme från grillen.",
     "page.gallery.caption2":
@@ -888,12 +1346,172 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Vår bar håller samma tempo som köket: genomtänkta cocktails, varm service och en disk där ni kan börja kvällen med en drink eller stanna för en sista efter desserten.",
     "page.hours.title": "Öppettider",
     "page.hours.map": "Plats",
-    "page.hours.mapIframeTitle": "Karta: El Portero, Torrevieja",
+    "page.hours.mapIframeTitle": "Karta: el PORTERO, Torrevieja",
     "page.admin.title": "Admininloggning",
+    "admin.signOut": "Logga ut",
+    "admin.signOutAria": "Logga ut från admin",
+    "admin.dashboard": "Översikt",
+    "admin.dashboard.title": "Översikt",
+    "admin.dashboard.intro": "Välj vad ni vill redigera.",
+    "admin.dashboard.signedInAs": "Inloggad som",
+    "admin.dashboard.eventsLabel": "Evenemang",
+    "admin.dashboard.eventsHeading": "Publika evenemang",
+    "admin.dashboard.eventsDescription":
+      "Lägg till och uppdatera kvällar och aktiviteter på startsidan och under Evenemang. Behåll utkast dolda tills ni är redo för gäster.",
+    "admin.dashboard.eventsLink": "Öppna evenemang →",
+    "admin.dashboard.menusLabel": "Menyer",
+    "admin.dashboard.menusHeading": "Middag & dryck",
+    "admin.dashboard.menusDescription":
+      "Redigera middags- och dryckesmenyer sektion för sektion. Spara utkastet och publicera när gäster ska se menyn på webbplatsen.",
+    "admin.dashboard.menusLink": "Öppna menyer →",
+    "admin.dashboard.backToSite": "← Tillbaka till sajten",
+    "admin.loading": "Laddar…",
+    "admin.checkingSignIn": "Kontrollerar inloggning…",
+    "admin.events.title": "Evenemang",
+    "admin.events.introLead":
+      "Här hanterar ni kvällar och aktiviteter som gäster ser på startsidan och under Evenemang.",
+    "admin.events.introBulletNewEvent":
+      "**Nytt evenemang** — börja med ett tomt formulär.",
+    "admin.events.introBulletEditList":
+      "**Välj ett evenemang i listan** — redigera det i formuläret till höger.",
+    "admin.events.introBulletDuplicate":
+      "**Duplicera** — kopiera ett befintligt evenemang; kom ihåg att ändra datum, titel och foto.",
+    "admin.events.introBulletPublished":
+      "**Publicerad på webbplatsen** — avmarkerad = utkast som gäster inte ser förrän ni kryssar i igen och sparar.",
+    "admin.events.introBulletSpecificTime":
+      "**Visa start- och sluttid** — ikryssad: gäster ser start- och sluttid; avmarkerad: bara datumraden visas.",
+    "admin.events.introBulletFullyBooked":
+      "**Fullbokat** — visar gäster att evenemanget är fullbokat på webbplatsen (de kan fortfarande kontakta restaurangen som vanligt).",
+    "admin.events.allEvents": "Alla evenemang",
+    "admin.events.newEvent": "Nytt evenemang",
+    "admin.events.emptyList": "Inga evenemang ännu. Tryck Nytt evenemang ovan för att lägga till det första.",
+    "admin.events.draft": "Utkast",
+    "admin.events.pastRemove": "Passerat — kan tas bort",
+    "admin.events.duplicate": "Duplicera",
+    "admin.events.formNew": "Nytt evenemang",
+    "admin.events.formEdit": "Redigera evenemang",
+    "admin.events.idLabel": "Kort namn (ID)",
+    "admin.events.idPlaceholder": "t.ex. vin-kvall-juni-2026",
+    "admin.events.idLocked": "Det korta namnet kan inte ändras efter att evenemanget skapats.",
+    "admin.events.calendarDate": "Datum i kalendern",
+    "admin.events.specificTime": "Visa start- och sluttid",
+    "admin.events.fullyBooked": "Fullbokat",
+    "admin.events.published": "Publicerad på webbplatsen",
+    "admin.events.imageUrl": "Länk till evenemangsfoto",
+    "admin.events.imageUrlHint":
+      "Ladda upp fotot på www.imgbox.com (inget konto behövs). När bilden visas: högerklicka → Get link (eller Kopiera bildadress) och klistra in länken här. Den ska börja med https:// och sluta med .jpg, .jpeg eller .png — inte imgbox-sidans adress.",
+    "admin.events.datePreviewHint":
+      "Datum som gäster ser (fylls i automatiskt från kalenderdatumet ovan):",
+    "admin.events.timeOnly": "Tid",
+    "admin.events.timeOnlyHint":
+      "Start- och sluttid visas på webbplatsen (24-timmarsklocka). Platsen är alltid el PORTERO i Torrevieja.",
+    "admin.events.startTime": "Starttid",
+    "admin.events.endTime": "Sluttid",
+    "admin.events.preview": "Förhandsvisning",
+    "admin.events.titleField": "Titel",
+    "admin.events.excerpt": "Kort beskrivning",
+    "admin.events.imageAlt": "Bildbeskrivning (tillgänglighet)",
+    "admin.events.create": "Skapa",
+    "admin.events.saveChanges": "Spara ändringar",
+    "admin.events.delete": "Ta bort",
+    "admin.events.saveNewTooltip": "Spara nytt evenemang",
+    "admin.events.saveEditTooltip": "Spara dina ändringar",
+    "admin.events.saveNewDisabledTooltip": "Ändra formuläret för att skapa ett evenemang",
+    "admin.events.saveEditDisabledTooltip": "Inga osparade ändringar — redigera ett fält för att spara",
+    "admin.events.duplicateLoaded":
+      "Kopia inläst — kontrollera kort namn (ID) och datum, tryck sedan Skapa.",
+    "admin.events.created": "Evenemanget skapades.",
+    "admin.events.updated": "Evenemanget uppdaterades.",
+    "admin.events.deleted": "Evenemanget togs bort.",
+    "admin.events.deleteConfirm": "Ta bort «{id}»? Det går inte att ångra.",
+    "admin.events.loadError": "Kunde inte ladda evenemang. Uppdatera sidan.",
+    "admin.events.saveError": "Kunde inte spara. Kontrollera anslutningen och försök igen.",
+    "admin.events.deleteError": "Kunde inte ta bort. Försök igen.",
+    "admin.events.invalidId":
+      "Kort namn (ID): 1–64 tecken — endast små bokstäver, siffror och bindestreck (t.ex. sommar-middag-2026).",
+    "admin.events.invalidTime": "Sluttiden måste vara samma som eller efter starttiden.",
+    "admin.events.loadingTitle": "Evenemang",
+    "admin.events.loadingIntro": "Laddar…",
+    "admin.menus.title": "Menyer",
+    "admin.menus.intro":
+      "Välj middag eller dryck. Spara behåller utkastet; Publicera visar det på webbplatsen.",
+    "admin.menus.reload": "Ladda om",
+    "admin.menus.tabDinner": "Middag",
+    "admin.menus.tabDrinks": "Dryck",
+    "admin.menus.status": "Status",
+    "admin.menus.statusIntro":
+      "Opublicerade menyer visar demoinnehåll på webbplatsen tills ni publicerar.",
+    "admin.menus.publishedLabel": "Publicerad:",
+    "admin.menus.yes": "Ja",
+    "admin.menus.no": "Nej",
+    "admin.menus.publish": "Publicera",
+    "admin.menus.unpublish": "Avpublicera",
+    "admin.menus.menuTitleLabel": "Menytitel (visas på sidan om den fylls i)",
+    "admin.menus.menuTitlePlaceholder": "t.ex. Vårmiddagsmeny",
+    "admin.menus.sectionTitleLabel": "Sektionsrubrik",
+    "admin.menus.removeSection": "Ta bort sektion",
+    "admin.menus.removeDish": "Ta bort rätt",
+    "admin.menus.removeDrink": "Ta bort dryck",
+    "admin.menus.addDish": "Lägg till rätt",
+    "admin.menus.addSection": "Lägg till sektion",
+    "admin.menus.addDrink": "Lägg till dryck",
+    "admin.menus.dragSection": "Dra för att ändra ordning på sektion",
+    "admin.menus.dragItem": "Dra för att ändra ordning på post",
+    "admin.menus.expandSection": "Visa sektion",
+    "admin.menus.collapseSection": "Dölj sektion",
+    "admin.menus.expandItem": "Visa post",
+    "admin.menus.collapseItem": "Dölj post",
+    "admin.menus.nameLabel": "Namn",
+    "admin.menus.nameExtensionLabel": "Namnförtydligande",
+    "admin.menus.optional": "(valfritt)",
+    "admin.menus.nameExtensionPlaceholder":
+      "Visas under namnet, samma stil, mindre — t.ex. region eller årgång",
+    "admin.menus.descriptionLabel": "Beskrivning",
+    "admin.menus.priceLabel": "Pris",
+    "admin.menus.priceExamplePlaceholder": "t.ex. 24 eller 24,50",
+    "admin.menus.priceHiddenPlaceholder": "Dolt — storleksvarianter nedan ersätter detta",
+    "admin.menus.priceHiddenNote":
+      "Det enskilda priset ovan döljs på den publika menyn när storleksvarianter är satta.",
+    "admin.menus.sizeVariantsTitle": "Storleksvarianter (valfritt)",
+    "admin.menus.sizeVariantsHint":
+      "För drycker i flera storlekar (t.ex. Liten / Stor, 33cl / 50cl, Glas / Flaska). När de är satta ersätter de det enskilda priset på webbplatsen.",
+    "admin.menus.sizeLabelPlaceholder": "Etikett (t.ex. Liten)",
+    "admin.menus.priceFieldPlaceholder": "Pris",
+    "admin.menus.removeVariant": "Ta bort",
+    "admin.menus.removeVariantAria": "Ta bort storleksvariant {n}",
+    "admin.menus.addSize": "Lägg till storlek",
+    "admin.menus.dietaryTagsTitle": "Dietmärkningar",
+    "admin.menus.dietaryHintDrinks":
+      "Valfritt — t.ex. alkoholfria mocktails, glutenfri öl, veganska eller mejerifria ingredienser.",
+    "admin.menus.dietaryHintFood": "Valfritt — välj de som passar.",
+    "admin.menus.allergensTitle": "Allergener (EU 1–14)",
+    "admin.menus.allergensHint":
+      "Tryck på numrerade cirklar för allergener som finns. Siffrorna matchar förklaringen på den publika menyn.",
+    "admin.menus.loadError": "Kunde inte ladda menyn.",
+    "admin.menus.saved": "Sparat. Gäster ser bara publicerade menyer.",
+    "admin.menus.saveError": "Kunde inte spara. Kontrollera anslutningen och försök igen.",
+    "admin.menus.publishedSuccess": "Publicerad — synlig på webbplatsen.",
+    "admin.menus.publishError": "Kunde inte publicera. Försök igen.",
+    "admin.menus.unpublishedSuccess": "Avpublicerad — dold för gäster (utkast behålls).",
+    "admin.menus.unpublishError": "Kunde inte avpublicera. Försök igen.",
+    "admin.menus.removeSectionConfirm":
+      "Ta bort sektionen «{section}»?\n\nDetta tar bort sektionsrubriken och alla rätter under den ({countPhrase}) — inte bara rubriken. Gäster ser ändringen på webbplatsen först när ni trycker Spara ändringar.",
+    "admin.menus.removeDishConfirm":
+      "Ta bort rätten «{dish}» från den här sektionen?\n\nDen försvinner från utkastet. Tryck Spara ändringar när ni är klara.",
+    "admin.menus.removeDrinkConfirm":
+      "Ta bort drycken «{dish}» från den här sektionen?\n\nDen försvinner från utkastet. Tryck Spara ändringar när ni är klara.",
+    "admin.menus.untitledSection": "Sektion utan titel",
+    "admin.menus.untitledDish": "Rätt utan namn",
+    "admin.menus.untitledDrink": "Dryck utan namn",
+    "admin.confirm.title": "Varning",
+    "admin.confirm.cancel": "Avbryt",
+    "admin.confirm.proceed": "Ja, fortsätt",
+    "admin.confirm.delete": "Ta bort",
+    "admin.confirm.remove": "Ta bort",
     "footer.whatsapp": "WhatsApp",
-    "footer.whatsappAria": "Öppna WhatsApp-chatt med El Portero",
+    "footer.whatsappAria": "Öppna WhatsApp-chatt med el PORTERO",
     "footer.tagline":
-      "El Portero i Torrevieja — smaker från Peru, Spanien och Sverige i en varm och levande dinner club-stämning på Costa Blanca, nära Medelhavet.",
+      "el PORTERO i Torrevieja — smaker från Peru, Spanien och Sverige i en varm och levande dinner club-stämning på Costa Blanca, nära Medelhavet.",
     "footer.links": "Snabblänkar",
     "footer.sitemap": "Webbplatskarta",
     "footer.openInMaps": "Öppna i Google Maps",

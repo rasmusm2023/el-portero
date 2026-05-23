@@ -67,11 +67,11 @@ const fontMenuPrice = Figtree({
 
 export const metadata: Metadata = {
   title: {
-    default: "El Portero Restaurant & Bar · Welcome",
-    template: "El Portero Restaurant & Bar · %s",
+    default: "el PORTERO Restaurant & Bar · Welcome",
+    template: "el PORTERO Restaurant & Bar · %s",
   },
   description:
-    "El Portero — dinner club in Torrevieja where Peruvian, Spanish and Swedish flavours meet in a warm, lively atmosphere, minutes from the Mediterranean.",
+    "el PORTERO — dinner club in Torrevieja where Peruvian, Spanish and Swedish flavours meet in a warm, lively atmosphere, minutes from the Mediterranean.",
   icons: {
     icon: [{ url: "/assets/favicon/el-portero-favicon.svg", type: "image/svg+xml" }],
   },

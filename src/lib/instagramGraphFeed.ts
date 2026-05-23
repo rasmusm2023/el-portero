@@ -100,7 +100,7 @@ export async function fetchInstagramFeed(
     if (!node.id || !node.permalink || !imageUrl) continue;
     const raw = node.caption?.replace(/\s+/g, " ").trim() ?? "";
     const alt =
-      raw.slice(0, 220) || "Post from El Portero on Instagram";
+      raw.slice(0, 220) || "Post from el PORTERO on Instagram";
     out.push({
       id: node.id,
       permalink: node.permalink,

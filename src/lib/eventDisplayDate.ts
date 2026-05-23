@@ -1,5 +1,5 @@
 import type { Locale } from "@/i18n/strings";
-import type { HomeEvent } from "@/lib/publicEventTypes";
+import type { HomeEvent, LocaleTrio } from "@/lib/publicEventTypes";
 
 function intlLocaleTag(locale: Locale): string {
   if (locale === "sv") return "sv-SE";
@@ -28,9 +28,16 @@ export function formatSortDateForEventDisplay(sortDate: string, locale: Locale):
   }).format(utc);
 }
 
-/** Prefer CMS "Weekday + date"; if empty for this locale, derive from `sortDate`. */
+/** All locale strings for the public date line, derived from `sortDate` (Europe/Madrid). */
+export function weekdayDateFromSortDate(sortDate: string): LocaleTrio {
+  return {
+    en: formatSortDateForEventDisplay(sortDate, "en"),
+    es: formatSortDateForEventDisplay(sortDate, "es"),
+    sv: formatSortDateForEventDisplay(sortDate, "sv"),
+  };
+}
+
+/** Public date line from calendar date only (weekday, day, month, year per locale). */
 export function eventCardDateLabel(ev: HomeEvent, locale: Locale): string {
-  const custom = (ev.weekdayDate[locale] ?? "").trim();
-  if (custom) return custom;
   return formatSortDateForEventDisplay(ev.sortDate, locale);
 }

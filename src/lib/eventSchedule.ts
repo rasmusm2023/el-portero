@@ -1,3 +1,4 @@
+import { weekdayDateFromSortDate } from "@/lib/eventDisplayDate";
 import {
   DEFAULT_EVENT_PLACE,
   DEFAULT_EVENT_TIME_END,
@@ -6,17 +7,25 @@ import {
   type LocaleTrio,
 } from "@/lib/publicEventTypes";
 
+/** Sync auto-generated date labels and time line (fixed venue) before save or after calendar edits. */
+export function syncDerivedEventFields(ev: HomeEvent): HomeEvent {
+  return applySlotsToTimeDetail({
+    ...ev,
+    weekdayDate: weekdayDateFromSortDate(ev.sortDate),
+    eventPlace: undefined,
+  });
+}
+
 function padHm(h: number, m: number) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-/** Half-hour slots from 11:00 through 23:30 (24h strings). */
+/** Half-hour slots for the full day (00:00 through 23:30, 24h strings). */
 export const EVENT_TIME_OPTIONS: string[] = (() => {
   const out: string[] = [];
-  for (let h = 11; h <= 22; h++) {
+  for (let h = 0; h <= 23; h++) {
     out.push(padHm(h, 0), padHm(h, 30));
   }
-  out.push(padHm(23, 0), padHm(23, 30));
   return out;
 })();
 
@@ -31,9 +40,9 @@ export function parseHmToMinutes(hm: string): number | null {
   return h * 60 + min;
 }
 
-export function formatTimeDetailLine(start: string, end: string, place: string): string {
-  const p = place.trim() || DEFAULT_EVENT_PLACE;
-  return `${start.trim()}-${end.trim()} · ${p}`;
+/** Times plus fixed venue (el PORTERO, Torrevieja — not editable in admin). */
+export function formatTimeDetailLine(start: string, end: string): string {
+  return `${start.trim()}-${end.trim()} · ${DEFAULT_EVENT_PLACE}`;
 }
 
 function sameTrio(t: LocaleTrio, line: string): LocaleTrio {
@@ -53,14 +62,13 @@ export function applySlotsToTimeDetail(ev: HomeEvent): HomeEvent {
   }
   const start = ev.timeSlotStart?.trim() || DEFAULT_EVENT_TIME_START;
   const end = ev.timeSlotEnd?.trim() || DEFAULT_EVENT_TIME_END;
-  const place = ev.eventPlace?.trim() || DEFAULT_EVENT_PLACE;
-  const line = formatTimeDetailLine(start, end, place);
+  const line = formatTimeDetailLine(start, end);
   return {
     ...ev,
     hasSpecificTime: ev.hasSpecificTime ?? true,
     timeSlotStart: start,
     timeSlotEnd: end,
-    eventPlace: place,
+    eventPlace: undefined,
     timeDetail: sameTrio(ev.timeDetail, line),
   };
 }
@@ -90,24 +98,25 @@ export function parseTimeLine(line: string): { start: string; end: string; place
 export function normalizeEventForEditor(ev: HomeEvent): HomeEvent {
   let start = ev.timeSlotStart?.trim();
   let end = ev.timeSlotEnd?.trim();
-  let place = ev.eventPlace?.trim();
 
   const timeDetailLine =
     (ev.timeDetail?.en ?? "").trim() ||
     (ev.timeDetail?.sv ?? "").trim() ||
     (ev.timeDetail?.es ?? "").trim();
 
-  const hasSpecificTime = ev.hasSpecificTime ?? Boolean(timeDetailLine || start || end || place);
+  const hasSpecificTime = ev.hasSpecificTime ?? Boolean(timeDetailLine || start || end);
 
   if (!hasSpecificTime) {
-    return applySlotsToTimeDetail({
-      ...ev,
-      hasSpecificTime: false,
-      timeSlotStart: undefined,
-      timeSlotEnd: undefined,
-      eventPlace: undefined,
-      timeDetail: sameTrio(ev.timeDetail, ""),
-    });
+    return syncDerivedEventFields(
+      applySlotsToTimeDetail({
+        ...ev,
+        hasSpecificTime: false,
+        timeSlotStart: undefined,
+        timeSlotEnd: undefined,
+        eventPlace: undefined,
+        timeDetail: sameTrio(ev.timeDetail, ""),
+      }),
+    );
   }
 
   if (!start || !end) {
@@ -118,22 +127,20 @@ export function normalizeEventForEditor(ev: HomeEvent): HomeEvent {
     if (parsed) {
       start = start || parsed.start;
       end = end || parsed.end;
-      place = place || parsed.place;
     }
   }
 
   start = start || DEFAULT_EVENT_TIME_START;
   end = end || DEFAULT_EVENT_TIME_END;
-  place = place || DEFAULT_EVENT_PLACE;
 
   const withSlots: HomeEvent = {
     ...ev,
     hasSpecificTime: true,
     timeSlotStart: start,
     timeSlotEnd: end,
-    eventPlace: place,
+    eventPlace: undefined,
   };
-  return applySlotsToTimeDetail(withSlots);
+  return syncDerivedEventFields(applySlotsToTimeDetail(withSlots));
 }
 
 function madridWallYmdHm(now: Date): { ymd: string; minutes: number } {
