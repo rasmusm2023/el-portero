@@ -32,3 +32,12 @@ export const adminCalloutSuccess =
 
 export const adminCalloutInfo =
   "rounded-none border border-sky-300/20 bg-sky-950/20 px-4 py-3 text-sm text-sky-100";
+
+/** Secondary copy on dark admin chrome (PageShell, toolbars) */
+export const adminTextMuted = "text-paper/85";
+
+/** Body copy on light admin cards and panels */
+export const adminTextOnLight = "text-ink/80";
+
+/** Dividers on dark admin chrome */
+export const adminDivider = "border-paper/15";

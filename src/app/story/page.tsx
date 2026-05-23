@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Our story",
   description:
-    "El Portero — our full story page is coming soon. Menus, reservations, and events are live.",
+    "el PORTERO — our full story page is coming soon. Menus, reservations, and events are live.",
 };
 
 export default async function Page() {

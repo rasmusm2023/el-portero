@@ -30,7 +30,7 @@ export default function SitemapPage() {
     <div className="mx-auto w-full max-w-[min(100%,64rem)] px-4 py-14 sm:px-6 sm:py-18 lg:px-8 lg:py-22">
       <header className="max-w-2xl">
         <p className="text-xs font-semibold tracking-[0.22em] text-ink-muted uppercase">
-          El Portero
+          el PORTERO
         </p>
         <h1 className="mt-3 font-display text-3xl font-medium tracking-tight text-paper sm:text-4xl">
           Sitemap

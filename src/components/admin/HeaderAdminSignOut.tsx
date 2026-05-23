@@ -3,6 +3,8 @@
 import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { t } from "@/i18n/strings";
+import { useLocale } from "@/i18n/useLocale";
 import { adminBtnSignOut } from "@/lib/adminUiStyles";
 
 type Variant = "desktop" | "mobile";
@@ -19,8 +21,10 @@ type Props = {
  * Lives in `SiteHeader` so admins can sign out without navigating to `/admin/*`.
  */
 export function HeaderAdminSignOut({ variant, onAfterSignOut, className }: Props) {
+  const { locale } = useLocale();
   const { adminReady, isAdmin, signOutUser } = useAdminAuth();
   const [busy, setBusy] = useState(false);
+  const signOutLabel = t(locale, "admin.signOut");
 
   if (!adminReady || !isAdmin) return null;
 
@@ -53,10 +57,10 @@ export function HeaderAdminSignOut({ variant, onAfterSignOut, className }: Props
         onClick={onClick}
         disabled={busy}
         className={compactClass}
-        aria-label="Sign out of admin"
+        aria-label={t(locale, "admin.signOutAria")}
       >
         <LogOut className="size-4" aria-hidden />
-        <span>Sign out</span>
+        <span>{signOutLabel}</span>
       </button>
     );
   }
@@ -70,7 +74,7 @@ export function HeaderAdminSignOut({ variant, onAfterSignOut, className }: Props
     >
       <span className="inline-flex items-center justify-center gap-2">
         <LogOut className="size-4" aria-hidden />
-        Sign out
+        {signOutLabel}
       </span>
     </button>
   );

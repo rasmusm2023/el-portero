@@ -219,7 +219,7 @@ export function SiteHeader() {
           <div
             className={`flex min-h-18 items-center justify-between gap-3 py-2.5 ${headerInnerMax}`}
           >
-          <Link href="/" className="flex min-w-0 max-w-[55%]" aria-label="El Portero">
+          <Link href="/" className="flex min-w-0 max-w-[55%]" aria-label="el PORTERO">
             <LogoWordmark
               size="header"
               showTagline={false}
@@ -290,7 +290,7 @@ export function SiteHeader() {
               )}
             </div>
             <div className="flex justify-center">
-              <Link href="/" className="flex" aria-label="El Portero">
+              <Link href="/" className="flex" aria-label="el PORTERO">
                 <LogoWordmark
                   size="header"
                   showTagline={false}

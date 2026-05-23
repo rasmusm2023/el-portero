@@ -1,4 +1,5 @@
 import type { Locale } from "@/i18n/strings";
+import { syncDerivedEventFields } from "@/lib/eventSchedule";
 
 export type LocaleTrio = Record<Locale, string>;
 
@@ -69,7 +70,6 @@ export function toUpsertBody(ev: HomeEvent) {
     hasSpecificTime: ev.hasSpecificTime ?? true,
     timeSlotStart: ev.timeSlotStart ?? DEFAULT_EVENT_TIME_START,
     timeSlotEnd: ev.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
-    eventPlace: ev.eventPlace ?? DEFAULT_EVENT_PLACE,
     fullyBooked: ev.fullyBooked ?? false,
     weekdayDate: { en: ev.weekdayDate.en, es: ev.weekdayDate.es, sv: ev.weekdayDate.sv },
     timeDetail: { en: ev.timeDetail.en, es: ev.timeDetail.es, sv: ev.timeDetail.sv },
@@ -82,21 +82,19 @@ export function toUpsertBody(ev: HomeEvent) {
 
 export function emptyHomeEvent(ymd: string): HomeEvent {
   const empty = (v: string): LocaleTrio => ({ en: v, es: v, sv: v });
-  const line = `${DEFAULT_EVENT_TIME_START}-${DEFAULT_EVENT_TIME_END} · ${DEFAULT_EVENT_PLACE}`;
-  return {
+  return syncDerivedEventFields({
     id: "",
     sortDate: ymd,
     published: true,
     hasSpecificTime: true,
     timeSlotStart: DEFAULT_EVENT_TIME_START,
     timeSlotEnd: DEFAULT_EVENT_TIME_END,
-    eventPlace: DEFAULT_EVENT_PLACE,
     fullyBooked: false,
     weekdayDate: empty(""),
-    timeDetail: empty(line),
+    timeDetail: empty(""),
     title: empty(""),
     excerpt: empty(""),
     imageSrc: "",
     imageAlt: empty(""),
-  };
+  });
 }

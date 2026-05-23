@@ -3,18 +3,20 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Copy, LogOut, Plus, Save, Trash2 } from "lucide-react";
+import { Copy, LayoutDashboard, LogOut, Plus, Save, Trash2 } from "lucide-react";
+import { EventsAdminIntro } from "@/components/admin/EventsAdminIntro";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { LocaleFlag } from "@/components/layout/LocaleFlag";
 import { PageShell } from "@/components/layout/PageShell";
 import { adminBtnBlue, adminBtnDanger, adminBtnGreen, adminBtnNeutral, adminBtnSignOut, adminCalloutSuccess } from "@/lib/adminUiStyles";
 import {
-  DEFAULT_EVENT_PLACE,
   DEFAULT_EVENT_TIME_END,
   DEFAULT_EVENT_TIME_START,
   emptyHomeEvent,
   toUpsertBody,
   type HomeEvent,
 } from "@/lib/publicEventTypes";
+import { formatSortDateForEventDisplay } from "@/lib/eventDisplayDate";
 import {
   applySlotsToTimeDetail,
   clampEndAfterStart,
@@ -23,18 +25,25 @@ import {
   normalizeEventForEditor,
   parseHmToMinutes,
   suggestDuplicateEventId,
+  syncDerivedEventFields,
 } from "@/lib/eventSchedule";
-import type { Locale } from "@/i18n/strings";
+import { localeLabels, t, type Locale } from "@/i18n/strings";
+import { useLocale } from "@/i18n/useLocale";
+import { useAdminConfirm } from "@/hooks/useAdminConfirm";
 import { unknownErrorMessage } from "@/lib/unknownErrorMessage";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
 import { removePublicEvent, subscribeAdminPublicEvents, upsertPublicEvent } from "@/lib/firebase/eventsStore";
 
 const LOCALE_ORDER: Locale[] = ["sv", "es", "en"];
-const LOCALE_LABELS: Record<Locale, string> = {
-  sv: "Swedish",
-  es: "Spanish",
-  en: "English",
-};
+
+function LocaleFieldLabel({ localeKey }: { localeKey: Locale }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <LocaleFlag locale={localeKey} variant="onDark" />
+      <span>{localeLabels[localeKey]}</span>
+    </span>
+  );
+}
 
 function todayYmd() {
   return new Date().toISOString().slice(0, 10);
@@ -58,8 +67,6 @@ function homeEventsEqual(a: HomeEvent, b: HomeEvent) {
   if (a.imageSrc !== b.imageSrc) return false;
   if ((a.timeSlotStart ?? "") !== (b.timeSlotStart ?? "")) return false;
   if ((a.timeSlotEnd ?? "") !== (b.timeSlotEnd ?? "")) return false;
-  if ((a.eventPlace ?? "") !== (b.eventPlace ?? "")) return false;
-  if (!sameLocaleTrio(a.weekdayDate, b.weekdayDate)) return false;
   if (!sameLocaleTrio(a.timeDetail, b.timeDetail)) return false;
   if (!sameLocaleTrio(a.title, b.title)) return false;
   if (!sameLocaleTrio(a.excerpt, b.excerpt)) return false;
@@ -87,8 +94,8 @@ function LocaleBlock({
       <div className="grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-3">
         {LOCALE_ORDER.map((k) => (
           <div key={k} className="min-w-0">
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-paper/60">
-              {LOCALE_LABELS[k]}
+            <label className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-paper/60">
+              <LocaleFieldLabel localeKey={k} />
             </label>
             {multiline ? (
               <textarea
@@ -112,6 +119,8 @@ function LocaleBlock({
 
 export function EventsAdminPage() {
   const router = useRouter();
+  const { locale } = useLocale();
+  const { confirm, dialog: confirmDialog } = useAdminConfirm(locale);
   const { user, ready, signOutUser } = useAdminAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -148,11 +157,11 @@ export function EventsAdminPage() {
       },
       (err) => {
         console.error(err);
-        setError(unknownErrorMessage(err, "Could not load events from Firestore."));
+        setError(unknownErrorMessage(err, t(locale, "admin.events.loadError")));
       },
     );
     return () => unsub();
-  }, [ready, user]);
+  }, [ready, user, locale]);
 
   async function onLogout() {
     setError(null);
@@ -194,9 +203,9 @@ export function EventsAdminPage() {
       setDraft(next);
       setSavedBaseline(cloneHomeEvent(emptyHomeEvent(todayYmd())));
       setError(null);
-      setMessage("Duplicate loaded — confirm the new ID, then Create.");
+      setMessage(t(locale, "admin.events.duplicateLoaded"));
     },
-    [rows],
+    [rows, locale],
   );
 
   const startEdit = (ev: HomeEvent) => {
@@ -216,19 +225,17 @@ export function EventsAdminPage() {
     const wasNew = isNew;
     const idTrim = draft.id.trim();
     if (!isValidEventSlug(idTrim)) {
-      setError(
-        "ID must be 1–64 characters: lowercase letters, digits, hyphens (e.g. summer-dinner-2026).",
-      );
+      setError(t(locale, "admin.events.invalidId"));
       return;
     }
     if (!isDirty) {
       return;
     }
-    const draftToSave: HomeEvent = applySlotsToTimeDetail({ ...draft, id: idTrim });
+    const draftToSave: HomeEvent = syncDerivedEventFields({ ...draft, id: idTrim });
     const sm = parseHmToMinutes(draftToSave.timeSlotStart ?? DEFAULT_EVENT_TIME_START);
     const em = parseHmToMinutes(draftToSave.timeSlotEnd ?? DEFAULT_EVENT_TIME_END);
     if (sm != null && em != null && em < sm) {
-      setError("End time must be the same as or after start time.");
+      setError(t(locale, "admin.events.invalidTime"));
       return;
     }
     setError(null);
@@ -245,57 +252,79 @@ export function EventsAdminPage() {
       setSavedBaseline(cloneHomeEvent(saved));
       setIsNew(false);
       setEditingId(saved.id);
-      setMessage(wasNew ? "Event created." : "Event updated.");
+      setMessage(wasNew ? t(locale, "admin.events.created") : t(locale, "admin.events.updated"));
     } catch (err) {
       console.error(err);
-      setError(unknownErrorMessage(err, "Network error while saving."));
+      setError(unknownErrorMessage(err, t(locale, "admin.events.saveError")));
     } finally {
       setBusy(false);
     }
   }
 
+  const deleteEventById = useCallback(
+    async (id: string) => {
+      const ok = await confirm({
+        message: t(locale, "admin.events.deleteConfirm").replace("{id}", id),
+        confirmLabel: t(locale, "admin.confirm.delete"),
+      });
+      if (!ok) {
+        return;
+      }
+      setError(null);
+      setMessage(null);
+      setBusy(true);
+      try {
+        const db = getFirebaseFirestore();
+        await removePublicEvent(db, id);
+        setMessage(t(locale, "admin.events.deleted"));
+        if (editingId === id) {
+          startNew();
+        }
+        await load();
+      } catch (err) {
+        console.error(err);
+        setError(unknownErrorMessage(err, t(locale, "admin.events.deleteError")));
+      } finally {
+        setBusy(false);
+      }
+    },
+    [locale, editingId, startNew, load, confirm],
+  );
+
   async function onDelete() {
     if (isNew || !editingId) return;
-    if (!window.confirm(`Delete “${editingId}”? This cannot be undone.`)) return;
-    setError(null);
-    setMessage(null);
-    setBusy(true);
-    try {
-      const db = getFirebaseFirestore();
-      await removePublicEvent(db, editingId);
-      setMessage("Event deleted.");
-      startNew();
-      await load();
-    } catch (err) {
-      console.error(err);
-      setError(unknownErrorMessage(err, "Network error while deleting."));
-    } finally {
-      setBusy(false);
-    }
+    await deleteEventById(editingId);
   }
 
   if (!ready || !user) {
     return (
-      <PageShell title="Events" intro="Loading…">
-        <p className="text-sm text-paper/70">Checking sign-in…</p>
+      <PageShell
+        title={t(locale, "admin.events.loadingTitle")}
+        intro={t(locale, "admin.events.loadingIntro")}
+      >
+        <p className="text-sm text-paper/70">{t(locale, "admin.checkingSignIn")}</p>
       </PageShell>
     );
   }
 
   return (
+    <>
     <PageShell
-      title="Events"
-      intro="Create, edit, duplicate, or delete public events (Firestore). IDs are stable slugs. Uncheck “Published on website” to save drafts. Image URL should be a direct https link."
+      title={t(locale, "admin.events.title")}
+      intro={<EventsAdminIntro locale={locale} />}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
       <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
         <Link href="/admin/dashboard" className={`inline-flex items-center ${adminBtnNeutral}`}>
-          Dashboard
+          <span className="inline-flex items-center gap-2">
+            <LayoutDashboard className="size-4" aria-hidden />
+            {t(locale, "admin.dashboard")}
+          </span>
         </Link>
         <button type="button" className={adminBtnSignOut} onClick={onLogout} disabled={busy}>
           <span className="inline-flex items-center gap-2">
             <LogOut className="size-4" aria-hidden />
-            Sign out
+            {t(locale, "admin.signOut")}
           </span>
         </button>
       </div>
@@ -310,17 +339,19 @@ export function EventsAdminPage() {
       <div className="grid min-w-0 gap-8 xl:grid-cols-12 xl:gap-10 2xl:gap-12">
         <aside className="min-w-0 xl:col-span-4 2xl:col-span-3">
           <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-base font-semibold text-paper sm:text-lg">All events</h2>
+            <h2 className="text-base font-semibold text-paper sm:text-lg">
+              {t(locale, "admin.events.allEvents")}
+            </h2>
             <button type="button" className={adminBtnGreen} onClick={startNew} disabled={busy}>
               <span className="inline-flex items-center gap-2">
                 <Plus className="size-4" aria-hidden />
-                New event
+                {t(locale, "admin.events.newEvent")}
               </span>
             </button>
           </div>
           <ul className="max-h-[min(50vh,24rem)] space-y-2 overflow-y-auto rounded-lg border border-border bg-paper/4 p-2 text-sm shadow-inner ring-1 ring-border/60 xl:max-h-[min(72vh,40rem)] xl:p-3">
             {rows.length === 0 ? (
-              <li className="px-2 py-4 text-paper/60">No events yet. Create one in Firestore.</li>
+              <li className="px-2 py-4 text-paper/60">{t(locale, "admin.events.emptyList")}</li>
             ) : (
               rows
                 .slice()
@@ -332,41 +363,79 @@ export function EventsAdminPage() {
                     <li key={ev.id} className="flex gap-1.5">
                       <button
                         type="button"
+                        aria-current={selected ? "true" : undefined}
                         className={[
-                          "min-w-0 flex-1 rounded-md border px-3 py-2.5 text-left transition-colors",
-                          past
-                            ? "border-red-400/35 bg-red-950/25 hover:border-red-300/50"
-                            : selected
-                              ? "border-paper/20 bg-paper/8 ring-1 ring-paper/10"
+                          "min-w-0 flex-1 rounded-md border px-3 py-2.5 text-left transition-[background-color,border-color,box-shadow]",
+                          selected
+                            ? [
+                                "border-sky-400/55 bg-sky-950/50 shadow-md",
+                                "ring-2 ring-sky-400/45 ring-offset-2 ring-offset-paper-dark",
+                                "border-l-[5px] border-l-sky-400",
+                                past ? "hover:border-sky-300/65" : "hover:border-sky-300/70 hover:bg-sky-950/60",
+                              ].join(" ")
+                            : past
+                              ? "border-red-400/35 bg-red-950/25 hover:border-red-300/50"
                               : "border-paper/10 bg-paper/4 hover:border-paper/20 hover:bg-paper/6",
                         ].join(" ")}
                         onClick={() => startEdit(ev)}
                       >
-                        <p className="text-[10px] font-mono text-paper/55">{ev.id}</p>
-                        <p className="mt-0.5 font-medium leading-snug text-paper">{ev.title.en}</p>
+                        <p
+                          className={[
+                            "text-[10px] font-mono",
+                            selected ? "text-sky-200/90" : "text-paper/55",
+                          ].join(" ")}
+                        >
+                          {ev.id}
+                        </p>
+                        <p
+                          className={[
+                            "mt-0.5 leading-snug",
+                            selected ? "font-semibold text-paper" : "font-medium text-paper/90",
+                          ].join(" ")}
+                        >
+                          {ev.title.en}
+                        </p>
                         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-paper/60">
                           <span>{ev.sortDate}</span>
                           {ev.published === false ? (
                             <span className="rounded border border-amber-300/25 bg-amber-950/20 px-1.5 py-px text-[10px] font-semibold tracking-wide text-amber-100 uppercase">
-                              Draft
+                              {t(locale, "admin.events.draft")}
                             </span>
                           ) : null}
                           {past ? (
-                            <span className="text-[10px] font-semibold text-red-200">Past — remove</span>
+                            <span className="text-[10px] font-semibold text-red-200">
+                              {t(locale, "admin.events.pastRemove")}
+                            </span>
                           ) : null}
                         </div>
                       </button>
-                      <button
-                        type="button"
-                        className="shrink-0 self-stretch rounded-md border border-paper/18 bg-paper/8 px-2 text-[11px] font-semibold tracking-wide text-paper uppercase transition-colors hover:bg-paper/12 disabled:opacity-50"
-                        onClick={() => duplicateFrom(ev)}
-                        disabled={busy}
-                      >
-                        <span className="inline-flex items-center gap-1.5">
-                          <Copy className="size-3.5" aria-hidden />
-                          Duplicate
-                        </span>
-                      </button>
+                      <div className="flex shrink-0 flex-col gap-1.5 self-stretch">
+                        <button
+                          type="button"
+                          className="flex min-h-0 flex-1 items-center justify-center rounded-md border border-paper/18 bg-paper/8 px-2 py-2 text-[11px] font-semibold tracking-wide text-paper uppercase transition-colors hover:bg-paper/12 disabled:opacity-50"
+                          onClick={() => duplicateFrom(ev)}
+                          disabled={busy}
+                        >
+                          <span className="inline-flex items-center gap-1.5">
+                            <Copy className="size-3.5 shrink-0" aria-hidden />
+                            {t(locale, "admin.events.duplicate")}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          className="flex min-h-0 flex-1 items-center justify-center rounded-md border border-red-300/30 bg-red-950/35 px-2 py-2 text-[11px] font-semibold tracking-wide text-red-100 uppercase transition-colors hover:bg-red-950/55 disabled:opacity-50"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            void deleteEventById(ev.id);
+                          }}
+                          disabled={busy}
+                        >
+                          <span className="inline-flex items-center gap-1.5">
+                            <Trash2 className="size-3.5 shrink-0" aria-hidden />
+                            {t(locale, "admin.events.delete")}
+                          </span>
+                        </button>
+                      </div>
                     </li>
                   );
                 })
@@ -377,13 +446,13 @@ export function EventsAdminPage() {
         <div className="min-w-0 space-y-6 xl:col-span-8 2xl:col-span-9">
           <div className="rounded-xl border border-border bg-paper-dark/35 p-5 shadow-md ring-1 ring-border/60 sm:p-6 lg:p-8 xl:p-10">
             <h2 className="mb-6 border-b border-border pb-3 text-lg font-semibold text-paper sm:text-xl">
-              {isNew ? "New event" : "Edit event"}
+              {isNew ? t(locale, "admin.events.formNew") : t(locale, "admin.events.formEdit")}
             </h2>
 
             <div className="space-y-5 lg:space-y-6">
           <div>
             <label className="text-xs font-semibold text-paper" htmlFor="ev-id">
-              ID (slug)
+              {t(locale, "admin.events.idLabel")}
             </label>
             <input
               id="ev-id"
@@ -392,25 +461,40 @@ export function EventsAdminPage() {
               onChange={(e) => setDraft((d) => ({ ...d, id: e.target.value }))}
               disabled={!isNew}
               autoComplete="off"
-              placeholder="e.g. wine-night-june-2026"
+              placeholder={t(locale, "admin.events.idPlaceholder")}
             />
             {!isNew ? (
-              <p className="mt-1 text-xs text-paper/55">ID cannot be changed after creation.</p>
+              <p className="mt-1 text-xs text-paper/55">{t(locale, "admin.events.idLocked")}</p>
             ) : null}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:items-end">
             <div className="sm:col-span-1">
               <label className="text-xs font-semibold text-paper" htmlFor="ev-date">
-                Calendar date
+                {t(locale, "admin.events.calendarDate")}
               </label>
               <input
                 id="ev-date"
                 type="date"
                 className={`${fieldInputClass} mt-1 font-sans`}
                 value={draft.sortDate}
-                onChange={(e) => setDraft((d) => ({ ...d, sortDate: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => syncDerivedEventFields({ ...d, sortDate: e.target.value }))
+                }
               />
+              <p className="mt-2 text-xs text-paper/55">
+                {t(locale, "admin.events.datePreviewHint")}
+              </p>
+              <ul className="mt-2 space-y-1 text-sm text-paper/85">
+                {LOCALE_ORDER.map((k) => (
+                  <li key={k} className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <span className="font-semibold text-paper/70">
+                      <LocaleFieldLabel localeKey={k} />:
+                    </span>
+                    <span>{formatSortDateForEventDisplay(draft.sortDate, k) || "—"}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="flex flex-col gap-3 pb-1 sm:col-span-1 lg:col-span-2">
               <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
@@ -421,17 +505,18 @@ export function EventsAdminPage() {
                   onChange={(e) => {
                     const on = e.target.checked;
                     setDraft((d) =>
-                      applySlotsToTimeDetail({
-                        ...d,
-                        hasSpecificTime: on,
-                        timeSlotStart: on ? d.timeSlotStart : undefined,
-                        timeSlotEnd: on ? d.timeSlotEnd : undefined,
-                        eventPlace: on ? d.eventPlace : undefined,
-                      }),
+                      syncDerivedEventFields(
+                        applySlotsToTimeDetail({
+                          ...d,
+                          hasSpecificTime: on,
+                          timeSlotStart: on ? d.timeSlotStart : undefined,
+                          timeSlotEnd: on ? d.timeSlotEnd : undefined,
+                        }),
+                      ),
                     );
                   }}
                 />
-                Specific event time
+                {t(locale, "admin.events.specificTime")}
               </label>
               <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
                 <input
@@ -440,7 +525,7 @@ export function EventsAdminPage() {
                   checked={draft.fullyBooked ?? false}
                   onChange={(e) => setDraft((d) => ({ ...d, fullyBooked: e.target.checked }))}
                 />
-                Fully booked
+                {t(locale, "admin.events.fullyBooked")}
               </label>
               <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
                 <input
@@ -454,40 +539,39 @@ export function EventsAdminPage() {
                     }))
                   }
                 />
-                Published on website
+                {t(locale, "admin.events.published")}
               </label>
             </div>
           </div>
 
           <div>
             <label className="text-xs font-semibold text-paper" htmlFor="ev-img">
-              Image URL
+              {t(locale, "admin.events.imageUrl")}
             </label>
             <input
               id="ev-img"
               className={`${fieldInputClass} mt-1`}
               value={draft.imageSrc}
               onChange={(e) => setDraft((d) => ({ ...d, imageSrc: e.target.value }))}
+              placeholder="https://images2.imgbox.com/…"
+              inputMode="url"
+              autoComplete="off"
             />
+            <p className="mt-2 text-xs leading-relaxed text-paper/60">
+              {t(locale, "admin.events.imageUrlHint")}
+            </p>
           </div>
 
-          <LocaleBlock
-            label="Weekday + date (display)"
-            value={draft.weekdayDate}
-            onChange={(v) => setDraft((d) => ({ ...d, weekdayDate: v }))}
-            multiline={false}
-          />
           {draft.hasSpecificTime !== false ? (
           <div className="space-y-3">
-            <p className="text-sm font-semibold tracking-wide text-paper">Time & place</p>
-            <p className="text-xs text-paper/55">
-              Start and end generate the line shown on the site (24h). Place is appended after the times for all
-              languages.
+            <p className="text-sm font-semibold tracking-wide text-paper">
+              {t(locale, "admin.events.timeOnly")}
             </p>
-            <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <p className="text-xs text-paper/55">{t(locale, "admin.events.timeOnlyHint")}</p>
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
               <div>
                 <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-start">
-                  Start time
+                  {t(locale, "admin.events.startTime")}
                 </label>
                 <select
                   id="ev-start"
@@ -496,14 +580,16 @@ export function EventsAdminPage() {
                   onChange={(e) => {
                     const nextStart = e.target.value;
                     setDraft((d) =>
-                      applySlotsToTimeDetail({
-                        ...d,
-                        timeSlotStart: nextStart,
-                        timeSlotEnd: clampEndAfterStart(
-                          nextStart,
-                          d.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
-                        ),
-                      }),
+                      syncDerivedEventFields(
+                        applySlotsToTimeDetail({
+                          ...d,
+                          timeSlotStart: nextStart,
+                          timeSlotEnd: clampEndAfterStart(
+                            nextStart,
+                            d.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
+                          ),
+                        }),
+                      ),
                     );
                   }}
                 >
@@ -516,7 +602,7 @@ export function EventsAdminPage() {
               </div>
               <div>
                 <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-end">
-                  End time
+                  {t(locale, "admin.events.endTime")}
                 </label>
                 <select
                   id="ev-end"
@@ -524,10 +610,12 @@ export function EventsAdminPage() {
                   value={draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END}
                   onChange={(e) =>
                     setDraft((d) =>
-                      applySlotsToTimeDetail({
-                        ...d,
-                        timeSlotEnd: e.target.value,
-                      }),
+                      syncDerivedEventFields(
+                        applySlotsToTimeDetail({
+                          ...d,
+                          timeSlotEnd: e.target.value,
+                        }),
+                      ),
                     )
                   }
                 >
@@ -538,28 +626,9 @@ export function EventsAdminPage() {
                   ))}
                 </select>
               </div>
-              <div className="min-w-0 sm:col-span-2 lg:col-span-1">
-                <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-place">
-                  Place (after times)
-                </label>
-                <input
-                  id="ev-place"
-                  className={fieldInputClass}
-                  value={draft.eventPlace ?? DEFAULT_EVENT_PLACE}
-                  onChange={(e) =>
-                    setDraft((d) =>
-                      applySlotsToTimeDetail({
-                        ...d,
-                        eventPlace: e.target.value,
-                      }),
-                    )
-                  }
-                  placeholder={DEFAULT_EVENT_PLACE}
-                />
-              </div>
             </div>
             <p className="text-xs text-paper/55">
-              Preview:{" "}
+              {t(locale, "admin.events.preview")}:{" "}
               <span className="font-medium text-paper">
                 {draft.timeDetail.en?.trim() ? draft.timeDetail.en : "—"}
               </span>
@@ -567,19 +636,19 @@ export function EventsAdminPage() {
           </div>
           ) : null}
           <LocaleBlock
-            label="Title"
+            label={t(locale, "admin.events.titleField")}
             value={draft.title}
             onChange={(v) => setDraft((d) => ({ ...d, title: v }))}
             multiline={false}
           />
           <LocaleBlock
-            label="Excerpt"
+            label={t(locale, "admin.events.excerpt")}
             value={draft.excerpt}
             onChange={(v) => setDraft((d) => ({ ...d, excerpt: v }))}
             multiline
           />
           <LocaleBlock
-            label="Image alt text (describe the image in text)"
+            label={t(locale, "admin.events.imageAlt")}
             value={draft.imageAlt}
             onChange={(v) => setDraft((d) => ({ ...d, imageAlt: v }))}
             multiline={false}
@@ -601,16 +670,16 @@ export function EventsAdminPage() {
               title={
                 isDirty
                   ? isNew
-                    ? "Save new event"
-                    : "Save your edits"
+                    ? t(locale, "admin.events.saveNewTooltip")
+                    : t(locale, "admin.events.saveEditTooltip")
                   : isNew
-                    ? "Change the form to create an event"
-                    : "No unsaved changes — edit a field to save"
+                    ? t(locale, "admin.events.saveNewDisabledTooltip")
+                    : t(locale, "admin.events.saveEditDisabledTooltip")
               }
             >
               <span className="inline-flex items-center gap-2">
                 {isNew ? <Plus className="size-4" aria-hidden /> : <Save className="size-4" aria-hidden />}
-                {isNew ? "Create" : "Save changes"}
+                {isNew ? t(locale, "admin.events.create") : t(locale, "admin.events.saveChanges")}
               </span>
             </button>
             {!isNew && editingId ? (
@@ -625,7 +694,7 @@ export function EventsAdminPage() {
               >
                 <span className="inline-flex items-center gap-2">
                   <Trash2 className="size-4" aria-hidden />
-                  Delete
+                  {t(locale, "admin.events.delete")}
                 </span>
               </button>
             ) : null}
@@ -635,6 +704,8 @@ export function EventsAdminPage() {
         </div>
       </div>
     </PageShell>
+    {confirmDialog}
+    </>
   );
 }
 

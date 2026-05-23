@@ -3,12 +3,44 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { LogOut, Plus, RefreshCcw, Save, Trash2, Upload, X } from "lucide-react";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
+  LayoutDashboard,
+  LogOut,
+  Plus,
+  RefreshCcw,
+  Save,
+  Trash2,
+  Upload,
+  UtensilsCrossed,
+  Wine,
+} from "lucide-react";
+import { EditableMenuItemFields } from "@/components/admin/menu-editor/EditableMenuItemFields";
+import { SortableMenuItem } from "@/components/admin/menu-editor/SortableMenuItem";
+import { SortableMenuSection } from "@/components/admin/menu-editor/SortableMenuSection";
+import { useMenuEditorExpansion } from "@/hooks/useMenuEditorExpansion";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { PageShell } from "@/components/layout/PageShell";
+import { t, type Locale } from "@/i18n/strings";
+import { useLocale } from "@/i18n/useLocale";
 import {
   adminBtnBlue,
   adminBtnCaution,
+  adminBtnDanger,
   adminBtnGreen,
   adminBtnNeutral,
   adminBtnSignOut,
@@ -28,11 +60,7 @@ import {
   normalizeDietaryTagIds,
   type DietaryTagId,
 } from "@/lib/dietaryTags";
-import {
-  ALLERGEN_OPTIONS,
-  normalizeAllergenIds,
-  type AllergenId,
-} from "@/lib/menuAllergens";
+import { normalizeAllergenIds, type AllergenId } from "@/lib/menuAllergens";
 import { staticCategoriesToEditableDraft } from "@/lib/editableMenuSeed";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
 import {
@@ -40,12 +68,64 @@ import {
   setEditableMenuPublished,
   upsertEditableMenu,
 } from "@/lib/firebase/editableMenuStore";
+import { useAdminConfirm } from "@/hooks/useAdminConfirm";
+import {
+  categorySortableId,
+  itemSortableId,
+  parseCategorySortableId,
+  parseItemSortableId,
+} from "@/lib/menuEditorIds";
 import { unknownErrorMessage } from "@/lib/unknownErrorMessage";
 
-const TABS: { kind: EditableMenuKind; label: string }[] = [
-  { kind: "dinner", label: "Dinner" },
-  { kind: "drinks", label: "Drinks" },
-];
+const MENU_TABS: EditableMenuKind[] = ["dinner", "drinks"];
+
+function menuTabLabel(locale: Locale, kind: EditableMenuKind): string {
+  return kind === "dinner"
+    ? t(locale, "admin.menus.tabDinner")
+    : t(locale, "admin.menus.tabDrinks");
+}
+
+function MenuTabIcon({ kind }: { kind: EditableMenuKind }) {
+  if (kind === "dinner") {
+    return <UtensilsCrossed className="size-4 shrink-0" aria-hidden />;
+  }
+  return <Wine className="size-4 shrink-0" aria-hidden />;
+}
+
+function menuDishCountPhrase(locale: Locale, count: number): string {
+  if (locale === "es") {
+    return count === 1 ? "1 plato" : `${count} platos`;
+  }
+  if (locale === "sv") {
+    return count === 1 ? "1 rätt" : `${count} rätter`;
+  }
+  return count === 1 ? "1 dish" : `${count} dishes`;
+}
+
+function menuItemCountPhrase(locale: Locale, kind: EditableMenuKind, count: number): string {
+  if (kind === "drinks") {
+    if (locale === "es") {
+      return count === 1 ? "1 bebida" : `${count} bebidas`;
+    }
+    if (locale === "sv") {
+      return count === 1 ? "1 dryck" : `${count} drycker`;
+    }
+    return count === 1 ? "1 drink" : `${count} drinks`;
+  }
+  return menuDishCountPhrase(locale, count);
+}
+
+function itemSummaryLabel(
+  locale: Locale,
+  kind: EditableMenuKind,
+  item: { name: string; price: string },
+): string {
+  const name =
+    item.name.trim() ||
+    t(locale, kind === "drinks" ? "admin.menus.untitledDrink" : "admin.menus.untitledDish");
+  const price = item.price.trim();
+  return price ? `${name} · ${price}` : name;
+}
 
 function seedFor(kind: EditableMenuKind): EditableMenuDoc {
   switch (kind) {
@@ -116,6 +196,8 @@ function normalizeDraft(input: EditableMenuDoc): EditableMenuDoc {
 
 export function EditableMenusAdminPage() {
   const router = useRouter();
+  const { locale } = useLocale();
+  const { confirm, dialog: confirmDialog } = useAdminConfirm(locale);
   const { user, ready, signOutUser } = useAdminAuth();
 
   const [tab, setTab] = useState<EditableMenuKind>("dinner");
@@ -125,6 +207,26 @@ export function EditableMenusAdminPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  const {
+    isSectionCollapsed,
+    isItemCollapsed,
+    toggleSection,
+    toggleItem,
+    onCategoriesReordered,
+    onItemsReordered,
+    expandItem,
+  } = useMenuEditorExpansion(tab);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const categorySortableIds = useMemo(
+    () => draft.categories.map((_, ci) => categorySortableId(ci)),
+    [draft.categories],
+  );
 
   const load = useCallback(async () => {
     setError(null);
@@ -142,11 +244,11 @@ export function EditableMenusAdminPage() {
       }
     } catch (err) {
       console.error(err);
-      setError(unknownErrorMessage(err, "Could not load menu."));
+      setError(unknownErrorMessage(err, t(locale, "admin.menus.loadError")));
     } finally {
       setBusy(false);
     }
-  }, [tab]);
+  }, [tab, locale]);
 
   useEffect(() => {
     if (!ready || !user) return;
@@ -181,10 +283,10 @@ export function EditableMenusAdminPage() {
         normalizeDraft({ ...draft, isPublished: published }),
       );
       await upsertEditableMenu(db, tab, payload);
-      setMessage("Saved. Guests only see published menus.");
+      setMessage(t(locale, "admin.menus.saved"));
     } catch (err) {
       console.error(err);
-      setError(unknownErrorMessage(err, "Save failed."));
+      setError(unknownErrorMessage(err, t(locale, "admin.menus.saveError")));
     } finally {
       setBusy(false);
     }
@@ -201,10 +303,10 @@ export function EditableMenusAdminPage() {
       );
       await upsertEditableMenu(db, tab, payload);
       setPublished(true);
-      setMessage("Published — visible on the website.");
+      setMessage(t(locale, "admin.menus.publishedSuccess"));
     } catch (err) {
       console.error(err);
-      setError(unknownErrorMessage(err, "Publish failed."));
+      setError(unknownErrorMessage(err, t(locale, "admin.menus.publishError")));
     } finally {
       setBusy(false);
     }
@@ -218,10 +320,10 @@ export function EditableMenusAdminPage() {
       const db = getFirebaseFirestore();
       await setEditableMenuPublished(db, tab, false);
       setPublished(false);
-      setMessage("Unpublished — hidden from guests (draft kept).");
+      setMessage(t(locale, "admin.menus.unpublishedSuccess"));
     } catch (err) {
       console.error(err);
-      setError(unknownErrorMessage(err, "Unpublish failed."));
+      setError(unknownErrorMessage(err, t(locale, "admin.menus.unpublishError")));
     } finally {
       setBusy(false);
     }
@@ -259,10 +361,12 @@ export function EditableMenusAdminPage() {
   }
 
   function addItem(ci: number) {
+    let newIndex = 0;
     setDraft((d) => {
       const next = normalizeDraft(d);
       const cat = next.categories[ci];
       if (!cat) return next;
+      newIndex = cat.items.length;
       cat.items.push({
         position: cat.items.length,
         name: "",
@@ -275,6 +379,48 @@ export function EditableMenusAdminPage() {
       });
       return normalizeDraft(next);
     });
+    expandItem(ci, newIndex);
+  }
+
+  function moveCategory(from: number, to: number) {
+    setDraft((d) => {
+      const next = normalizeDraft(d);
+      next.categories = arrayMove(next.categories, from, to);
+      return normalizeDraft(next);
+    });
+    onCategoriesReordered(from, to);
+  }
+
+  function moveItem(ci: number, from: number, to: number) {
+    setDraft((d) => {
+      const next = normalizeDraft(d);
+      const cat = next.categories[ci];
+      if (!cat) return next;
+      cat.items = arrayMove(cat.items, from, to);
+      return normalizeDraft(next);
+    });
+    onItemsReordered(ci, from, to);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const activeId = String(active.id);
+    const overId = String(over.id);
+
+    const fromCat = parseCategorySortableId(activeId);
+    const toCat = parseCategorySortableId(overId);
+    if (fromCat != null && toCat != null) {
+      moveCategory(fromCat, toCat);
+      return;
+    }
+
+    const fromItem = parseItemSortableId(activeId);
+    const toItem = parseItemSortableId(overId);
+    if (fromItem && toItem && fromItem.ci === toItem.ci) {
+      moveItem(fromItem.ci, fromItem.ii, toItem.ii);
+    }
   }
 
   function toggleDietaryTag(ci: number, ii: number, id: DietaryTagId) {
@@ -353,20 +499,55 @@ export function EditableMenusAdminPage() {
     });
   }
 
-  const tabLabel = useMemo(() => TABS.find((x) => x.kind === tab)?.label ?? tab, [tab]);
+  async function confirmRemoveCategory(ci: number) {
+    const cat = draft.categories[ci];
+    if (!cat) return;
+    const section = cat.title.trim() || t(locale, "admin.menus.untitledSection");
+    const countPhrase = menuDishCountPhrase(locale, cat.items.length);
+    const msg = t(locale, "admin.menus.removeSectionConfirm")
+      .replace("{section}", section)
+      .replace("{countPhrase}", countPhrase);
+    const ok = await confirm({
+      message: msg,
+      confirmLabel: t(locale, "admin.confirm.remove"),
+    });
+    if (!ok) return;
+    removeCategory(ci);
+  }
+
+  async function confirmRemoveItem(ci: number, ii: number) {
+    const item = draft.categories[ci]?.items[ii];
+    if (!item) return;
+    const dish =
+      item.name.trim() ||
+      t(locale, tab === "drinks" ? "admin.menus.untitledDrink" : "admin.menus.untitledDish");
+    const msg = t(
+      locale,
+      tab === "drinks" ? "admin.menus.removeDrinkConfirm" : "admin.menus.removeDishConfirm",
+    ).replace("{dish}", dish);
+    const ok = await confirm({
+      message: msg,
+      confirmLabel: t(locale, "admin.confirm.remove"),
+    });
+    if (!ok) return;
+    removeItem(ci, ii);
+  }
+
+  const tabLabel = useMemo(() => menuTabLabel(locale, tab), [locale, tab]);
 
   if (!ready || !user) {
     return (
-      <PageShell title="Menus" intro="Loading…">
-        <p className="text-sm text-paper/70">Checking sign-in…</p>
+      <PageShell title={t(locale, "admin.menus.title")} intro={t(locale, "admin.loading")}>
+        <p className="text-sm text-paper/70">{t(locale, "admin.checkingSignIn")}</p>
       </PageShell>
     );
   }
 
   return (
+    <>
     <PageShell
-      title="Menus"
-      intro="Choose dinner or drinks. Save keeps your draft; Publish shows it on the site."
+      title={t(locale, "admin.menus.title")}
+      intro={t(locale, "admin.menus.intro")}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -375,7 +556,10 @@ export function EditableMenusAdminPage() {
             href="/admin/dashboard"
             className={`inline-flex items-center justify-center ${adminBtnNeutral}`}
           >
-            Dashboard
+            <span className="inline-flex items-center gap-2">
+              <LayoutDashboard className="size-4" aria-hidden />
+              {t(locale, "admin.dashboard")}
+            </span>
           </Link>
           <button
             type="button"
@@ -385,20 +569,20 @@ export function EditableMenusAdminPage() {
           >
             <span className="inline-flex items-center gap-2">
               <RefreshCcw className="size-4" aria-hidden />
-              Reload
+              {t(locale, "admin.menus.reload")}
             </span>
           </button>
         </div>
         <button type="button" className={adminBtnSignOut} onClick={onLogout} disabled={busy}>
           <span className="inline-flex items-center gap-2">
             <LogOut className="size-4" aria-hidden />
-            Sign out
+            {t(locale, "admin.signOut")}
           </span>
         </button>
       </div>
 
       <div className="mb-8 flex flex-wrap gap-2 border-b border-border pb-4">
-        {TABS.map(({ kind, label }) => (
+        {MENU_TABS.map((kind) => (
           <button
             key={kind}
             type="button"
@@ -411,7 +595,10 @@ export function EditableMenusAdminPage() {
                 : "border-border bg-paper/5 text-paper/70 hover:border-paper/25",
             ].join(" ")}
           >
-            {label}
+            <span className="inline-flex items-center gap-2">
+              <MenuTabIcon kind={kind} />
+              {menuTabLabel(locale, kind)}
+            </span>
           </button>
         ))}
       </div>
@@ -424,22 +611,27 @@ export function EditableMenusAdminPage() {
       {message ? <div className={`mb-4 ${adminCalloutSuccess}`}>{message}</div> : null}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+        <aside className="lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:self-start">
         <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-          <h2 className="font-display text-xl font-medium text-paper">Status · {tabLabel}</h2>
+          <h2 className="font-display text-xl font-medium text-paper">
+            {t(locale, "admin.menus.status")} · {tabLabel}
+          </h2>
           <p className="mt-3 text-sm text-paper/65 leading-relaxed">
-            Unpublished menus fall back to demo content on the public site until you publish.
+            {t(locale, "admin.menus.statusIntro")}
           </p>
           <div className="mt-6 space-y-2 text-sm">
             <p>
-              <span className="text-paper/60">Published:</span>{" "}
-              <span className="font-semibold text-paper">{published ? "Yes" : "No"}</span>
+              <span className="text-paper/60">{t(locale, "admin.menus.publishedLabel")}</span>{" "}
+              <span className="font-semibold text-paper">
+                {published ? t(locale, "admin.menus.yes") : t(locale, "admin.menus.no")}
+              </span>
             </p>
           </div>
           <div className="mt-8 flex flex-col gap-3">
             <button type="button" className={`w-full ${adminBtnGreen}`} onClick={() => void onPublish()} disabled={busy}>
               <span className="inline-flex items-center justify-center gap-2">
                 <Upload className="size-4" aria-hidden />
-                Publish
+                {t(locale, "admin.menus.publish")}
               </span>
             </button>
             <button
@@ -448,298 +640,185 @@ export function EditableMenusAdminPage() {
               onClick={() => void onUnpublish()}
               disabled={busy || !published}
             >
-              Unpublish
+              {t(locale, "admin.menus.unpublish")}
+            </button>
+            <button
+              type="button"
+              className={`w-full ${adminBtnBlue}`}
+              onClick={() => void onSave()}
+              disabled={busy}
+            >
+              <span className="inline-flex items-center justify-center gap-2">
+                <Save className="size-4" aria-hidden />
+                {t(locale, "admin.events.saveChanges")}
+              </span>
             </button>
           </div>
         </div>
+        </aside>
 
         <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-          <label className="block text-sm font-medium text-paper">Menu title (shown on the page when set)</label>
+          <label className="block text-sm font-medium text-paper">
+            {t(locale, "admin.menus.menuTitleLabel")}
+          </label>
           <input
             value={draft.title}
             onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-            placeholder='e.g. "Spring dinner menu"'
+            placeholder={t(locale, "admin.menus.menuTitlePlaceholder")}
             className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm placeholder:text-paper/40 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
             disabled={busy}
           />
 
-          <div className="mt-10 space-y-12">
-            {draft.categories.map((cat, ci) => (
-              <section key={ci} className="border-t border-border pt-10 first:border-t-0 first:pt-0">
-                <div className="flex flex-wrap items-end justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <label className="block text-sm font-medium text-paper">Section title</label>
-                    <input
-                      value={cat.title}
-                      onChange={(e) =>
-                        setDraft((d) => {
-                          const next = normalizeDraft(d);
-                          const c = next.categories[ci];
-                          if (c) c.title = e.target.value;
-                          return next;
-                        })
-                      }
-                      className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
-                      disabled={busy}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className={`inline-flex items-center gap-2 ${adminBtnCaution}`}
-                    onClick={() => removeCategory(ci)}
-                    disabled={busy || draft.categories.length <= 1}
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                    Remove section
-                  </button>
-                </div>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={categorySortableIds} strategy={verticalListSortingStrategy}>
+              <div className="mt-10 space-y-6">
+                {draft.categories.map((cat, ci) => {
+                  const itemSortableIds = cat.items.map((_, ii) => itemSortableId(ci, ii));
+                  const sectionCollapsed = isSectionCollapsed(ci);
 
-                <div className="mt-8 space-y-10">
-                  {cat.items.map((item, ii) => (
-                    <div key={ii} className="rounded-none border border-paper/10 bg-paper/5 p-4">
-                      <div className="mb-4 flex justify-end">
+                  return (
+                    <SortableMenuSection
+                      key={categorySortableId(ci)}
+                      ci={ci}
+                      collapsed={sectionCollapsed}
+                      busy={busy}
+                      expandLabel={t(locale, "admin.menus.expandSection")}
+                      collapseLabel={t(locale, "admin.menus.collapseSection")}
+                      dragLabel={t(locale, "admin.menus.dragSection")}
+                      meta={menuItemCountPhrase(locale, tab, cat.items.length)}
+                      onToggleCollapse={() => toggleSection(ci)}
+                      title={
+                        <label className="block w-full text-sm font-medium text-paper">
+                          {t(locale, "admin.menus.sectionTitleLabel")}
+                          <input
+                            value={cat.title}
+                            onChange={(e) =>
+                              setDraft((d) => {
+                                const next = normalizeDraft(d);
+                                const c = next.categories[ci];
+                                if (c) c.title = e.target.value;
+                                return next;
+                              })
+                            }
+                            className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
+                            disabled={busy}
+                          />
+                        </label>
+                      }
+                      actions={
                         <button
                           type="button"
-                          className={`inline-flex items-center gap-2 text-xs ${adminBtnNeutral}`}
-                          onClick={() => removeItem(ci, ii)}
-                          disabled={busy || cat.items.length <= 1}
+                          className={`inline-flex items-center gap-2 ${adminBtnDanger}`}
+                          onClick={() => void confirmRemoveCategory(ci)}
+                          disabled={busy || draft.categories.length <= 1}
                         >
-                          <Trash2 className="size-3.5" aria-hidden />
-                          Remove dish
+                          <Trash2 className="size-4" aria-hidden />
+                          {t(locale, "admin.menus.removeSection")}
                         </button>
-                      </div>
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="sm:col-span-2">
-                          <label className="block text-sm font-medium text-paper">Name</label>
-                          <input
-                            value={item.name}
-                            onChange={(e) =>
-                              setDraft((d) => {
-                                const next = normalizeDraft(d);
-                                const it = next.categories[ci]?.items[ii];
-                                if (it) it.name = e.target.value;
-                                return next;
-                              })
-                            }
-                            className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
-                            disabled={busy}
-                          />
-                        </div>
-                        <div className="sm:col-span-2">
-                          <label className="block text-sm font-medium text-paper">
-                            Name extension{" "}
-                            <span className="font-normal text-paper/50">(optional)</span>
-                          </label>
-                          <input
-                            value={item.nameExtension}
-                            onChange={(e) =>
-                              setDraft((d) => {
-                                const next = normalizeDraft(d);
-                                const it = next.categories[ci]?.items[ii];
-                                if (it) it.nameExtension = e.target.value;
-                                return next;
-                              })
-                            }
-                            placeholder="Shown below the name, same style, smaller — e.g. region or vintage"
-                            className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
-                            disabled={busy}
-                          />
-                        </div>
-                        <div className="sm:col-span-2">
-                          <label className="block text-sm font-medium text-paper">Description</label>
-                          <textarea
-                            value={item.description}
-                            onChange={(e) =>
-                              setDraft((d) => {
-                                const next = normalizeDraft(d);
-                                const it = next.categories[ci]?.items[ii];
-                                if (it) it.description = e.target.value;
-                                return next;
-                              })
-                            }
-                            rows={3}
-                            className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
-                            disabled={busy}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-paper">Price</label>
-                          <input
-                            value={item.price}
-                            onChange={(e) =>
-                              setDraft((d) => {
-                                const next = normalizeDraft(d);
-                                const it = next.categories[ci]?.items[ii];
-                                if (it) it.price = e.target.value;
-                                return next;
-                              })
-                            }
-                            placeholder={
-                              priceOptionsEnabled && item.priceOptions.length > 0
-                                ? "Hidden — size variants below override this"
-                                : "e.g. 24 or 24.50"
-                            }
-                            className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
-                            disabled={busy}
-                          />
-                          {priceOptionsEnabled && item.priceOptions.length > 0 ? (
-                            <p className="mt-1 text-[11px] leading-snug text-paper/45">
-                              The single price above is hidden on the public menu while
-                              size variants are set.
-                            </p>
-                          ) : null}
-                        </div>
-                        {priceOptionsEnabled ? (
-                          <div className="sm:col-span-2">
-                            <p className="block text-sm font-medium text-paper">
-                              Size variants (optional)
-                            </p>
-                            <p className="mt-0.5 text-xs text-paper/55">
-                              For drinks sold in multiple sizes (e.g. Small / Large,
-                              33cl / 50cl, Glass / Bottle). When set, these replace
-                              the single price on the public menu.
-                            </p>
-                            {item.priceOptions.length > 0 ? (
-                              <ul className="mt-3 flex flex-col gap-2">
-                                {item.priceOptions.map((opt, pi) => (
-                                  <li
-                                    key={pi}
-                                    className="flex flex-wrap items-center gap-2"
-                                  >
-                                    <input
-                                      value={opt.label}
-                                      onChange={(e) =>
-                                        updatePriceOption(ci, ii, pi, "label", e.target.value)
-                                      }
-                                      placeholder="Label (e.g. Small)"
-                                      className="min-w-0 flex-1 rounded-none border border-paper/15 bg-paper/8 px-3 py-1.5 text-sm text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
-                                      disabled={busy}
-                                    />
-                                    <input
-                                      value={opt.price}
-                                      onChange={(e) =>
-                                        updatePriceOption(ci, ii, pi, "price", e.target.value)
-                                      }
-                                      placeholder="Price"
-                                      className="w-24 rounded-none border border-paper/15 bg-paper/8 px-3 py-1.5 text-sm text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
-                                      disabled={busy}
-                                    />
-                                    <button
-                                      type="button"
-                                      aria-label={`Remove size variant ${pi + 1}`}
-                                      onClick={() => removePriceOption(ci, ii, pi)}
-                                      className={`inline-flex items-center gap-1.5 ${adminBtnNeutral}`}
-                                      disabled={busy}
-                                    >
-                                      <X className="size-3.5" aria-hidden />
-                                      Remove
-                                    </button>
-                                  </li>
-                                ))}
-                              </ul>
-                            ) : null}
-                            <button
-                              type="button"
-                              className={`mt-3 inline-flex items-center gap-2 ${adminBtnNeutral}`}
-                              onClick={() => addPriceOption(ci, ii)}
-                              disabled={busy}
-                            >
-                              <Plus className="size-3.5" aria-hidden />
-                              Add size
-                            </button>
-                          </div>
-                        ) : null}
-                        <div className="sm:col-span-2">
-                          <p className="block text-sm font-medium text-paper">Dietary tags</p>
-                          <p className="mt-0.5 text-xs text-paper/55">
-                            {tab === "drinks"
-                              ? "Optional — e.g. alcohol-free mocktails, gluten-free beer, vegan or dairy-free ingredients."
-                              : "Optional — select any that apply."}
-                          </p>
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {dietaryTagOptions.map((opt) => {
-                              const selected = item.dietaryTagIds.includes(opt.id);
-                              const Icon = opt.Icon;
-                              return (
+                      }
+                    >
+                      <SortableContext items={itemSortableIds} strategy={verticalListSortingStrategy}>
+                        <div className="space-y-4">
+                          {cat.items.map((item, ii) => (
+                            <SortableMenuItem
+                              key={itemSortableId(ci, ii)}
+                              ci={ci}
+                              ii={ii}
+                              collapsed={isItemCollapsed(ci, ii)}
+                              busy={busy}
+                              expandLabel={t(locale, "admin.menus.expandItem")}
+                              collapseLabel={t(locale, "admin.menus.collapseItem")}
+                              dragLabel={t(locale, "admin.menus.dragItem")}
+                              summary={itemSummaryLabel(locale, tab, item)}
+                              onToggleCollapse={() => toggleItem(ci, ii)}
+                              actions={
                                 <button
-                                  key={opt.id}
                                   type="button"
-                                  disabled={busy}
-                                  aria-pressed={selected}
-                                  onClick={() => toggleDietaryTag(ci, ii, opt.id)}
-                                  className={[
-                                    "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-2 text-left text-xs font-semibold tracking-[0.06em] uppercase transition-colors",
-                                    selected
-                                      ? opt.pillClass
-                                      : "border-dashed border-paper/20 bg-paper/5 text-paper/45 hover:border-paper/35 hover:bg-paper/10 hover:text-paper/75",
-                                  ].join(" ")}
+                                  className={`inline-flex items-center gap-2 ${adminBtnDanger}`}
+                                  onClick={() => void confirmRemoveItem(ci, ii)}
+                                  disabled={busy || cat.items.length <= 1}
                                 >
-                                  <Icon className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />
-                                  {opt.label}
+                                  <Trash2 className="size-3.5" aria-hidden />
+                                  {t(
+                                    locale,
+                                    tab === "drinks"
+                                      ? "admin.menus.removeDrink"
+                                      : "admin.menus.removeDish",
+                                  )}
                                 </button>
-                              );
-                            })}
-                          </div>
+                              }
+                            >
+                              <EditableMenuItemFields
+                                locale={locale}
+                                tab={tab}
+                                item={item}
+                                busy={busy}
+                                priceOptionsEnabled={priceOptionsEnabled}
+                                allergensEnabled={allergensEnabled}
+                                dietaryTagOptions={dietaryTagOptions}
+                                onNameChange={(value) =>
+                                  setDraft((d) => {
+                                    const next = normalizeDraft(d);
+                                    const it = next.categories[ci]?.items[ii];
+                                    if (it) it.name = value;
+                                    return next;
+                                  })
+                                }
+                                onNameExtensionChange={(value) =>
+                                  setDraft((d) => {
+                                    const next = normalizeDraft(d);
+                                    const it = next.categories[ci]?.items[ii];
+                                    if (it) it.nameExtension = value;
+                                    return next;
+                                  })
+                                }
+                                onDescriptionChange={(value) =>
+                                  setDraft((d) => {
+                                    const next = normalizeDraft(d);
+                                    const it = next.categories[ci]?.items[ii];
+                                    if (it) it.description = value;
+                                    return next;
+                                  })
+                                }
+                                onPriceChange={(value) =>
+                                  setDraft((d) => {
+                                    const next = normalizeDraft(d);
+                                    const it = next.categories[ci]?.items[ii];
+                                    if (it) it.price = value;
+                                    return next;
+                                  })
+                                }
+                                onToggleDietaryTag={(id) => toggleDietaryTag(ci, ii, id)}
+                                onToggleAllergen={(id) => toggleAllergen(ci, ii, id)}
+                                onAddPriceOption={() => addPriceOption(ci, ii)}
+                                onUpdatePriceOption={(pi, field, value) =>
+                                  updatePriceOption(ci, ii, pi, field, value)
+                                }
+                                onRemovePriceOption={(pi) => removePriceOption(ci, ii, pi)}
+                              />
+                            </SortableMenuItem>
+                          ))}
                         </div>
-                        {allergensEnabled ? (
-                          <div className="sm:col-span-2">
-                            <p className="block text-sm font-medium text-paper">Allergens (EU 1–14)</p>
-                            <p className="mt-0.5 text-xs text-paper/55">
-                              Tap the numbered circles for any allergens present. Numbers match the legend shown on the public menu.
-                            </p>
-                            <div className="mt-3 flex flex-wrap gap-2">
-                              {ALLERGEN_OPTIONS.map((opt) => {
-                                const selected = item.allergenIds.includes(opt.id);
-                                return (
-                                  <button
-                                    key={opt.id}
-                                    type="button"
-                                    disabled={busy}
-                                    aria-pressed={selected}
-                                    title={`${opt.number}. ${opt.name}`}
-                                    onClick={() => toggleAllergen(ci, ii, opt.id)}
-                                    className={[
-                                      "inline-flex items-center gap-2 rounded-full border px-2 py-1 text-left text-xs font-semibold tracking-[0.06em] transition-colors",
-                                      selected
-                                        ? "border-amber-400/40 bg-amber-950/40 text-amber-100"
-                                        : "border-dashed border-paper/20 bg-paper/5 text-paper/45 hover:border-paper/35 hover:bg-paper/10 hover:text-paper/75",
-                                    ].join(" ")}
-                                  >
-                                    <span
-                                      aria-hidden
-                                      className={[
-                                        "inline-flex size-6 shrink-0 items-center justify-center rounded-full border text-[11px] tabular-nums leading-none",
-                                        selected
-                                          ? "border-amber-300/50 bg-amber-900/70 text-amber-100"
-                                          : "border-paper/25 bg-paper/8 text-paper/65",
-                                      ].join(" ")}
-                                    >
-                                      {opt.number}
-                                    </span>
-                                    <span className="pr-1 normal-case tracking-normal">{opt.name}</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                      </SortableContext>
 
-                <button
-                  type="button"
-                  className={`mt-6 inline-flex items-center gap-2 ${adminBtnNeutral}`}
-                  onClick={() => addItem(ci)}
-                  disabled={busy}
-                >
-                  <Plus className="size-4" aria-hidden />
-                  Add dish
-                </button>
-              </section>
-            ))}
-          </div>
+                      <button
+                        type="button"
+                        className={`mt-6 inline-flex items-center gap-2 ${adminBtnBlue}`}
+                        onClick={() => addItem(ci)}
+                        disabled={busy}
+                      >
+                        <Plus className="size-4" aria-hidden />
+                        {t(
+                          locale,
+                          tab === "drinks" ? "admin.menus.addDrink" : "admin.menus.addDish",
+                        )}
+                      </button>
+                    </SortableMenuSection>
+                  );
+                })}
+              </div>
+            </SortableContext>
+          </DndContext>
 
           <button
             type="button"
@@ -748,19 +827,12 @@ export function EditableMenusAdminPage() {
             disabled={busy}
           >
             <Plus className="size-4" aria-hidden />
-            Add section
+            {t(locale, "admin.menus.addSection")}
           </button>
-
-          <div className="mt-10">
-            <button type="button" className={`w-full ${adminBtnBlue}`} onClick={() => void onSave()} disabled={busy}>
-              <span className="inline-flex items-center justify-center gap-2">
-                <Save className="size-4" aria-hidden />
-                Save changes
-              </span>
-            </button>
-          </div>
         </div>
       </div>
     </PageShell>
+    {confirmDialog}
+    </>
   );
 }

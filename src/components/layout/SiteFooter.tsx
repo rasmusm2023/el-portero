@@ -137,7 +137,7 @@ export function SiteFooter() {
           </div>
 
           <p className="mt-8 text-xs tracking-wide text-paper/55 uppercase">
-            © {new Date().getFullYear()} El Portero
+            © {new Date().getFullYear()} el PORTERO
           </p>
         </div>
       </div>

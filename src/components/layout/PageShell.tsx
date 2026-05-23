@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 type PageShellProps = {
   title?: string;
-  intro?: string;
+  intro?: ReactNode;
   /** Match category headings on menu pages (`font-display text-2xl`), e.g. lunch intro under the hero title. */
   introVariant?: "default" | "display";
   /** When false, skip the document title block (e.g. title already appears in {@link PageHeroSection}). */
@@ -53,7 +53,7 @@ export function PageShell({
         <header className={["mb-12", headerMaxClass].join(" ")}>
           <h1 className={titleClassName}>{title}</h1>
           {intro ? (
-            <p className={introClassName}>{intro}</p>
+            <div className={introClassName}>{intro}</div>
           ) : null}
         </header>
       ) : null}
