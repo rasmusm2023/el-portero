@@ -57,5 +57,12 @@ service cloud.firestore {
             && resource.data.isPublished == true);
       allow create, update, delete: if isAdmin();
     }
+
+    match /openingHours/{docId} {
+      allow read: if isAdmin()
+        || (exists(/databases/$(database)/documents/openingHours/$(docId))
+            && resource.data.isPublished == true);
+      allow create, update, delete: if isAdmin();
+    }
   }
 }

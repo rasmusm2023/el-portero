@@ -1,4 +1,5 @@
 import type { HomeEvent } from "@/lib/publicEventTypes";
+import { resolveEventDescriptionText } from "@/lib/eventDescriptionText";
 
 /** `YYYY-MM-DD` from string, Firestore Timestamp-like, or Admin JSON `{ seconds }`. */
 export function normalizeSortDateFromFirestore(raw: unknown): string {
@@ -34,7 +35,8 @@ export function homeEventFromFirestoreData(id: string, v: Record<string, unknown
   const weekdayDate = (v.weekdayDate ?? { en: "", es: "", sv: "" }) as HomeEvent["weekdayDate"];
   const timeDetail = (v.timeDetail ?? { en: "", es: "", sv: "" }) as HomeEvent["timeDetail"];
   const title = (v.title ?? { en: "", es: "", sv: "" }) as HomeEvent["title"];
-  const excerpt = (v.excerpt ?? { en: "", es: "", sv: "" }) as HomeEvent["excerpt"];
+  const rawExcerpt = (v.excerpt ?? { en: "", es: "", sv: "" }) as HomeEvent["excerpt"];
+  const excerpt = resolveEventDescriptionText(rawExcerpt, v.excerptLines);
   const imageAlt = (v.imageAlt ?? { en: "", es: "", sv: "" }) as HomeEvent["imageAlt"];
   const sortDate = normalizeSortDateFromFirestore(v.sortDate) || String(v.sortDate ?? "").trim();
 
@@ -59,6 +61,10 @@ export function homeEventFromFirestoreData(id: string, v: Record<string, unknown
     timeDetail,
     title,
     excerpt,
+    excerptLines:
+      v.excerptLines && typeof v.excerptLines === "object"
+        ? (v.excerptLines as HomeEvent["excerptLines"])
+        : undefined,
     imageSrc: String(v.imageSrc ?? ""),
     imageAlt,
   };

@@ -29,6 +29,7 @@ import {
   UtensilsCrossed,
   Wine,
 } from "lucide-react";
+import { MenuEditorVisibilityButton } from "@/components/admin/menu-editor/MenuEditorChrome";
 import { EditableMenuItemFields } from "@/components/admin/menu-editor/EditableMenuItemFields";
 import { SortableMenuItem } from "@/components/admin/menu-editor/SortableMenuItem";
 import { SortableMenuSection } from "@/components/admin/menu-editor/SortableMenuSection";
@@ -75,6 +76,7 @@ import {
   parseCategorySortableId,
   parseItemSortableId,
 } from "@/lib/menuEditorIds";
+import { menuContentSnapshot, menuDraftSnapshot } from "@/lib/menuEditorSnapshot";
 import { unknownErrorMessage } from "@/lib/unknownErrorMessage";
 
 const MENU_TABS: EditableMenuKind[] = ["dinner", "drinks"];
@@ -118,13 +120,30 @@ function menuItemCountPhrase(locale: Locale, kind: EditableMenuKind, count: numb
 function itemSummaryLabel(
   locale: Locale,
   kind: EditableMenuKind,
-  item: { name: string; price: string },
+  item: { name: string; price: string; hidden: boolean },
 ): string {
   const name =
     item.name.trim() ||
     t(locale, kind === "drinks" ? "admin.menus.untitledDrink" : "admin.menus.untitledDish");
   const price = item.price.trim();
-  return price ? `${name} · ${price}` : name;
+  const base = price ? `${name} · ${price}` : name;
+  return item.hidden ? `${base} · ${t(locale, "admin.menus.hiddenFromGuests")}` : base;
+}
+
+function sectionMetaLabel(
+  locale: Locale,
+  kind: EditableMenuKind,
+  cat: { hidden: boolean; items: { hidden: boolean }[] },
+): string {
+  const countPhrase = menuItemCountPhrase(locale, kind, cat.items.length);
+  if (cat.hidden) {
+    return `${countPhrase} · ${t(locale, "admin.menus.hiddenFromGuests")}`;
+  }
+  const hiddenItems = cat.items.filter((it) => it.hidden).length;
+  if (hiddenItems > 0) {
+    return `${countPhrase} · ${t(locale, "admin.menus.hiddenItemsCount").replace("{count}", String(hiddenItems))}`;
+  }
+  return countPhrase;
 }
 
 function seedFor(kind: EditableMenuKind): EditableMenuDoc {
@@ -171,15 +190,31 @@ function cleanDraftForSave(input: EditableMenuDoc): EditableMenuDoc {
   };
 }
 
+function normalizedPersistedPayload(doc: EditableMenuDoc, isPublished: boolean): EditableMenuDoc {
+  return cleanDraftForSave(normalizeDraft({ ...doc, isPublished }));
+}
+
+/** Full snapshot (includes hide flags) — baseline for Save button. */
+function persistedMenuSnapshot(doc: EditableMenuDoc, isPublished: boolean): string {
+  return menuDraftSnapshot(normalizedPersistedPayload(doc, isPublished), isPublished);
+}
+
+/** Content-only snapshot (hide flags ignored) — baseline for “save before hide” gating. */
+function persistedContentSnapshot(doc: EditableMenuDoc, isPublished: boolean): string {
+  return menuContentSnapshot(normalizedPersistedPayload(doc, isPublished), isPublished);
+}
+
 function normalizeDraft(input: EditableMenuDoc): EditableMenuDoc {
   return {
     title: input.title ?? "",
     isPublished: Boolean(input.isPublished),
     categories: (input.categories ?? []).map((c, ci) => ({
       position: ci,
+      hidden: Boolean(c.hidden),
       title: c.title ?? "",
       items: (c.items ?? []).map((it, ii) => ({
         position: ii,
+        hidden: Boolean(it.hidden),
         name: it.name ?? "",
         nameExtension: typeof it.nameExtension === "string" ? it.nameExtension : "",
         description: it.description ?? "",
@@ -207,6 +242,8 @@ export function EditableMenusAdminPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
+  const [savedContentSnapshot, setSavedContentSnapshot] = useState<string | null>(null);
 
   const {
     isSectionCollapsed,
@@ -228,6 +265,21 @@ export function EditableMenusAdminPage() {
     [draft.categories],
   );
 
+  const hasUnsavedChanges = useMemo(() => {
+    if (savedSnapshot === null) return false;
+    return persistedMenuSnapshot(draft, published) !== savedSnapshot;
+  }, [draft, published, savedSnapshot]);
+
+  const hasUnsavedContent = useMemo(() => {
+    if (savedContentSnapshot === null) return true;
+    return persistedContentSnapshot(draft, published) !== savedContentSnapshot;
+  }, [draft, published, savedContentSnapshot]);
+
+  const visibilityControlsEnabled = !busy && !hasUnsavedContent;
+  const saveEnabled = !busy && hasUnsavedChanges;
+
+  const saveBeforeHideTitle = t(locale, "admin.menus.saveBeforeHide");
+
   const load = useCallback(async () => {
     setError(null);
     setMessage(null);
@@ -236,11 +288,19 @@ export function EditableMenusAdminPage() {
       const db = getFirebaseFirestore();
       const existing = await readEditableMenu(db, tab);
       if (existing) {
-        setDraft(normalizeDraft(existing));
-        setPublished(Boolean(existing.isPublished));
+        const normalized = normalizeDraft(existing);
+        const pub = Boolean(existing.isPublished);
+        setDraft(normalized);
+        setPublished(pub);
+        const baseline = persistedMenuSnapshot(normalized, pub);
+        setSavedSnapshot(baseline);
+        setSavedContentSnapshot(persistedContentSnapshot(normalized, pub));
       } else {
-        setDraft(seedFor(tab));
+        const seeded = seedFor(tab);
+        setDraft(seeded);
         setPublished(false);
+        setSavedSnapshot(persistedMenuSnapshot(seeded, false));
+        setSavedContentSnapshot(persistedContentSnapshot(seeded, false));
       }
     } catch (err) {
       console.error(err);
@@ -283,6 +343,8 @@ export function EditableMenusAdminPage() {
         normalizeDraft({ ...draft, isPublished: published }),
       );
       await upsertEditableMenu(db, tab, payload);
+      setSavedSnapshot(persistedMenuSnapshot(payload, published));
+      setSavedContentSnapshot(persistedContentSnapshot(payload, published));
       setMessage(t(locale, "admin.menus.saved"));
     } catch (err) {
       console.error(err);
@@ -303,6 +365,8 @@ export function EditableMenusAdminPage() {
       );
       await upsertEditableMenu(db, tab, payload);
       setPublished(true);
+      setSavedSnapshot(persistedMenuSnapshot(payload, true));
+      setSavedContentSnapshot(persistedContentSnapshot(payload, true));
       setMessage(t(locale, "admin.menus.publishedSuccess"));
     } catch (err) {
       console.error(err);
@@ -334,10 +398,12 @@ export function EditableMenusAdminPage() {
       const next = normalizeDraft(d);
       next.categories.push({
         position: next.categories.length,
+        hidden: false,
         title: `Section ${next.categories.length + 1}`,
         items: [
           {
             position: 0,
+            hidden: false,
             name: "",
             nameExtension: "",
             description: "",
@@ -348,6 +414,24 @@ export function EditableMenusAdminPage() {
           },
         ],
       });
+      return next;
+    });
+  }
+
+  function toggleCategoryHidden(ci: number) {
+    setDraft((d) => {
+      const next = normalizeDraft(d);
+      const cat = next.categories[ci];
+      if (cat) cat.hidden = !cat.hidden;
+      return next;
+    });
+  }
+
+  function toggleItemHidden(ci: number, ii: number) {
+    setDraft((d) => {
+      const next = normalizeDraft(d);
+      const it = next.categories[ci]?.items[ii];
+      if (it) it.hidden = !it.hidden;
       return next;
     });
   }
@@ -369,6 +453,7 @@ export function EditableMenusAdminPage() {
       newIndex = cat.items.length;
       cat.items.push({
         position: cat.items.length,
+        hidden: false,
         name: "",
         nameExtension: "",
         description: "",
@@ -503,7 +588,7 @@ export function EditableMenusAdminPage() {
     const cat = draft.categories[ci];
     if (!cat) return;
     const section = cat.title.trim() || t(locale, "admin.menus.untitledSection");
-    const countPhrase = menuDishCountPhrase(locale, cat.items.length);
+    const countPhrase = menuItemCountPhrase(locale, tab, cat.items.length);
     const msg = t(locale, "admin.menus.removeSectionConfirm")
       .replace("{section}", section)
       .replace("{countPhrase}", countPhrase);
@@ -644,9 +729,10 @@ export function EditableMenusAdminPage() {
             </button>
             <button
               type="button"
-              className={`w-full ${adminBtnBlue}`}
+              className={`w-full ${saveEnabled ? adminBtnBlue : adminBtnNeutral}`}
               onClick={() => void onSave()}
-              disabled={busy}
+              disabled={!saveEnabled}
+              aria-disabled={!saveEnabled}
             >
               <span className="inline-flex items-center justify-center gap-2">
                 <Save className="size-4" aria-hidden />
@@ -681,12 +767,23 @@ export function EditableMenusAdminPage() {
                       key={categorySortableId(ci)}
                       ci={ci}
                       collapsed={sectionCollapsed}
+                      hidden={cat.hidden}
                       busy={busy}
                       expandLabel={t(locale, "admin.menus.expandSection")}
                       collapseLabel={t(locale, "admin.menus.collapseSection")}
                       dragLabel={t(locale, "admin.menus.dragSection")}
-                      meta={menuItemCountPhrase(locale, tab, cat.items.length)}
+                      meta={sectionMetaLabel(locale, tab, cat)}
                       onToggleCollapse={() => toggleSection(ci)}
+                      visibilityButton={
+                        <MenuEditorVisibilityButton
+                          hidden={cat.hidden}
+                          hideLabel={t(locale, "admin.menus.hideBtn")}
+                          showLabel={t(locale, "admin.menus.showBtn")}
+                          disabled={!visibilityControlsEnabled}
+                          disabledTitle={saveBeforeHideTitle}
+                          onToggle={() => toggleCategoryHidden(ci)}
+                        />
+                      }
                       title={
                         <label className="block w-full text-sm font-medium text-paper">
                           {t(locale, "admin.menus.sectionTitleLabel")}
@@ -725,12 +822,23 @@ export function EditableMenusAdminPage() {
                               ci={ci}
                               ii={ii}
                               collapsed={isItemCollapsed(ci, ii)}
+                              hidden={item.hidden}
                               busy={busy}
                               expandLabel={t(locale, "admin.menus.expandItem")}
                               collapseLabel={t(locale, "admin.menus.collapseItem")}
                               dragLabel={t(locale, "admin.menus.dragItem")}
                               summary={itemSummaryLabel(locale, tab, item)}
                               onToggleCollapse={() => toggleItem(ci, ii)}
+                              visibilityButton={
+                                <MenuEditorVisibilityButton
+                                  hidden={item.hidden}
+                                  hideLabel={t(locale, "admin.menus.hideBtn")}
+                                  showLabel={t(locale, "admin.menus.showBtn")}
+                                  disabled={!visibilityControlsEnabled}
+                                  disabledTitle={saveBeforeHideTitle}
+                                  onToggle={() => toggleItemHidden(ci, ii)}
+                                />
+                              }
                               actions={
                                 <button
                                   type="button"

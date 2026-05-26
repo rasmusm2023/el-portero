@@ -14,12 +14,14 @@ type Props = {
   ci: number;
   ii: number;
   collapsed: boolean;
+  hidden: boolean;
   busy: boolean;
   expandLabel: string;
   collapseLabel: string;
   dragLabel: string;
   summary?: string;
   actions: ReactNode;
+  visibilityButton?: ReactNode;
   onToggleCollapse: () => void;
   children: ReactNode;
 };
@@ -28,12 +30,14 @@ export function SortableMenuItem({
   ci,
   ii,
   collapsed,
+  hidden,
   busy,
   expandLabel,
   collapseLabel,
   dragLabel,
   summary,
   actions,
+  visibilityButton,
   onToggleCollapse,
   children,
 }: Props) {
@@ -51,9 +55,12 @@ export function SortableMenuItem({
       ref={setNodeRef}
       style={style}
       className={[
-        "rounded-none border border-paper/10 bg-paper/5 p-4",
+        "rounded-none border bg-paper/5 p-4 transition-[opacity,border-color,background-color]",
+        hidden ? "border-amber-500/25 bg-amber-950/10" : "border-paper/10",
+        hidden && !isDragging ? "opacity-50" : "",
         isDragging ? "z-10 opacity-70 ring-2 ring-sky-400/30" : "",
       ].join(" ")}
+      data-menu-hidden={hidden ? "true" : undefined}
     >
       <MenuEditorPanelHeader
         dragHandle={
@@ -64,6 +71,7 @@ export function SortableMenuItem({
             listeners={listeners}
           />
         }
+        visibilityButton={visibilityButton}
         expandButton={
           <MenuEditorExpandButton
             expanded={!collapsed}
@@ -75,7 +83,14 @@ export function SortableMenuItem({
         }
         title={
           collapsed && summary ? (
-            <p className="text-sm font-medium text-paper">{summary}</p>
+            <p
+              className={[
+                "text-sm font-medium",
+                hidden ? "text-paper/55" : "text-paper",
+              ].join(" ")}
+            >
+              {summary}
+            </p>
           ) : null
         }
         actions={actions}

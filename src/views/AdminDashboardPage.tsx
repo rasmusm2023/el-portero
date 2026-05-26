@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { Clock, LogOut } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { t } from "@/i18n/strings";
@@ -57,7 +57,7 @@ export function AdminDashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Link
           href="/admin/events"
           className="group rounded-xl border border-violet-300/80 border-l-[6px] border-l-violet-600 bg-gradient-to-br from-violet-50 to-white p-8 shadow-sm transition-colors hover:border-violet-400"
@@ -91,6 +91,25 @@ export function AdminDashboardPage() {
           </p>
           <p className="mt-6 text-sm font-semibold text-emerald-900 group-hover:underline">
             {t(locale, "admin.dashboard.menusLink")}
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/opening-hours"
+          className="group rounded-xl border border-sky-300/80 border-l-[6px] border-l-sky-600 bg-gradient-to-br from-sky-50 to-white p-8 shadow-sm transition-colors hover:border-sky-400 sm:col-span-2 lg:col-span-1"
+        >
+          <p className="text-xs font-semibold tracking-[0.18em] text-sky-900 uppercase">
+            {t(locale, "admin.dashboard.hoursLabel")}
+          </p>
+          <h2 className="mt-2 font-display text-2xl font-medium text-ink">
+            {t(locale, "admin.dashboard.hoursHeading")}
+          </h2>
+          <p className={`mt-3 text-sm leading-relaxed ${adminTextOnLight}`}>
+            {t(locale, "admin.dashboard.hoursDescription")}
+          </p>
+          <p className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-sky-900 group-hover:underline">
+            <Clock className="size-4" aria-hidden />
+            {t(locale, "admin.dashboard.hoursLink")}
           </p>
         </Link>
       </div>
