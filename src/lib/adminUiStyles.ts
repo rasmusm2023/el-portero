@@ -23,6 +23,14 @@ export const adminBtnCaution =
 export const adminBtnSignOut =
   "rounded-none border border-red-300/18 bg-red-950/25 px-4 py-2 text-xs font-semibold tracking-[0.22em] uppercase text-red-100 shadow-sm transition-colors hover:bg-red-950/35 disabled:cursor-not-allowed disabled:opacity-50";
 
+/** Hide from guests (reversible; not delete) */
+export const adminBtnHide =
+  "rounded-none border border-amber-300/30 bg-amber-950/35 px-3 py-2 text-xs font-semibold tracking-[0.18em] uppercase text-amber-100 shadow-sm transition-colors hover:bg-amber-950/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300/40 disabled:cursor-not-allowed disabled:opacity-50";
+
+/** Restore visibility on the public menu */
+export const adminBtnShow =
+  "rounded-none border border-emerald-300/30 bg-emerald-950/35 px-3 py-2 text-xs font-semibold tracking-[0.18em] uppercase text-emerald-100 shadow-sm transition-colors hover:bg-emerald-950/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/40 disabled:cursor-not-allowed disabled:opacity-50";
+
 /** Dashboard / toolbar */
 export const adminBtnNeutral =
   "rounded-none border border-paper/18 bg-paper/8 px-4 py-2 text-xs font-semibold tracking-[0.22em] uppercase text-paper/90 shadow-sm transition-colors hover:bg-paper/12 disabled:cursor-not-allowed disabled:opacity-50";

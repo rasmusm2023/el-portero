@@ -8,9 +8,11 @@ export function staticCategoriesToEditableDraft(categories: MenuCategoryData[]):
     isPublished: false,
     categories: categories.map((cat, ci) => ({
       position: ci,
+      hidden: false,
       title: cat.title.en,
       items: cat.items.map((it, ii) => ({
         position: ii,
+        hidden: false,
         name: it.name.en,
         nameExtension: "",
         description: it.description.en,

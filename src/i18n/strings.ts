@@ -206,7 +206,44 @@ type AdminKey =
   | "admin.dashboard.menusHeading"
   | "admin.dashboard.menusDescription"
   | "admin.dashboard.menusLink"
+  | "admin.dashboard.hoursLabel"
+  | "admin.dashboard.hoursHeading"
+  | "admin.dashboard.hoursDescription"
+  | "admin.dashboard.hoursLink"
   | "admin.dashboard.backToSite"
+  | "openingHours.day.mon"
+  | "openingHours.day.tue"
+  | "openingHours.day.wed"
+  | "openingHours.day.thu"
+  | "openingHours.day.fri"
+  | "openingHours.day.sat"
+  | "openingHours.day.sun"
+  | "openingHours.closed"
+  | "admin.openingHours.title"
+  | "admin.openingHours.intro"
+  | "admin.openingHours.statusTitle"
+  | "admin.openingHours.statusIntro"
+  | "admin.openingHours.scheduleTitle"
+  | "admin.openingHours.scheduleIntro"
+  | "admin.openingHours.dayStatus"
+  | "admin.openingHours.statusOpen"
+  | "admin.openingHours.statusClosed"
+  | "admin.openingHours.openFrom"
+  | "admin.openingHours.openUntil"
+  | "admin.openingHours.day.mon"
+  | "admin.openingHours.day.tue"
+  | "admin.openingHours.day.wed"
+  | "admin.openingHours.day.thu"
+  | "admin.openingHours.day.fri"
+  | "admin.openingHours.day.sat"
+  | "admin.openingHours.day.sun"
+  | "admin.openingHours.loadError"
+  | "admin.openingHours.saved"
+  | "admin.openingHours.saveError"
+  | "admin.openingHours.publishedSuccess"
+  | "admin.openingHours.publishError"
+  | "admin.openingHours.unpublishedSuccess"
+  | "admin.openingHours.unpublishError"
   | "admin.loading"
   | "admin.checkingSignIn"
   | "admin.events.title"
@@ -278,6 +315,17 @@ type AdminKey =
   | "admin.menus.menuTitlePlaceholder"
   | "admin.menus.sectionTitleLabel"
   | "admin.menus.removeSection"
+  | "admin.menus.hideSection"
+  | "admin.menus.showSection"
+  | "admin.menus.hideBtn"
+  | "admin.menus.showBtn"
+  | "admin.menus.saveBeforeHide"
+  | "admin.menus.hideDish"
+  | "admin.menus.showDish"
+  | "admin.menus.hideDrink"
+  | "admin.menus.showDrink"
+  | "admin.menus.hiddenFromGuests"
+  | "admin.menus.hiddenItemsCount"
   | "admin.menus.removeDish"
   | "admin.menus.removeDrink"
   | "admin.menus.addDish"
@@ -575,7 +623,48 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.menusDescription":
       "Edit dinner and drinks menus section by section. Save your draft, then publish when guests should see the menu on the website.",
     "admin.dashboard.menusLink": "Open menus →",
+    "admin.dashboard.hoursLabel": "Hours",
+    "admin.dashboard.hoursHeading": "Opening hours",
+    "admin.dashboard.hoursDescription":
+      "Weekly schedule and open/closed times shown on the home page. Save, then publish when guests should see updates.",
+    "admin.dashboard.hoursLink": "Open opening hours →",
     "admin.dashboard.backToSite": "← Back to site",
+    "openingHours.day.mon": "Mon",
+    "openingHours.day.tue": "Tue",
+    "openingHours.day.wed": "Wed",
+    "openingHours.day.thu": "Thu",
+    "openingHours.day.fri": "Fri",
+    "openingHours.day.sat": "Sat",
+    "openingHours.day.sun": "Sun",
+    "openingHours.closed": "Closed",
+    "admin.openingHours.title": "Opening hours",
+    "admin.openingHours.intro":
+      "Edit the weekly schedule guests see on the home page. Each day uses dropdowns — the open/closed indicator updates automatically from today's hours (Europe/Madrid).",
+    "admin.openingHours.statusTitle": "Status",
+    "admin.openingHours.statusIntro":
+      "Save your draft first, then publish when the website should show the new hours.",
+    "admin.openingHours.scheduleTitle": "Weekly schedule",
+    "admin.openingHours.scheduleIntro":
+      "Choose Open or Closed for each day. If open, pick opening and closing times in half-hour steps. Closing after midnight (e.g. 01:00) is supported.",
+    "admin.openingHours.dayStatus": "Day status",
+    "admin.openingHours.statusOpen": "Open",
+    "admin.openingHours.statusClosed": "Closed",
+    "admin.openingHours.openFrom": "Opens at",
+    "admin.openingHours.openUntil": "Closes at",
+    "admin.openingHours.day.mon": "Monday",
+    "admin.openingHours.day.tue": "Tuesday",
+    "admin.openingHours.day.wed": "Wednesday",
+    "admin.openingHours.day.thu": "Thursday",
+    "admin.openingHours.day.fri": "Friday",
+    "admin.openingHours.day.sat": "Saturday",
+    "admin.openingHours.day.sun": "Sunday",
+    "admin.openingHours.loadError": "Could not load opening hours.",
+    "admin.openingHours.saved": "Saved. Guests only see published hours.",
+    "admin.openingHours.saveError": "Could not save. Check your connection and try again.",
+    "admin.openingHours.publishedSuccess": "Published — visible on the website.",
+    "admin.openingHours.publishError": "Could not publish. Try again.",
+    "admin.openingHours.unpublishedSuccess": "Unpublished — hidden from guests (draft kept).",
+    "admin.openingHours.unpublishError": "Could not unpublish. Try again.",
     "admin.loading": "Loading…",
     "admin.checkingSignIn": "Checking sign-in…",
     "admin.events.title": "Events",
@@ -661,6 +750,17 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.menuTitlePlaceholder": "e.g. Spring dinner menu",
     "admin.menus.sectionTitleLabel": "Section title",
     "admin.menus.removeSection": "Remove section",
+    "admin.menus.hideSection": "Hide section",
+    "admin.menus.showSection": "Show section",
+    "admin.menus.hideBtn": "Hide",
+    "admin.menus.showBtn": "Show",
+    "admin.menus.saveBeforeHide": "Save changes before hiding or showing items for guests",
+    "admin.menus.hideDish": "Hide dish",
+    "admin.menus.showDish": "Show dish",
+    "admin.menus.hideDrink": "Hide drink",
+    "admin.menus.showDrink": "Show drink",
+    "admin.menus.hiddenFromGuests": "Hidden from guests",
+    "admin.menus.hiddenItemsCount": "{count} hidden from guests",
     "admin.menus.removeDish": "Remove dish",
     "admin.menus.removeDrink": "Remove drink",
     "admin.menus.addDish": "Add dish",
@@ -975,7 +1075,48 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.menusDescription":
       "Editad las cartas de cena y bebidas por secciones. Guardad el borrador y publicad cuando los clientes deban ver la carta en la web.",
     "admin.dashboard.menusLink": "Abrir cartas →",
+    "admin.dashboard.hoursLabel": "Horario",
+    "admin.dashboard.hoursHeading": "Horario de apertura",
+    "admin.dashboard.hoursDescription":
+      "Horario semanal y horas de apertura/cierre en la página de inicio. Guardad y publicad cuando los clientes deban ver los cambios.",
+    "admin.dashboard.hoursLink": "Abrir horario →",
     "admin.dashboard.backToSite": "← Volver al sitio",
+    "openingHours.day.mon": "Lun",
+    "openingHours.day.tue": "Mar",
+    "openingHours.day.wed": "Mié",
+    "openingHours.day.thu": "Jue",
+    "openingHours.day.fri": "Vie",
+    "openingHours.day.sat": "Sáb",
+    "openingHours.day.sun": "Dom",
+    "openingHours.closed": "Cerrado",
+    "admin.openingHours.title": "Horario de apertura",
+    "admin.openingHours.intro":
+      "Editad el horario semanal de la página de inicio. Cada día usa menús desplegables — el indicador abierto/cerrado se actualiza automáticamente según el horario de hoy (Europa/Madrid).",
+    "admin.openingHours.statusTitle": "Estado",
+    "admin.openingHours.statusIntro":
+      "Guardad el borrador y publicad cuando la web deba mostrar el nuevo horario.",
+    "admin.openingHours.scheduleTitle": "Horario semanal",
+    "admin.openingHours.scheduleIntro":
+      "Elegid Abierto o Cerrado para cada día. Si está abierto, elegid hora de apertura y cierre en pasos de media hora. Se admite cierre después de medianoche (p. ej. 01:00).",
+    "admin.openingHours.dayStatus": "Estado del día",
+    "admin.openingHours.statusOpen": "Abierto",
+    "admin.openingHours.statusClosed": "Cerrado",
+    "admin.openingHours.openFrom": "Abre a las",
+    "admin.openingHours.openUntil": "Cierra a las",
+    "admin.openingHours.day.mon": "Lunes",
+    "admin.openingHours.day.tue": "Martes",
+    "admin.openingHours.day.wed": "Miércoles",
+    "admin.openingHours.day.thu": "Jueves",
+    "admin.openingHours.day.fri": "Viernes",
+    "admin.openingHours.day.sat": "Sábado",
+    "admin.openingHours.day.sun": "Domingo",
+    "admin.openingHours.loadError": "No se pudo cargar el horario.",
+    "admin.openingHours.saved": "Guardado. Los clientes solo ven horarios publicados.",
+    "admin.openingHours.saveError": "No se pudo guardar. Comprobad la conexión e intentad de nuevo.",
+    "admin.openingHours.publishedSuccess": "Publicado — visible en la web.",
+    "admin.openingHours.publishError": "No se pudo publicar. Intentad de nuevo.",
+    "admin.openingHours.unpublishedSuccess": "Despublicado — oculto para clientes (borrador conservado).",
+    "admin.openingHours.unpublishError": "No se pudo despublicar. Intentad de nuevo.",
     "admin.loading": "Cargando…",
     "admin.checkingSignIn": "Comprobando acceso…",
     "admin.events.title": "Eventos",
@@ -1061,6 +1202,17 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.menuTitlePlaceholder": "p. ej. Carta de primavera",
     "admin.menus.sectionTitleLabel": "Título de sección",
     "admin.menus.removeSection": "Eliminar sección",
+    "admin.menus.hideSection": "Ocultar sección",
+    "admin.menus.showSection": "Mostrar sección",
+    "admin.menus.hideBtn": "Ocultar",
+    "admin.menus.showBtn": "Mostrar",
+    "admin.menus.saveBeforeHide": "Guardad los cambios antes de ocultar o mostrar para los clientes",
+    "admin.menus.hideDish": "Ocultar plato",
+    "admin.menus.showDish": "Mostrar plato",
+    "admin.menus.hideDrink": "Ocultar bebida",
+    "admin.menus.showDrink": "Mostrar bebida",
+    "admin.menus.hiddenFromGuests": "Oculto para clientes",
+    "admin.menus.hiddenItemsCount": "{count} ocultos para clientes",
     "admin.menus.removeDish": "Eliminar plato",
     "admin.menus.removeDrink": "Eliminar bebida",
     "admin.menus.addDish": "Añadir plato",
@@ -1364,7 +1516,48 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.menusDescription":
       "Redigera middags- och dryckesmenyer sektion för sektion. Spara utkastet och publicera när gäster ska se menyn på webbplatsen.",
     "admin.dashboard.menusLink": "Öppna menyer →",
+    "admin.dashboard.hoursLabel": "Öppettider",
+    "admin.dashboard.hoursHeading": "Öppettider",
+    "admin.dashboard.hoursDescription":
+      "Veckoschema och öppet/stängt på startsidan. Spara och publicera när gäster ska se uppdateringarna.",
+    "admin.dashboard.hoursLink": "Öppna öppettider →",
     "admin.dashboard.backToSite": "← Tillbaka till sajten",
+    "openingHours.day.mon": "Mån",
+    "openingHours.day.tue": "Tis",
+    "openingHours.day.wed": "Ons",
+    "openingHours.day.thu": "Tor",
+    "openingHours.day.fri": "Fre",
+    "openingHours.day.sat": "Lör",
+    "openingHours.day.sun": "Sön",
+    "openingHours.closed": "Stängt",
+    "admin.openingHours.title": "Öppettider",
+    "admin.openingHours.intro":
+      "Redigera veckoschemat på startsidan. Varje dag har rullgardinsmenyer — öppet/stängt-indikatorn uppdateras automatiskt utifrån dagens tider (Europa/Madrid).",
+    "admin.openingHours.statusTitle": "Status",
+    "admin.openingHours.statusIntro":
+      "Spara utkastet först, publicera sedan när webbplatsen ska visa nya tider.",
+    "admin.openingHours.scheduleTitle": "Veckoschema",
+    "admin.openingHours.scheduleIntro":
+      "Välj Öppet eller Stängt för varje dag. Om öppet, välj öppnings- och stängningstid i halvtimmessteg. Stängning efter midnatt (t.ex. 01:00) stöds.",
+    "admin.openingHours.dayStatus": "Dagsstatus",
+    "admin.openingHours.statusOpen": "Öppet",
+    "admin.openingHours.statusClosed": "Stängt",
+    "admin.openingHours.openFrom": "Öppnar",
+    "admin.openingHours.openUntil": "Stänger",
+    "admin.openingHours.day.mon": "Måndag",
+    "admin.openingHours.day.tue": "Tisdag",
+    "admin.openingHours.day.wed": "Onsdag",
+    "admin.openingHours.day.thu": "Torsdag",
+    "admin.openingHours.day.fri": "Fredag",
+    "admin.openingHours.day.sat": "Lördag",
+    "admin.openingHours.day.sun": "Söndag",
+    "admin.openingHours.loadError": "Kunde inte ladda öppettider.",
+    "admin.openingHours.saved": "Sparat. Gäster ser bara publicerade öppettider.",
+    "admin.openingHours.saveError": "Kunde inte spara. Kontrollera anslutningen och försök igen.",
+    "admin.openingHours.publishedSuccess": "Publicerad — synlig på webbplatsen.",
+    "admin.openingHours.publishError": "Kunde inte publicera. Försök igen.",
+    "admin.openingHours.unpublishedSuccess": "Avpublicerad — dold för gäster (utkast behålls).",
+    "admin.openingHours.unpublishError": "Kunde inte avpublicera. Försök igen.",
     "admin.loading": "Laddar…",
     "admin.checkingSignIn": "Kontrollerar inloggning…",
     "admin.events.title": "Evenemang",
@@ -1450,6 +1643,17 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.menuTitlePlaceholder": "t.ex. Vårmiddagsmeny",
     "admin.menus.sectionTitleLabel": "Sektionsrubrik",
     "admin.menus.removeSection": "Ta bort sektion",
+    "admin.menus.hideSection": "Dölj sektion",
+    "admin.menus.showSection": "Visa sektion",
+    "admin.menus.hideBtn": "Dölj",
+    "admin.menus.showBtn": "Visa",
+    "admin.menus.saveBeforeHide": "Spara ändringar innan ni döljer eller visar för gäster",
+    "admin.menus.hideDish": "Dölj rätt",
+    "admin.menus.showDish": "Visa rätt",
+    "admin.menus.hideDrink": "Dölj dryck",
+    "admin.menus.showDrink": "Visa dryck",
+    "admin.menus.hiddenFromGuests": "Dold för gäster",
+    "admin.menus.hiddenItemsCount": "{count} dolda för gäster",
     "admin.menus.removeDish": "Ta bort rätt",
     "admin.menus.removeDrink": "Ta bort dryck",
     "admin.menus.addDish": "Lägg till rätt",

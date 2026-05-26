@@ -56,6 +56,7 @@ function normalizeDoc(raw: Record<string, unknown> | undefined): EditableMenuDoc
       const priceOptions = normalizePriceOptions(item.priceOptions);
       return {
         position: typeof item.position === "number" ? item.position : ii,
+        hidden: Boolean(item.hidden),
         name: typeof item.name === "string" ? item.name : "",
         nameExtension:
           typeof item.nameExtension === "string" ? item.nameExtension.trim() : "",
@@ -69,6 +70,7 @@ function normalizeDoc(raw: Record<string, unknown> | undefined): EditableMenuDoc
     items.sort((a, b) => a.position - b.position);
     return {
       position: typeof row.position === "number" ? row.position : ci,
+      hidden: Boolean(row.hidden),
       title: typeof row.title === "string" ? row.title : "",
       items,
     };

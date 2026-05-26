@@ -4,96 +4,12 @@
  * Opening-hours + live open/closed strip for the home events column. Shown only when
  * `LAUNCH_UI_OPENING_HOURS` is true — see `HomeEventsSection` and `config/launchUi.ts`.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "@/i18n/useLocale";
-import { t } from "@/i18n/strings";
-
-/** Madrid time; venue open 17:00–01:00 every day (session crosses midnight). */
-const OPEN_START_MIN = 17 * 60;
-/** First minute we consider closed after night service (01:00). */
-const NIGHT_END_MIN = 1 * 60;
-
-type VenueStatus = {
-  isOpen: boolean;
-  label: string;
-  detail: string;
-};
-
-function getMadridNowParts() {
-  const dtf = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/Madrid",
-    weekday: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-
-  const parts = dtf.formatToParts(new Date());
-  const hour = Number(parts.find((p) => p.type === "hour")?.value ?? "0");
-  const minute = Number(parts.find((p) => p.type === "minute")?.value ?? "0");
-
-  return { hour, minute };
-}
-
-function getVenueStatus(locale: string): VenueStatus {
-  const { hour, minute } = getMadridNowParts();
-  const minutes = hour * 60 + minute;
-
-  const strings =
-    locale === "es"
-      ? {
-          open: "Abierto ahora",
-          closed: "Cerrado ahora",
-          closesAt: "Cierra a las",
-          opensAt: "Abre a las",
-          today: "hoy",
-        }
-      : locale === "sv"
-        ? {
-            open: "Öppet nu",
-            closed: "Stängt nu",
-            closesAt: "Stänger",
-            opensAt: "Öppnar",
-            today: "i dag",
-          }
-        : {
-            open: "Open now",
-            closed: "Closed now",
-            closesAt: "Closes at",
-            opensAt: "Opens at",
-            today: "tonight",
-          };
-
-  const fmt = (h: number, m: number) =>
-    `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-
-  const isOpen =
-    minutes >= OPEN_START_MIN || minutes < NIGHT_END_MIN;
-
-  if (isOpen) {
-    return {
-      isOpen: true,
-      label: strings.open,
-      detail: `${strings.closesAt} ${fmt(1, 0)} (${strings.today})`,
-    };
-  }
-
-  return {
-    isOpen: false,
-    label: strings.closed,
-    detail: `${strings.opensAt} ${fmt(17, 0)} (${strings.today})`,
-  };
-}
-
-const WEEK_ROWS = [
-  { day: "Mon", hours: "17:00 – 01:00" },
-  { day: "Tue", hours: "17:00 – 01:00" },
-  { day: "Wed", hours: "17:00 – 01:00" },
-  { day: "Thu", hours: "17:00 – 01:00" },
-  { day: "Fri", hours: "17:00 – 01:00" },
-  { day: "Sat", hours: "17:00 – 01:00" },
-  { day: "Sun", hours: "17:00 – 01:00" },
-] as const;
+import { t, type MessageKey } from "@/i18n/strings";
+import { usePublishedOpeningHours } from "@/hooks/usePublishedOpeningHours";
+import { resolvePublicOpeningHours } from "@/lib/openingHoursTypes";
+import { getVenueStatus, formatDayHoursLine } from "@/lib/openingHoursVenueStatus";
 
 type OpeningHoursCardProps = {
   /** For deep links (`/#hours`). */
@@ -102,12 +18,27 @@ type OpeningHoursCardProps = {
   className?: string;
 };
 
+const DAY_PUBLIC_LABEL_KEYS: Record<string, MessageKey> = {
+  mon: "openingHours.day.mon",
+  tue: "openingHours.day.tue",
+  wed: "openingHours.day.wed",
+  thu: "openingHours.day.thu",
+  fri: "openingHours.day.fri",
+  sat: "openingHours.day.sat",
+  sun: "openingHours.day.sun",
+};
+
 export function OpeningHoursCard({
   id,
   headingId = "hours-heading",
   className = "",
 }: OpeningHoursCardProps) {
   const { locale } = useLocale();
+  const { remote, ready } = usePublishedOpeningHours();
+  const schedule = useMemo(
+    () => (ready ? resolvePublicOpeningHours(remote) : null),
+    [ready, remote],
+  );
 
   const [, setTick] = useState(0);
   useEffect(() => {
@@ -115,7 +46,17 @@ export function OpeningHoursCard({
     return () => window.clearInterval(timer);
   }, []);
 
-  const status = getVenueStatus(locale);
+  if (!schedule) {
+    return (
+      <div
+        id={id}
+        className={["w-full scroll-mt-[calc(var(--header-h)+1px)]", className].filter(Boolean).join(" ")}
+        aria-busy="true"
+      />
+    );
+  }
+
+  const status = getVenueStatus(locale, schedule);
 
   return (
     <div id={id} className={["w-full scroll-mt-[calc(var(--header-h)+1px)]", className].filter(Boolean).join(" ")}>
@@ -142,16 +83,16 @@ export function OpeningHoursCard({
         </p>
 
         <ul className="mt-8 space-y-3.5 font-sans sm:mt-10 sm:space-y-4">
-          {WEEK_ROWS.map((row) => (
+          {schedule.rows.map((row) => (
             <li
-              key={row.day}
+              key={row.dayKey}
               className="flex items-baseline justify-between gap-6 border-b border-paper/10 pb-3.5 last:border-b-0 last:pb-0 sm:gap-8 sm:pb-4"
             >
               <span className="min-w-13 text-base font-normal text-ink-muted sm:min-w-16 sm:text-lg">
-                {row.day}
+                {t(locale, DAY_PUBLIC_LABEL_KEYS[row.dayKey] ?? "openingHours.day.mon")}
               </span>
-              <span className="text-base tabular-nums font-medium text-paper sm:text-lg">
-                {row.hours}
+              <span className="text-base font-medium tabular-nums text-paper sm:text-lg">
+                {formatDayHoursLine(locale, row)}
               </span>
             </li>
           ))}

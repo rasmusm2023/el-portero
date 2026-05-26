@@ -1,4 +1,8 @@
 import type { Locale } from "@/i18n/strings";
+import {
+  eventDescriptionLinesFromLocaleTrio,
+  normalizeEventDescriptionLocaleTrio,
+} from "@/lib/eventDescriptionText";
 import { syncDerivedEventFields } from "@/lib/eventSchedule";
 
 export type LocaleTrio = Record<Locale, string>;
@@ -28,6 +32,8 @@ export type HomeEvent = {
   timeDetail: LocaleTrio;
   title: LocaleTrio;
   excerpt: LocaleTrio;
+  /** Explicit textarea line model. Used so public cards can reproduce staff-entered line breaks exactly. */
+  excerptLines?: Record<Locale, string[]>;
   imageSrc: string;
   imageAlt: LocaleTrio;
 };
@@ -41,6 +47,7 @@ export type PublicEventApiDto = {
   timeDetail: { en: string; es: string; sv: string };
   title: { en: string; es: string; sv: string };
   excerpt: { en: string; es: string; sv: string };
+  excerptLines?: { en?: string[]; es?: string[]; sv?: string[] };
   imageSrc: string;
   imageAlt: { en: string; es: string; sv: string };
   updatedAtUtc: string;
@@ -57,12 +64,18 @@ export function publicEventFromDto(d: PublicEventApiDto): HomeEvent {
     timeDetail: { en: d.timeDetail.en, es: d.timeDetail.es, sv: d.timeDetail.sv },
     title: { en: d.title.en, es: d.title.es, sv: d.title.sv },
     excerpt: { en: d.excerpt.en, es: d.excerpt.es, sv: d.excerpt.sv },
+    excerptLines: {
+      en: d.excerptLines?.en ?? [],
+      es: d.excerptLines?.es ?? [],
+      sv: d.excerptLines?.sv ?? [],
+    },
     imageSrc: d.imageSrc,
     imageAlt: { en: d.imageAlt.en, es: d.imageAlt.es, sv: d.imageAlt.sv },
   };
 }
 
 export function toUpsertBody(ev: HomeEvent) {
+  const excerpt = normalizeEventDescriptionLocaleTrio(ev.excerpt);
   return {
     id: ev.id,
     sortDate: ev.sortDate,
@@ -74,7 +87,8 @@ export function toUpsertBody(ev: HomeEvent) {
     weekdayDate: { en: ev.weekdayDate.en, es: ev.weekdayDate.es, sv: ev.weekdayDate.sv },
     timeDetail: { en: ev.timeDetail.en, es: ev.timeDetail.es, sv: ev.timeDetail.sv },
     title: { en: ev.title.en, es: ev.title.es, sv: ev.title.sv },
-    excerpt: { en: ev.excerpt.en, es: ev.excerpt.es, sv: ev.excerpt.sv },
+    excerpt: { en: excerpt.en, es: excerpt.es, sv: excerpt.sv },
+    excerptLines: eventDescriptionLinesFromLocaleTrio(excerpt),
     imageSrc: ev.imageSrc,
     imageAlt: { en: ev.imageAlt.en, es: ev.imageAlt.es, sv: ev.imageAlt.sv },
   };

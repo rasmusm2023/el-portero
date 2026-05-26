@@ -15,6 +15,10 @@ import {
   type Unsubscribe,
 } from "firebase/firestore";
 import type { HomeEvent } from "@/lib/publicEventTypes";
+import {
+  eventDescriptionLinesFromLocaleTrio,
+  normalizeEventDescriptionLocaleTrio,
+} from "@/lib/eventDescriptionText";
 import { coercePublishedToBoolean, publishedFieldNeedsRepair } from "@/lib/publicEventPublishedCoercion";
 import { PUBLIC_EVENTS_COLLECTION } from "@/lib/firebase/publicEventsConstants";
 import { homeEventFromFirestoreData } from "@/lib/firebase/publicEventDoc";
@@ -85,6 +89,7 @@ export function subscribePublishedPublicEvents(
 
 export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
   const id = ev.id.trim();
+  const excerpt = normalizeEventDescriptionLocaleTrio(ev.excerpt);
   const payload: Record<string, unknown> = {
     sortDate: ev.sortDate,
     published: ev.published !== false,
@@ -93,7 +98,8 @@ export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
     weekdayDate: ev.weekdayDate,
     timeDetail: ev.timeDetail,
     title: ev.title,
-    excerpt: ev.excerpt,
+    excerpt,
+    excerptLines: eventDescriptionLinesFromLocaleTrio(excerpt),
     imageSrc: ev.imageSrc,
     imageAlt: ev.imageAlt,
     updatedAt: serverTimestamp(),

@@ -2,15 +2,13 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { EventImage } from "@/components/events/EventImage";
-import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
+import { EventCard } from "@/components/events/EventCard";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { PageShell } from "@/components/layout/PageShell";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
-import { eventCardDateLabel } from "@/lib/eventDisplayDate";
 import { getEventsMontageClips } from "@/lib/eventsVideos";
 
 type EventsPageProps = {
@@ -100,72 +98,10 @@ export function EventsPage({ heroImages }: EventsPageProps) {
                 {events.map((ev) => (
                   <li key={ev.id} className="relative w-full pl-10">
                     <span
-                      className="absolute left-[0.875rem] top-0 z-10 flex h-3.5 w-3.5 -translate-x-1/2 shrink-0 rounded-full border-2 border-paper/70 bg-ink shadow-[0_0_0_5px_var(--color-ink)] ring-1 ring-paper/15"
+                      className="absolute left-3.5 top-0 z-10 flex h-3.5 w-3.5 -translate-x-1/2 shrink-0 rounded-full border-2 border-paper/70 bg-ink shadow-[0_0_0_5px_var(--color-ink)] ring-1 ring-paper/15"
                       aria-hidden
                     />
-                    <article className="overflow-hidden rounded-2xl border border-border bg-paper-dark/35 ring-1 ring-border/60 sm:rounded-3xl">
-                      <div className="flex flex-col md:flex-row">
-                        <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-ink/5 md:aspect-auto md:w-1/2 md:min-h-[280px] md:min-w-0 md:max-w-none">
-                          <EventImage
-                            src={ev.imageSrc}
-                            alt={ev.imageAlt[locale]}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 767px) 100vw, 50vw"
-                          />
-                          <div
-                            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/35 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-paper/8"
-                            aria-hidden
-                          />
-                        </div>
-                        <div className="flex min-w-0 flex-1 flex-col justify-between px-6 py-8 sm:px-10 sm:py-10">
-                          <div>
-                            <time
-                              className="mb-3 block text-left text-[10px] font-semibold leading-snug tracking-[0.2em] text-ink-muted uppercase sm:text-[11px]"
-                              dateTime={ev.sortDate}
-                            >
-                              {eventCardDateLabel(ev, locale)}
-                            </time>
-                            {ev.hasSpecificTime !== false && ev.timeDetail[locale]?.trim() ? (
-                              <div className="flex flex-wrap items-center gap-2">
-                                <p className="text-xs font-semibold tracking-[0.18em] text-ink-muted/90 uppercase">
-                                  {ev.timeDetail[locale]}
-                                </p>
-                              </div>
-                            ) : null}
-                            <h2
-                              className={`font-display text-2xl font-medium text-paper sm:text-3xl ${
-                                ev.hasSpecificTime !== false && ev.timeDetail[locale]?.trim()
-                                  ? "mt-3"
-                                  : ""
-                              }`}
-                            >
-                              {ev.title[locale]}
-                            </h2>
-                            <p className="mt-4 text-ink-muted leading-relaxed">{ev.excerpt[locale]}</p>
-                          </div>
-                          <div className="mt-8 flex flex-wrap gap-2.5">
-                            {ev.fullyBooked ? (
-                              <button
-                                type="button"
-                                disabled
-                                className="inline-flex shrink-0 cursor-not-allowed items-center justify-center rounded-lg border border-border bg-ink/10 px-4 py-2.5 text-xs font-semibold tracking-[0.2em] text-ink-muted uppercase opacity-80 sm:text-sm"
-                                aria-disabled="true"
-                              >
-                                {t(locale, "page.reserve.fullyBooked")}
-                              </button>
-                            ) : (
-                              <BookTableWidgetButton
-                                type="button"
-                                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-ink bg-ink px-4 py-2.5 text-xs font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:text-sm"
-                              >
-                                {t(locale, "nav.reserve")}
-                              </BookTableWidgetButton>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </article>
+                    <EventCard event={ev} locale={locale} variant="listing" />
                   </li>
                 ))}
               </ol>

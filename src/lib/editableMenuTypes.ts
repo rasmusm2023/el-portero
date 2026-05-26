@@ -17,6 +17,8 @@ export type EditableMenuPriceOption = {
 
 export type EditableMenuItem = {
   position: number;
+  /** When true, item stays in the draft but is omitted on the public menu. */
+  hidden: boolean;
   name: string;
   /**
    * Optional suffix shown after the dish name (same visual style as the name, smaller type).
@@ -39,6 +41,8 @@ export type EditableMenuItem = {
 
 export type EditableMenuCategory = {
   position: number;
+  /** When true, section title and all its items are omitted on the public menu. */
+  hidden: boolean;
   title: string;
   items: EditableMenuItem[];
 };

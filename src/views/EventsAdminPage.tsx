@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Copy, LayoutDashboard, LogOut, Plus, Save, Trash2 } from "lucide-react";
 import { EventsAdminIntro } from "@/components/admin/EventsAdminIntro";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { EventCard } from "@/components/events/EventCard";
 import { LocaleFlag } from "@/components/layout/LocaleFlag";
 import { PageShell } from "@/components/layout/PageShell";
 import { adminBtnBlue, adminBtnDanger, adminBtnGreen, adminBtnNeutral, adminBtnSignOut, adminCalloutSuccess } from "@/lib/adminUiStyles";
@@ -140,6 +141,10 @@ export function EventsAdminPage() {
   const isDirty = useMemo(
     () => !homeEventsEqual(draft, savedBaseline),
     [draft, savedBaseline],
+  );
+  const previewEvent = useMemo(
+    () => syncDerivedEventFields(cloneHomeEvent(draft)),
+    [draft],
   );
 
   const load = useCallback(async () => {
@@ -444,6 +449,25 @@ export function EventsAdminPage() {
         </aside>
 
         <div className="min-w-0 space-y-6 xl:col-span-8 2xl:col-span-9">
+          <div className="rounded-xl border border-border bg-ink/45 p-5 shadow-md ring-1 ring-border/60 sm:p-6 lg:p-8">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+              <h2 className="text-lg font-semibold text-paper sm:text-xl">
+                {t(locale, "admin.events.preview")}
+              </h2>
+              <span className="inline-flex items-center gap-2 rounded-full border border-paper/15 bg-paper/6 px-3 py-1 text-xs font-semibold text-paper/70">
+                <LocaleFlag locale={locale} variant="onDark" />
+                {localeLabels[locale]}
+              </span>
+            </div>
+            <EventCard
+              event={previewEvent}
+              locale={locale}
+              variant="home"
+              bookingMode="disabled"
+              imageFallbackLabel={t(locale, "admin.events.imageUrl")}
+            />
+          </div>
+
           <div className="rounded-xl border border-border bg-paper-dark/35 p-5 shadow-md ring-1 ring-border/60 sm:p-6 lg:p-8 xl:p-10">
             <h2 className="mb-6 border-b border-border pb-3 text-lg font-semibold text-paper sm:text-xl">
               {isNew ? t(locale, "admin.events.formNew") : t(locale, "admin.events.formEdit")}
