@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BUNNY_IMG, bunnyVideoSources } from "@/lib/bunnyMedia";
+import { BUNNY_IMG } from "@/lib/bunnyMedia";
 import { useLocale } from "@/i18n/useLocale";
 import { t, type MessageKey } from "@/i18n/strings";
 
@@ -107,10 +107,9 @@ type GalleryMedia =
     }
   | { kind: "imageCycle"; slides: GalleryImageSlide[]; rotateDeg: number };
 
-const galleryBarSources = bunnyVideoSources(
-  "https://el-portero.b-cdn.net/videos/8s_barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red_dzlpue.webm",
-  "https://el-portero.b-cdn.net/videos/8s_barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night-with-red.mp4",
-);
+const galleryBarVideoMp4 =
+  "https://el-portero.b-cdn.net/videos/8s_barman-making-cocktails-with-whiskey-liquor-alcohol-at-the-bar-at-night.mp4";
+const galleryBarSources = [{ src: galleryBarVideoMp4, type: "video/mp4" as const }];
 
 const ROWS: {
   media: GalleryMedia;
@@ -151,7 +150,7 @@ const ROWS: {
   {
     media: {
       kind: "video",
-      src: galleryBarSources[1].src,
+      src: galleryBarVideoMp4,
       sources: galleryBarSources,
       coverScale: 1.02,
       objectPosition: "50% 50%",
