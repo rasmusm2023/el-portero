@@ -398,6 +398,7 @@ export function HeroVideoMontage({ clips, containerRef }: Props) {
                 className="h-full w-full object-cover will-change-transform"
                 muted
                 playsInline
+                poster={i === 0 ? clips[0]?.posterSrc : undefined}
                 preload={reduceMotionSingle && i === 1 ? "none" : "metadata"}
                 autoPlay={i === 0}
               />

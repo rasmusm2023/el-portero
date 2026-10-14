@@ -1,11 +1,4 @@
-import {
-  Cormorant_Garamond,
-  Courier_Prime,
-  Dancing_Script,
-  Figtree,
-  Jaro,
-  Plus_Jakarta_Sans,
-} from "next/font/google";
+import { Cormorant_Garamond, Jaro, Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import type { Metadata } from "next";
 import "./globals.css";
@@ -27,12 +20,6 @@ const fontSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const fontSignature = Dancing_Script({
-  subsets: ["latin"],
-  variable: "--font-signature",
-  display: "swap",
-});
-
 const fontHeroTitle = localFont({
   src: "../assets/fonts/Sweetest Goods - Celesse Regular.otf",
   variable: "--font-bricolage-grotesque",
@@ -45,23 +32,6 @@ const fontLogo = Jaro({
   weight: "variable",
   axes: ["opsz"],
   variable: "--font-jaro",
-  display: "swap",
-});
-
-/** Menu typography: typewriter face for section titles, dish names, descriptions. */
-const fontMenuType = Courier_Prime({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal"],
-  variable: "--font-courier",
-  display: "swap",
-});
-
-/** Menu typography: clean geometric sans for prices (semibold). */
-const fontMenuPrice = Figtree({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-figtree",
   display: "swap",
 });
 
@@ -85,7 +55,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable} ${fontSignature.variable} ${fontMenuType.variable} ${fontMenuPrice.variable}`}
+      className={`${fontDisplay.variable} ${fontSans.variable} ${fontLogo.variable} ${fontHeroTitle.variable}`}
     >
       <body>
         <AppProviders>

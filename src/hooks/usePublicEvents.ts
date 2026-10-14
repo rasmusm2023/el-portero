@@ -34,7 +34,7 @@ function isFirestorePermissionDenied(err: unknown): boolean {
 }
 
 async function loadEventsViaApi(signal: AbortSignal): Promise<HomeEvent[] | null> {
-  const res = await fetch("/api/public/events", { cache: "no-store", signal });
+  const res = await fetch("/api/public/events", { signal });
   if (!res.ok) return null;
   const raw = (await res.json()) as unknown;
   if (!Array.isArray(raw)) return null;

@@ -2,6 +2,7 @@
 
 import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LogoWordmark } from "@/components/LogoWordmark";
 import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { LocationMapEmbed } from "@/components/LocationMap";
@@ -38,14 +39,18 @@ function TikTokIcon() {
 
 export function SiteFooter() {
   const { locale } = useLocale();
+  const pathname = usePathname();
+  const showMap = pathname === "/" || pathname === "/contact";
 
   const mapsHref = googleMapsSearchUrl();
 
   return (
     <footer className="bg-ink text-paper">
-      <div className="w-full border-b border-paper/10">
-        <LocationMapEmbed locale={locale} />
-      </div>
+      {showMap ? (
+        <div className="w-full border-b border-paper/10">
+          <LocationMapEmbed locale={locale} />
+        </div>
+      ) : null}
 
       <div className="w-full py-8">
         <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 sm:px-6 lg:px-8">

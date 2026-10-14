@@ -9,6 +9,9 @@ import { homeEventFromFirestoreData } from "@/lib/firebase/publicEventDoc";
 
 export const dynamic = "force-dynamic";
 
+/** Successful reads can be reused briefly. Errors stay uncached. The Firestore listener still updates the page live. */
+const PUBLIC_CACHE = "public, max-age=60, s-maxage=60";
+
 /** One-time per Node process: same boolean coercion as opening Admin → Events (client `updateDoc`). */
 let bootstrapPublicEventsRepairDone = false;
 let warnedMissingServiceAccount = false;
@@ -31,7 +34,9 @@ export async function GET() {
           "Troubleshooting: GET /api/public/events/diagnostics (dev) or ?key=EVENTS_DIAGNOSTICS_SECRET",
       );
     }
-    return NextResponse.json([]);
+    return NextResponse.json([], {
+      headers: { "Cache-Control": PUBLIC_CACHE },
+    });
   }
 
   const { projectId, token } = session;
@@ -67,9 +72,14 @@ export async function GET() {
       .map((r) => homeEventFromFirestoreData(r.id, r.data))
       .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
 
-    return NextResponse.json(events);
+    return NextResponse.json(events, {
+      headers: { "Cache-Control": PUBLIC_CACHE },
+    });
   } catch (e) {
     console.error("[api/public/events]", e);
-    return NextResponse.json({ error: "Failed to load events" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load events" },
+      { status: 500, headers: { "Cache-Control": "no-store" } },
+    );
   }
 }

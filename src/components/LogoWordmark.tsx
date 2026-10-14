@@ -18,7 +18,7 @@ type LogoWordmarkProps = {
   locale?: Locale;
   /** Treat the SVG for the current surface (black on light; gold gradient on dark — matches primary CTAs). */
   tone?: "onLight" | "onDark";
-  /** Fade in smoothly once the client is ready (default: true). */
+  /** Fade in after mount. Off by default so the wordmark is in the first paint. */
   fadeInOnMount?: boolean;
 };
 
@@ -69,15 +69,16 @@ export function LogoWordmark({
   align = "center",
   locale: localeProp,
   tone = "onLight",
-  fadeInOnMount = true,
+  fadeInOnMount = false,
 }: LogoWordmarkProps) {
   const { locale: localeHook } = useLocale();
   const locale = localeProp ?? localeHook;
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    if (!fadeInOnMount) return;
     setMounted(true);
-  }, []);
+  }, [fadeInOnMount]);
 
   const alignClass = align === "start" ? "items-start" : "items-center";
   const taglineColorClass =
