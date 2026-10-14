@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { EventCard } from "@/components/events/EventCard";
+import { EventsEmptyMessage } from "@/components/events/EventsEmptyMessage";
 import { OpeningHoursCard } from "@/components/OpeningHoursCard";
 import { LAUNCH_UI_OPENING_HOURS } from "@/config/launchUi";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
@@ -51,9 +52,10 @@ export function HomeEventsSection() {
                   {t(locale, "page.home.eventsLoading")}
                 </p>
               ) : events.length === 0 ? (
-                <p className="max-w-md text-base text-ink-muted leading-relaxed">
-                  {t(locale, "page.home.eventsEmpty")}
-                </p>
+                <EventsEmptyMessage
+                  messageKey="page.home.eventsEmpty"
+                  className="max-w-xl text-base text-ink-muted leading-relaxed"
+                />
               ) : (
                 <div className="w-full">
                   <ol className="relative z-10 m-0 flex list-none flex-col gap-10">

@@ -46,16 +46,18 @@ type StoryBlock = {
   kicker?: string;
   title: string;
   body: string[];
-  image: { alt: string } & (
-    | { kind: "single"; src: string; objectPosition?: string }
-    | {
-        kind: "cycle";
-        slides: string[];
-        intervalMs: number;
-        fadeMs: number;
-        objectPosition?: string;
-      }
-  );
+  image:
+    | { kind: "placeholder" }
+    | ({ alt: string } & (
+        | { kind: "single"; src: string; objectPosition?: string }
+        | {
+            kind: "cycle";
+            slides: string[];
+            intervalMs: number;
+            fadeMs: number;
+            objectPosition?: string;
+          }
+      ));
   imageAspectClassName?: string;
   footer?: React.ReactNode;
 };
@@ -147,7 +149,9 @@ function StoryBlockRow({ block, index }: { block: StoryBlock; index: number }) {
       className={`relative flex flex-col gap-6 md:flex-row md:items-stretch md:gap-0 ${beat.row}`}
     >
       <div className={imageClassName}>
-        {block.image.kind === "cycle" ? (
+        {block.image.kind === "placeholder" ? (
+          <div className="absolute inset-0 bg-[#bdbdbd]" aria-hidden />
+        ) : block.image.kind === "cycle" ? (
           <FadingImageCycle
             slides={block.image.slides}
             alt={block.image.alt}
@@ -200,11 +204,7 @@ export function StoryDraftPage() {
         kicker: t(locale, "page.storyDraft.dreamKicker"),
         title: t(locale, "page.storyDraft.dreamTitle"),
         body: [t(locale, "page.storyDraft.dreamP1"), t(locale, "page.storyDraft.dreamP2")],
-        image: {
-          kind: "single",
-          src: `${cdn}/3.jpg`,
-          alt: t(locale, "page.storyDraft.altDream"),
-        },
+        image: { kind: "placeholder" },
       },
       {
         id: "two-dreams",
@@ -243,41 +243,22 @@ export function StoryDraftPage() {
           t(locale, "page.storyDraft.nameP2"),
           t(locale, "page.storyDraft.nameP3"),
         ],
-        image: {
-          kind: "single",
-          src: `${cdn}/bar.jpg`,
-          alt: t(locale, "page.storyDraft.altName"),
-        },
+        image: { kind: "placeholder" },
       },
       {
         id: "welcome",
         title: t(locale, "page.storyDraft.welcomeTitle"),
-        body: [t(locale, "page.storyDraft.welcomeP1"), t(locale, "page.storyDraft.welcomeP2")],
-        image: {
-          kind: "single",
-          src: `${cdn}/torrevieja-beach.walk.jpg`,
-          alt: t(locale, "page.storyDraft.altWelcome"),
-        },
+        body: [
+          `${t(locale, "page.storyDraft.welcomeP1")} ${t(locale, "page.storyDraft.welcomeP2")}`,
+        ],
+        image: { kind: "placeholder" },
         imageAspectClassName: "aspect-[21/9] md:aspect-[16/10]",
         footer: (
-          <div className="mt-8 flex flex-col gap-5 sm:mt-10 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
-            <div>
-              <p className={bodyClass}>{t(locale, "page.storyDraft.signatureLead")}</p>
-              <p className="mt-1 font-signature text-3xl text-paper sm:text-4xl">
-                Magnus Hedman
-              </p>
-            </div>
-            <div className="flex shrink-0 justify-start sm:justify-end">
-              <div className="relative size-48 overflow-hidden rounded-full bg-paper-dark ring-1 ring-ink/10 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.55)] sm:size-56">
-                <Image
-                  src={`${cdn}/6.jpg`}
-                  alt={t(locale, "page.storyDraft.altPortrait")}
-                  fill
-                  className="object-cover"
-                  sizes="224px"
-                />
-              </div>
-            </div>
+          <div className="mt-8 sm:mt-10">
+            <p className={bodyClass}>{t(locale, "page.storyDraft.signatureLead")}</p>
+            <p className="mt-1 font-signature text-3xl text-paper sm:text-4xl">
+              Magnus Hedman
+            </p>
           </div>
         ),
       },
@@ -300,7 +281,7 @@ export function StoryDraftPage() {
       </PageHeroSection>
 
       <section className="w-full border-t border-border bg-ink">
-        <div className="mx-auto w-full max-w-[min(100%,140rem)] px-4 py-16 sm:px-6 sm:py-20 lg:px-10 lg:py-24 xl:px-14">
+        <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
           <div className="flex flex-col gap-14 md:gap-17 lg:gap-24">
             {STORY_BLOCKS.map((block, i) => (
               <StoryBlockRow key={block.id} block={block} index={i} />

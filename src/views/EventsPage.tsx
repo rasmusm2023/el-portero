@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { EventCard } from "@/components/events/EventCard";
+import { EventsEmptyMessage } from "@/components/events/EventsEmptyMessage";
 import { PageHeroSection } from "@/components/PageHeroSection";
 import { bookTableHeroHollowButtonClass } from "@/components/layout/SiteHeader";
 import { PageShell } from "@/components/layout/PageShell";
@@ -86,7 +87,10 @@ export function EventsPage({ heroImages }: EventsPageProps) {
             </div>
           ) : events.length === 0 ? (
             <div className="mt-8 rounded-none border border-dashed border-border bg-paper-dark/50 px-6 py-12 text-center">
-              <p className="text-ink-muted sm:text-lg">{t(locale, "page.events.listEmpty")}</p>
+              <EventsEmptyMessage
+                messageKey="page.events.listEmpty"
+                className="text-ink-muted sm:text-lg"
+              />
             </div>
           ) : (
             <div className="relative mt-8 w-full sm:mt-10">

@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Sitemap",
+  description:
+    "Index of el PORTERO’s website: home, menus, events, our story, gallery, opening hours, and how to contact the restaurant.",
 };
 
 type SitemapGroup = {

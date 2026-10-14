@@ -1,9 +1,11 @@
 "use client";
 
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import {
   CONTACT_EMAIL,
+  CONTACT_PHONE,
   contactMailtoHref,
+  contactTelHref,
 } from "@/config/site";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
@@ -11,9 +13,13 @@ import { t } from "@/i18n/strings";
 const linkCardClass =
   "group flex flex-col gap-2 rounded-lg border border-paper/12 bg-paper-dark/45 px-6 py-5 shadow-[0_8px_28px_-12px_rgba(0,0,0,0.45)] transition-colors hover:border-gold/35 hover:bg-paper-dark/65 sm:px-8 sm:py-6";
 
+const contactValueClass =
+  "break-all font-sans text-lg font-medium leading-snug text-paper group-hover:underline sm:text-xl";
+
 export function ContactPage() {
   const { locale } = useLocale();
   const mailHref = contactMailtoHref();
+  const telHref = contactTelHref();
 
   return (
     <div className="mx-auto w-full max-w-[var(--container-max)] px-4 pb-20 pt-10 sm:px-6 sm:pb-24 sm:pt-12 lg:px-8 lg:pt-16">
@@ -46,8 +52,27 @@ export function ContactPage() {
                   <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/45">
                     {t(locale, "page.contact.emailLabel")}
                   </span>
-                  <span className="break-all font-display text-2xl font-medium text-paper group-hover:underline sm:text-3xl">
+                  <span className={contactValueClass}>
                     {CONTACT_EMAIL}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href={telHref} className={linkCardClass}>
+              <div className="flex items-center gap-4 sm:gap-5">
+                <Phone
+                  className="size-9 shrink-0 text-paper/45 sm:size-11"
+                  strokeWidth={1.35}
+                  aria-hidden
+                />
+                <div className="min-w-0 flex flex-1 flex-col gap-2">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-paper/45">
+                    {t(locale, "page.contact.phoneLabel")}
+                  </span>
+                  <span className={`${contactValueClass} tabular-nums tracking-[0.04em]`}>
+                    {CONTACT_PHONE}
                   </span>
                 </div>
               </div>
