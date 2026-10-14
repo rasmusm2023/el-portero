@@ -42,6 +42,7 @@ type PageKey =
   | "page.home.eventsViewAll"
   | "page.home.eventsScrollHint"
   | "page.home.eventsEmpty"
+  | "page.home.eventsEmptyContact"
   | "page.home.eventsLoading"
   | "page.home.heroReserveCta"
   | "page.home.heroTagline"
@@ -382,6 +383,7 @@ type FooterKey =
   | "footer.whatsappAria"
   | "footer.tagline"
   | "footer.links"
+  | "footer.follow"
   | "footer.sitemap"
   | "footer.openInMaps";
 
@@ -419,7 +421,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsViewAll": "All events",
     "page.home.eventsScrollHint": "Scroll sideways for more",
     "page.home.eventsEmpty":
-      "There are no published public events at the moment. Check back soon, follow us on Instagram, or ask about a private dinner.",
+      "Nothing to book just yet. We’re in the back plotting the restaurant’s next great nights — follow @elporterorestaurant so they don’t sneak past you, or {contact} if you’ve got an event of your own.",
+    "page.home.eventsEmptyContact": "contact us",
     "page.home.eventsLoading": "Loading events…",
     "page.home.heroReserveCta": "Book a table",
     "page.home.heroTagline":
@@ -482,7 +485,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Hire the restaurant for your crowd — weddings, company dinners, birthdays, tastings, or a fully private celebration. Tell us your date, group size, and mood; we’ll come back with menus, pacing, and a clear way forward.",
     "page.events.listHeading": "Coming up",
     "page.events.listEmpty":
-      "There are no published public events on the calendar right now. Check back soon, or contact us about a private booking.",
+      "Nothing to book just yet. We’re in the back plotting the restaurant’s next great nights — follow @elporterorestaurant so they don’t sneak past you, or {contact} if you’ve got an event of your own.",
     "page.events.listLoading": "Loading events…",
     "page.events.sectionOverviewLabel": "Public nights and private events",
     "page.story.title": "Our story",
@@ -585,8 +588,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.title": "Contact",
     "page.contact.heroTitle": "We’re listening",
     "page.contact.heroBody":
-      "Send us an email — we’ll get back as soon as we can.",
-    "page.contact.phoneLabel": "Email",
+      "Call or email — we’ll get back as soon as we can.",
+    "page.contact.phoneLabel": "Phone",
     "page.contact.emailLabel": "Email",
     "page.gallery.srHeading": "A glimpse of el PORTERO",
     "page.gallery.imageAlt1":
@@ -838,6 +841,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.tagline":
       "el PORTERO in Torrevieja — Peruvian, Spanish and Swedish flavours in a warm, lively dinner-club setting on the Costa Blanca, minutes from the Mediterranean.",
     "footer.links": "Quick links",
+    "footer.follow": "Follow",
     "footer.sitemap": "Sitemap",
     "footer.openInMaps": "Open in Google Maps",
     "brand.dinnerClub": "Dinner Club",
@@ -863,7 +867,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsViewAll": "Todos los eventos",
     "page.home.eventsScrollHint": "Desplázate horizontalmente para ver más",
     "page.home.eventsEmpty":
-      "No hay eventos públicos publicados en este momento. Volved pronto, seguid en Instagram o escribid para una cena privada.",
+      "Todavía no hay nada que reservar. En la cocina estamos tramando las próximas grandes noches del restaurante — seguid a @elporterorestaurant para que no se os escapen en cuanto salgan, o {contact} si tenéis un evento propio.",
+    "page.home.eventsEmptyContact": "escribidnos",
     "page.home.eventsLoading": "Cargando eventos…",
     "page.home.heroReserveCta": "Reservar mesa",
     "page.home.heroTagline":
@@ -927,7 +932,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Reservad el restaurante para vuestro grupo — bodas, cenas de empresa, cumpleaños, catas o una celebración a puerta cerrada. Decidnos fecha, tamaño del grupo y ambición; volveremos con menús, ritmo y siguientes pasos claros.",
     "page.events.listHeading": "Próximas fechas",
     "page.events.listEmpty":
-      "No hay eventos públicos publicados en el calendario ahora mismo. Volved pronto o contactad para una reserva privada.",
+      "Todavía no hay nada que reservar. En la cocina estamos tramando las próximas grandes noches del restaurante — seguid a @elporterorestaurant para que no se os escapen en cuanto salgan, o {contact} si tenéis un evento propio.",
     "page.events.listLoading": "Cargando eventos…",
     "page.events.sectionOverviewLabel":
       "Eventos abiertos y celebraciones privadas",
@@ -1037,8 +1042,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.contact.title": "Contacto",
     "page.contact.heroTitle": "Escribidnos",
     "page.contact.heroBody":
-      "Escribid un correo — contestamos en cuanto podamos.",
-    "page.contact.phoneLabel": "Correo",
+      "Llamad o escribid — contestamos en cuanto podamos.",
+    "page.contact.phoneLabel": "Teléfono",
     "page.contact.emailLabel": "Correo",
     "page.gallery.srHeading": "Un vistazo a el PORTERO",
     "page.gallery.imageAlt1":
@@ -1276,6 +1281,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.tagline":
       "el PORTERO en Torrevieja — sabores de Perú, España y Suecia en un dinner club cálido y lleno de vida en la Costa Blanca, a minutos del Mediterráneo.",
     "footer.links": "Enlaces rápidos",
+    "footer.follow": "Síguenos",
     "footer.sitemap": "Mapa del sitio",
     "footer.openInMaps": "Abrir en Google Maps",
     "header.menuLabel": "MENÚ",
@@ -1307,7 +1313,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.home.eventsViewAll": "Alla evenemang",
     "page.home.eventsScrollHint": "Scrolla åt sidan för fler",
     "page.home.eventsEmpty":
-      "Det finns inga publicerade publika evenemang just nu. Kom tillbaka snart, följ oss på Instagram eller hör av dig om en privat middag.",
+      "Inget att boka än. Vi står i köket och kokar ihop restaurangens nästa stora kvällar — följ @elporterorestaurant så de inte smiter förbi er, eller {contact} om ni har ett eget event på gång.",
+    "page.home.eventsEmptyContact": "hör av er",
     "page.home.eventsLoading": "Laddar evenemang…",
     "page.home.heroReserveCta": "Boka bord",
     "page.home.heroTagline":
@@ -1370,7 +1377,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Ta över restaurangen för er skara — bröllop, företagsmiddagar, födelsedagar, provningar eller en helt privat fest. Berätta om datum, antal gäster och känsla; vi återkom med meny, upplägg och nästa steg.",
     "page.events.listHeading": "Kommande",
     "page.events.listEmpty":
-      "Det finns inga publicerade publika evenemang i kalendern just nu. Kom tillbaka snart eller kontakta oss om en privat bokning.",
+      "Inget att boka än. Vi står i köket och kokar ihop restaurangens nästa stora kvällar — följ @elporterorestaurant så de inte smiter förbi er, eller {contact} om ni har ett eget event på gång.",
     "page.events.listLoading": "Laddar evenemang…",
     "page.events.sectionOverviewLabel": "Publika kvällar och privata event",
     "page.story.title": "Vår historia",
@@ -1478,8 +1485,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.reserve.altWhatsAppAria": "Boka via WhatsApp",
     "page.contact.title": "Kontakt",
     "page.contact.heroTitle": "Hör av dig",
-    "page.contact.heroBody": "Mejla — vi återkommer så fort vi kan.",
-    "page.contact.phoneLabel": "E-post",
+    "page.contact.heroBody": "Ring eller mejla — vi återkommer så fort vi kan.",
+    "page.contact.phoneLabel": "Telefon",
     "page.contact.emailLabel": "E-post",
     "page.gallery.srHeading": "En glimt av el PORTERO",
     "page.gallery.imageAlt1":
@@ -1717,6 +1724,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "footer.tagline":
       "el PORTERO i Torrevieja — smaker från Peru, Spanien och Sverige i en varm och levande dinner club-stämning på Costa Blanca, nära Medelhavet.",
     "footer.links": "Snabblänkar",
+    "footer.follow": "Följ oss",
     "footer.sitemap": "Webbplatskarta",
     "footer.openInMaps": "Öppna i Google Maps",
     "header.menuLabel": "MENY",

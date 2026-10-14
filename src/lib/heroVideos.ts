@@ -4,7 +4,7 @@
  * `playbackRate` stretches or compresses the visible slice; each clip still shows at most
  * ~{@link HERO_MONTAGE_CLIP_MS} of wall-clock time.
  */
-import { bunnyVideoSources } from "@/lib/bunnyMedia";
+import { BUNNY_IMG, bunnyVideoSources } from "@/lib/bunnyMedia";
 
 export const HERO_MONTAGE_CLIP_MS = 3000;
 
@@ -40,6 +40,7 @@ export function getHeroMontageClips(): HeroMontageClip[] {
         "https://el-portero.b-cdn.net/videos/el-portero-home-hero-sequence.webm",
         "https://el-portero.b-cdn.net/videos/el-portero-home-hero-sequence.mp4",
       ),
+      posterSrc: BUNNY_IMG.heroClip1Poster.src,
       playbackRate: 1,
     },
   ];

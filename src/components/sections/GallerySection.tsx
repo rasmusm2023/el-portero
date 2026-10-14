@@ -23,6 +23,37 @@ function GalleryParallaxVideo({
   objectPosition?: string;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setInView(entries.some((entry) => entry.isIntersecting));
+      },
+      { rootMargin: "240px 0px" },
+    );
+    observer.observe(wrap);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const video = wrapRef.current?.querySelector("video");
+    if (!video) return;
+    if (!inView) {
+      video.pause();
+      return;
+    }
+    if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) {
+      video.load();
+    }
+    void video.play().catch(() => {});
+  }, [inView]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -76,8 +107,7 @@ function GalleryParallaxVideo({
         muted
         playsInline
         loop
-        autoPlay
-        preload="metadata"
+        preload={inView ? "metadata" : "none"}
       >
         {(sources ?? [{ src }]).map((s) => (
           <source key={s.src} src={s.src} type={s.type} />
@@ -309,7 +339,7 @@ function GalleryParallaxFadingImage({
             alt={alt}
             className={`${imgClass} ${z}`}
             style={imgStyle}
-            loading={i === 0 ? "eager" : "lazy"}
+            loading="lazy"
             decoding="async"
             draggable={false}
           />

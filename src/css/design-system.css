@@ -85,3 +85,15 @@
       transparent 55%
     );
 }
+
+/* Courier and Figtree load on `/menus` only, so they are not on `<html>`.
+   The theme tokens above resolve on `:root` and would drop these faces. */
+@layer utilities {
+  .font-menu-type {
+    font-family: var(--font-courier), ui-monospace, "Courier New", monospace;
+  }
+
+  .font-menu-price {
+    font-family: var(--font-figtree), var(--font-sans);
+  }
+}
