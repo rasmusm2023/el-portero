@@ -172,26 +172,63 @@ function madridWallYmdHm(now: Date): { ymd: string; minutes: number } {
   return { ymd, minutes };
 }
 
+/** Ends at or before this clock time can mean “next morning” when they are before the start. */
+const OVERNIGHT_END_LIMIT_MINUTES = 6 * 60;
+
+function addDaysYmd(ymd: string, days: number): string | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd.trim());
+  if (!match) return null;
+  const utc = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]) + days));
+  const year = utc.getUTCFullYear();
+  const month = String(utc.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(utc.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * An end earlier than the start, through 06:00, finishes after midnight
+ * (19:30–02:00). Later backwards times stay invalid same-day ranges.
+ */
+export function eventEndsNextMorning(start: string, end: string): boolean {
+  const startMin = parseHmToMinutes(start);
+  const endMin = parseHmToMinutes(end);
+  if (startMin == null || endMin == null) return false;
+  return endMin < startMin && endMin <= OVERNIGHT_END_LIMIT_MINUTES;
+}
+
 /**
  * True when the event should be treated as over (Madrid wall clock): after `sortDate` at end time,
- * or on an earlier calendar day.
+ * or on an earlier calendar day. An end through 06:00 that is before the start finishes the next morning.
  */
 export function isEventPastForAdmin(ev: HomeEvent, now = new Date()): boolean {
   if (!ev.sortDate) return false;
   const { ymd: madridYmd, minutes: nowMin } = madridWallYmdHm(now);
-  if (ev.sortDate < madridYmd) return true;
-  if (ev.sortDate > madridYmd) return false;
 
-  const endHm = ev.timeSlotEnd?.trim();
-  let endMin: number | null = endHm ? parseHmToMinutes(endHm) : null;
-  if (endMin == null) {
-    const parsed =
-      parseTimeLine(ev.timeDetail.en) ??
-      parseTimeLine(ev.timeDetail.sv) ??
-      parseTimeLine(ev.timeDetail.es);
-    endMin = parsed ? parseHmToMinutes(parsed.end) : null;
+  const parsed =
+    parseTimeLine(ev.timeDetail?.en ?? "") ??
+    parseTimeLine(ev.timeDetail?.sv ?? "") ??
+    parseTimeLine(ev.timeDetail?.es ?? "");
+  const startHm = ev.timeSlotStart?.trim() || parsed?.start || "";
+  const endHm = ev.timeSlotEnd?.trim() || parsed?.end || "";
+  const startMin = startHm ? parseHmToMinutes(startHm) : null;
+  const endMin = endHm ? parseHmToMinutes(endHm) : null;
+  const overnight =
+    startMin != null &&
+    endMin != null &&
+    eventEndsNextMorning(startHm, endHm);
+
+  if (!overnight) {
+    if (ev.sortDate < madridYmd) return true;
+    if (ev.sortDate > madridYmd) return false;
+    if (endMin == null) return false;
+    return nowMin >= endMin;
   }
-  if (endMin == null) return false;
+
+  const endDay = addDaysYmd(ev.sortDate, 1);
+  if (!endDay) return ev.sortDate < madridYmd;
+  if (madridYmd < ev.sortDate) return false;
+  if (madridYmd > endDay) return true;
+  if (madridYmd === ev.sortDate) return false;
   return nowMin >= endMin;
 }
 
@@ -208,12 +245,15 @@ export function suggestDuplicateEventId(originalId: string): string {
   return `event${suffix}`;
 }
 
-/** If `end` is before `start` on the clock, return the first option in `EVENT_TIME_OPTIONS` that is not before `start`. */
+/**
+ * Keep an end that is the same evening or the next morning (through 06:00).
+ * Any other end before the start is pulled forward to the start.
+ */
 export function clampEndAfterStart(start: string, end: string): string {
   const sm = parseHmToMinutes(start);
   const em = parseHmToMinutes(end);
   if (sm == null || em == null) return end;
-  if (em >= sm) return end;
+  if (em >= sm || eventEndsNextMorning(start, end)) return end;
   const pick = EVENT_TIME_OPTIONS.find((opt) => {
     const om = parseHmToMinutes(opt);
     return om != null && om >= sm;

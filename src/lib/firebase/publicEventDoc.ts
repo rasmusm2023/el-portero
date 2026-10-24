@@ -53,6 +53,7 @@ export function homeEventFromFirestoreData(id: string, v: Record<string, unknown
     id,
     sortDate,
     published: v.published !== false,
+    localOnly: v.localOnly === true,
     fullyBooked: Boolean(v.fullyBooked ?? false),
     hasSpecificTime,
     timeSlotStart: v.timeSlotStart != null ? String(v.timeSlotStart) : undefined,

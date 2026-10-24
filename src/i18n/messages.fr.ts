@@ -277,20 +277,6 @@ export const frMessages = {
   "admin.events.title": "Événements",
   "admin.events.introLead":
     "Ici, vous gérez les soirées et les rendez-vous que les hôtes voient sur la page d’accueil et la page Événements.",
-  "admin.events.introBulletNewEvent":
-    "**Nouvel événement** — commencer avec un formulaire vide.",
-  "admin.events.introBulletEditList":
-    "**Choisir un événement dans la liste** — le modifier dans le formulaire à droite.",
-  "admin.events.introBulletDuplicate":
-    "**Dupliquer** — copier un événement existant ; pensez à changer la date, le titre et la photo.",
-  "admin.events.introBulletPublished":
-    "**Publié sur le site** — décoché, l’événement est un brouillon et reste caché jusqu’à ce que vous cochiez à nouveau et enregistriez.",
-  "admin.events.introBulletSpecificTime":
-    "**Afficher l’heure de début et de fin** — coché, les hôtes voient les horaires ; décoché, seule la ligne de date apparaît.",
-  "admin.events.introBulletFullyBooked":
-    "**Complet** — indique aux hôtes que l’événement est plein (ils peuvent toujours contacter le restaurant comme d’habitude).",
-  "admin.events.introBulletTranslate":
-    "**Traduire le contenu** — écrivez le titre et la description une seule fois, dans n’importe quelle langue. Le bouton remplit le suédois, l’anglais, l’espagnol, l’allemand et le français, et rédige la description de la photo à partir de l’image.",
   "admin.events.allEvents": "Tous les événements",
   "admin.events.newEvent": "Nouvel événement",
   "admin.events.emptyList": "Aucun événement. Appuyez sur Nouvel événement ci-dessus.",
@@ -310,12 +296,20 @@ export const frMessages = {
   "admin.events.sectionCopy": "Texte visible par les clients",
   "admin.events.sectionReview": "Relire les traductions",
   "admin.events.sectionPublish": "Statut sur le site",
-  "admin.events.previewHint": "Apparence de l’événement sur le site",
+  "admin.events.previewHint": "Cliquez sur la carte pour modifier ce que voient les clients. Changez de langue en haut à droite.",
   "admin.events.guestDateLabel": "Affiché aux clients comme",
   "admin.events.calendarDate": "Date du calendrier",
   "admin.events.specificTime": "Afficher l’heure de début et de fin",
   "admin.events.fullyBooked": "Complet",
-  "admin.events.published": "Publié sur le site",
+  "admin.events.published": "En ligne sur le vrai site",
+  "admin.events.publishedHint": "Les clients sur www.el-portero.com peuvent voir cet événement.",
+  "admin.events.publishedLocal": "Uniquement sur cet ordinateur",
+  "admin.events.publishedLocalHint":
+    "Visible ici sur localhost. Le vrai site ne l’affichera pas.",
+  "admin.events.statusHidden": "Masqué",
+  "admin.events.statusHiddenHint": "Les clients sur www.el-portero.com ne voient pas cet événement.",
+  "admin.events.statusHiddenLocalHint": "Ni sur localhost, ni sur le vrai site.",
+  "admin.events.localOnly": "Local seulement",
   "admin.events.imageUrl": "Lien de la photo",
   "admin.events.imageUrlHint":
     "Téléversez une photo depuis l’ordinateur (nous la redimensionnons). Un lien reste possible si vous préférez.",
@@ -335,8 +329,8 @@ export const frMessages = {
   "admin.events.delete": "Supprimer",
   "admin.events.saveNewTooltip": "Enregistrer le nouvel événement",
   "admin.events.saveEditTooltip": "Enregistrer vos modifications",
-  "admin.events.saveNewDisabledTooltip": "Modifiez le formulaire pour créer un événement",
-  "admin.events.saveEditDisabledTooltip": "Aucune modification — éditez un champ pour enregistrer",
+  "admin.events.saveNewDisabledTooltip": "Modifiez l’aperçu ou les détails ci-dessous pour créer un événement",
+  "admin.events.saveEditDisabledTooltip": "Aucune modification — éditez l’aperçu ou les détails ci-dessous pour enregistrer",
   "admin.events.duplicateLoaded":
     "Copie chargée — vérifiez le nom court (ID) et la date, puis appuyez sur Créer.",
   "admin.events.created": "Événement créé.",
@@ -353,10 +347,19 @@ export const frMessages = {
   "admin.events.loadingIntro": "Chargement…",
   "admin.events.translateContent": "Traduire le contenu",
   "admin.events.translating": "Traduction en cours…",
+  "admin.events.translateWait1": "La traduction est en cours. Patientez quelques secondes.",
+  "admin.events.translateWait2": "Nous vérifions la langue de votre texte, puis nous traduisons le reste.",
+  "admin.events.translateWait3":
+    "L’aperçu se met à jour quand toutes les langues sont prêtes. Vous pouvez laisser cette page ouverte.",
+  "admin.events.translateElapsed": "Temps écoulé {time}",
+  "admin.events.translateLanguageCorrected":
+    "Le texte saisi dans le champ {source} est en {detected}. L’original est enregistré en {detected}, et {source} contient maintenant la traduction. Les autres langues vides ont aussi été remplies. Changez de langue sur l’aperçu pour relire, puis enregistrez.",
+  "admin.events.translateLanguageCorrectedSplit":
+    "Le titre est en {titleLanguage} et la description en {excerptLanguage}. Chaque original est enregistré dans sa langue, et les champs {source} ont maintenant la traduction. Changez de langue sur l’aperçu pour relire, puis enregistrez.",
   "admin.events.translateError":
     "Traduction impossible. Firebase AI Logic doit être activé sur le projet. Réessayez ensuite.",
   "admin.events.translateSuccess":
-    "Traductions et description de la photo remplies — relisez-les ci-dessous, puis enregistrez.",
+    "Les langues vides et les descriptions de photo ont été remplies à partir de {language}. Changez de langue sur l’aperçu pour relire, puis enregistrez.",
   "admin.events.translateNeedText": "Ajoutez un titre ou une description avant de traduire.",
   "admin.events.reviewTranslations": "Relire les traductions",
   "admin.events.uploadImage": "Téléverser une photo",
@@ -365,13 +368,31 @@ export const frMessages = {
   "admin.events.imageUploading": "Téléversement de la photo…",
   "admin.events.imageUploadError":
     "Impossible de téléverser la photo. Réessayez, ou collez un lien à la place.",
-  "admin.events.imageHint":
-    "Téléversez une photo depuis l’ordinateur — nous la compressons et la redimensionnons automatiquement à l’enregistrement. Un lien reste possible. Une dizaine de photos d’événements reste rapide ; le fichier est supprimé quand vous retirez un événement passé.",
+  "admin.events.imageHint": "Vous préférez un lien ? Collez-le ici.",
   "admin.events.imageAltHint":
-    "Remplie automatiquement lors de la traduction. Modifiez-la si vous voulez plus de précision.",
+    "S’applique à la langue choisie sur l’aperçu. Remplie lors de la traduction. Modifiez-la si vous voulez plus de précision.",
   "admin.events.sourceHint":
-    "Écrivez une seule fois, dans n’importe quelle langue. Appuyez ensuite sur Traduire le contenu pour remplir les autres langues et la description de la photo.",
+    "Écrivez le titre et la description sur la carte. Traduire le contenu détecte la vraie langue, conserve votre texte dans cette langue et remplit les autres langues ainsi que la description de la photo.",
   "admin.events.orPasteLink": "Ou coller un lien de photo",
+  "admin.events.notTranslatedYet": "Pas encore traduit",
+  "admin.events.previewLanguage": "Langue de l’aperçu",
+  "admin.events.changePhoto": "Changer la photo",
+  "admin.events.addTime": "Ajouter l’heure",
+  "admin.events.descriptionText": "Texte",
+  "admin.events.descriptionBullets": "Puces",
+  "admin.events.descriptionBold": "Gras",
+  "admin.events.descriptionItalic": "Italique",
+  "admin.events.available": "Disponible",
+  "admin.events.editDate": "Date de l’événement",
+  "admin.events.editTime": "Heure de début et de fin",
+  "admin.events.editAvailability": "Statut de réservation",
+  "admin.events.chooseLanguage": "Choisir la langue de l’aperçu",
+  "admin.events.staffHint": "Les clients ne voient pas ces champs. Ils ne servent qu’ici.",
+  "admin.events.step": "Étape {n}",
+  "admin.events.step1Title": "Détails et aperçu",
+  "admin.events.step3Title": "Nom court et statut sur le site",
+  "admin.events.step4Title": "Vérification",
+  "admin.events.step4Hint": "Relisez le reste avant d’enregistrer.",
   "admin.menus.title": "Cartes",
   "admin.menus.intro":
     "Choisissez dîner ou boissons. Enregistrer garde le brouillon ; Publier l’affiche sur le site.",

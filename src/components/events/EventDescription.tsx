@@ -1,5 +1,9 @@
 import { Fragment } from "react";
-import { normalizeEventDescriptionText } from "@/lib/eventDescriptionText";
+import {
+  parseDescriptionInlines,
+  type DescriptionInline,
+  normalizeEventDescriptionText,
+} from "@/lib/eventDescriptionText";
 
 type EventDescriptionProps = {
   text: string;
@@ -20,9 +24,27 @@ export function EventDescription({ text, className }: EventDescriptionProps) {
       {lines.map((line, index) => (
         <Fragment key={`${index}-${line}`}>
           {index > 0 ? <br /> : null}
-          {line}
+          <DescriptionInlines nodes={parseDescriptionInlines(line)} />
         </Fragment>
       ))}
     </p>
   );
+}
+
+function DescriptionInlines({ nodes }: { nodes: DescriptionInline[] }) {
+  return nodes.map((node, index) => {
+    if (node.type === "text") return <Fragment key={index}>{node.text}</Fragment>;
+    if (node.type === "bold") {
+      return (
+        <strong key={index} className="font-semibold">
+          <DescriptionInlines nodes={node.children} />
+        </strong>
+      );
+    }
+    return (
+      <em key={index}>
+        <DescriptionInlines nodes={node.children} />
+      </em>
+    );
+  });
 }

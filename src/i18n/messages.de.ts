@@ -277,20 +277,6 @@ export const deMessages = {
   "admin.events.title": "Events",
   "admin.events.introLead":
     "Hier verwaltet ihr die Abende und Anlässe, die Gäste auf der Startseite und der Eventseite sehen.",
-  "admin.events.introBulletNewEvent":
-    "**Neues Event** — mit einem leeren Formular beginnen.",
-  "admin.events.introBulletEditList":
-    "**Event aus der Liste wählen** — rechts im Formular bearbeiten.",
-  "admin.events.introBulletDuplicate":
-    "**Duplizieren** — ein bestehendes Event kopieren; Datum, Titel und Foto danach ändern.",
-  "admin.events.introBulletPublished":
-    "**Auf der Website veröffentlicht** — ohne Haken ist das Event ein Entwurf und bleibt für Gäste unsichtbar, bis ihr wieder ankreuzt und speichert.",
-  "admin.events.introBulletSpecificTime":
-    "**Start- und Endzeit zeigen** — mit Haken sehen Gäste die Uhrzeiten; ohne Haken nur die Datumzeile.",
-  "admin.events.introBulletFullyBooked":
-    "**Ausgebucht** — zeigt Gästen auf der Website, dass das Event voll ist (sie können das Restaurant weiter wie gewohnt kontaktieren).",
-  "admin.events.introBulletTranslate":
-    "**Inhalt übersetzen** — Titel und Beschreibung einmal in einer beliebigen Sprache schreiben. Die Schaltfläche füllt Schwedisch, Englisch, Spanisch, Deutsch und Französisch und schreibt die Fotobeschreibung aus dem Bild.",
   "admin.events.allEvents": "Alle Events",
   "admin.events.newEvent": "Neues Event",
   "admin.events.emptyList": "Noch keine Events. Oben auf Neues Event tippen.",
@@ -310,12 +296,21 @@ export const deMessages = {
   "admin.events.sectionCopy": "Text, den Gäste sehen",
   "admin.events.sectionReview": "Übersetzungen prüfen",
   "admin.events.sectionPublish": "Status auf der Website",
-  "admin.events.previewHint": "So sieht das Event auf der Website aus",
+  "admin.events.previewHint": "Auf die Karte klicken, um zu bearbeiten, was Gäste sehen. Sprache oben rechts wechseln.",
   "admin.events.guestDateLabel": "Für Gäste angezeigt als",
   "admin.events.calendarDate": "Datum im Kalender",
   "admin.events.specificTime": "Start- und Endzeit zeigen",
   "admin.events.fullyBooked": "Ausgebucht",
-  "admin.events.published": "Auf der Website veröffentlicht",
+  "admin.events.published": "Live auf der echten Website",
+  "admin.events.publishedHint": "Gäste auf www.el-portero.com können dieses Event sehen.",
+  "admin.events.publishedLocal": "Nur auf diesem Computer",
+  "admin.events.publishedLocalHint":
+    "Hier auf localhost sichtbar. Die echte Website zeigt es nicht.",
+  "admin.events.statusHidden": "Versteckt",
+  "admin.events.statusHiddenHint": "Gäste auf www.el-portero.com sehen dieses Event nicht.",
+  "admin.events.statusHiddenLocalHint":
+    "Weder auf localhost noch auf der echten Website sichtbar.",
+  "admin.events.localOnly": "Nur lokal",
   "admin.events.imageUrl": "Fotolink",
   "admin.events.imageUrlHint":
     "Ladet ein Foto vom Computer hoch (wir verkleinern es automatisch). Ein Link ist weiter möglich, wenn ihr wollt.",
@@ -335,8 +330,8 @@ export const deMessages = {
   "admin.events.delete": "Löschen",
   "admin.events.saveNewTooltip": "Neues Event speichern",
   "admin.events.saveEditTooltip": "Änderungen speichern",
-  "admin.events.saveNewDisabledTooltip": "Formular ändern, um ein Event anzulegen",
-  "admin.events.saveEditDisabledTooltip": "Keine ungespeicherten Änderungen — ein Feld bearbeiten, um zu speichern",
+  "admin.events.saveNewDisabledTooltip": "Vorschau oder die Angaben unten bearbeiten, um ein Event anzulegen",
+  "admin.events.saveEditDisabledTooltip": "Keine ungespeicherten Änderungen — Vorschau oder die Angaben unten bearbeiten, um zu speichern",
   "admin.events.duplicateLoaded":
     "Kopie geladen — Kurzname (ID) und Datum prüfen, dann Anlegen tippen.",
   "admin.events.created": "Event angelegt.",
@@ -353,10 +348,20 @@ export const deMessages = {
   "admin.events.loadingIntro": "Wird geladen…",
   "admin.events.translateContent": "Inhalt übersetzen",
   "admin.events.translating": "Wird übersetzt…",
+  "admin.events.translateWait1": "Die Übersetzung läuft. Bitte ein paar Sekunden warten.",
+  "admin.events.translateWait2":
+    "Wir prüfen, in welcher Sprache ihr geschrieben habt, und übersetzen dann den Rest.",
+  "admin.events.translateWait3":
+    "Die Vorschau aktualisiert sich, sobald alle Sprachen fertig sind. Ihr könnt das Fenster offen lassen.",
+  "admin.events.translateElapsed": "Verstrichene Zeit {time}",
+  "admin.events.translateLanguageCorrected":
+    "Der Text im Feld für {source} ist {detected}. Das Original bleibt unter {detected} gespeichert, und {source} enthält jetzt die Übersetzung. Die anderen leeren Sprachen wurden ebenfalls gefüllt. Sprache in der Vorschau wechseln zum Prüfen, dann speichern.",
+  "admin.events.translateLanguageCorrectedSplit":
+    "Der Titel ist {titleLanguage} und die Beschreibung {excerptLanguage}. Jedes Original wird in seiner Sprache gespeichert, und die Felder für {source} enthalten jetzt die Übersetzung. Sprache in der Vorschau wechseln zum Prüfen, dann speichern.",
   "admin.events.translateError":
     "Übersetzung fehlgeschlagen. Firebase AI Logic muss im Projekt aktiv sein. Dann erneut versuchen.",
   "admin.events.translateSuccess":
-    "Übersetzungen und Fotobeschreibung sind ausgefüllt — unten prüfen, dann speichern.",
+    "Leere Sprachen und Fotobeschreibungen wurden aus {language} gefüllt. Sprache in der Vorschau wechseln zum Prüfen, dann speichern.",
   "admin.events.translateNeedText": "Titel oder Beschreibung eingeben, bevor ihr übersetzt.",
   "admin.events.reviewTranslations": "Übersetzungen prüfen",
   "admin.events.uploadImage": "Foto hochladen",
@@ -365,13 +370,31 @@ export const deMessages = {
   "admin.events.imageUploading": "Foto wird hochgeladen…",
   "admin.events.imageUploadError":
     "Foto konnte nicht hochgeladen werden. Erneut versuchen oder stattdessen einen Link einfügen.",
-  "admin.events.imageHint":
-    "Foto vom Computer hochladen — wir komprimieren und verkleinern es automatisch beim Speichern. Ein Link bleibt möglich. Etwa zehn Eventfotos bleiben schnell; Dateien werden gelöscht, wenn ihr ein vergangenes Event entfernt.",
+  "admin.events.imageHint": "Lieber ein Link? Hier einfügen.",
   "admin.events.imageAltHint":
-    "Wird beim Übersetzen automatisch ausgefüllt. Bei Bedarf genauer formulieren.",
+    "Gilt für die in der Vorschau gewählte Sprache. Wird beim Übersetzen ausgefüllt. Bei Bedarf genauer formulieren.",
   "admin.events.sourceHint":
-    "Einmal in einer beliebigen Sprache schreiben. Dann Inhalt übersetzen tippen — die anderen Sprachen und die Fotobeschreibung werden ausgefüllt.",
+    "Titel und Beschreibung auf der Karte schreiben. Inhalt übersetzen erkennt die echte Sprache, behält euren Text dort und füllt die anderen Sprachen sowie die Fotobeschreibung.",
   "admin.events.orPasteLink": "Oder einen Fotolink einfügen",
+  "admin.events.notTranslatedYet": "Noch nicht übersetzt",
+  "admin.events.previewLanguage": "Vorschausprache",
+  "admin.events.changePhoto": "Foto ändern",
+  "admin.events.addTime": "Uhrzeit hinzufügen",
+  "admin.events.descriptionText": "Text",
+  "admin.events.descriptionBullets": "Aufzählung",
+  "admin.events.descriptionBold": "Fett",
+  "admin.events.descriptionItalic": "Kursiv",
+  "admin.events.available": "Frei",
+  "admin.events.editDate": "Eventdatum",
+  "admin.events.editTime": "Start- und Endzeit",
+  "admin.events.editAvailability": "Buchungsstatus",
+  "admin.events.chooseLanguage": "Vorschausprache wählen",
+  "admin.events.staffHint": "Gäste sehen diese Felder nicht. Sie werden nur hier verwendet.",
+  "admin.events.step": "Schritt {n}",
+  "admin.events.step1Title": "Details und Vorschau",
+  "admin.events.step3Title": "Kurzname und Status auf der Website",
+  "admin.events.step4Title": "Gegenprüfung",
+  "admin.events.step4Hint": "Den Rest prüfen, bevor ihr speichert.",
   "admin.menus.title": "Karten",
   "admin.menus.intro":
     "Abendessen oder Getränke wählen. Speichern behält den Entwurf; Veröffentlichen zeigt ihn auf der Website.",

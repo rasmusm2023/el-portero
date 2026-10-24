@@ -264,13 +264,6 @@ type AdminKey =
   | "admin.chrome.staff"
   | "admin.events.title"
   | "admin.events.introLead"
-  | "admin.events.introBulletNewEvent"
-  | "admin.events.introBulletEditList"
-  | "admin.events.introBulletDuplicate"
-  | "admin.events.introBulletPublished"
-  | "admin.events.introBulletSpecificTime"
-  | "admin.events.introBulletFullyBooked"
-  | "admin.events.introBulletTranslate"
   | "admin.events.allEvents"
   | "admin.events.newEvent"
   | "admin.events.emptyList"
@@ -295,6 +288,13 @@ type AdminKey =
   | "admin.events.specificTime"
   | "admin.events.fullyBooked"
   | "admin.events.published"
+  | "admin.events.publishedHint"
+  | "admin.events.publishedLocal"
+  | "admin.events.publishedLocalHint"
+  | "admin.events.statusHidden"
+  | "admin.events.statusHiddenHint"
+  | "admin.events.statusHiddenLocalHint"
+  | "admin.events.localOnly"
   | "admin.events.imageUrl"
   | "admin.events.imageUrlHint"
   | "admin.events.datePreviewHint"
@@ -327,6 +327,12 @@ type AdminKey =
   | "admin.events.loadingIntro"
   | "admin.events.translateContent"
   | "admin.events.translating"
+  | "admin.events.translateWait1"
+  | "admin.events.translateWait2"
+  | "admin.events.translateWait3"
+  | "admin.events.translateElapsed"
+  | "admin.events.translateLanguageCorrected"
+  | "admin.events.translateLanguageCorrectedSplit"
   | "admin.events.translateError"
   | "admin.events.translateSuccess"
   | "admin.events.translateNeedText"
@@ -340,6 +346,25 @@ type AdminKey =
   | "admin.events.imageAltHint"
   | "admin.events.sourceHint"
   | "admin.events.orPasteLink"
+  | "admin.events.notTranslatedYet"
+  | "admin.events.previewLanguage"
+  | "admin.events.changePhoto"
+  | "admin.events.addTime"
+  | "admin.events.descriptionText"
+  | "admin.events.descriptionBullets"
+  | "admin.events.descriptionBold"
+  | "admin.events.descriptionItalic"
+  | "admin.events.available"
+  | "admin.events.editDate"
+  | "admin.events.editTime"
+  | "admin.events.editAvailability"
+  | "admin.events.chooseLanguage"
+  | "admin.events.staffHint"
+  | "admin.events.step"
+  | "admin.events.step1Title"
+  | "admin.events.step3Title"
+  | "admin.events.step4Title"
+  | "admin.events.step4Hint"
   | "admin.menus.title"
   | "admin.menus.intro"
   | "admin.menus.reload"
@@ -719,20 +744,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.title": "Events",
     "admin.events.introLead":
       "Here you manage the evenings and happenings that guests see on the home page and Events page.",
-    "admin.events.introBulletNewEvent":
-      "**New event** — start with a blank form.",
-    "admin.events.introBulletEditList":
-      "**Pick an event from the list** — edit it in the form on the right.",
-    "admin.events.introBulletDuplicate":
-      "**Duplicate** — copy an existing event; remember to change the date, title, and photo.",
-    "admin.events.introBulletPublished":
-      "**Published on website** — when unchecked, the event is a draft and stays hidden from guests until you check this again and save.",
-    "admin.events.introBulletSpecificTime":
-      "**Show start and end time** — when checked, guests see start and end times; when unchecked, only the date line is shown.",
-    "admin.events.introBulletFullyBooked":
-      "**Fully booked** — tells guests the event is full on the website (they can still contact the restaurant as usual).",
-    "admin.events.introBulletTranslate":
-      "**Translate content** — write the title and description once, in any language. The button fills Swedish, English, Spanish, German, and French, and writes a photo description from the image.",
     "admin.events.allEvents": "All events",
     "admin.events.newEvent": "New event",
     "admin.events.emptyList": "No events yet. Tap New event above to add the first one.",
@@ -752,13 +763,22 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.sectionCopy": "Text guests will see",
     "admin.events.sectionReview": "Review translations",
     "admin.events.sectionPublish": "Website status",
-    "admin.events.previewHint": "How this event looks on the website",
+    "admin.events.previewHint": "Click the card to edit what guests see. Switch language at the top right.",
     "admin.events.guestDateLabel": "Shown to guests as",
     "admin.events.calendarDate": "Date on calendar",
     "admin.events.specificTime": "Show start and end time",
     "admin.events.fullyBooked": "Fully booked",
-    "admin.events.published": "Published on website",
-    "admin.events.imageUrl": "Event photo link",
+    "admin.events.published": "Live on the real website",
+    "admin.events.publishedHint": "Guests on www.el-portero.com can see this event.",
+    "admin.events.publishedLocal": "Only on this computer",
+    "admin.events.publishedLocalHint":
+      "Visible here on localhost. The real website will not show it.",
+    "admin.events.statusHidden": "Hidden",
+    "admin.events.statusHiddenHint": "Guests on www.el-portero.com cannot see this event.",
+    "admin.events.statusHiddenLocalHint":
+      "Not shown on localhost, and not on the real website.",
+    "admin.events.localOnly": "Local only",
+    "admin.events.imageUrl": "Photo link",
     "admin.events.imageUrlHint":
       "Upload a photo from your computer (we resize it automatically). You can still paste an image link if you prefer.",
     "admin.events.datePreviewHint":
@@ -777,8 +797,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.delete": "Delete",
     "admin.events.saveNewTooltip": "Save new event",
     "admin.events.saveEditTooltip": "Save your edits",
-    "admin.events.saveNewDisabledTooltip": "Change the form to create an event",
-    "admin.events.saveEditDisabledTooltip": "No unsaved changes — edit a field to save",
+    "admin.events.saveNewDisabledTooltip": "Edit the preview or the details below to create an event",
+    "admin.events.saveEditDisabledTooltip": "No unsaved changes — edit the preview or the details below to save",
     "admin.events.duplicateLoaded":
       "Copy loaded — check the short name (ID) and date, then tap Create.",
     "admin.events.created": "Event created.",
@@ -795,10 +815,18 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadingIntro": "Loading…",
     "admin.events.translateContent": "Translate content",
     "admin.events.translating": "Translating…",
+    "admin.events.translateWait1": "Translation is running. Please wait a couple of seconds.",
+    "admin.events.translateWait2": "Checking which language you wrote in, then translating the rest.",
+    "admin.events.translateWait3": "The preview updates when every language is ready. You can leave this open.",
+    "admin.events.translateElapsed": "Elapsed time {time}",
+    "admin.events.translateLanguageCorrected":
+      "What you wrote in the {source} field is {detected}. That original text is saved as {detected}, and {source} now has the translation. Other empty languages were filled too. Switch language on the preview to review, then save.",
+    "admin.events.translateLanguageCorrectedSplit":
+      "The title is {titleLanguage} and the description is {excerptLanguage}. Each original is saved in that language, and the {source} fields now have the {source} translation. Switch language on the preview to review, then save.",
     "admin.events.translateError":
       "Could not translate. Firebase AI Logic needs to be enabled on the project, then try again.",
     "admin.events.translateSuccess":
-      "Translations and photo description filled in — review them below, then save.",
+      "Empty languages and photo descriptions were filled from {language}. Switch language on the preview to review, then save.",
     "admin.events.translateNeedText": "Add a title or description before translating.",
     "admin.events.reviewTranslations": "Review translations",
     "admin.events.uploadImage": "Upload photo",
@@ -807,13 +835,31 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.imageUploading": "Uploading photo…",
     "admin.events.imageUploadError":
       "Could not upload the photo. Try again, or paste a link instead.",
-    "admin.events.imageHint":
-      "Upload a photo from your computer — we compress and resize it automatically when you save. A link still works if you prefer. About ten event photos stays fast; we remove the file when you delete a past event.",
+    "admin.events.imageHint": "Prefer a link? Paste it here instead.",
     "admin.events.imageAltHint":
-      "Filled in automatically when you translate. Edit if you want it more specific.",
+      "Applies to the language selected on the preview. Filled when you translate. Edit if you want it more specific.",
     "admin.events.sourceHint":
-      "Write once in any language. Then tap Translate content to fill the other languages and the photo description.",
+      "Write the title and description on the card. Translate content detects the real language, keeps your wording there, and fills the other languages and the photo description.",
     "admin.events.orPasteLink": "Or paste a photo link",
+    "admin.events.notTranslatedYet": "Not translated yet",
+    "admin.events.previewLanguage": "Preview language",
+    "admin.events.changePhoto": "Change photo",
+    "admin.events.addTime": "Add time",
+    "admin.events.descriptionText": "Text",
+    "admin.events.descriptionBullets": "Bullets",
+    "admin.events.descriptionBold": "Bold",
+    "admin.events.descriptionItalic": "Italic",
+    "admin.events.available": "Available",
+    "admin.events.editDate": "Event date",
+    "admin.events.editTime": "Start and end time",
+    "admin.events.editAvailability": "Booking status",
+    "admin.events.chooseLanguage": "Choose preview language",
+    "admin.events.staffHint": "Guests do not see these fields. They are only used here.",
+    "admin.events.step": "Step {n}",
+    "admin.events.step1Title": "Details & Preview",
+    "admin.events.step3Title": "Short name and website status",
+    "admin.events.step4Title": "Double-check",
+    "admin.events.step4Hint": "Look over the rest before you save.",
     "admin.menus.title": "Menus",
     "admin.menus.intro":
       "Choose dinner or drinks. Save keeps your draft; Publish shows it on the site.",
@@ -1212,20 +1258,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.title": "Eventos",
     "admin.events.introLead":
       "Aquí gestionáis las veladas y actividades que ven los clientes en la página de inicio y en Eventos.",
-    "admin.events.introBulletNewEvent":
-      "**Nuevo evento** — empezad con un formulario en blanco.",
-    "admin.events.introBulletEditList":
-      "**Elegid un evento de la lista** — editadlo en el formulario de la derecha.",
-    "admin.events.introBulletDuplicate":
-      "**Duplicar** — copia un evento existente; acordaos de cambiar fecha, título y foto.",
-    "admin.events.introBulletPublished":
-      "**Publicado en la web** — si está desmarcado, el evento es un borrador y los clientes no lo ven hasta que lo volváis a marcar y guardéis.",
-    "admin.events.introBulletSpecificTime":
-      "**Mostrar hora de inicio y fin** — marcado: los clientes ven las horas; desmarcado: solo la fecha.",
-    "admin.events.introBulletFullyBooked":
-      "**Completo** — indica a los clientes que el evento está lleno en la web (pueden seguir contactando con el restaurante).",
-    "admin.events.introBulletTranslate":
-      "**Traducir contenido** — escribid el título y la descripción una vez, en cualquier idioma. El botón rellena sueco, inglés, español, alemán y francés, y escribe la descripción de la foto a partir de la imagen.",
     "admin.events.allEvents": "Todos los eventos",
     "admin.events.newEvent": "Nuevo evento",
     "admin.events.emptyList": "Aún no hay eventos. Pulsad Nuevo evento arriba para añadir el primero.",
@@ -1245,13 +1277,21 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.sectionCopy": "Texto que verán los clientes",
     "admin.events.sectionReview": "Revisar traducciones",
     "admin.events.sectionPublish": "Estado en la web",
-    "admin.events.previewHint": "Así se ve este evento en la web",
+    "admin.events.previewHint": "Pulsad la tarjeta para editar lo que ven los clientes. El idioma se cambia arriba a la derecha.",
     "admin.events.guestDateLabel": "Los clientes lo ven como",
     "admin.events.calendarDate": "Fecha en el calendario",
     "admin.events.specificTime": "Mostrar hora de inicio y fin",
     "admin.events.fullyBooked": "Completo",
-    "admin.events.published": "Publicado en la web",
-    "admin.events.imageUrl": "Enlace de la foto del evento",
+    "admin.events.published": "Visible en la web real",
+    "admin.events.publishedHint": "Los clientes en www.el-portero.com pueden ver este evento.",
+    "admin.events.publishedLocal": "Solo en este ordenador",
+    "admin.events.publishedLocalHint":
+      "Se ve aquí en localhost. La web real no lo mostrará.",
+    "admin.events.statusHidden": "Oculto",
+    "admin.events.statusHiddenHint": "Los clientes en www.el-portero.com no pueden ver este evento.",
+    "admin.events.statusHiddenLocalHint": "No se muestra en localhost ni en la web real.",
+    "admin.events.localOnly": "Solo local",
+    "admin.events.imageUrl": "Enlace de la foto",
     "admin.events.imageUrlHint":
       "Subid una foto desde el ordenador (la redimensionamos). También podéis pegar un enlace si lo preferís.",
     "admin.events.datePreviewHint":
@@ -1270,8 +1310,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.delete": "Eliminar",
     "admin.events.saveNewTooltip": "Guardar nuevo evento",
     "admin.events.saveEditTooltip": "Guardar cambios",
-    "admin.events.saveNewDisabledTooltip": "Rellenad el formulario para crear un evento",
-    "admin.events.saveEditDisabledTooltip": "Sin cambios pendientes — editad un campo para guardar",
+    "admin.events.saveNewDisabledTooltip": "Editad la vista previa o los datos de abajo para crear un evento",
+    "admin.events.saveEditDisabledTooltip": "Sin cambios pendientes — editad la vista previa o los datos de abajo para guardar",
     "admin.events.duplicateLoaded":
       "Copia cargada — revisad el nombre corto (ID) y la fecha, luego pulsad Crear.",
     "admin.events.created": "Evento creado.",
@@ -1288,10 +1328,19 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadingIntro": "Cargando…",
     "admin.events.translateContent": "Traducir contenido",
     "admin.events.translating": "Traduciendo…",
+    "admin.events.translateWait1": "La traducción está en marcha. Esperad un par de segundos.",
+    "admin.events.translateWait2": "Comprobamos en qué idioma escribisteis y luego traducimos el resto.",
+    "admin.events.translateWait3":
+      "La vista previa se actualiza cuando todos los idiomas están listos. Podéis dejar esto abierto.",
+    "admin.events.translateElapsed": "Tiempo transcurrido {time}",
+    "admin.events.translateLanguageCorrected":
+      "Lo que escribisteis en el campo de {source} está en {detected}. Ese texto original queda guardado como {detected}, y {source} tiene ahora la traducción. También se rellenaron los demás idiomas vacíos. Cambiad el idioma en la vista previa para revisarlos y guardad.",
+    "admin.events.translateLanguageCorrectedSplit":
+      "El título está en {titleLanguage} y la descripción en {excerptLanguage}. Cada original se guarda en su idioma, y los campos de {source} tienen ahora la traducción. Cambiad el idioma en la vista previa para revisarlos y guardad.",
     "admin.events.translateError":
       "No se pudo traducir. Hay que activar Firebase AI Logic en el proyecto e intentarlo de nuevo.",
     "admin.events.translateSuccess":
-      "Traducciones y descripción de la foto rellenadas — revisadlas abajo y guardad.",
+      "Los idiomas vacíos y las descripciones de la foto se rellenaron desde {language}. Cambiad el idioma en la vista previa para revisarlos y guardad.",
     "admin.events.translateNeedText": "Añadid un título o una descripción antes de traducir.",
     "admin.events.reviewTranslations": "Revisar traducciones",
     "admin.events.uploadImage": "Subir foto",
@@ -1300,13 +1349,31 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.imageUploading": "Subiendo foto…",
     "admin.events.imageUploadError":
       "No se pudo subir la foto. Intentad de nuevo o pegad un enlace.",
-    "admin.events.imageHint":
-      "Subid una foto desde el ordenador — la comprimimos y redimensionamos al guardar. Un enlace sigue valiendo. Unas diez fotos de eventos no ralentizan la web; borramos el archivo al eliminar un evento pasado.",
+    "admin.events.imageHint": "¿Preferís un enlace? Pegadlo aquí.",
     "admin.events.imageAltHint":
-      "Se rellena al traducir. Editadla si queréis más detalle.",
+      "Corresponde al idioma seleccionado en la vista previa. Se rellena al traducir. Editadla si queréis más detalle.",
     "admin.events.sourceHint":
-      "Escribid una vez, en cualquier idioma. Pulsad Traducir contenido para rellenar los demás idiomas y la descripción de la foto.",
+      "Escribid el título y la descripción en la tarjeta. Traducir contenido detecta el idioma real, conserva ese texto ahí y rellena los demás idiomas y la descripción de la foto.",
     "admin.events.orPasteLink": "O pegar un enlace de foto",
+    "admin.events.notTranslatedYet": "Aún no traducido",
+    "admin.events.previewLanguage": "Idioma de la vista previa",
+    "admin.events.changePhoto": "Cambiar foto",
+    "admin.events.addTime": "Añadir hora",
+    "admin.events.descriptionText": "Texto",
+    "admin.events.descriptionBullets": "Viñetas",
+    "admin.events.descriptionBold": "Negrita",
+    "admin.events.descriptionItalic": "Cursiva",
+    "admin.events.available": "Disponible",
+    "admin.events.editDate": "Fecha del evento",
+    "admin.events.editTime": "Hora de inicio y fin",
+    "admin.events.editAvailability": "Estado de reserva",
+    "admin.events.chooseLanguage": "Elegir idioma de la vista previa",
+    "admin.events.staffHint": "Los clientes no ven estos campos. Solo se usan aquí.",
+    "admin.events.step": "Paso {n}",
+    "admin.events.step1Title": "Detalles y vista previa",
+    "admin.events.step3Title": "Nombre corto y estado en la web",
+    "admin.events.step4Title": "Repaso",
+    "admin.events.step4Hint": "Revisad el resto antes de guardar.",
     "admin.menus.title": "Cartas",
     "admin.menus.intro":
       "Elegid cena o bebidas. Guardar conserva el borrador; Publicar lo muestra en la web.",
@@ -1694,20 +1761,6 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.title": "Evenemang",
     "admin.events.introLead":
       "Här hanterar ni kvällar och aktiviteter som gäster ser på startsidan och under Evenemang.",
-    "admin.events.introBulletNewEvent":
-      "**Nytt evenemang** — börja med ett tomt formulär.",
-    "admin.events.introBulletEditList":
-      "**Välj ett evenemang i listan** — redigera det i formuläret till höger.",
-    "admin.events.introBulletDuplicate":
-      "**Duplicera** — kopiera ett befintligt evenemang; kom ihåg att ändra datum, titel och foto.",
-    "admin.events.introBulletPublished":
-      "**Publicerad på webbplatsen** — avmarkerad = utkast som gäster inte ser förrän ni kryssar i igen och sparar.",
-    "admin.events.introBulletSpecificTime":
-      "**Visa start- och sluttid** — ikryssad: gäster ser start- och sluttid; avmarkerad: bara datumraden visas.",
-    "admin.events.introBulletFullyBooked":
-      "**Fullbokat** — visar gäster att evenemanget är fullbokat på webbplatsen (de kan fortfarande kontakta restaurangen som vanligt).",
-    "admin.events.introBulletTranslate":
-      "**Översätt innehåll** — skriv titel och beskrivning en gång, på valfritt språk. Knappen fyller svenska, engelska, spanska, tyska och franska, och skriver bildbeskrivningen från fotot.",
     "admin.events.allEvents": "Alla evenemang",
     "admin.events.newEvent": "Nytt evenemang",
     "admin.events.emptyList": "Inga evenemang ännu. Tryck Nytt evenemang ovan för att lägga till det första.",
@@ -1727,13 +1780,22 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.sectionCopy": "Text som gästerna ser",
     "admin.events.sectionReview": "Granska översättningar",
     "admin.events.sectionPublish": "Status på webbplatsen",
-    "admin.events.previewHint": "Så här ser evenemanget ut på webbplatsen",
+    "admin.events.previewHint": "Klicka på kortet för att redigera det gästerna ser. Byt språk uppe till höger.",
     "admin.events.guestDateLabel": "Visas för gäster som",
     "admin.events.calendarDate": "Datum i kalendern",
     "admin.events.specificTime": "Visa start- och sluttid",
     "admin.events.fullyBooked": "Fullbokat",
-    "admin.events.published": "Publicerad på webbplatsen",
-    "admin.events.imageUrl": "Länk till evenemangsfoto",
+    "admin.events.published": "Synligt på den riktiga webbplatsen",
+    "admin.events.publishedHint": "Gäster på www.el-portero.com kan se evenemanget.",
+    "admin.events.publishedLocal": "Bara på den här datorn",
+    "admin.events.publishedLocalHint":
+      "Syns här på localhost. Den riktiga webbplatsen visar det inte.",
+    "admin.events.statusHidden": "Dolt",
+    "admin.events.statusHiddenHint": "Gäster på www.el-portero.com kan inte se evenemanget.",
+    "admin.events.statusHiddenLocalHint":
+      "Visas inte på localhost och inte på den riktiga webbplatsen.",
+    "admin.events.localOnly": "Bara lokalt",
+    "admin.events.imageUrl": "Fotolänk",
     "admin.events.imageUrlHint":
       "Ladda upp ett foto från datorn (vi förminskar det). Ni kan fortfarande klistra in en länk om ni vill.",
     "admin.events.datePreviewHint":
@@ -1752,8 +1814,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.delete": "Ta bort",
     "admin.events.saveNewTooltip": "Spara nytt evenemang",
     "admin.events.saveEditTooltip": "Spara dina ändringar",
-    "admin.events.saveNewDisabledTooltip": "Ändra formuläret för att skapa ett evenemang",
-    "admin.events.saveEditDisabledTooltip": "Inga osparade ändringar — redigera ett fält för att spara",
+    "admin.events.saveNewDisabledTooltip": "Redigera förhandsvisningen eller uppgifterna nedan för att skapa ett evenemang",
+    "admin.events.saveEditDisabledTooltip": "Inga osparade ändringar — redigera förhandsvisningen eller uppgifterna nedan för att spara",
     "admin.events.duplicateLoaded":
       "Kopia inläst — kontrollera kort namn (ID) och datum, tryck sedan Skapa.",
     "admin.events.created": "Evenemanget skapades.",
@@ -1770,10 +1832,19 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadingIntro": "Laddar…",
     "admin.events.translateContent": "Översätt innehåll",
     "admin.events.translating": "Översätter…",
+    "admin.events.translateWait1": "Översättningen pågår. Vänta ett par sekunder.",
+    "admin.events.translateWait2": "Vi kontrollerar vilket språk ni skrev på och översätter sedan resten.",
+    "admin.events.translateWait3":
+      "Förhandsvisningen uppdateras när alla språk är klara. Ni kan låta det här vara öppet.",
+    "admin.events.translateElapsed": "Förfluten tid {time}",
+    "admin.events.translateLanguageCorrected":
+      "Texten i fältet för {source} är på {detected}. Originalet sparas som {detected}, och {source} har nu översättningen. Övriga tomma språk fylldes också i. Byt språk i förhandsvisningen för att granska och spara sedan.",
+    "admin.events.translateLanguageCorrectedSplit":
+      "Titeln är på {titleLanguage} och beskrivningen på {excerptLanguage}. Varje original sparas på sitt språk, och fälten för {source} har nu översättningen. Byt språk i förhandsvisningen för att granska och spara sedan.",
     "admin.events.translateError":
       "Kunde inte översätta. Firebase AI Logic måste vara aktiverat i projektet. Försök sedan igen.",
     "admin.events.translateSuccess":
-      "Översättningar och bildbeskrivning är ifyllda — granska dem nedan och spara.",
+      "Tomma språk och bildbeskrivningar fylldes i från {language}. Byt språk i förhandsvisningen för att granska och spara sedan.",
     "admin.events.translateNeedText": "Lägg till en titel eller beskrivning innan ni översätter.",
     "admin.events.reviewTranslations": "Granska översättningar",
     "admin.events.uploadImage": "Ladda upp foto",
@@ -1782,13 +1853,31 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.imageUploading": "Laddar upp foto…",
     "admin.events.imageUploadError":
       "Kunde inte ladda upp fotot. Försök igen, eller klistra in en länk.",
-    "admin.events.imageHint":
-      "Ladda upp ett foto från datorn — vi komprimerar och förminskar det automatiskt när ni sparar. En länk fungerar fortfarande. Cirka tio evenemangsfoton påverkar inte sidhastigheten; filen tas bort när ni raderar ett gammalt evenemang.",
+    "admin.events.imageHint": "Hellre en länk? Klistra in den här.",
     "admin.events.imageAltHint":
-      "Fylls i automatiskt när ni översätter. Redigera om ni vill mer precist.",
+      "Gäller språket som är valt i förhandsvisningen. Fylls i när ni översätter. Redigera om ni vill mer precist.",
     "admin.events.sourceHint":
-      "Skriv en gång, på valfritt språk. Tryck sedan Översätt innehåll så fylls övriga språk och bildbeskrivningen i.",
+      "Skriv titel och beskrivning på kortet. Översätt innehåll känner av det riktiga språket, behåller er text där och fyller övriga språk samt bildbeskrivningen.",
     "admin.events.orPasteLink": "Eller klistra in en fotolänk",
+    "admin.events.notTranslatedYet": "Inte översatt än",
+    "admin.events.previewLanguage": "Förhandsvisningsspråk",
+    "admin.events.changePhoto": "Byt foto",
+    "admin.events.addTime": "Lägg till tid",
+    "admin.events.descriptionText": "Text",
+    "admin.events.descriptionBullets": "Punkter",
+    "admin.events.descriptionBold": "Fet",
+    "admin.events.descriptionItalic": "Kursiv",
+    "admin.events.available": "Ledigt",
+    "admin.events.editDate": "Evenemangsdatum",
+    "admin.events.editTime": "Start- och sluttid",
+    "admin.events.editAvailability": "Bokningsstatus",
+    "admin.events.chooseLanguage": "Välj förhandsvisningsspråk",
+    "admin.events.staffHint": "Gäster ser inte de här fälten. De används bara här.",
+    "admin.events.step": "Steg {n}",
+    "admin.events.step1Title": "Detaljer och förhandsvisning",
+    "admin.events.step3Title": "Kort namn och status på webbplatsen",
+    "admin.events.step4Title": "Dubbelkolla",
+    "admin.events.step4Hint": "Gå igenom resten innan ni sparar.",
     "admin.menus.title": "Menyer",
     "admin.menus.intro":
       "Välj middag eller dryck. Spara behåller utkastet; Publicera visar det på webbplatsen.",

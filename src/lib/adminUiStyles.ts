@@ -6,9 +6,9 @@
 export const adminBtnGreen =
   "rounded-md border border-emerald-700 bg-emerald-600 px-4 py-3 text-xs font-semibold tracking-[0.18em] uppercase text-white shadow-sm transition-colors hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:opacity-50";
 
-/** AI / translate — distinct from save/create */
-export const adminBtnGold =
-  "rounded-md border border-amber-800 bg-amber-600 px-4 py-2.5 text-sm font-semibold tracking-[0.16em] uppercase text-white shadow-sm transition-colors hover:bg-amber-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-700 disabled:cursor-not-allowed disabled:opacity-50";
+/** AI / translate — sparkle gradient, distinct from save, publish, and warnings */
+export const adminBtnAi =
+  "cursor-pointer rounded-md border border-indigo-700 bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-4 py-2.5 text-sm font-semibold tracking-[0.16em] uppercase text-white shadow-sm transition-[filter,background-color] hover:from-indigo-500 hover:via-violet-500 hover:to-fuchsia-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-700 disabled:cursor-progress disabled:opacity-70";
 
 /** Save — drafts and edits (non-destructive) */
 export const adminBtnBlue =

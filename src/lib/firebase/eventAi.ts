@@ -1,6 +1,6 @@
 "use client";
 
-import { getAI, getGenerativeModel, GoogleAIBackend, Schema } from "firebase/ai";
+import { getAI, getGenerativeModel, GoogleAIBackend, Schema, ThinkingLevel } from "firebase/ai";
 import { localeTrioFromPartial } from "@/i18n/localeMeta";
 import { getFirebaseApp } from "@/lib/firebase/client";
 import type { LocaleTrio } from "@/lib/publicEventTypes";
@@ -36,41 +36,66 @@ async function fileToInlinePart(file: File) {
 export async function translateEventContent(input: {
   title: string;
   excerpt: string;
+  imageAlt?: string;
+  sourceLocale: string;
   imageFile?: File | null;
-}): Promise<{ title: LocaleTrio; excerpt: LocaleTrio; imageAlt: LocaleTrio }> {
+}): Promise<{
+  title: LocaleTrio;
+  excerpt: LocaleTrio;
+  imageAlt: LocaleTrio;
+  detectedTitleLanguage: string;
+  detectedExcerptLanguage: string;
+  detectedImageAltLanguage: string;
+}> {
   const ai = getAI(getFirebaseApp(), { backend: new GoogleAIBackend() });
-  const model = getGenerativeModel(ai, {
-    model: "gemini-2.5-flash",
-    generationConfig: {
-      temperature: 0.4,
-      responseMimeType: "application/json",
-      responseSchema: Schema.object({
-        properties: {
-          title: localeObjectSchema(),
-          excerpt: localeObjectSchema(),
-          imageAlt: localeObjectSchema(),
-        },
-      }),
+  const model = getGenerativeModel(
+    ai,
+    {
+      model: "gemini-3.8-flash",
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: 8192,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+        responseMimeType: "application/json",
+        responseSchema: Schema.object({
+          properties: {
+            title: localeObjectSchema(),
+            excerpt: localeObjectSchema(),
+            imageAlt: localeObjectSchema(),
+            detectedTitleLanguage: Schema.string(),
+            detectedExcerptLanguage: Schema.string(),
+            detectedImageAltLanguage: Schema.string(),
+          },
+        }),
+      },
     },
-  });
+    { timeout: 45_000 },
+  );
 
-  const prompt = `You are the in-house copywriter for el PORTERO, a dinner club restaurant in Torrevieja, Spain (Peru, Spain, Sweden).
+  const prompt = `Translate this event into Swedish (sv), English (en), Spanish (es), German (de), and French (fr).
+Keep the same facts, length, and line breaks. Do not add sentences or rewrite it as new marketing copy.
 
-Translate the event title and description into Swedish (sv), English (en), Spanish (es), German (de), and French (fr).
+detectedTitleLanguage, detectedExcerptLanguage, and detectedImageAltLanguage:
+- sv, en, es, de, or fr when that field is written in that language
+- other when it is any different language
+- an empty string when the field is empty
 
-Rules:
-- Detect the source language. Keep that language natural; do not clumsily rephrase it unless needed for restaurant tone.
-- Write natural marketing copy, not a word-for-word translation.
-- Keep proper names unchanged: el PORTERO, Torrevieja, Magnus Hedman, and similar.
-- Preserve line breaks in the description.
-- imageAlt: one short accessible sentence per language describing the event photo. If no photo is attached, write a tasteful alt from the title/description (what a guest would see on a poster).
-- Do not invent new facts (dates, prices, artists) that are not in the source.
+If a field is sv, en, es, de, or fr, keep its original wording in that language and translate the others.
+If it is other, translate it into all five languages.
+Keep names, prices, dates, phone numbers, and URLs unchanged.
+Preserve **bold**, _italic_, and lines that start with "• ".
+imageAlt is one short sentence per language. If no photo description was given, write it from the title.
+
+Typed into language box: ${input.sourceLocale} (this label may be wrong).
 
 Source title:
 ${input.title.trim()}
 
 Source description:
-${input.excerpt.trim()}`;
+${input.excerpt.trim()}
+
+Source photo description:
+${input.imageAlt?.trim() ?? ""}`;
 
   const parts: Array<string | { inlineData: { data: string; mimeType: string } }> = [prompt];
   if (input.imageFile) {
@@ -84,11 +109,19 @@ ${input.excerpt.trim()}`;
     title?: unknown;
     excerpt?: unknown;
     imageAlt?: unknown;
+    detectedTitleLanguage?: unknown;
+    detectedExcerptLanguage?: unknown;
+    detectedImageAltLanguage?: unknown;
   };
+
+  const detected = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
   return {
     title: localeTrioFromPartial(parsed.title),
     excerpt: localeTrioFromPartial(parsed.excerpt),
     imageAlt: localeTrioFromPartial(parsed.imageAlt),
+    detectedTitleLanguage: detected(parsed.detectedTitleLanguage),
+    detectedExcerptLanguage: detected(parsed.detectedExcerptLanguage),
+    detectedImageAltLanguage: detected(parsed.detectedImageAltLanguage),
   };
 }

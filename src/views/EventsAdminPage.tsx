@@ -2,20 +2,21 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Copy, Languages, LayoutDashboard, LogOut, Plus, Save, Trash2, Upload } from "lucide-react";
-import { EventsAdminIntro } from "@/components/admin/EventsAdminIntro";
-import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
-import { EventCard } from "@/components/events/EventCard";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { Copy, Eye, EyeOff, LayoutDashboard, Loader2, LogOut, Plus, Save, Sparkles, Trash2 } from "lucide-react";
+import { EditableEventCard } from "@/components/admin/EditableEventCard";
+import { EventPreviewLocaleMenu } from "@/components/admin/EventPreviewLocaleMenu";
 import { LocaleFlag } from "@/components/layout/LocaleFlag";
+import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { PageShell } from "@/components/layout/PageShell";
 import {
   adminBtnBlue,
   adminBtnDanger,
-  adminBtnGold,
+  adminBtnAi,
   adminBtnGreen,
   adminBtnNeutral,
   adminBtnSignOut,
+  adminCalloutInfo,
   adminCalloutSuccess,
   adminCheckbox,
   adminErrorBox,
@@ -31,53 +32,104 @@ import {
   toUpsertBody,
   type HomeEvent,
 } from "@/lib/publicEventTypes";
-import { formatSortDateForEventDisplay } from "@/lib/eventDisplayDate";
 import {
   applySlotsToTimeDetail,
   clampEndAfterStart,
   EVENT_TIME_OPTIONS,
+  eventEndsNextMorning,
   isEventPastForAdmin,
   normalizeEventForEditor,
   parseHmToMinutes,
   suggestDuplicateEventId,
   syncDerivedEventFields,
 } from "@/lib/eventSchedule";
-import { adminContentLocales, pickLocaleText, sameLocaleTrio } from "@/i18n/localeMeta";
-import { localeLabels, t, type Locale } from "@/i18n/strings";
+import {
+  applyTranslatedLocaleTrio,
+  pickLocaleText,
+  pickTranslateSourceLocale,
+  sameLocaleTrio,
+} from "@/i18n/localeMeta";
+import { localeLabels, locales, t, type Locale } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
 import { useAdminConfirm } from "@/hooks/useAdminConfirm";
+import { isLocalDevHost } from "@/lib/localDevHost";
 import { unknownErrorMessage } from "@/lib/unknownErrorMessage";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
 import { translateEventContent } from "@/lib/firebase/eventAi";
 import { deleteEventImageIfManaged, uploadEventImage } from "@/lib/firebase/eventImageStorage";
 import { removePublicEvent, subscribeAdminPublicEvents, upsertPublicEvent } from "@/lib/firebase/eventsStore";
 
-function LocaleFieldLabel({ localeKey }: { localeKey: Locale }) {
+function StepHeading({
+  locale,
+  step,
+  title,
+  hint,
+}: {
+  locale: Locale;
+  step: 1 | 2 | 3 | 4;
+  title: string;
+  hint?: string;
+}) {
   return (
-    <span className="inline-flex items-center gap-2">
-      <LocaleFlag locale={localeKey} />
-      <span>{localeLabels[localeKey]}</span>
-    </span>
+    <div>
+      <p className="text-[11px] font-semibold tracking-[0.18em] text-zinc-500 uppercase">
+        {t(locale, "admin.events.step").replace("{n}", String(step))}
+      </p>
+      <h2 className="mt-1 text-lg font-semibold text-zinc-900 sm:text-xl">{title}</h2>
+      {hint ? <p className={`mt-1 ${adminHint}`}>{hint}</p> : null}
+    </div>
   );
 }
 
-function AdminFormSection({
-  title,
-  hint,
-  children,
+function WebsiteStatusCard({
+  locale,
+  localPublish,
+  checked,
+  disabled,
+  onChange,
 }: {
-  title: string;
-  hint?: string;
-  children: ReactNode;
+  locale: Locale;
+  localPublish: boolean;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: (checked: boolean) => void;
 }) {
+  const title = checked
+    ? t(locale, localPublish ? "admin.events.publishedLocal" : "admin.events.published")
+    : t(locale, "admin.events.statusHidden");
+  const hint = checked
+    ? t(locale, localPublish ? "admin.events.publishedLocalHint" : "admin.events.publishedHint")
+    : t(locale, localPublish ? "admin.events.statusHiddenLocalHint" : "admin.events.statusHiddenHint");
+  const tone = checked
+    ? localPublish
+      ? "border-sky-500 bg-sky-50 text-sky-950"
+      : "border-emerald-600 bg-emerald-50 text-emerald-950"
+    : "border-amber-500 bg-amber-50 text-amber-950";
+
   return (
-    <section className="space-y-4 border-b border-zinc-200 pb-6 last:border-0 last:pb-0">
-      <div>
-        <h3 className="text-sm font-semibold tracking-wide text-zinc-900">{title}</h3>
-        {hint ? <p className={`mt-1 ${adminHint}`}>{hint}</p> : null}
-      </div>
-      {children}
-    </section>
+    <label
+      className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 shadow-sm ${tone} ${
+        disabled ? "cursor-not-allowed opacity-60" : ""
+      }`}
+    >
+      <input
+        type="checkbox"
+        className="mt-1 size-5 shrink-0 rounded border-current/40 bg-white text-current focus:ring-2 focus:ring-current/30"
+        checked={checked}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span className="min-w-0">
+        <span className="block text-[11px] font-semibold tracking-[0.16em] uppercase opacity-70">
+          {t(locale, "admin.events.sectionPublish")}
+        </span>
+        <span className="mt-1 flex items-center gap-2 text-base font-semibold">
+          {checked ? <Eye className="size-4 shrink-0" aria-hidden /> : <EyeOff className="size-4 shrink-0" aria-hidden />}
+          {title}
+        </span>
+        <span className="mt-1 block text-sm leading-relaxed">{hint}</span>
+      </span>
+    </label>
   );
 }
 
@@ -92,6 +144,7 @@ function cloneHomeEvent(e: HomeEvent): HomeEvent {
 function homeEventsEqual(a: HomeEvent, b: HomeEvent) {
   if (a.id.trim() !== b.id.trim() || a.sortDate !== b.sortDate) return false;
   if ((a.published !== false) !== (b.published !== false)) return false;
+  if ((a.localOnly === true) !== (b.localOnly === true)) return false;
   if ((a.fullyBooked ?? false) !== (b.fullyBooked ?? false)) return false;
   if ((a.hasSpecificTime !== false) !== (b.hasSpecificTime !== false)) return false;
   if (a.imageSrc !== b.imageSrc) return false;
@@ -105,20 +158,57 @@ function homeEventsEqual(a: HomeEvent, b: HomeEvent) {
   return true;
 }
 
-function sourceTextFromEvent(ev: HomeEvent, locale: Locale) {
-  return {
-    title: pickLocaleText(ev.title, locale),
-    excerpt: pickLocaleText(ev.excerpt, locale),
-  };
+const translateWaitNotes = [
+  "admin.events.translateWait1",
+  "admin.events.translateWait2",
+  "admin.events.translateWait3",
+] as const;
+
+function formatTranslateElapsed(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
+
+function translateResultMessage(
+  locale: Locale,
+  sourceLocale: Locale,
+  titleLanguage: Locale | null,
+  excerptLanguage: Locale | null,
+): string {
+  const source = localeLabels[sourceLocale];
+  if (titleLanguage && excerptLanguage && titleLanguage !== excerptLanguage) {
+    return t(locale, "admin.events.translateLanguageCorrectedSplit")
+      .replaceAll("{titleLanguage}", localeLabels[titleLanguage])
+      .replaceAll("{excerptLanguage}", localeLabels[excerptLanguage])
+      .replaceAll("{source}", source);
+  }
+  const detected = titleLanguage ?? excerptLanguage;
+  if (detected) {
+    return t(locale, "admin.events.translateLanguageCorrected")
+      .replaceAll("{detected}", localeLabels[detected])
+      .replaceAll("{source}", source);
+  }
+  return t(locale, "admin.events.translateSuccess").replaceAll("{language}", source);
+}
+
+const eventTimeSelectClass =
+  "mt-1 h-16 w-24 shrink-0 rounded-md border border-zinc-300 bg-white px-1 text-center text-base font-medium tabular-nums text-zinc-900 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:text-zinc-500";
 
 export function EventsAdminPage() {
   const router = useRouter();
   const { locale } = useLocale();
   const { confirm, dialog: confirmDialog } = useAdminConfirm(locale);
   const { user, ready, signOutUser } = useAdminAuth();
+  const onLocalhost = useSyncExternalStore(
+    () => () => {},
+    () => isLocalDevHost(window.location.hostname),
+    () => false,
+  );
   const [busy, setBusy] = useState(false);
   const [translating, setTranslating] = useState(false);
+  const [translateSeconds, setTranslateSeconds] = useState(0);
+  const [translateBeat, setTranslateBeat] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -130,13 +220,16 @@ export function EventsAdminPage() {
     applySlotsToTimeDetail(emptyHomeEvent(todayYmd())),
   );
   const [isNew, setIsNew] = useState(true);
+  const editingLiveEvent =
+    !isNew && savedBaseline.published !== false && savedBaseline.localOnly !== true;
+  const localPublish = onLocalhost && !editingLiveEvent;
+  const publishOn = localPublish
+    ? draft.localOnly === true || (isNew && draft.published !== false && draft.localOnly !== false)
+    : draft.published !== false;
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [sourceTitle, setSourceTitle] = useState("");
-  const [sourceExcerpt, setSourceExcerpt] = useState("");
-  const [reviewLocale, setReviewLocale] = useState<Locale>("sv");
+  const [previewLocale, setPreviewLocale] = useState<Locale>("en");
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
-  const [showImageLink, setShowImageLink] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isDirty = useMemo(
@@ -156,15 +249,6 @@ export function EventsAdminPage() {
       return null;
     });
   }, []);
-
-  const applySourceFromEvent = useCallback(
-    (ev: HomeEvent) => {
-      const source = sourceTextFromEvent(ev, locale);
-      setSourceTitle(source.title);
-      setSourceExcerpt(source.excerpt);
-    },
-    [locale],
-  );
 
   const load = useCallback(async () => {
     // No-op: Firestore is live-subscribed via onSnapshot below.
@@ -210,10 +294,8 @@ export function EventsAdminPage() {
     const blank = applySlotsToTimeDetail(emptyHomeEvent(todayYmd()));
     setDraft(cloneHomeEvent(blank));
     setSavedBaseline(cloneHomeEvent(blank));
-    setSourceTitle("");
-    setSourceExcerpt("");
+    setPreviewLocale("en");
     clearPendingImage();
-    setShowImageLink(false);
     setError(null);
     setMessage(null);
   }, [clearPendingImage]);
@@ -237,13 +319,12 @@ export function EventsAdminPage() {
       setEditingId(null);
       setDraft(next);
       setSavedBaseline(cloneHomeEvent(emptyHomeEvent(todayYmd())));
-      applySourceFromEvent(next);
+      setPreviewLocale("en");
       clearPendingImage();
-      setShowImageLink(Boolean(next.imageSrc));
       setError(null);
       setMessage(t(locale, "admin.events.duplicateLoaded"));
     },
-    [rows, locale, applySourceFromEvent, clearPendingImage],
+    [rows, locale, clearPendingImage],
   );
 
   const startEdit = (ev: HomeEvent) => {
@@ -255,9 +336,8 @@ export function EventsAdminPage() {
     });
     setDraft(d);
     setSavedBaseline(cloneHomeEvent(d));
-    applySourceFromEvent(d);
+    setPreviewLocale("en");
     clearPendingImage();
-    setShowImageLink(Boolean(d.imageSrc) && !d.imageStoragePath);
     setError(null);
     setMessage(null);
   };
@@ -271,7 +351,6 @@ export function EventsAdminPage() {
     clearPendingImage();
     setPendingImageFile(file);
     setPendingImagePreview(URL.createObjectURL(file));
-    setShowImageLink(false);
     setError(null);
   }
 
@@ -280,27 +359,69 @@ export function EventsAdminPage() {
     setDraft((d) => ({ ...d, imageSrc: "", imageStoragePath: undefined }));
   }
 
+  useEffect(() => {
+    if (!translating) return;
+    const started = Date.now();
+    const timer = window.setInterval(() => {
+      const elapsed = Date.now() - started;
+      setTranslateSeconds(Math.floor(elapsed / 1000));
+      setTranslateBeat(Math.floor(elapsed / 650));
+    }, 200);
+    return () => window.clearInterval(timer);
+  }, [translating]);
+
   async function onTranslate() {
-    if (!sourceTitle.trim() && !sourceExcerpt.trim()) {
+    const sourceLocale = pickTranslateSourceLocale(draft.title, draft.excerpt, previewLocale);
+    if (!sourceLocale) {
       setError(t(locale, "admin.events.translateNeedText"));
       return;
     }
     setError(null);
     setMessage(null);
+    setTranslateSeconds(0);
+    setTranslateBeat(0);
     setTranslating(true);
     try {
+      const sourceTitle = draft.title[sourceLocale] ?? "";
+      const sourceExcerpt = draft.excerpt[sourceLocale] ?? "";
+      const sourceAlt = draft.imageAlt[sourceLocale] ?? "";
       const result = await translateEventContent({
         title: sourceTitle,
         excerpt: sourceExcerpt,
+        imageAlt: sourceAlt,
+        sourceLocale,
         imageFile: pendingImageFile,
       });
+      const titleApplied = applyTranslatedLocaleTrio(
+        draft.title,
+        result.title,
+        sourceLocale,
+        result.detectedTitleLanguage,
+        sourceTitle,
+      );
+      const excerptApplied = applyTranslatedLocaleTrio(
+        draft.excerpt,
+        result.excerpt,
+        sourceLocale,
+        result.detectedExcerptLanguage,
+        sourceExcerpt,
+      );
+      const altApplied = applyTranslatedLocaleTrio(
+        draft.imageAlt,
+        result.imageAlt,
+        sourceLocale,
+        sourceAlt.trim() ? result.detectedImageAltLanguage : null,
+        sourceAlt,
+      );
       setDraft((d) => ({
         ...d,
-        title: result.title,
-        excerpt: result.excerpt,
-        imageAlt: result.imageAlt,
+        title: titleApplied.trio,
+        excerpt: excerptApplied.trio,
+        imageAlt: altApplied.trio,
       }));
-      setMessage(t(locale, "admin.events.translateSuccess"));
+      setMessage(
+        translateResultMessage(locale, sourceLocale, titleApplied.correctedTo, excerptApplied.correctedTo),
+      );
     } catch (err) {
       console.error(err);
       setError(unknownErrorMessage(err, t(locale, "admin.events.translateError")));
@@ -319,9 +440,17 @@ export function EventsAdminPage() {
     if (!isDirty) {
       return;
     }
-    const sm = parseHmToMinutes(draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START);
-    const em = parseHmToMinutes(draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END);
-    if (sm != null && em != null && em < sm) {
+    const startHm = draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START;
+    const endHm = draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END;
+    const sm = parseHmToMinutes(startHm);
+    const em = parseHmToMinutes(endHm);
+    if (
+      draft.hasSpecificTime !== false &&
+      sm != null &&
+      em != null &&
+      em < sm &&
+      !eventEndsNextMorning(startHm, endHm)
+    ) {
       setError(t(locale, "admin.events.invalidTime"));
       return;
     }
@@ -330,6 +459,15 @@ export function EventsAdminPage() {
     setBusy(true);
     try {
       let nextDraft = syncDerivedEventFields({ ...draft, id: idTrim });
+      const onLocalhost = isLocalDevHost(window.location.hostname);
+      const alreadyLive =
+        !wasNew && savedBaseline.published !== false && savedBaseline.localOnly !== true;
+      if (onLocalhost && !alreadyLive) {
+        const showLocally = nextDraft.localOnly === true || (wasNew && nextDraft.published !== false && nextDraft.localOnly !== false);
+        nextDraft = { ...nextDraft, published: false, localOnly: showLocally };
+      } else if (!onLocalhost) {
+        nextDraft = { ...nextDraft, localOnly: false };
+      }
       const previousPath = savedBaseline.imageStoragePath;
       if (pendingImageFile) {
         const uploaded = await uploadEventImage(pendingImageFile);
@@ -351,7 +489,6 @@ export function EventsAdminPage() {
       const saved = cloneHomeEvent(nextDraft);
       setDraft(saved);
       setSavedBaseline(cloneHomeEvent(saved));
-      applySourceFromEvent(saved);
       clearPendingImage();
       setIsNew(false);
       setEditingId(saved.id);
@@ -423,7 +560,7 @@ export function EventsAdminPage() {
     <PageShell
       tone="admin"
       title={t(locale, "admin.events.title")}
-      intro={<EventsAdminIntro locale={locale} />}
+      intro={t(locale, "admin.events.introLead")}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
       <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
@@ -504,6 +641,10 @@ export function EventsAdminPage() {
                             <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-px text-[10px] font-semibold tracking-wide text-amber-800 uppercase">
                               {t(locale, "admin.events.draft")}
                             </span>
+                          ) : ev.localOnly ? (
+                            <span className="rounded border border-sky-200 bg-sky-50 px-1.5 py-px text-[10px] font-semibold tracking-wide text-sky-800 uppercase">
+                              {t(locale, "admin.events.localOnly")}
+                            </span>
                           ) : null}
                           {past ? (
                             <span className="text-[10px] font-semibold text-red-700">
@@ -548,44 +689,166 @@ export function EventsAdminPage() {
 
         <div className="min-w-0 space-y-6 xl:col-span-8 2xl:col-span-9">
           <div className={adminPanel}>
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 pb-3">
-              <div>
-                <h2 className="text-lg font-semibold text-zinc-900 sm:text-xl">
-                  {t(locale, "admin.events.preview")}
-                </h2>
-                <p className={`mt-1 ${adminHint}`}>{t(locale, "admin.events.previewHint")}</p>
-              </div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-semibold text-zinc-700">
-                <LocaleFlag locale={locale} />
-                {localeLabels[locale]}
-              </span>
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-zinc-200 pb-3">
+              <StepHeading
+                locale={locale}
+                step={1}
+                title={t(locale, "admin.events.step1Title")}
+                hint={t(locale, "admin.events.previewHint")}
+              />
+              <EventPreviewLocaleMenu
+                uiLocale={locale}
+                previewLocale={previewLocale}
+                title={draft.title}
+                excerpt={draft.excerpt}
+                onChange={setPreviewLocale}
+                disabled={locked}
+              />
             </div>
-            <div className="overflow-hidden rounded-xl bg-ink">
-              <EventCard
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              onChange={(e) => {
+                onPickImage(e.target.files?.[0]);
+                e.target.value = "";
+              }}
+            />
+            <div className="rounded-xl bg-ink">
+              <EditableEventCard
                 key={editingId ?? "new-event"}
                 event={previewEvent}
-                locale={locale}
-                variant="home"
-                bookingMode="disabled"
-                imageFallbackLabel={t(locale, "admin.events.uploadImage")}
-                loadImage={Boolean(previewEvent.imageSrc.trim())}
-                imageLoading="eager"
+                previewLocale={previewLocale}
+                uiLocale={locale}
+                disabled={locked}
+                onRequestImagePick={() => fileInputRef.current?.click()}
+                onChangeDate={(ymd) =>
+                  setDraft((d) => syncDerivedEventFields({ ...d, sortDate: ymd }))
+                }
+                onChangeTitle={(value) =>
+                  setDraft((d) => ({
+                    ...d,
+                    title: { ...d.title, [previewLocale]: value },
+                  }))
+                }
+                onChangeExcerpt={(value) =>
+                  setDraft((d) => ({
+                    ...d,
+                    excerpt: { ...d.excerpt, [previewLocale]: value },
+                  }))
+                }
+                onChangeTime={(start, end) =>
+                  setDraft((d) =>
+                    syncDerivedEventFields(
+                      applySlotsToTimeDetail({
+                        ...d,
+                        hasSpecificTime: true,
+                        timeSlotStart: start,
+                        timeSlotEnd: clampEndAfterStart(start, end),
+                      }),
+                    ),
+                  )
+                }
+                onEnableTime={() =>
+                  setDraft((d) =>
+                    syncDerivedEventFields(
+                      applySlotsToTimeDetail({
+                        ...d,
+                        hasSpecificTime: true,
+                      }),
+                    ),
+                  )
+                }
+                onChangeFullyBooked={(fullyBooked) =>
+                  setDraft((d) => ({ ...d, fullyBooked }))
+                }
               />
+            </div>
+            <div className="mt-4 flex flex-col items-start gap-3 border-t border-zinc-200 pt-4">
+              <StepHeading
+                locale={locale}
+                step={2}
+                title={t(locale, "admin.events.translateContent")}
+                hint={t(locale, "admin.events.sourceHint")}
+              />
+              <button
+                type="button"
+                className={adminBtnAi}
+                onClick={() => void onTranslate()}
+                disabled={locked}
+              >
+                <span className="inline-flex items-center gap-2">
+                  {translating ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : (
+                    <Sparkles className="size-4" aria-hidden />
+                  )}
+                  {translating
+                    ? t(locale, "admin.events.translating")
+                    : t(locale, "admin.events.translateContent")}
+                </span>
+              </button>
+              {translating ? (
+                <div className={`${adminCalloutInfo} w-full`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-semibold">{t(locale, "admin.events.translating")}</p>
+                    <p
+                      className="font-mono text-sm tabular-nums text-sky-800/80"
+                      aria-label={t(locale, "admin.events.translateElapsed").replaceAll(
+                        "{time}",
+                        formatTranslateElapsed(translateSeconds),
+                      )}
+                    >
+                      {formatTranslateElapsed(translateSeconds)}
+                    </p>
+                  </div>
+                  <div className="mt-3 flex gap-1" aria-hidden>
+                    {locales.map((code, index) => (
+                      <span
+                        key={code}
+                        className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                          index === translateBeat % locales.length ? "bg-sky-600" : "bg-sky-200"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <ul className="mt-3 flex flex-wrap gap-2" aria-hidden>
+                    {locales.map((code, index) => {
+                      const active = index === translateBeat % locales.length;
+                      return (
+                        <li
+                          key={code}
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-all duration-300 ${
+                            active
+                              ? "border-sky-400 bg-white text-sky-950 shadow-sm"
+                              : "border-transparent bg-sky-100/70 text-sky-900/55"
+                          }`}
+                        >
+                          <LocaleFlag locale={code} />
+                          {localeLabels[code]}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p className="mt-3" role="status" aria-live="polite">
+                    {t(locale, translateWaitNotes[Math.floor(translateSeconds / 4) % translateWaitNotes.length]!)}
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
 
           <div className={`${adminPanel} lg:p-8`}>
-            <h2 className="mb-6 border-b border-zinc-200 pb-3 text-lg font-semibold text-zinc-900 sm:text-xl">
-              {isNew ? t(locale, "admin.events.formNew") : t(locale, "admin.events.formEdit")}
-            </h2>
-
-            <div className="space-y-6">
-          <AdminFormSection
-            title={t(locale, "admin.events.sectionBasics")}
-            hint={t(locale, "admin.events.idHint")}
-          >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-              <div className="w-full max-w-72">
+            <div className="space-y-8">
+          <div className="space-y-6">
+            <StepHeading
+              locale={locale}
+              step={3}
+              title={t(locale, "admin.events.step3Title")}
+            />
+            <div className="grid items-start gap-6 lg:grid-cols-2">
+              <div>
                 <label className={adminLabel} htmlFor="ev-id">
                   {t(locale, "admin.events.idLabel")}
                 </label>
@@ -598,50 +861,34 @@ export function EventsAdminPage() {
                   autoComplete="off"
                   placeholder={t(locale, "admin.events.idPlaceholder")}
                 />
-                {!isNew ? <p className={`mt-1 ${adminHint}`}>{t(locale, "admin.events.idLocked")}</p> : null}
-              </div>
-              <div className="w-full max-w-52">
-                <label className={adminLabel} htmlFor="ev-date">
-                  {t(locale, "admin.events.calendarDate")}
-                </label>
-                <input
-                  id="ev-date"
-                  type="date"
-                  className={`${adminFieldInput} mt-1 font-sans`}
-                  value={draft.sortDate}
-                  onChange={(e) =>
-                    setDraft((d) => syncDerivedEventFields({ ...d, sortDate: e.target.value }))
-                  }
-                />
-                <p className={`mt-2 ${adminHint}`}>
-                  {t(locale, "admin.events.guestDateLabel")}{" "}
-                  <span className="font-medium text-zinc-700">
-                    {formatSortDateForEventDisplay(draft.sortDate, locale) || "—"}
-                  </span>
+                <p className={`mt-1 ${adminHint}`}>
+                  {isNew ? t(locale, "admin.events.idHint") : t(locale, "admin.events.idLocked")}
                 </p>
               </div>
+              <WebsiteStatusCard
+                locale={locale}
+                localPublish={onLocalhost && !editingLiveEvent}
+                checked={publishOn}
+                disabled={locked}
+                onChange={(checked) =>
+                  setDraft((d) =>
+                    onLocalhost && !editingLiveEvent
+                      ? { ...d, published: false, localOnly: checked }
+                      : { ...d, published: checked },
+                  )
+                }
+              />
             </div>
-            <details className="text-sm text-zinc-600">
-              <summary className="cursor-pointer text-xs font-semibold text-zinc-500">
-                {t(locale, "admin.events.datePreviewHint")}
-              </summary>
-              <ul className="mt-2 space-y-1">
-                {adminContentLocales.map((k) => (
-                  <li key={k} className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span className="font-semibold text-zinc-500">
-                      <LocaleFieldLabel localeKey={k} />:
-                    </span>
-                    <span>{formatSortDateForEventDisplay(draft.sortDate, k) || "—"}</span>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          </AdminFormSection>
+          </div>
 
-          <AdminFormSection
-            title={t(locale, "admin.events.sectionTime")}
-            hint={t(locale, "admin.events.timeOnlyHint")}
-          >
+          <div className="space-y-6 border-t border-zinc-200 pt-8">
+            <StepHeading
+              locale={locale}
+              step={4}
+              title={t(locale, "admin.events.step4Title")}
+              hint={t(locale, "admin.events.step4Hint")}
+            />
+          <div className="space-y-3">
             <label className="inline-flex items-center gap-2.5 text-sm font-medium text-zinc-800">
               <input
                 type="checkbox"
@@ -663,293 +910,123 @@ export function EventsAdminPage() {
               />
               {t(locale, "admin.events.specificTime")}
             </label>
-            {draft.hasSpecificTime !== false ? (
-              <div className="flex flex-wrap items-end gap-3">
-                <div className="w-full max-w-32">
-                  <label className={adminLabel} htmlFor="ev-start">
-                    {t(locale, "admin.events.startTime")}
-                  </label>
-                  <select
-                    id="ev-start"
-                    className={`${adminFieldInput} mt-1`}
-                    value={draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START}
-                    onChange={(e) => {
-                      const nextStart = e.target.value;
-                      setDraft((d) =>
-                        syncDerivedEventFields(
-                          applySlotsToTimeDetail({
-                            ...d,
-                            timeSlotStart: nextStart,
-                            timeSlotEnd: clampEndAfterStart(
-                              nextStart,
-                              d.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
-                            ),
-                          }),
-                        ),
-                      );
-                    }}
-                  >
-                    {EVENT_TIME_OPTIONS.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="w-full max-w-32">
-                  <label className={adminLabel} htmlFor="ev-end">
-                    {t(locale, "admin.events.endTime")}
-                  </label>
-                  <select
-                    id="ev-end"
-                    className={`${adminFieldInput} mt-1`}
-                    value={draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END}
-                    onChange={(e) =>
-                      setDraft((d) =>
-                        syncDerivedEventFields(
-                          applySlotsToTimeDetail({
-                            ...d,
-                            timeSlotEnd: e.target.value,
-                          }),
-                        ),
-                      )
-                    }
-                  >
-                    {EVENT_TIME_OPTIONS.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <p className={`pb-2 ${adminHint}`}>
-                  {t(locale, "admin.events.preview")}:{" "}
-                  <span className="font-medium text-zinc-700">
-                    {draft.timeDetail.en?.trim() ? draft.timeDetail.en : "—"}
-                  </span>
-                </p>
+            <div className="flex flex-wrap gap-8">
+              <div>
+                <label className={adminLabel} htmlFor="ev-start">
+                  {t(locale, "admin.events.startTime")}
+                </label>
+                <select
+                  id="ev-start"
+                  className={eventTimeSelectClass}
+                  value={draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START}
+                  disabled={locked || draft.hasSpecificTime === false}
+                  onChange={(e) => {
+                    const start = e.target.value;
+                    const end = clampEndAfterStart(start, draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END);
+                    setDraft((d) =>
+                      syncDerivedEventFields(
+                        applySlotsToTimeDetail({
+                          ...d,
+                          hasSpecificTime: true,
+                          timeSlotStart: start,
+                          timeSlotEnd: end,
+                        }),
+                      ),
+                    );
+                  }}
+                >
+                  {EVENT_TIME_OPTIONS.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
               </div>
-            ) : null}
-          </AdminFormSection>
+              <div>
+                <label className={adminLabel} htmlFor="ev-end">
+                  {t(locale, "admin.events.endTime")}
+                </label>
+                <select
+                  id="ev-end"
+                  className={eventTimeSelectClass}
+                  value={draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END}
+                  disabled={locked || draft.hasSpecificTime === false}
+                  onChange={(e) => {
+                    const start = draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START;
+                    setDraft((d) =>
+                      syncDerivedEventFields(
+                        applySlotsToTimeDetail({
+                          ...d,
+                          hasSpecificTime: true,
+                          timeSlotStart: start,
+                          timeSlotEnd: e.target.value,
+                        }),
+                      ),
+                    );
+                  }}
+                >
+                  {EVENT_TIME_OPTIONS.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <p className={adminHint}>{t(locale, "admin.events.timeOnlyHint")}</p>
+          </div>
 
-          <AdminFormSection
-            title={t(locale, "admin.events.sectionPhoto")}
-            hint={t(locale, "admin.events.imageHint")}
-          >
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="grid items-start gap-6 lg:grid-cols-2">
+            <div>
+              <label className={adminLabel} htmlFor="ev-img">
+                {t(locale, "admin.events.imageUrl")}
+              </label>
               <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="sr-only"
+                id="ev-img"
+                className={`${adminFieldInput} mt-1`}
+                value={pendingImageFile ? "" : draft.imageSrc}
                 onChange={(e) => {
-                  onPickImage(e.target.files?.[0]);
-                  e.target.value = "";
+                  clearPendingImage();
+                  setDraft((d) => ({
+                    ...d,
+                    imageSrc: e.target.value,
+                    imageStoragePath: undefined,
+                  }));
                 }}
+                placeholder="https://…"
+                inputMode="url"
+                autoComplete="off"
               />
-              <button
-                type="button"
-                className={adminBtnNeutral}
-                onClick={() => fileInputRef.current?.click()}
-                disabled={locked}
-              >
-                <span className="inline-flex items-center gap-2">
-                  <Upload className="size-4" aria-hidden />
-                  {draft.imageSrc || pendingImageFile
-                    ? t(locale, "admin.events.replaceImage")
-                    : t(locale, "admin.events.uploadImage")}
-                </span>
-              </button>
+              <p className={`mt-1 ${adminHint}`}>{t(locale, "admin.events.imageHint")}</p>
               {draft.imageSrc || pendingImageFile ? (
                 <button
                   type="button"
-                  className="text-xs font-semibold tracking-wide text-red-700 uppercase hover:text-red-800"
+                  className="mt-2 text-xs font-semibold tracking-wide text-red-700 uppercase hover:text-red-800"
                   onClick={onRemoveImage}
                   disabled={locked}
                 >
                   {t(locale, "admin.events.removeImage")}
                 </button>
               ) : null}
-              <button
-                type="button"
-                className="text-xs font-semibold tracking-wide text-zinc-500 uppercase hover:text-zinc-800"
-                onClick={() => setShowImageLink((v) => !v)}
-              >
-                {t(locale, "admin.events.orPasteLink")}
-              </button>
             </div>
-            {showImageLink ? (
-              <input
-                id="ev-img"
-                className={`${adminFieldInput} mt-1 max-w-xl`}
-                value={draft.imageSrc}
-                onChange={(e) =>
-                  setDraft((d) => ({
-                    ...d,
-                    imageSrc: e.target.value,
-                    imageStoragePath: undefined,
-                  }))
-                }
-                placeholder="https://…"
-                inputMode="url"
-                autoComplete="off"
-              />
-            ) : null}
-          </AdminFormSection>
-
-          <AdminFormSection
-            title={t(locale, "admin.events.sectionCopy")}
-            hint={t(locale, "admin.events.sourceHint")}
-          >
-            <div className="max-w-xl">
-              <label className={adminLabel} htmlFor="ev-title">
-                {t(locale, "admin.events.titleField")}
+            <div>
+              <label className={adminLabel} htmlFor="ev-alt">
+                {t(locale, "admin.events.imageAlt")} ({localeLabels[previewLocale]})
               </label>
               <input
-                id="ev-title"
+                id="ev-alt"
                 className={`${adminFieldInput} mt-1`}
-                value={sourceTitle}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSourceTitle(value);
-                  setDraft((d) => ({
-                    ...d,
-                    title: { ...d.title, [locale]: value },
-                  }));
-                }}
-              />
-            </div>
-            <div className="max-w-2xl">
-              <label className={adminLabel} htmlFor="ev-excerpt">
-                {t(locale, "admin.events.excerpt")}
-              </label>
-              <textarea
-                id="ev-excerpt"
-                className={`${adminFieldInput} mt-1 min-h-28 resize-y`}
-                value={sourceExcerpt}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSourceExcerpt(value);
-                  setDraft((d) => ({
-                    ...d,
-                    excerpt: { ...d.excerpt, [locale]: value },
-                  }));
-                }}
-              />
-            </div>
-            <button
-              type="button"
-              className={adminBtnGold}
-              onClick={() => void onTranslate()}
-              disabled={locked}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Languages className="size-4" aria-hidden />
-                {translating ? t(locale, "admin.events.translating") : t(locale, "admin.events.translateContent")}
-              </span>
-            </button>
-          </AdminFormSection>
-
-          <AdminFormSection title={t(locale, "admin.events.sectionReview")}>
-            <div className="flex flex-wrap gap-1.5">
-              {adminContentLocales.map((code) => {
-                const selected = reviewLocale === code;
-                return (
-                  <button
-                    key={code}
-                    type="button"
-                    className={[
-                      "inline-flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs font-semibold",
-                      selected
-                        ? "border-sky-400 bg-sky-50 text-sky-900"
-                        : "border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50",
-                    ].join(" ")}
-                    onClick={() => setReviewLocale(code)}
-                  >
-                    <LocaleFlag locale={code} />
-                    {localeLabels[code]}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="max-w-xl">
-              <label className={adminLabel} htmlFor="ev-title-review">
-                {t(locale, "admin.events.titleField")}
-              </label>
-              <input
-                id="ev-title-review"
-                className={`${adminFieldInput} mt-1`}
-                value={draft.title[reviewLocale] ?? ""}
+                value={draft.imageAlt[previewLocale] ?? ""}
                 onChange={(e) =>
                   setDraft((d) => ({
                     ...d,
-                    title: { ...d.title, [reviewLocale]: e.target.value },
-                  }))
-                }
-              />
-            </div>
-            <div className="max-w-2xl">
-              <label className={adminLabel} htmlFor="ev-excerpt-review">
-                {t(locale, "admin.events.excerpt")}
-              </label>
-              <textarea
-                id="ev-excerpt-review"
-                className={`${adminFieldInput} mt-1 min-h-24 resize-y`}
-                value={draft.excerpt[reviewLocale] ?? ""}
-                onChange={(e) =>
-                  setDraft((d) => ({
-                    ...d,
-                    excerpt: { ...d.excerpt, [reviewLocale]: e.target.value },
-                  }))
-                }
-              />
-            </div>
-            <div className="max-w-xl">
-              <label className={adminLabel} htmlFor="ev-alt-review">
-                {t(locale, "admin.events.imageAlt")}
-              </label>
-              <input
-                id="ev-alt-review"
-                className={`${adminFieldInput} mt-1`}
-                value={draft.imageAlt[reviewLocale] ?? ""}
-                onChange={(e) =>
-                  setDraft((d) => ({
-                    ...d,
-                    imageAlt: { ...d.imageAlt, [reviewLocale]: e.target.value },
+                    imageAlt: { ...d.imageAlt, [previewLocale]: e.target.value },
                   }))
                 }
               />
               <p className={`mt-1 ${adminHint}`}>{t(locale, "admin.events.imageAltHint")}</p>
             </div>
-          </AdminFormSection>
-
-          <AdminFormSection title={t(locale, "admin.events.sectionPublish")}>
-            <div className="flex flex-col gap-3">
-              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-zinc-800">
-                <input
-                  type="checkbox"
-                  className={adminCheckbox}
-                  checked={draft.published !== false}
-                  onChange={(e) =>
-                    setDraft((d) => ({
-                      ...d,
-                      published: e.target.checked,
-                    }))
-                  }
-                />
-                {t(locale, "admin.events.published")}
-              </label>
-              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-zinc-800">
-                <input
-                  type="checkbox"
-                  className={adminCheckbox}
-                  checked={draft.fullyBooked ?? false}
-                  onChange={(e) => setDraft((d) => ({ ...d, fullyBooked: e.target.checked }))}
-                />
-                {t(locale, "admin.events.fullyBooked")}
-              </label>
-            </div>
-          </AdminFormSection>
+          </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-1">
             <button
@@ -997,6 +1074,7 @@ export function EventsAdminPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </PageShell>
     {confirmDialog}

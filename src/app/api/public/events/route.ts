@@ -6,7 +6,8 @@ import {
   runQueryPublishedEvents,
 } from "@/lib/firebase/firestoreRest";
 import { homeEventFromFirestoreData } from "@/lib/firebase/publicEventDoc";
-import { isPublicEventVisible } from "@/lib/eventSchedule";
+import { isEventPastForAdmin } from "@/lib/eventSchedule";
+import { showEventOnSite } from "@/lib/localDevHost";
 
 export const dynamic = "force-dynamic";
 
@@ -69,9 +70,19 @@ export async function GET() {
       }
     }
 
+    const localDev = process.env.NODE_ENV !== "production";
+    if (localDev) {
+      const all = await runQueryAllPublicEvents(projectId, token);
+      const seen = new Set(rows.map((row) => row.id));
+      for (const row of all) {
+        if (seen.has(row.id) || row.data.localOnly !== true) continue;
+        rows.push({ id: row.id, data: row.data });
+      }
+    }
+
     const events = rows
       .map((r) => homeEventFromFirestoreData(r.id, r.data))
-      .filter((ev) => isPublicEventVisible(ev))
+      .filter((ev) => showEventOnSite(ev, localDev) && !isEventPastForAdmin(ev))
       .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
 
     return NextResponse.json(events, {

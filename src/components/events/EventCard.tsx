@@ -30,7 +30,7 @@ export function EventCard({
   loadImage,
   imageLoading = "lazy",
 }: EventCardProps) {
-  const allowImage = loadImage ?? event.published !== false;
+  const allowImage = loadImage ?? (event.published !== false || event.localOnly === true);
   const imageSrc = allowImage ? event.imageSrc.trim() : "";
   const title = pickLocaleText(event.title, locale) || t(locale, "admin.events.titleField");
   const excerpt = pickLocaleText(event.excerpt, locale) || t(locale, "admin.events.excerpt");

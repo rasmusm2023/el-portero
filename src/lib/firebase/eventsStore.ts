@@ -94,6 +94,7 @@ export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
   const payload: Record<string, unknown> = {
     sortDate: ev.sortDate,
     published: ev.published !== false,
+    localOnly: ev.localOnly === true ? true : deleteField(),
     fullyBooked: Boolean(ev.fullyBooked ?? false),
     hasSpecificTime: ev.hasSpecificTime !== false,
     weekdayDate: ev.weekdayDate,

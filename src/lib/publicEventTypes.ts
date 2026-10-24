@@ -19,6 +19,11 @@ export type HomeEvent = {
   /** When false, hidden on the public site (draft). Missing in older Firestore docs = published. */
   published?: boolean;
   /**
+   * Published from localhost. Shown on the dev site only.
+   * The live site skips these even when `published` is true.
+   */
+  localOnly?: boolean;
+  /**
    * When false, the event has no specific time/place and the public UI should not display a time line.
    * Kept optional so older Firestore docs default to “true”.
    */
