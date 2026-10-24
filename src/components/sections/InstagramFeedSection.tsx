@@ -6,7 +6,7 @@
  */
 import { Instagram } from "lucide-react";
 import { useLocale } from "@/i18n/useLocale";
-import { t } from "@/i18n/strings";
+import { t, type Locale } from "@/i18n/strings";
 import { INSTAGRAM_HANDLE, INSTAGRAM_PROFILE_URL } from "@/config/site";
 import { useEffect, useId, useState } from "react";
 
@@ -28,7 +28,7 @@ function InstagramFeedGrid({
   posts: (FeedPost | null)[];
   loading: boolean;
   panelId: string;
-  locale: "en" | "es" | "sv";
+  locale: Locale;
 }) {
   return (
     <div

@@ -6,6 +6,7 @@ import {
   runQueryPublishedEvents,
 } from "@/lib/firebase/firestoreRest";
 import { homeEventFromFirestoreData } from "@/lib/firebase/publicEventDoc";
+import { isPublicEventVisible } from "@/lib/eventSchedule";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,7 @@ export async function GET() {
 
     const events = rows
       .map((r) => homeEventFromFirestoreData(r.id, r.data))
+      .filter((ev) => isPublicEventVisible(ev))
       .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
 
     return NextResponse.json(events, {

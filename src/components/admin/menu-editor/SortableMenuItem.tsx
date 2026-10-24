@@ -55,8 +55,8 @@ export function SortableMenuItem({
       ref={setNodeRef}
       style={style}
       className={[
-        "rounded-none border bg-paper/5 p-4 transition-[opacity,border-color,background-color]",
-        hidden ? "border-amber-500/25 bg-amber-950/10" : "border-paper/10",
+        "rounded-lg border bg-white p-4 transition-[opacity,border-color,background-color]",
+        hidden ? "border-amber-200 bg-amber-50" : "border-zinc-200",
         hidden && !isDragging ? "opacity-50" : "",
         isDragging ? "z-10 opacity-70 ring-2 ring-sky-400/30" : "",
       ].join(" ")}
@@ -86,7 +86,7 @@ export function SortableMenuItem({
             <p
               className={[
                 "text-sm font-medium",
-                hidden ? "text-paper/55" : "text-paper",
+                hidden ? "text-zinc-500" : "text-zinc-900",
               ].join(" ")}
             >
               {summary}

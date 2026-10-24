@@ -15,6 +15,9 @@ import {
   adminBtnNeutral,
   adminBtnSignOut,
   adminCalloutSuccess,
+  adminErrorBox,
+  adminFieldInput,
+  adminPanel,
   adminTextMuted,
 } from "@/lib/adminUiStyles";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
@@ -49,8 +52,7 @@ function dayAdminLabel(locale: Locale, dayKey: OpeningHoursDayKey): string {
   return t(locale, DAY_ADMIN_LABEL_KEYS[dayKey]);
 }
 
-const fieldSelectClass =
-  "w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-sm text-paper shadow-sm transition-shadow focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20 disabled:cursor-not-allowed disabled:bg-paper/6 disabled:text-paper/45";
+const fieldSelectClass = adminFieldInput;
 
 function patchDayRow(
   draft: OpeningHoursDoc,
@@ -183,7 +185,7 @@ export function OpeningHoursAdminPage() {
 
   if (!ready || !user) {
     return (
-      <PageShell title={t(locale, "admin.openingHours.title")} intro={t(locale, "admin.loading")}>
+      <PageShell tone="admin" title={t(locale, "admin.openingHours.title")} intro={t(locale, "admin.loading")}>
         <p className={`text-sm ${adminTextMuted}`}>{t(locale, "admin.checkingSignIn")}</p>
       </PageShell>
     );
@@ -191,6 +193,7 @@ export function OpeningHoursAdminPage() {
 
   return (
     <PageShell
+      tone="admin"
       title={t(locale, "admin.openingHours.title")}
       intro={<p className={adminTextMuted}>{t(locale, "admin.openingHours.intro")}</p>}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
@@ -224,7 +227,7 @@ export function OpeningHoursAdminPage() {
       </div>
 
       {error ? (
-        <div className="mb-4 rounded-none border border-red-400/25 bg-red-950/25 px-4 py-3 text-sm text-red-100">
+        <div className={`mb-4 ${adminErrorBox}`}>
           {error}
         </div>
       ) : null}
@@ -232,17 +235,17 @@ export function OpeningHoursAdminPage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
         <aside className="lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:self-start">
-          <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-            <h2 className="font-display text-xl font-medium text-paper">
+          <div className={adminPanel}>
+            <h2 className="font-display text-xl font-medium text-zinc-900">
               {t(locale, "admin.openingHours.statusTitle")}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-paper/65">
+            <p className="mt-3 text-sm leading-relaxed text-zinc-600">
               {t(locale, "admin.openingHours.statusIntro")}
             </p>
             <div className="mt-6 text-sm">
               <p>
-                <span className="text-paper/60">{t(locale, "admin.menus.publishedLabel")}</span>{" "}
-                <span className="font-semibold text-paper">
+                <span className="text-zinc-500">{t(locale, "admin.menus.publishedLabel")}</span>{" "}
+                <span className="font-semibold text-zinc-900">
                   {published ? t(locale, "admin.menus.yes") : t(locale, "admin.menus.no")}
                 </span>
               </p>
@@ -282,14 +285,14 @@ export function OpeningHoursAdminPage() {
           </div>
         </aside>
 
-        <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-          <div className="flex items-start gap-3 border-b border-paper/10 pb-6">
-            <Clock className="mt-0.5 size-5 shrink-0 text-paper/70" aria-hidden />
+        <div className={adminPanel}>
+          <div className="flex items-start gap-3 border-b border-zinc-200 pb-6">
+            <Clock className="mt-0.5 size-5 shrink-0 text-zinc-500" aria-hidden />
             <div>
-              <h2 className="font-display text-xl font-medium text-paper">
+              <h2 className="font-display text-xl font-medium text-zinc-900">
                 {t(locale, "admin.openingHours.scheduleTitle")}
               </h2>
-              <p className="mt-2 text-sm leading-relaxed text-paper/65">
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600">
                 {t(locale, "admin.openingHours.scheduleIntro")}
               </p>
             </div>
@@ -302,9 +305,9 @@ export function OpeningHoursAdminPage() {
               return (
                 <li
                   key={dayKey}
-                  className="grid gap-3 border-b border-paper/10 pb-5 last:border-b-0 last:pb-0 sm:grid-cols-[minmax(0,8rem)_minmax(0,9rem)_minmax(0,1fr)_minmax(0,1fr)] sm:items-end sm:gap-4"
+                  className="grid gap-3 border-b border-zinc-200 pb-5 last:border-b-0 last:pb-0 sm:grid-cols-[minmax(0,8rem)_minmax(0,9rem)_minmax(0,1fr)_minmax(0,1fr)] sm:items-end sm:gap-4"
                 >
-                  <span className="text-sm font-semibold tracking-wide text-paper uppercase sm:pb-2">
+                  <span className="text-sm font-semibold tracking-wide text-zinc-800 uppercase sm:pb-2">
                     {dayAdminLabel(locale, dayKey)}
                   </span>
                   <div>
@@ -327,7 +330,7 @@ export function OpeningHoursAdminPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-paper/60" htmlFor={`oh-open-${dayKey}`}>
+                    <label className="block text-xs font-medium text-zinc-500" htmlFor={`oh-open-${dayKey}`}>
                       {t(locale, "admin.openingHours.openFrom")}
                     </label>
                     <select
@@ -345,7 +348,7 @@ export function OpeningHoursAdminPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-paper/60" htmlFor={`oh-close-${dayKey}`}>
+                    <label className="block text-xs font-medium text-zinc-500" htmlFor={`oh-close-${dayKey}`}>
                       {t(locale, "admin.openingHours.openUntil")}
                     </label>
                     <select

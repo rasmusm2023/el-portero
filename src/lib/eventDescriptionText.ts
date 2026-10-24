@@ -1,7 +1,6 @@
-import type { Locale } from "@/i18n/strings";
+import { locales, type Locale } from "@/i18n/strings";
+import { emptyLocaleTrio } from "@/i18n/localeMeta";
 import type { LocaleTrio } from "@/lib/publicEventTypes";
-
-const LOCALES: Locale[] = ["en", "es", "sv"];
 
 export type EventDescriptionLines = Record<Locale, string[]>;
 
@@ -24,19 +23,19 @@ export function eventDescriptionTextFromLines(lines: unknown): string | null {
 }
 
 export function eventDescriptionLinesFromLocaleTrio(excerpt: LocaleTrio): EventDescriptionLines {
-  return {
-    en: eventDescriptionLinesFromText(excerpt.en),
-    es: eventDescriptionLinesFromText(excerpt.es),
-    sv: eventDescriptionLinesFromText(excerpt.sv),
-  };
+  const out = {} as EventDescriptionLines;
+  for (const locale of locales) {
+    out[locale] = eventDescriptionLinesFromText(excerpt[locale] ?? "");
+  }
+  return out;
 }
 
 export function normalizeEventDescriptionLocaleTrio(excerpt: LocaleTrio): LocaleTrio {
-  return {
-    en: normalizeEventDescriptionText(excerpt.en),
-    es: normalizeEventDescriptionText(excerpt.es),
-    sv: normalizeEventDescriptionText(excerpt.sv),
-  };
+  const out = emptyLocaleTrio("");
+  for (const locale of locales) {
+    out[locale] = normalizeEventDescriptionText(excerpt[locale] ?? "");
+  }
+  return out;
 }
 
 export function resolveEventDescriptionText(
@@ -48,12 +47,9 @@ export function resolveEventDescriptionText(
       ? (linesByLocale as Partial<Record<Locale, unknown>>)
       : {};
 
-  return LOCALES.reduce<LocaleTrio>(
-    (out, locale) => {
-      const fromLines = eventDescriptionTextFromLines(linesRecord[locale]);
-      out[locale] = fromLines ?? normalizeEventDescriptionText(excerpt[locale]);
-      return out;
-    },
-    { en: "", es: "", sv: "" },
-  );
+  return locales.reduce<LocaleTrio>((out, locale) => {
+    const fromLines = eventDescriptionTextFromLines(linesRecord[locale]);
+    out[locale] = fromLines ?? normalizeEventDescriptionText(excerpt[locale] ?? "");
+    return out;
+  }, emptyLocaleTrio(""));
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, X } from "lucide-react";
-import { adminBtnNeutral } from "@/lib/adminUiStyles";
+import { adminBtnNeutral, adminFieldInput } from "@/lib/adminUiStyles";
 import type { EditableMenuItem, EditableMenuKind } from "@/lib/editableMenuTypes";
 import { t, type Locale } from "@/i18n/strings";
 import type { DietaryTagOption } from "@/lib/dietaryTags";
@@ -9,8 +9,7 @@ import { ALLERGEN_OPTIONS } from "@/lib/menuAllergens";
 import type { DietaryTagId } from "@/lib/dietaryTags";
 import type { AllergenId } from "@/lib/menuAllergens";
 
-const fieldClass =
-  "mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm placeholder:text-paper/40 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20";
+const fieldClass = `mt-2 ${adminFieldInput}`;
 
 type Props = {
   locale: Locale;
@@ -52,7 +51,7 @@ export function EditableMenuItemFields({
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
-        <label className="block text-sm font-medium text-paper">
+        <label className="block text-sm font-medium text-zinc-800">
           {t(locale, "admin.menus.nameLabel")}
         </label>
         <input
@@ -63,9 +62,9 @@ export function EditableMenuItemFields({
         />
       </div>
       <div className="sm:col-span-2">
-        <label className="block text-sm font-medium text-paper">
+        <label className="block text-sm font-medium text-zinc-800">
           {t(locale, "admin.menus.nameExtensionLabel")}{" "}
-          <span className="font-normal text-paper/50">{t(locale, "admin.menus.optional")}</span>
+          <span className="font-normal text-zinc-400">{t(locale, "admin.menus.optional")}</span>
         </label>
         <input
           value={item.nameExtension}
@@ -76,7 +75,7 @@ export function EditableMenuItemFields({
         />
       </div>
       <div className="sm:col-span-2">
-        <label className="block text-sm font-medium text-paper">
+        <label className="block text-sm font-medium text-zinc-800">
           {t(locale, "admin.menus.descriptionLabel")}
         </label>
         <textarea
@@ -88,7 +87,7 @@ export function EditableMenuItemFields({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-paper">
+        <label className="block text-sm font-medium text-zinc-800">
           {t(locale, "admin.menus.priceLabel")}
         </label>
         <input
@@ -103,17 +102,17 @@ export function EditableMenuItemFields({
           disabled={busy}
         />
         {priceOptionsEnabled && item.priceOptions.length > 0 ? (
-          <p className="mt-1 text-[11px] leading-snug text-paper/45">
+          <p className="mt-1 text-[11px] leading-snug text-zinc-500">
             {t(locale, "admin.menus.priceHiddenNote")}
           </p>
         ) : null}
       </div>
       {priceOptionsEnabled ? (
         <div className="sm:col-span-2">
-          <p className="block text-sm font-medium text-paper">
+          <p className="block text-sm font-medium text-zinc-800">
             {t(locale, "admin.menus.sizeVariantsTitle")}
           </p>
-          <p className="mt-0.5 text-xs text-paper/55">{t(locale, "admin.menus.sizeVariantsHint")}</p>
+          <p className="mt-0.5 text-xs text-zinc-500">{t(locale, "admin.menus.sizeVariantsHint")}</p>
           {item.priceOptions.length > 0 ? (
             <ul className="mt-3 flex flex-col gap-2">
               {item.priceOptions.map((opt, pi) => (
@@ -122,14 +121,14 @@ export function EditableMenuItemFields({
                     value={opt.label}
                     onChange={(e) => onUpdatePriceOption(pi, "label", e.target.value)}
                     placeholder={t(locale, "admin.menus.sizeLabelPlaceholder")}
-                    className="min-w-0 flex-1 rounded-none border border-paper/15 bg-paper/8 px-3 py-1.5 text-sm text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
+                    className={`min-w-0 flex-1 ${adminFieldInput} py-1.5`}
                     disabled={busy}
                   />
                   <input
                     value={opt.price}
                     onChange={(e) => onUpdatePriceOption(pi, "price", e.target.value)}
                     placeholder={t(locale, "admin.menus.priceFieldPlaceholder")}
-                    className="w-24 rounded-none border border-paper/15 bg-paper/8 px-3 py-1.5 text-sm text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
+                    className={`w-24 ${adminFieldInput} py-1.5`}
                     disabled={busy}
                   />
                   <button
@@ -158,8 +157,8 @@ export function EditableMenuItemFields({
         </div>
       ) : null}
       <div className="sm:col-span-2">
-        <p className="block text-sm font-medium text-paper">{t(locale, "admin.menus.dietaryTagsTitle")}</p>
-        <p className="mt-0.5 text-xs text-paper/55">
+        <p className="block text-sm font-medium text-zinc-800">{t(locale, "admin.menus.dietaryTagsTitle")}</p>
+        <p className="mt-0.5 text-xs text-zinc-500">
           {tab === "drinks"
             ? t(locale, "admin.menus.dietaryHintDrinks")
             : t(locale, "admin.menus.dietaryHintFood")}
@@ -179,7 +178,7 @@ export function EditableMenuItemFields({
                   "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-2 text-left text-xs font-semibold tracking-[0.06em] uppercase transition-colors",
                   selected
                     ? opt.pillClass
-                    : "border-dashed border-paper/20 bg-paper/5 text-paper/45 hover:border-paper/35 hover:bg-paper/10 hover:text-paper/75",
+                    : "border-dashed border-zinc-300 bg-white text-zinc-400 hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-600",
                 ].join(" ")}
               >
                 <Icon className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />
@@ -191,8 +190,8 @@ export function EditableMenuItemFields({
       </div>
       {allergensEnabled ? (
         <div className="sm:col-span-2">
-          <p className="block text-sm font-medium text-paper">{t(locale, "admin.menus.allergensTitle")}</p>
-          <p className="mt-0.5 text-xs text-paper/55">{t(locale, "admin.menus.allergensHint")}</p>
+          <p className="block text-sm font-medium text-zinc-800">{t(locale, "admin.menus.allergensTitle")}</p>
+          <p className="mt-0.5 text-xs text-zinc-500">{t(locale, "admin.menus.allergensHint")}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {ALLERGEN_OPTIONS.map((opt) => {
               const selected = item.allergenIds.includes(opt.id);
@@ -207,8 +206,8 @@ export function EditableMenuItemFields({
                   className={[
                     "inline-flex items-center gap-2 rounded-full border px-2 py-1 text-left text-xs font-semibold tracking-[0.06em] transition-colors",
                     selected
-                      ? "border-amber-400/40 bg-amber-950/40 text-amber-100"
-                      : "border-dashed border-paper/20 bg-paper/5 text-paper/45 hover:border-paper/35 hover:bg-paper/10 hover:text-paper/75",
+                      ? "border-amber-300 bg-amber-50 text-amber-900"
+                      : "border-dashed border-zinc-300 bg-white text-zinc-400 hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-600",
                   ].join(" ")}
                 >
                   <span
@@ -216,8 +215,8 @@ export function EditableMenuItemFields({
                     className={[
                       "inline-flex size-6 shrink-0 items-center justify-center rounded-full border text-[11px] tabular-nums leading-none",
                       selected
-                        ? "border-amber-300/50 bg-amber-900/70 text-amber-100"
-                        : "border-paper/25 bg-paper/8 text-paper/65",
+                        ? "border-amber-300 bg-amber-100 text-amber-900"
+                        : "border-zinc-300 bg-zinc-50 text-zinc-600",
                     ].join(" ")}
                   >
                     {opt.number}

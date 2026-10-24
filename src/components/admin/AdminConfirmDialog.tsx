@@ -58,11 +58,11 @@ export function AdminConfirmDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descId}
-        className="relative w-full max-w-md border-2 border-red-400/45 bg-gradient-to-b from-red-950 to-[#1a0a0c] p-6 shadow-[0_24px_64px_-12px_rgba(0,0,0,0.75),0_0_0_1px_rgba(248,113,113,0.15)] ring-4 ring-red-600/25 sm:p-8"
+        className="relative w-full max-w-md rounded-xl border-2 border-red-200 bg-white p-6 shadow-xl ring-4 ring-red-100 sm:p-8"
       >
         <div className="flex gap-4">
           <div
-            className="flex size-12 shrink-0 items-center justify-center rounded-full border border-red-400/35 bg-red-600/25 text-red-200"
+            className="flex size-12 shrink-0 items-center justify-center rounded-full border border-red-200 bg-red-50 text-red-700"
             aria-hidden
           >
             <AlertTriangle className="size-7 stroke-[2px]" />
@@ -70,13 +70,13 @@ export function AdminConfirmDialog({
           <div className="min-w-0 flex-1">
             <h2
               id={titleId}
-              className="font-display text-xl font-semibold tracking-tight text-red-50 sm:text-2xl"
+              className="font-display text-xl font-semibold tracking-tight text-red-900 sm:text-2xl"
             >
               {title}
             </h2>
             <p
               id={descId}
-              className="mt-3 text-sm leading-relaxed text-red-100/90 whitespace-pre-line"
+              className="mt-3 text-sm leading-relaxed text-zinc-700 whitespace-pre-line"
             >
               {message}
             </p>

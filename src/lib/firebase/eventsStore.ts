@@ -1,6 +1,7 @@
 import {
   collection,
   deleteDoc,
+  deleteField,
   doc,
   onSnapshot,
   query,
@@ -104,6 +105,7 @@ export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
     imageAlt: ev.imageAlt,
     updatedAt: serverTimestamp(),
   };
+  payload.imageStoragePath = ev.imageStoragePath ? ev.imageStoragePath : deleteField();
   if (ev.hasSpecificTime !== false && ev.timeSlotStart != null && ev.timeSlotStart !== "") {
     payload.timeSlotStart = ev.timeSlotStart;
   }

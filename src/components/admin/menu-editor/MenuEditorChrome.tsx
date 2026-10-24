@@ -6,7 +6,7 @@ import { ChevronDown, ChevronRight, Eye, EyeOff, GripVertical } from "lucide-rea
 import type { ReactNode } from "react";
 
 const chromeBtnClass =
-  "inline-flex shrink-0 items-center justify-center rounded-none border border-paper/15 bg-paper/8 text-paper/80 transition-colors hover:bg-paper/12 hover:text-paper disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex shrink-0 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function MenuEditorDragHandle({
   label,
@@ -57,8 +57,8 @@ export function MenuEditorVisibilityButton({
         chromeBtnClass,
         "h-9 min-w-9 gap-1 px-2 text-[10px] font-semibold leading-none tracking-[0.16em] uppercase",
         hidden
-          ? "border-emerald-400/45 bg-emerald-950/50 text-emerald-100 shadow-[inset_0_0_0_1px_rgba(52,211,153,0.12)] hover:border-emerald-400/60 hover:bg-emerald-950/65 hover:text-white"
-          : "text-paper/80",
+          ? "border-emerald-400 bg-emerald-50 text-emerald-900 hover:border-emerald-500 hover:bg-emerald-100"
+          : "text-zinc-600",
       ].join(" ")}
       disabled={disabled}
       title={disabled && disabledTitle ? disabledTitle : label}
@@ -122,7 +122,7 @@ export function MenuEditorPanelHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-start gap-2 border-b border-paper/10 pb-3">
+    <div className="flex flex-wrap items-start gap-2 border-b border-zinc-200 pb-3">
       <div className="flex shrink-0 items-center gap-1">
         {dragHandle}
         {visibilityButton}
@@ -130,7 +130,7 @@ export function MenuEditorPanelHeader({
       </div>
       <div className="min-w-0 flex-1">
         {title}
-        {meta ? <p className="mt-1 text-xs text-paper/55">{meta}</p> : null}
+        {meta ? <p className="mt-1 text-xs text-zinc-500">{meta}</p> : null}
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap gap-2">{actions}</div> : null}
     </div>

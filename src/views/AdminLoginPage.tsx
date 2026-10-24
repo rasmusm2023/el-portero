@@ -8,7 +8,7 @@ import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { firebaseAuthErrorMessage } from "@/lib/firebase/authErrors";
 import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
-import { adminBtnBlue } from "@/lib/adminUiStyles";
+import { adminBtnBlue, adminErrorBox, adminFieldInput } from "@/lib/adminUiStyles";
 
 export function AdminLoginPage() {
   const { locale } = useLocale();
@@ -17,12 +17,7 @@ export function AdminLoginPage() {
     useAdminAuth();
   const lastLoginAttemptAt = useRef<number>(0);
 
-  const intro =
-    locale === "es"
-      ? "Acceso restringido para el equipo."
-      : locale === "sv"
-        ? "Begränsad åtkomst."
-        : "Restricted access for staff.";
+  const intro = t(locale, "page.admin.intro");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,7 +59,7 @@ export function AdminLoginPage() {
 
   if (!firebaseConfigured) {
     return (
-      <PageShell title={t(locale, "page.admin.title")} intro={intro}>
+      <PageShell tone="admin" title={t(locale, "page.admin.title")} intro={intro}>
         <p className="max-w-xl text-sm text-ink-muted leading-relaxed">
           Add Firebase web config to <code className="font-mono text-xs">.env.local</code> (see{" "}
           <code className="font-mono text-xs">.env.example</code>), then restart{" "}
@@ -75,11 +70,11 @@ export function AdminLoginPage() {
   }
 
   return (
-    <PageShell title={t(locale, "page.admin.title")} intro={intro}>
+    <PageShell tone="admin" title={t(locale, "page.admin.title")} intro={intro}>
       <form className="max-w-sm space-y-6" onSubmit={onSubmit}>
         <div>
-          <label htmlFor="admin-email" className="block text-sm font-medium text-paper">
-            {locale === "es" ? "Correo" : locale === "sv" ? "E-post" : "Email"}
+          <label htmlFor="admin-email" className="block text-sm font-medium text-zinc-800">
+            {t(locale, "page.admin.email")}
           </label>
           <input
             id="admin-email"
@@ -88,16 +83,12 @@ export function AdminLoginPage() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 w-full rounded-none border border-border bg-paper-dark px-3 py-2 text-paper shadow-sm placeholder:text-paper/45 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/25"
+            className={`mt-2 ${adminFieldInput}`}
           />
         </div>
         <div>
-          <label htmlFor="admin-password" className="block text-sm font-medium text-paper">
-            {locale === "es"
-              ? "Contraseña"
-              : locale === "sv"
-                ? "Lösenord"
-                : "Password"}
+          <label htmlFor="admin-password" className="block text-sm font-medium text-zinc-800">
+            {t(locale, "page.admin.password")}
           </label>
           <input
             id="admin-password"
@@ -106,27 +97,19 @@ export function AdminLoginPage() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 w-full rounded-none border border-border bg-paper-dark px-3 py-2 text-paper shadow-sm placeholder:text-paper/45 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/25"
+            className={`mt-2 ${adminFieldInput}`}
           />
         </div>
         <button type="submit" className={`w-full ${adminBtnBlue}`} disabled={busy}>
-          {locale === "es"
-            ? "Entrar"
-            : locale === "sv"
-              ? "Logga in"
-              : "Sign in"}
+          {t(locale, "page.admin.signIn")}
         </button>
       </form>
 
-      {error ? (
-        <div className="mt-6 max-w-sm rounded-none border border-red-500/35 bg-red-950/40 px-4 py-3 text-sm text-red-300">
-          {error}
-        </div>
-      ) : null}
+      {error ? <div className={`mt-6 max-w-sm ${adminErrorBox}`}>{error}</div> : null}
 
-      <p className="mt-10 text-xs text-ink-muted">
+      <p className="mt-10 text-xs text-zinc-500">
         <Link href="/" className="underline-offset-4 hover:underline">
-          ← {locale === "es" ? "Volver al sitio" : locale === "sv" ? "Tillbaka till sajten" : "Back to site"}
+          ← {t(locale, "page.admin.backToSite")}
         </Link>
       </p>
     </PageShell>

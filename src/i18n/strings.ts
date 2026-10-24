@@ -1,11 +1,16 @@
-export type Locale = "en" | "es" | "sv";
+import { deMessages } from "./messages.de";
+import { frMessages } from "./messages.fr";
 
-export const locales: Locale[] = ["en", "es", "sv"];
+export type Locale = "en" | "es" | "sv" | "de" | "fr";
+
+export const locales: Locale[] = ["en", "es", "sv", "de", "fr"];
 
 export const localeLabels: Record<Locale, string> = {
   en: "English",
   es: "Español",
   sv: "Svenska",
+  de: "Deutsch",
+  fr: "Français",
 };
 
 /**
@@ -13,11 +18,15 @@ export const localeLabels: Record<Locale, string> = {
  * — en: en.wikipedia File:Flag_of_the_United_Kingdom.svg
  * — es: commons File:Flag_of_Spain.svg
  * — sv: commons File:Flag_of_Sweden.svg
+ * — de: en.wikipedia File:Flag_of_Germany.svg
+ * — fr: en.wikipedia File:Flag_of_France.svg
  */
 export const localeFlagSrc: Record<Locale, string> = {
   en: "https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg",
   es: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg",
   sv: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Sweden.svg",
+  de: "https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg",
+  fr: "https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg",
 };
 
 export type NavKey =
@@ -190,7 +199,12 @@ type PageKey =
   | "page.hours.title"
   | "page.hours.map"
   | "page.hours.mapIframeTitle"
-  | "page.admin.title";
+  | "page.admin.title"
+  | "page.admin.intro"
+  | "page.admin.email"
+  | "page.admin.password"
+  | "page.admin.signIn"
+  | "page.admin.backToSite";
 
 type AdminKey =
   | "admin.signOut"
@@ -247,6 +261,7 @@ type AdminKey =
   | "admin.openingHours.unpublishError"
   | "admin.loading"
   | "admin.checkingSignIn"
+  | "admin.chrome.staff"
   | "admin.events.title"
   | "admin.events.introLead"
   | "admin.events.introBulletNewEvent"
@@ -255,6 +270,7 @@ type AdminKey =
   | "admin.events.introBulletPublished"
   | "admin.events.introBulletSpecificTime"
   | "admin.events.introBulletFullyBooked"
+  | "admin.events.introBulletTranslate"
   | "admin.events.allEvents"
   | "admin.events.newEvent"
   | "admin.events.emptyList"
@@ -265,7 +281,16 @@ type AdminKey =
   | "admin.events.formEdit"
   | "admin.events.idLabel"
   | "admin.events.idPlaceholder"
+  | "admin.events.idHint"
   | "admin.events.idLocked"
+  | "admin.events.sectionBasics"
+  | "admin.events.sectionTime"
+  | "admin.events.sectionPhoto"
+  | "admin.events.sectionCopy"
+  | "admin.events.sectionReview"
+  | "admin.events.sectionPublish"
+  | "admin.events.previewHint"
+  | "admin.events.guestDateLabel"
   | "admin.events.calendarDate"
   | "admin.events.specificTime"
   | "admin.events.fullyBooked"
@@ -300,6 +325,21 @@ type AdminKey =
   | "admin.events.invalidTime"
   | "admin.events.loadingTitle"
   | "admin.events.loadingIntro"
+  | "admin.events.translateContent"
+  | "admin.events.translating"
+  | "admin.events.translateError"
+  | "admin.events.translateSuccess"
+  | "admin.events.translateNeedText"
+  | "admin.events.reviewTranslations"
+  | "admin.events.uploadImage"
+  | "admin.events.replaceImage"
+  | "admin.events.removeImage"
+  | "admin.events.imageUploading"
+  | "admin.events.imageUploadError"
+  | "admin.events.imageHint"
+  | "admin.events.imageAltHint"
+  | "admin.events.sourceHint"
+  | "admin.events.orPasteLink"
   | "admin.menus.title"
   | "admin.menus.intro"
   | "admin.menus.reload"
@@ -610,6 +650,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.map": "Location",
     "page.hours.mapIframeTitle": "Map: el PORTERO, Torrevieja",
     "page.admin.title": "Admin sign-in",
+    "page.admin.intro": "Restricted access for staff.",
+    "page.admin.email": "Email",
+    "page.admin.password": "Password",
+    "page.admin.signIn": "Sign in",
+    "page.admin.backToSite": "Back to site",
     "admin.signOut": "Sign out",
     "admin.signOutAria": "Sign out of admin",
     "admin.dashboard": "Dashboard",
@@ -670,6 +715,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "Could not unpublish. Try again.",
     "admin.loading": "Loading…",
     "admin.checkingSignIn": "Checking sign-in…",
+    "admin.chrome.staff": "Staff workspace",
     "admin.events.title": "Events",
     "admin.events.introLead":
       "Here you manage the evenings and happenings that guests see on the home page and Events page.",
@@ -685,6 +731,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "**Show start and end time** — when checked, guests see start and end times; when unchecked, only the date line is shown.",
     "admin.events.introBulletFullyBooked":
       "**Fully booked** — tells guests the event is full on the website (they can still contact the restaurant as usual).",
+    "admin.events.introBulletTranslate":
+      "**Translate content** — write the title and description once, in any language. The button fills Swedish, English, Spanish, German, and French, and writes a photo description from the image.",
     "admin.events.allEvents": "All events",
     "admin.events.newEvent": "New event",
     "admin.events.emptyList": "No events yet. Tap New event above to add the first one.",
@@ -695,19 +743,29 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.formEdit": "Edit event",
     "admin.events.idLabel": "Short name (ID)",
     "admin.events.idPlaceholder": "e.g. wine-night-june-2026",
+    "admin.events.idHint":
+      "Guests never see this short name. It is only used in this list and when saving the event.",
     "admin.events.idLocked": "The short name cannot be changed after the event is created.",
+    "admin.events.sectionBasics": "Name and date",
+    "admin.events.sectionTime": "Time",
+    "admin.events.sectionPhoto": "Photo",
+    "admin.events.sectionCopy": "Text guests will see",
+    "admin.events.sectionReview": "Review translations",
+    "admin.events.sectionPublish": "Website status",
+    "admin.events.previewHint": "How this event looks on the website",
+    "admin.events.guestDateLabel": "Shown to guests as",
     "admin.events.calendarDate": "Date on calendar",
     "admin.events.specificTime": "Show start and end time",
     "admin.events.fullyBooked": "Fully booked",
     "admin.events.published": "Published on website",
     "admin.events.imageUrl": "Event photo link",
     "admin.events.imageUrlHint":
-      "Upload the photo at www.imgbox.com (no account needed). When it appears, right-click the image → Get link (or Copy image address) and paste that link here. It must start with https:// and end with .jpg, .jpeg, or .png — not the imgbox page address.",
+      "Upload a photo from your computer (we resize it automatically). You can still paste an image link if you prefer.",
     "admin.events.datePreviewHint":
       "Date shown to guests (filled in automatically from the calendar date above):",
     "admin.events.timeOnly": "Time",
     "admin.events.timeOnlyHint":
-      "Start and end times appear on the website (24-hour clock). The venue is always el PORTERO in Torrevieja.",
+      "Start and end times appear on the website (24-hour clock).",
     "admin.events.startTime": "Start time",
     "admin.events.endTime": "End time",
     "admin.events.preview": "Preview",
@@ -735,6 +793,27 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.invalidTime": "End time must be the same as or after the start time.",
     "admin.events.loadingTitle": "Events",
     "admin.events.loadingIntro": "Loading…",
+    "admin.events.translateContent": "Translate content",
+    "admin.events.translating": "Translating…",
+    "admin.events.translateError":
+      "Could not translate. Firebase AI Logic needs to be enabled on the project, then try again.",
+    "admin.events.translateSuccess":
+      "Translations and photo description filled in — review them below, then save.",
+    "admin.events.translateNeedText": "Add a title or description before translating.",
+    "admin.events.reviewTranslations": "Review translations",
+    "admin.events.uploadImage": "Upload photo",
+    "admin.events.replaceImage": "Replace photo",
+    "admin.events.removeImage": "Remove photo",
+    "admin.events.imageUploading": "Uploading photo…",
+    "admin.events.imageUploadError":
+      "Could not upload the photo. Try again, or paste a link instead.",
+    "admin.events.imageHint":
+      "Upload a photo from your computer — we compress and resize it automatically when you save. A link still works if you prefer. About ten event photos stays fast; we remove the file when you delete a past event.",
+    "admin.events.imageAltHint":
+      "Filled in automatically when you translate. Edit if you want it more specific.",
+    "admin.events.sourceHint":
+      "Write once in any language. Then tap Translate content to fill the other languages and the photo description.",
+    "admin.events.orPasteLink": "Or paste a photo link",
     "admin.menus.title": "Menus",
     "admin.menus.intro":
       "Choose dinner or drinks. Save keeps your draft; Publish shows it on the site.",
@@ -1064,6 +1143,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.map": "Ubicación",
     "page.hours.mapIframeTitle": "Mapa: el PORTERO, Torrevieja",
     "page.admin.title": "Acceso admin",
+    "page.admin.intro": "Acceso restringido para el equipo.",
+    "page.admin.email": "Correo",
+    "page.admin.password": "Contraseña",
+    "page.admin.signIn": "Entrar",
+    "page.admin.backToSite": "Volver al sitio",
     "admin.signOut": "Cerrar sesión",
     "admin.signOutAria": "Cerrar sesión de administración",
     "admin.dashboard": "Panel",
@@ -1124,6 +1208,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "No se pudo despublicar. Intentad de nuevo.",
     "admin.loading": "Cargando…",
     "admin.checkingSignIn": "Comprobando acceso…",
+    "admin.chrome.staff": "Zona de personal",
     "admin.events.title": "Eventos",
     "admin.events.introLead":
       "Aquí gestionáis las veladas y actividades que ven los clientes en la página de inicio y en Eventos.",
@@ -1139,6 +1224,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "**Mostrar hora de inicio y fin** — marcado: los clientes ven las horas; desmarcado: solo la fecha.",
     "admin.events.introBulletFullyBooked":
       "**Completo** — indica a los clientes que el evento está lleno en la web (pueden seguir contactando con el restaurante).",
+    "admin.events.introBulletTranslate":
+      "**Traducir contenido** — escribid el título y la descripción una vez, en cualquier idioma. El botón rellena sueco, inglés, español, alemán y francés, y escribe la descripción de la foto a partir de la imagen.",
     "admin.events.allEvents": "Todos los eventos",
     "admin.events.newEvent": "Nuevo evento",
     "admin.events.emptyList": "Aún no hay eventos. Pulsad Nuevo evento arriba para añadir el primero.",
@@ -1149,19 +1236,29 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.formEdit": "Editar evento",
     "admin.events.idLabel": "Nombre corto (ID)",
     "admin.events.idPlaceholder": "p. ej. cena-vino-junio-2026",
+    "admin.events.idHint":
+      "Los clientes no ven este nombre corto. Solo se usa en esta lista y al guardar el evento.",
     "admin.events.idLocked": "El nombre corto no se puede cambiar después de crear el evento.",
+    "admin.events.sectionBasics": "Nombre y fecha",
+    "admin.events.sectionTime": "Hora",
+    "admin.events.sectionPhoto": "Foto",
+    "admin.events.sectionCopy": "Texto que verán los clientes",
+    "admin.events.sectionReview": "Revisar traducciones",
+    "admin.events.sectionPublish": "Estado en la web",
+    "admin.events.previewHint": "Así se ve este evento en la web",
+    "admin.events.guestDateLabel": "Los clientes lo ven como",
     "admin.events.calendarDate": "Fecha en el calendario",
     "admin.events.specificTime": "Mostrar hora de inicio y fin",
     "admin.events.fullyBooked": "Completo",
     "admin.events.published": "Publicado en la web",
     "admin.events.imageUrl": "Enlace de la foto del evento",
     "admin.events.imageUrlHint":
-      "Subid la foto en www.imgbox.com (no hace falta cuenta). Cuando aparezca, clic derecho en la imagen → Get link (o Copiar dirección de la imagen) y pegad ese enlace aquí. Debe empezar por https:// y terminar en .jpg, .jpeg o .png — no la página de imgbox.",
+      "Subid una foto desde el ordenador (la redimensionamos). También podéis pegar un enlace si lo preferís.",
     "admin.events.datePreviewHint":
       "Fecha que verán los clientes (se rellena sola según la fecha del calendario):",
     "admin.events.timeOnly": "Hora",
     "admin.events.timeOnlyHint":
-      "Las horas de inicio y fin se muestran en la web (24 h). El lugar es siempre el PORTERO en Torrevieja.",
+      "Las horas de inicio y fin se muestran en la web (24 h).",
     "admin.events.startTime": "Hora de inicio",
     "admin.events.endTime": "Hora de fin",
     "admin.events.preview": "Vista previa",
@@ -1189,6 +1286,27 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.invalidTime": "La hora de fin debe ser igual o posterior a la de inicio.",
     "admin.events.loadingTitle": "Eventos",
     "admin.events.loadingIntro": "Cargando…",
+    "admin.events.translateContent": "Traducir contenido",
+    "admin.events.translating": "Traduciendo…",
+    "admin.events.translateError":
+      "No se pudo traducir. Hay que activar Firebase AI Logic en el proyecto e intentarlo de nuevo.",
+    "admin.events.translateSuccess":
+      "Traducciones y descripción de la foto rellenadas — revisadlas abajo y guardad.",
+    "admin.events.translateNeedText": "Añadid un título o una descripción antes de traducir.",
+    "admin.events.reviewTranslations": "Revisar traducciones",
+    "admin.events.uploadImage": "Subir foto",
+    "admin.events.replaceImage": "Sustituir foto",
+    "admin.events.removeImage": "Quitar foto",
+    "admin.events.imageUploading": "Subiendo foto…",
+    "admin.events.imageUploadError":
+      "No se pudo subir la foto. Intentad de nuevo o pegad un enlace.",
+    "admin.events.imageHint":
+      "Subid una foto desde el ordenador — la comprimimos y redimensionamos al guardar. Un enlace sigue valiendo. Unas diez fotos de eventos no ralentizan la web; borramos el archivo al eliminar un evento pasado.",
+    "admin.events.imageAltHint":
+      "Se rellena al traducir. Editadla si queréis más detalle.",
+    "admin.events.sourceHint":
+      "Escribid una vez, en cualquier idioma. Pulsad Traducir contenido para rellenar los demás idiomas y la descripción de la foto.",
+    "admin.events.orPasteLink": "O pegar un enlace de foto",
     "admin.menus.title": "Cartas",
     "admin.menus.intro":
       "Elegid cena o bebidas. Guardar conserva el borrador; Publicar lo muestra en la web.",
@@ -1507,6 +1625,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.map": "Plats",
     "page.hours.mapIframeTitle": "Karta: el PORTERO, Torrevieja",
     "page.admin.title": "Admininloggning",
+    "page.admin.intro": "Begränsad åtkomst för personal.",
+    "page.admin.email": "E-post",
+    "page.admin.password": "Lösenord",
+    "page.admin.signIn": "Logga in",
+    "page.admin.backToSite": "Tillbaka till sajten",
     "admin.signOut": "Logga ut",
     "admin.signOutAria": "Logga ut från admin",
     "admin.dashboard": "Översikt",
@@ -1567,6 +1690,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "Kunde inte avpublicera. Försök igen.",
     "admin.loading": "Laddar…",
     "admin.checkingSignIn": "Kontrollerar inloggning…",
+    "admin.chrome.staff": "Personalyta",
     "admin.events.title": "Evenemang",
     "admin.events.introLead":
       "Här hanterar ni kvällar och aktiviteter som gäster ser på startsidan och under Evenemang.",
@@ -1582,6 +1706,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "**Visa start- och sluttid** — ikryssad: gäster ser start- och sluttid; avmarkerad: bara datumraden visas.",
     "admin.events.introBulletFullyBooked":
       "**Fullbokat** — visar gäster att evenemanget är fullbokat på webbplatsen (de kan fortfarande kontakta restaurangen som vanligt).",
+    "admin.events.introBulletTranslate":
+      "**Översätt innehåll** — skriv titel och beskrivning en gång, på valfritt språk. Knappen fyller svenska, engelska, spanska, tyska och franska, och skriver bildbeskrivningen från fotot.",
     "admin.events.allEvents": "Alla evenemang",
     "admin.events.newEvent": "Nytt evenemang",
     "admin.events.emptyList": "Inga evenemang ännu. Tryck Nytt evenemang ovan för att lägga till det första.",
@@ -1592,19 +1718,29 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.formEdit": "Redigera evenemang",
     "admin.events.idLabel": "Kort namn (ID)",
     "admin.events.idPlaceholder": "t.ex. vin-kvall-juni-2026",
+    "admin.events.idHint":
+      "Gäster ser inte det här kortnamnet. Det används bara i den här listan och när evenemanget sparas.",
     "admin.events.idLocked": "Det korta namnet kan inte ändras efter att evenemanget skapats.",
+    "admin.events.sectionBasics": "Namn och datum",
+    "admin.events.sectionTime": "Tid",
+    "admin.events.sectionPhoto": "Foto",
+    "admin.events.sectionCopy": "Text som gästerna ser",
+    "admin.events.sectionReview": "Granska översättningar",
+    "admin.events.sectionPublish": "Status på webbplatsen",
+    "admin.events.previewHint": "Så här ser evenemanget ut på webbplatsen",
+    "admin.events.guestDateLabel": "Visas för gäster som",
     "admin.events.calendarDate": "Datum i kalendern",
     "admin.events.specificTime": "Visa start- och sluttid",
     "admin.events.fullyBooked": "Fullbokat",
     "admin.events.published": "Publicerad på webbplatsen",
     "admin.events.imageUrl": "Länk till evenemangsfoto",
     "admin.events.imageUrlHint":
-      "Ladda upp fotot på www.imgbox.com (inget konto behövs). När bilden visas: högerklicka → Get link (eller Kopiera bildadress) och klistra in länken här. Den ska börja med https:// och sluta med .jpg, .jpeg eller .png — inte imgbox-sidans adress.",
+      "Ladda upp ett foto från datorn (vi förminskar det). Ni kan fortfarande klistra in en länk om ni vill.",
     "admin.events.datePreviewHint":
       "Datum som gäster ser (fylls i automatiskt från kalenderdatumet ovan):",
     "admin.events.timeOnly": "Tid",
     "admin.events.timeOnlyHint":
-      "Start- och sluttid visas på webbplatsen (24-timmarsklocka). Platsen är alltid el PORTERO i Torrevieja.",
+      "Start- och sluttid visas på webbplatsen (24-timmarsklocka).",
     "admin.events.startTime": "Starttid",
     "admin.events.endTime": "Sluttid",
     "admin.events.preview": "Förhandsvisning",
@@ -1632,6 +1768,27 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.invalidTime": "Sluttiden måste vara samma som eller efter starttiden.",
     "admin.events.loadingTitle": "Evenemang",
     "admin.events.loadingIntro": "Laddar…",
+    "admin.events.translateContent": "Översätt innehåll",
+    "admin.events.translating": "Översätter…",
+    "admin.events.translateError":
+      "Kunde inte översätta. Firebase AI Logic måste vara aktiverat i projektet. Försök sedan igen.",
+    "admin.events.translateSuccess":
+      "Översättningar och bildbeskrivning är ifyllda — granska dem nedan och spara.",
+    "admin.events.translateNeedText": "Lägg till en titel eller beskrivning innan ni översätter.",
+    "admin.events.reviewTranslations": "Granska översättningar",
+    "admin.events.uploadImage": "Ladda upp foto",
+    "admin.events.replaceImage": "Byt foto",
+    "admin.events.removeImage": "Ta bort foto",
+    "admin.events.imageUploading": "Laddar upp foto…",
+    "admin.events.imageUploadError":
+      "Kunde inte ladda upp fotot. Försök igen, eller klistra in en länk.",
+    "admin.events.imageHint":
+      "Ladda upp ett foto från datorn — vi komprimerar och förminskar det automatiskt när ni sparar. En länk fungerar fortfarande. Cirka tio evenemangsfoton påverkar inte sidhastigheten; filen tas bort när ni raderar ett gammalt evenemang.",
+    "admin.events.imageAltHint":
+      "Fylls i automatiskt när ni översätter. Redigera om ni vill mer precist.",
+    "admin.events.sourceHint":
+      "Skriv en gång, på valfritt språk. Tryck sedan Översätt innehåll så fylls övriga språk och bildbeskrivningen i.",
+    "admin.events.orPasteLink": "Eller klistra in en fotolänk",
     "admin.menus.title": "Menyer",
     "admin.menus.intro":
       "Välj middag eller dryck. Spara behåller utkastet; Publicera visar det på webbplatsen.",
@@ -1735,6 +1892,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.reserveNav": "Boka bord",
     "brand.dinnerClub": "Dinner Club",
   },
+  de: deMessages,
+  fr: frMessages,
 };
 
 export function t(locale: Locale, key: MessageKey): string {

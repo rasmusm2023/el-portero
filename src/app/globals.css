@@ -23,6 +23,20 @@
   :focus-visible {
     @apply outline-solid outline-2 outline-offset-2 outline-gold/45;
   }
+
+  html[data-theme="admin"] {
+    color-scheme: light;
+  }
+
+  html[data-theme="admin"] body {
+    @apply bg-zinc-100 text-zinc-900;
+    background-image: none;
+  }
+
+  html[data-theme="admin"] ::selection {
+    background: color-mix(in srgb, var(--color-ink) 16%, transparent);
+    color: var(--color-ink);
+  }
 }
 
 @layer utilities {

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { getFirebaseFirestore, isFirebaseConfigured } from "@/lib/firebase/client";
 import { subscribePublishedPublicEvents } from "@/lib/firebase/eventsStore";
 import { homeEventFromFirestoreData } from "@/lib/firebase/publicEventDoc";
+import { isPublicEventVisible } from "@/lib/eventSchedule";
 import type { HomeEvent } from "@/lib/publicEventTypes";
 
 export type PublicEventsState = {
@@ -13,7 +14,9 @@ export type PublicEventsState = {
 };
 
 function sortByDate(events: HomeEvent[]) {
-  return [...events].sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+  return [...events]
+    .filter((ev) => isPublicEventVisible(ev))
+    .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
 }
 
 const DEBUG_PUBLIC_EVENTS = process.env.NEXT_PUBLIC_DEBUG_PUBLIC_EVENTS === "1";

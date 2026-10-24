@@ -1,3 +1,4 @@
+import { emptyLocaleTrio } from "@/i18n/localeMeta";
 import { weekdayDateFromSortDate } from "@/lib/eventDisplayDate";
 import {
   DEFAULT_EVENT_PLACE,
@@ -40,16 +41,16 @@ export function parseHmToMinutes(hm: string): number | null {
   return h * 60 + min;
 }
 
-/** Times plus fixed venue (el PORTERO, Torrevieja — not editable in admin). */
+/** Start–end only (24h). Older docs may still store `19:30-23:00 · Torrevieja`. */
 export function formatTimeDetailLine(start: string, end: string): string {
-  return `${start.trim()}-${end.trim()} · ${DEFAULT_EVENT_PLACE}`;
+  return `${start.trim()}-${end.trim()}`;
 }
 
-function sameTrio(t: LocaleTrio, line: string): LocaleTrio {
-  return { en: line, es: line, sv: line };
+function sameTrio(_t: LocaleTrio, line: string): LocaleTrio {
+  return emptyLocaleTrio(line);
 }
 
-/** Sync `timeDetail` from slot fields + place. */
+/** Sync `timeDetail` from start/end slots. */
 export function applySlotsToTimeDetail(ev: HomeEvent): HomeEvent {
   if (ev.hasSpecificTime === false) {
     return {
@@ -74,7 +75,7 @@ export function applySlotsToTimeDetail(ev: HomeEvent): HomeEvent {
 }
 
 const TIME_LINE_RE =
-  /^(\d{1,2}:\d{2})\s*[-\u2013]\s*(\d{1,2}:\d{2})\s*·\s*(.+)$/u;
+  /^(\d{1,2}:\d{2})\s*[-\u2013]\s*(\d{1,2}:\d{2})(?:\s*·\s*(.+))?$/u;
 
 function normalizeHm(raw: string): string | null {
   const m = /^(\d{1,2}):(\d{2})$/.exec(raw.trim());
@@ -85,14 +86,21 @@ function normalizeHm(raw: string): string | null {
   return padHm(h, min);
 }
 
-/** Try to recover slots + place from an existing display line (e.g. legacy Firestore). */
+/** Try to recover slots from an existing display line (times only, or legacy `times · place`). */
 export function parseTimeLine(line: string): { start: string; end: string; place: string } | null {
   const m = TIME_LINE_RE.exec(line.trim());
   if (!m) return null;
   const s = normalizeHm(m[1]);
   const e = normalizeHm(m[2]);
   if (!s || !e) return null;
-  return { start: s, end: e, place: m[3].trim() || DEFAULT_EVENT_PLACE };
+  return { start: s, end: e, place: (m[3] ?? "").trim() || DEFAULT_EVENT_PLACE };
+}
+
+/** Drop a leftover venue suffix so guests only see the clock times. */
+export function timesOnlyLine(line: string): string {
+  const parsed = parseTimeLine(line);
+  if (parsed) return formatTimeDetailLine(parsed.start, parsed.end);
+  return line.replace(/\s*·\s*.+$/u, "").trim();
 }
 
 export function normalizeEventForEditor(ev: HomeEvent): HomeEvent {
@@ -166,7 +174,7 @@ function madridWallYmdHm(now: Date): { ymd: string; minutes: number } {
 
 /**
  * True when the event should be treated as over (Madrid wall clock): after `sortDate` at end time,
- * or on an earlier calendar day. Used in the admin list only.
+ * or on an earlier calendar day.
  */
 export function isEventPastForAdmin(ev: HomeEvent, now = new Date()): boolean {
   if (!ev.sortDate) return false;
@@ -185,6 +193,11 @@ export function isEventPastForAdmin(ev: HomeEvent, now = new Date()): boolean {
   }
   if (endMin == null) return false;
   return nowMin >= endMin;
+}
+
+/** Guests only see published events that have not ended yet. */
+export function isPublicEventVisible(ev: HomeEvent, now = new Date()): boolean {
+  return ev.published !== false && !isEventPastForAdmin(ev, now);
 }
 
 export function suggestDuplicateEventId(originalId: string): string {

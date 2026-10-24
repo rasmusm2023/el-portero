@@ -3,12 +3,11 @@
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import type { KeyboardEvent } from "react";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { intlLocaleTag } from "@/i18n/localeMeta";
 import type { Locale } from "@/i18n/strings";
 
 function localeToBcp47(locale: Locale): string {
-  if (locale === "es") return "es-ES";
-  if (locale === "sv") return "sv-SE";
-  return "en-GB";
+  return intlLocaleTag(locale);
 }
 
 function toIsoLocal(d: Date): string {
@@ -214,7 +213,11 @@ export function ReserveDateField({
                   ? "Mes anterior"
                   : locale === "sv"
                     ? "Föregående månad"
-                    : "Previous month"
+                    : locale === "de"
+                      ? "Vorheriger Monat"
+                      : locale === "fr"
+                        ? "Mois précédent"
+                        : "Previous month"
               }
               onClick={() =>
                 setVisibleMonth(
@@ -235,7 +238,11 @@ export function ReserveDateField({
                   ? "Mes siguiente"
                   : locale === "sv"
                     ? "Nästa månad"
-                    : "Next month"
+                    : locale === "de"
+                      ? "Nächster Monat"
+                      : locale === "fr"
+                        ? "Mois suivant"
+                        : "Next month"
               }
               onClick={() =>
                 setVisibleMonth(

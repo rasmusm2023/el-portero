@@ -120,14 +120,32 @@ export function getVenueStatus(locale: Locale, doc: OpeningHoursDoc): VenueStatu
             today: "i dag",
             closedToday: "Stängt idag",
           }
-        : {
-            open: "Open now",
-            closed: "Closed now",
-            closesAt: "Closes at",
-            opensAt: "Opens at",
-            today: "tonight",
-            closedToday: "Closed today",
-          };
+        : locale === "de"
+          ? {
+              open: "Jetzt geöffnet",
+              closed: "Jetzt geschlossen",
+              closesAt: "Schließt um",
+              opensAt: "Öffnet um",
+              today: "heute",
+              closedToday: "Heute geschlossen",
+            }
+          : locale === "fr"
+            ? {
+                open: "Ouvert maintenant",
+                closed: "Fermé maintenant",
+                closesAt: "Ferme à",
+                opensAt: "Ouvre à",
+                today: "aujourd’hui",
+                closedToday: "Fermé aujourd’hui",
+              }
+            : {
+                open: "Open now",
+                closed: "Closed now",
+                closesAt: "Closes at",
+                opensAt: "Opens at",
+                today: "tonight",
+                closedToday: "Closed today",
+              };
 
   if (!today || today.closed) {
     const next = findNextOpenDay(doc, todayKey);

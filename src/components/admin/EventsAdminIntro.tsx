@@ -10,6 +10,7 @@ const INTRO_BULLET_KEYS = [
   "admin.events.introBulletPublished",
   "admin.events.introBulletSpecificTime",
   "admin.events.introBulletFullyBooked",
+  "admin.events.introBulletTranslate",
 ] as const satisfies readonly MessageKey[];
 
 type Props = {
@@ -20,7 +21,7 @@ export function EventsAdminIntro({ locale }: Props) {
   return (
     <div className="space-y-4">
       <p>{t(locale, "admin.events.introLead")}</p>
-      <ul className="list-disc space-y-2.5 pl-5 text-base marker:text-paper/45">
+      <ul className="list-disc space-y-2.5 pl-5 text-base marker:text-zinc-400">
         {INTRO_BULLET_KEYS.map((key) => (
           <li key={key}>
             <AdminIntroEmphasis text={t(locale, key)} />

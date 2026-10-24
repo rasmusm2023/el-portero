@@ -10,7 +10,7 @@ export function AdminIntroEmphasis({ text }: { text: string }): ReactNode {
     i % 2 === 1 ? (
       <strong
         key={i}
-        className="font-semibold italic text-paper"
+        className="font-semibold italic text-zinc-900"
       >
         {part}
       </strong>

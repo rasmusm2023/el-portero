@@ -20,6 +20,12 @@ function guestOptionLabel(count: number, locale: Locale): string {
   if (locale === "es") {
     return count === 1 ? "1 comensal" : `${count} comensales`;
   }
+  if (locale === "de") {
+    return count === 1 ? "1 Gast" : `${count} Gäste`;
+  }
+  if (locale === "fr") {
+    return count === 1 ? "1 convive" : `${count} convives`;
+  }
   return count === 1 ? "1 guest" : `${count} guests`;
 }
 

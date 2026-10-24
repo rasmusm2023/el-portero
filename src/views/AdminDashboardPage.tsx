@@ -28,6 +28,7 @@ export function AdminDashboardPage() {
   if (!ready) {
     return (
       <PageShell
+        tone="admin"
         title={t(locale, "admin.dashboard.title")}
         intro={<p className={adminTextMuted}>{t(locale, "admin.loading")}</p>}
       >
@@ -38,6 +39,7 @@ export function AdminDashboardPage() {
 
   return (
     <PageShell
+      tone="admin"
       title={t(locale, "admin.dashboard.title")}
       intro={<p className={adminTextMuted}>{t(locale, "admin.dashboard.intro")}</p>}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
@@ -45,7 +47,7 @@ export function AdminDashboardPage() {
       <div className={`mb-8 flex flex-wrap items-center justify-between gap-4 border-b ${adminDivider} pb-6`}>
         <p className={`text-sm ${adminTextMuted}`}>
           {t(locale, "admin.dashboard.signedInAs")}{" "}
-          <span className="font-medium text-paper">{user?.email ?? user?.uid ?? "—"}</span>
+          <span className="font-medium text-zinc-900">{user?.email ?? user?.uid ?? "—"}</span>
         </p>
         <div className="flex flex-wrap gap-2">
           <button type="button" className={adminBtnSignOut} onClick={() => void onSignOut()}>

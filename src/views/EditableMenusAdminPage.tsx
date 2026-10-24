@@ -46,6 +46,9 @@ import {
   adminBtnNeutral,
   adminBtnSignOut,
   adminCalloutSuccess,
+  adminErrorBox,
+  adminFieldInput,
+  adminPanel,
 } from "@/lib/adminUiStyles";
 import { dinnerMenuCategories } from "@/data/dinnerMenu";
 import { drinksMenuCategories } from "@/data/drinksMenu";
@@ -101,6 +104,12 @@ function menuDishCountPhrase(locale: Locale, count: number): string {
   if (locale === "sv") {
     return count === 1 ? "1 rätt" : `${count} rätter`;
   }
+  if (locale === "de") {
+    return count === 1 ? "1 Gericht" : `${count} Gerichte`;
+  }
+  if (locale === "fr") {
+    return count === 1 ? "1 plat" : `${count} plats`;
+  }
   return count === 1 ? "1 dish" : `${count} dishes`;
 }
 
@@ -111,6 +120,12 @@ function menuItemCountPhrase(locale: Locale, kind: EditableMenuKind, count: numb
     }
     if (locale === "sv") {
       return count === 1 ? "1 dryck" : `${count} drycker`;
+    }
+    if (locale === "de") {
+      return count === 1 ? "1 Getränk" : `${count} Getränke`;
+    }
+    if (locale === "fr") {
+      return count === 1 ? "1 boisson" : `${count} boissons`;
     }
     return count === 1 ? "1 drink" : `${count} drinks`;
   }
@@ -622,8 +637,8 @@ export function EditableMenusAdminPage() {
 
   if (!ready || !user) {
     return (
-      <PageShell title={t(locale, "admin.menus.title")} intro={t(locale, "admin.loading")}>
-        <p className="text-sm text-paper/70">{t(locale, "admin.checkingSignIn")}</p>
+      <PageShell tone="admin" title={t(locale, "admin.menus.title")} intro={t(locale, "admin.loading")}>
+        <p className="text-sm text-zinc-600">{t(locale, "admin.checkingSignIn")}</p>
       </PageShell>
     );
   }
@@ -631,6 +646,7 @@ export function EditableMenusAdminPage() {
   return (
     <>
     <PageShell
+      tone="admin"
       title={t(locale, "admin.menus.title")}
       intro={t(locale, "admin.menus.intro")}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
@@ -666,7 +682,7 @@ export function EditableMenusAdminPage() {
         </button>
       </div>
 
-      <div className="mb-8 flex flex-wrap gap-2 border-b border-border pb-4">
+      <div className="mb-8 flex flex-wrap gap-2 border-b border-zinc-200 pb-4">
         {MENU_TABS.map((kind) => (
           <button
             key={kind}
@@ -676,8 +692,8 @@ export function EditableMenusAdminPage() {
             className={[
               "rounded-none border px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em]",
               tab === kind
-                ? "border-emerald-600 bg-emerald-950/40 text-emerald-100"
-                : "border-border bg-paper/5 text-paper/70 hover:border-paper/25",
+                ? "border-emerald-600 bg-emerald-600 text-white"
+                : "border-zinc-300 bg-white text-zinc-600 hover:border-zinc-400",
             ].join(" ")}
           >
             <span className="inline-flex items-center gap-2">
@@ -689,7 +705,7 @@ export function EditableMenusAdminPage() {
       </div>
 
       {error ? (
-        <div className="mb-4 rounded-none border border-red-400/25 bg-red-950/25 px-4 py-3 text-sm text-red-100">
+        <div className={`mb-4 ${adminErrorBox}`}>
           {error}
         </div>
       ) : null}
@@ -697,17 +713,17 @@ export function EditableMenusAdminPage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
         <aside className="lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:self-start">
-        <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-          <h2 className="font-display text-xl font-medium text-paper">
+        <div className={adminPanel}>
+          <h2 className="font-display text-xl font-medium text-zinc-900">
             {t(locale, "admin.menus.status")} · {tabLabel}
           </h2>
-          <p className="mt-3 text-sm text-paper/65 leading-relaxed">
+          <p className="mt-3 text-sm leading-relaxed text-zinc-600">
             {t(locale, "admin.menus.statusIntro")}
           </p>
           <div className="mt-6 space-y-2 text-sm">
             <p>
-              <span className="text-paper/60">{t(locale, "admin.menus.publishedLabel")}</span>{" "}
-              <span className="font-semibold text-paper">
+              <span className="text-zinc-500">{t(locale, "admin.menus.publishedLabel")}</span>{" "}
+              <span className="font-semibold text-zinc-900">
                 {published ? t(locale, "admin.menus.yes") : t(locale, "admin.menus.no")}
               </span>
             </p>
@@ -743,15 +759,15 @@ export function EditableMenusAdminPage() {
         </div>
         </aside>
 
-        <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-          <label className="block text-sm font-medium text-paper">
+        <div className={adminPanel}>
+          <label className="block text-sm font-medium text-zinc-800">
             {t(locale, "admin.menus.menuTitleLabel")}
           </label>
           <input
             value={draft.title}
             onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
             placeholder={t(locale, "admin.menus.menuTitlePlaceholder")}
-            className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm placeholder:text-paper/40 focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
+            className={`mt-2 max-w-xl ${adminFieldInput}`}
             disabled={busy}
           />
 
@@ -785,7 +801,7 @@ export function EditableMenusAdminPage() {
                         />
                       }
                       title={
-                        <label className="block w-full text-sm font-medium text-paper">
+                        <label className="block w-full text-sm font-medium text-zinc-800">
                           {t(locale, "admin.menus.sectionTitleLabel")}
                           <input
                             value={cat.title}
@@ -797,7 +813,7 @@ export function EditableMenusAdminPage() {
                                 return next;
                               })
                             }
-                            className="mt-2 w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-paper shadow-sm focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20"
+                            className={`mt-2 ${adminFieldInput}`}
                             disabled={busy}
                           />
                         </label>

@@ -55,8 +55,8 @@ export function SortableMenuSection({
       ref={setNodeRef}
       style={style}
       className={[
-        "rounded-none border bg-paper/[0.03] p-4 transition-[opacity,border-color,background-color]",
-        hidden ? "border-amber-500/30 bg-amber-950/15" : "border-paper/12",
+        "rounded-lg border bg-zinc-50 p-4 transition-[opacity,border-color,background-color]",
+        hidden ? "border-amber-200 bg-amber-50" : "border-zinc-200",
         hidden && !isDragging ? "opacity-50" : "",
         isDragging ? "z-10 opacity-70 ring-2 ring-gold/35" : "",
       ].join(" ")}

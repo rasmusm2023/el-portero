@@ -174,7 +174,11 @@ export function MenuSplitSectionVertical({
           ? "Elegir tipo de carta (demo)"
           : locale === "sv"
             ? "Välj meny (demo)"
-            : "Choose a menu (demo)"
+            : locale === "de"
+              ? "Speisekarte wählen (Demo)"
+              : locale === "fr"
+                ? "Choisir une carte (démo)"
+                : "Choose a menu (demo)"
       }
       className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-ink"
     >
