@@ -25,6 +25,10 @@ dist-ssr
 .env
 .env.*.local
 
+# Firebase CLI web SDK dump. Contains the client API key; the app reads
+# NEXT_PUBLIC_FIREBASE_* from the environment instead.
+firebase-config.json
+
 # Local databases
 *.db
 
