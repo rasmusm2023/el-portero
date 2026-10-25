@@ -687,12 +687,12 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.intro": "Choose what you want to edit.",
     "admin.dashboard.signedInAs": "Signed in as",
     "admin.dashboard.eventsLabel": "Events",
-    "admin.dashboard.eventsHeading": "Public events",
+    "admin.dashboard.eventsHeading": "Events",
     "admin.dashboard.eventsDescription":
       "Add and update evenings and happenings on the home page and Events page. Keep drafts hidden until you are ready for guests to see them.",
     "admin.dashboard.eventsLink": "Open events →",
     "admin.dashboard.menusLabel": "Menus",
-    "admin.dashboard.menusHeading": "Dinner & drinks",
+    "admin.dashboard.menusHeading": "Menu",
     "admin.dashboard.menusDescription":
       "Edit dinner and drinks menus section by section. Save your draft, then publish when guests should see the menu on the website.",
     "admin.dashboard.menusLink": "Open menus →",
@@ -1201,12 +1201,12 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.intro": "Elegid qué queréis editar.",
     "admin.dashboard.signedInAs": "Sesión iniciada como",
     "admin.dashboard.eventsLabel": "Eventos",
-    "admin.dashboard.eventsHeading": "Eventos públicos",
+    "admin.dashboard.eventsHeading": "Eventos",
     "admin.dashboard.eventsDescription":
       "Añadid y actualizad veladas y actividades en la página de inicio y en Eventos. Dejad los borradores ocultos hasta que estén listos para los clientes.",
     "admin.dashboard.eventsLink": "Abrir eventos →",
     "admin.dashboard.menusLabel": "Cartas",
-    "admin.dashboard.menusHeading": "Cena y bebidas",
+    "admin.dashboard.menusHeading": "Carta",
     "admin.dashboard.menusDescription":
       "Editad las cartas de cena y bebidas por secciones. Guardad el borrador y publicad cuando los clientes deban ver la carta en la web.",
     "admin.dashboard.menusLink": "Abrir cartas →",
@@ -1704,12 +1704,12 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.intro": "Välj vad ni vill redigera.",
     "admin.dashboard.signedInAs": "Inloggad som",
     "admin.dashboard.eventsLabel": "Evenemang",
-    "admin.dashboard.eventsHeading": "Publika evenemang",
+    "admin.dashboard.eventsHeading": "Evenemang",
     "admin.dashboard.eventsDescription":
       "Lägg till och uppdatera kvällar och aktiviteter på startsidan och under Evenemang. Behåll utkast dolda tills ni är redo för gäster.",
     "admin.dashboard.eventsLink": "Öppna evenemang →",
     "admin.dashboard.menusLabel": "Menyer",
-    "admin.dashboard.menusHeading": "Middag & dryck",
+    "admin.dashboard.menusHeading": "Meny",
     "admin.dashboard.menusDescription":
       "Redigera middags- och dryckesmenyer sektion för sektion. Spara utkastet och publicera när gäster ska se menyn på webbplatsen.",
     "admin.dashboard.menusLink": "Öppna menyer →",

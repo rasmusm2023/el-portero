@@ -220,12 +220,12 @@ export const frMessages = {
   "admin.dashboard.intro": "Choisissez ce que vous voulez modifier.",
   "admin.dashboard.signedInAs": "Connecté en tant que",
   "admin.dashboard.eventsLabel": "Événements",
-  "admin.dashboard.eventsHeading": "Événements publics",
+  "admin.dashboard.eventsHeading": "Événements",
   "admin.dashboard.eventsDescription":
     "Ajouter et mettre à jour les soirées de la page d’accueil et de la page Événements. Les brouillons restent cachés jusqu’à ce que les hôtes puissent les voir.",
   "admin.dashboard.eventsLink": "Ouvrir les événements →",
   "admin.dashboard.menusLabel": "Cartes",
-  "admin.dashboard.menusHeading": "Dîner & boissons",
+  "admin.dashboard.menusHeading": "Menu",
   "admin.dashboard.menusDescription":
     "Modifier les cartes dîner et boissons section par section. Enregistrez le brouillon, puis publiez lorsque les hôtes doivent voir la carte sur le site.",
   "admin.dashboard.menusLink": "Ouvrir les cartes →",

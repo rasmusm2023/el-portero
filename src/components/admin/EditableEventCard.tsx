@@ -150,7 +150,7 @@ export function EditableEventCard({
         />
         <button
           type="button"
-          className="absolute inset-0 z-10 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-paper/40 disabled:cursor-not-allowed"
+          className="absolute inset-0 z-10 flex cursor-pointer items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-paper/40 disabled:cursor-not-allowed"
           onClick={onRequestImagePick}
           disabled={disabled}
           aria-label={
@@ -210,7 +210,7 @@ export function EditableEventCard({
             <div ref={timeRef} className="relative mt-2">
               <button
                 type="button"
-                className={`-mx-1 px-1 py-0.5 text-left text-[11px] font-semibold leading-snug tracking-[0.18em] text-ink-muted uppercase sm:text-xs sm:tracking-[0.2em] ${editHit}`}
+                className={`-mx-1 cursor-pointer px-1 py-0.5 text-left text-[11px] font-semibold leading-snug tracking-[0.18em] text-ink-muted uppercase sm:text-xs sm:tracking-[0.2em] disabled:cursor-not-allowed ${editHit}`}
                 aria-label={t(uiLocale, "admin.events.editTime")}
                 aria-expanded={timeOpen}
                 aria-haspopup="dialog"
@@ -232,7 +232,7 @@ export function EditableEventCard({
           ) : (
             <button
               type="button"
-              className={`mt-2 -mx-1 px-1 py-0.5 text-left text-[11px] font-semibold leading-snug tracking-[0.18em] text-ink-muted/70 uppercase sm:text-xs sm:tracking-[0.2em] ${editHit}`}
+              className={`mt-2 -mx-1 cursor-pointer px-1 py-0.5 text-left text-[11px] font-semibold leading-snug tracking-[0.18em] text-ink-muted/70 uppercase sm:text-xs sm:tracking-[0.2em] disabled:cursor-not-allowed ${editHit}`}
               aria-label={t(uiLocale, "admin.events.addTime")}
               disabled={disabled}
               onClick={openTimeEditor}
@@ -313,8 +313,8 @@ export function EditableEventCard({
               type="button"
               className={
                 fullyBooked
-                  ? `inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border bg-ink/10 px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-ink-muted uppercase sm:px-4 sm:py-2.5 sm:text-xs ${editHit}`
-                  : "inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-ink bg-ink px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 sm:px-4 sm:py-2.5 sm:text-xs"
+                  ? `inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border bg-ink/10 px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-ink-muted uppercase disabled:cursor-not-allowed sm:px-4 sm:py-2.5 sm:text-xs ${editHit}`
+                  : "inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-ink bg-ink px-3.5 py-2.5 text-[10px] font-semibold tracking-[0.2em] text-paper uppercase transition-colors hover:bg-ink/90 disabled:cursor-not-allowed sm:px-4 sm:py-2.5 sm:text-xs"
               }
               aria-label={t(uiLocale, "admin.events.editAvailability")}
               aria-haspopup="listbox"
@@ -387,7 +387,7 @@ function TimePopover({
       <label className="block text-xs font-medium text-slate-500">
         {t(uiLocale, "admin.events.startTime")}
         <select
-          className="mt-1 block rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-900 tabular-nums focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          className="mt-1 block cursor-pointer rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-900 tabular-nums focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed"
           value={start}
           disabled={disabled}
           onChange={(e) => {
@@ -405,7 +405,7 @@ function TimePopover({
       <label className="block text-xs font-medium text-slate-500">
         {t(uiLocale, "admin.events.endTime")}
         <select
-          className="mt-1 block rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-900 tabular-nums focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          className="mt-1 block cursor-pointer rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-900 tabular-nums focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed"
           value={end}
           disabled={disabled}
           onChange={(e) => onChangeTime(start, e.target.value)}
@@ -437,7 +437,7 @@ function BookingOption({
         role="option"
         aria-selected={selected}
         className={[
-          "w-full rounded-md px-2.5 py-2 text-left text-sm",
+          "w-full cursor-pointer rounded-md px-2.5 py-2 text-left text-sm",
           selected ? "bg-blue-50 font-medium text-blue-800" : "text-slate-700 hover:bg-slate-50",
         ].join(" ")}
         onClick={onSelect}
@@ -502,7 +502,7 @@ function DescriptionFormatButton({
   return (
     <button
       type="button"
-      className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+      className="inline-flex cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
       aria-label={label}
       disabled={disabled}
       onMouseDown={(event) => event.preventDefault()}

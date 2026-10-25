@@ -48,7 +48,7 @@ export function AdminConfirmDialog({
     <div className="fixed inset-0 z-[300] flex items-end justify-center p-4 sm:items-center sm:p-6">
       <button
         type="button"
-        className="absolute inset-0 bg-slate-900/40"
+        className="absolute inset-0 cursor-pointer bg-slate-900/40"
         aria-label={cancelLabel}
         onClick={onCancel}
       />
@@ -74,7 +74,7 @@ export function AdminConfirmDialog({
         <div className="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button
             type="button"
-            className="inline-flex h-9 items-center justify-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            className="inline-flex h-9 cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
             onClick={onCancel}
           >
             {cancelLabel}
@@ -82,7 +82,7 @@ export function AdminConfirmDialog({
           <button
             ref={confirmRef}
             type="button"
-            className="inline-flex h-9 items-center justify-center rounded-lg bg-red-600 px-3.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            className="inline-flex h-9 cursor-pointer items-center justify-center rounded-lg bg-red-600 px-3.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             onClick={onConfirm}
           >
             {confirmLabel}

@@ -661,14 +661,14 @@ export function EventsAdminPage() {
                 />
                 <button
                   type="button"
-                  className={`${deskGhost} shrink-0`}
+                  className={`${deskGhost} group shrink-0`}
                   onClick={() => void onTranslate()}
                   disabled={locked}
                 >
                   {translating ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : (
-                    <Sparkles className="size-4 text-blue-600" aria-hidden />
+                    <Sparkles className="size-4 text-blue-600 motion-safe:group-hover:animate-[spin_0.7s_ease-in-out]" aria-hidden />
                   )}
                   {translating
                     ? t(locale, "admin.events.translating")
@@ -895,7 +895,7 @@ export function EventsAdminPage() {
               {draft.imageSrc || pendingImageFile ? (
                 <button
                   type="button"
-                  className="mt-2 text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:opacity-40"
+                  className="mt-2 cursor-pointer text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
                   onClick={onRemoveImage}
                   disabled={locked}
                 >

@@ -36,7 +36,7 @@ export function EventPreviewLocaleMenu({
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
@@ -65,7 +65,7 @@ export function EventPreviewLocaleMenu({
                   role="option"
                   aria-selected={selected}
                   className={[
-                    "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm",
+                    "flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm",
                     selected ? "bg-blue-50 text-blue-900" : "text-slate-800 hover:bg-slate-50",
                   ].join(" ")}
                   onClick={() => {

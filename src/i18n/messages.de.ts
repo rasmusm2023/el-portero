@@ -220,12 +220,12 @@ export const deMessages = {
   "admin.dashboard.intro": "Wählt, was ihr bearbeiten möchtet.",
   "admin.dashboard.signedInAs": "Angemeldet als",
   "admin.dashboard.eventsLabel": "Events",
-  "admin.dashboard.eventsHeading": "Öffentliche Events",
+  "admin.dashboard.eventsHeading": "Events",
   "admin.dashboard.eventsDescription":
     "Abende und Anlässe auf der Startseite und der Eventseite hinzufügen und aktualisieren. Entwürfe bleiben verborgen, bis ihr sie für Gäste freigebt.",
   "admin.dashboard.eventsLink": "Events öffnen →",
   "admin.dashboard.menusLabel": "Karten",
-  "admin.dashboard.menusHeading": "Abendessen & Getränke",
+  "admin.dashboard.menusHeading": "Menü",
   "admin.dashboard.menusDescription":
     "Abend- und Getränkekarten Abschnitt für Abschnitt bearbeiten. Speichert den Entwurf und veröffentlicht, wenn Gäste die Karte auf der Website sehen sollen.",
   "admin.dashboard.menusLink": "Karten öffnen →",
