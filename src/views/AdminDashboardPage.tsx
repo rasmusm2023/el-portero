@@ -239,7 +239,9 @@ export function AdminDashboardPage() {
         />
       </div>
 
-      <DashboardBento />
+      <div className="mt-8 border-t border-slate-200 pt-8">
+        <DashboardBento />
+      </div>
 
       <div className="mt-6">
         <Link href="/" className={deskButton}>

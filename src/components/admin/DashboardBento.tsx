@@ -165,7 +165,7 @@ export function DashboardBento() {
   const todayKey = currentOpeningDayKey();
 
   return (
-    <section className="mt-8" aria-label={t(locale, "admin.dashboard.now")}>
+    <section aria-label={t(locale, "admin.dashboard.now")}>
       <h2 className="mb-3 text-sm font-semibold text-slate-900">{t(locale, "admin.dashboard.now")}</h2>
       <div className="grid items-stretch gap-4 lg:grid-cols-6">
         <Link href="/admin/opening-hours" className={`${tileClass} lg:col-span-3 lg:row-span-2`}>
