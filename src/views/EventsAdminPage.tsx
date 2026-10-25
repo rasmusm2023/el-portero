@@ -3,28 +3,27 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { Copy, Eye, EyeOff, LayoutDashboard, Loader2, LogOut, Plus, Save, Sparkles, Trash2 } from "lucide-react";
+import { LayoutDashboard, Loader2, LogOut, Plus, Save, Sparkles, Trash2 } from "lucide-react";
 import { EditableEventCard } from "@/components/admin/EditableEventCard";
 import { EventPreviewLocaleMenu } from "@/components/admin/EventPreviewLocaleMenu";
+import {
+  DeskNotice,
+  DeskToggle,
+  EventIndexRow,
+  StepHeading,
+  WebsiteStatusCard,
+  deskDanger,
+  deskField,
+  deskGhost,
+  deskHint,
+  deskLabel,
+  deskPanel,
+  deskPrimary,
+  deskTimeSelect,
+} from "@/components/admin/events/EventsDesk";
 import { LocaleFlag } from "@/components/layout/LocaleFlag";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { PageShell } from "@/components/layout/PageShell";
-import {
-  adminBtnBlue,
-  adminBtnDanger,
-  adminBtnAi,
-  adminBtnGreen,
-  adminBtnNeutral,
-  adminBtnSignOut,
-  adminCalloutInfo,
-  adminCalloutSuccess,
-  adminCheckbox,
-  adminErrorBox,
-  adminFieldInput,
-  adminHint,
-  adminLabel,
-  adminPanel,
-} from "@/lib/adminUiStyles";
 import {
   DEFAULT_EVENT_TIME_END,
   DEFAULT_EVENT_TIME_START,
@@ -45,7 +44,6 @@ import {
 } from "@/lib/eventSchedule";
 import {
   applyTranslatedLocaleTrio,
-  pickLocaleText,
   pickTranslateSourceLocale,
   sameLocaleTrio,
 } from "@/i18n/localeMeta";
@@ -58,80 +56,6 @@ import { getFirebaseFirestore } from "@/lib/firebase/client";
 import { translateEventContent } from "@/lib/firebase/eventAi";
 import { deleteEventImageIfManaged, uploadEventImage } from "@/lib/firebase/eventImageStorage";
 import { removePublicEvent, subscribeAdminPublicEvents, upsertPublicEvent } from "@/lib/firebase/eventsStore";
-
-function StepHeading({
-  locale,
-  step,
-  title,
-  hint,
-}: {
-  locale: Locale;
-  step: 1 | 2 | 3 | 4;
-  title: string;
-  hint?: string;
-}) {
-  return (
-    <div>
-      <p className="text-[11px] font-semibold tracking-[0.18em] text-zinc-500 uppercase">
-        {t(locale, "admin.events.step").replace("{n}", String(step))}
-      </p>
-      <h2 className="mt-1 text-lg font-semibold text-zinc-900 sm:text-xl">{title}</h2>
-      {hint ? <p className={`mt-1 ${adminHint}`}>{hint}</p> : null}
-    </div>
-  );
-}
-
-function WebsiteStatusCard({
-  locale,
-  localPublish,
-  checked,
-  disabled,
-  onChange,
-}: {
-  locale: Locale;
-  localPublish: boolean;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  const title = checked
-    ? t(locale, localPublish ? "admin.events.publishedLocal" : "admin.events.published")
-    : t(locale, "admin.events.statusHidden");
-  const hint = checked
-    ? t(locale, localPublish ? "admin.events.publishedLocalHint" : "admin.events.publishedHint")
-    : t(locale, localPublish ? "admin.events.statusHiddenLocalHint" : "admin.events.statusHiddenHint");
-  const tone = checked
-    ? localPublish
-      ? "border-sky-500 bg-sky-50 text-sky-950"
-      : "border-emerald-600 bg-emerald-50 text-emerald-950"
-    : "border-amber-500 bg-amber-50 text-amber-950";
-
-  return (
-    <label
-      className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 shadow-sm ${tone} ${
-        disabled ? "cursor-not-allowed opacity-60" : ""
-      }`}
-    >
-      <input
-        type="checkbox"
-        className="mt-1 size-5 shrink-0 rounded border-current/40 bg-white text-current focus:ring-2 focus:ring-current/30"
-        checked={checked}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span className="min-w-0">
-        <span className="block text-[11px] font-semibold tracking-[0.16em] uppercase opacity-70">
-          {t(locale, "admin.events.sectionPublish")}
-        </span>
-        <span className="mt-1 flex items-center gap-2 text-base font-semibold">
-          {checked ? <Eye className="size-4 shrink-0" aria-hidden /> : <EyeOff className="size-4 shrink-0" aria-hidden />}
-          {title}
-        </span>
-        <span className="mt-1 block text-sm leading-relaxed">{hint}</span>
-      </span>
-    </label>
-  );
-}
 
 function todayYmd() {
   return new Date().toISOString().slice(0, 10);
@@ -192,9 +116,6 @@ function translateResultMessage(
   return t(locale, "admin.events.translateSuccess").replaceAll("{language}", source);
 }
 
-const eventTimeSelectClass =
-  "mt-1 h-16 w-24 shrink-0 rounded-md border border-zinc-300 bg-white px-1 text-center text-base font-medium tabular-nums text-zinc-900 shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:cursor-not-allowed disabled:bg-zinc-100 disabled:text-zinc-500";
-
 export function EventsAdminPage() {
   const router = useRouter();
   const { locale } = useLocale();
@@ -231,6 +152,7 @@ export function EventsAdminPage() {
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const selectedRowRef = useRef<HTMLLIElement>(null);
 
   const isDirty = useMemo(
     () => Boolean(pendingImageFile) || !homeEventsEqual(draft, savedBaseline),
@@ -276,6 +198,11 @@ export function EventsAdminPage() {
       if (pendingImagePreview) URL.revokeObjectURL(pendingImagePreview);
     };
   }, [pendingImagePreview]);
+
+  useEffect(() => {
+    if (!editingId || isNew) return;
+    selectedRowRef.current?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [editingId, isNew]);
 
   async function onLogout() {
     setError(null);
@@ -563,147 +490,106 @@ export function EventsAdminPage() {
       intro={t(locale, "admin.events.introLead")}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
-      <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
-        <Link href="/admin/dashboard" className={`inline-flex items-center ${adminBtnNeutral}`}>
-          <span className="inline-flex items-center gap-2">
-            <LayoutDashboard className="size-4" aria-hidden />
-            {t(locale, "admin.dashboard")}
-          </span>
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <Link href="/admin/dashboard" className={deskGhost}>
+          <LayoutDashboard className="size-3.5" aria-hidden />
+          {t(locale, "admin.dashboard")}
         </Link>
-        <button type="button" className={adminBtnSignOut} onClick={onLogout} disabled={locked}>
-          <span className="inline-flex items-center gap-2">
-            <LogOut className="size-4" aria-hidden />
-            {t(locale, "admin.signOut")}
-          </span>
+        <button type="button" className={deskGhost} onClick={onLogout} disabled={locked}>
+          <LogOut className="size-3.5" aria-hidden />
+          {t(locale, "admin.signOut")}
         </button>
       </div>
 
-      {message ? <p className={`mb-4 ${adminCalloutSuccess}`}>{message}</p> : null}
-      {error ? <p className={`mb-4 ${adminErrorBox}`}>{error}</p> : null}
+      {message || error ? (
+        <div className="mb-6 space-y-3">
+          {message ? <DeskNotice tone="success">{message}</DeskNotice> : null}
+          {error ? <DeskNotice tone="error">{error}</DeskNotice> : null}
+        </div>
+      ) : null}
 
-      <div className="grid min-w-0 gap-8 xl:grid-cols-12 xl:gap-10 2xl:gap-12">
-        <aside className="min-w-0 xl:col-span-4 2xl:col-span-3">
-          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-base font-semibold text-zinc-900 sm:text-lg">
-              {t(locale, "admin.events.allEvents")}
-            </h2>
-            <button type="button" className={adminBtnGreen} onClick={startNew} disabled={locked}>
-              <span className="inline-flex items-center gap-2">
-                <Plus className="size-4" aria-hidden />
+      <div className="grid min-w-0 items-start gap-6 xl:grid-cols-12 xl:gap-8">
+        <aside className="min-w-0 xl:sticky xl:top-6 xl:col-span-4 xl:self-start 2xl:col-span-3">
+          <div className={`${deskPanel} p-4 sm:p-5`}>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 px-1.5">
+              <div className="flex items-baseline gap-2.5">
+                <h2 className="text-sm font-semibold text-slate-900">
+                  {t(locale, "admin.events.allEvents")}
+                </h2>
+                <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-xs tabular-nums text-slate-500">
+                  {rows.length}
+                </span>
+              </div>
+              <button
+                type="button"
+                className={deskPrimary}
+                onClick={startNew}
+                disabled={locked}
+                aria-pressed={isNew}
+              >
+                <Plus className="size-3.5" aria-hidden />
                 {t(locale, "admin.events.newEvent")}
-              </span>
-            </button>
+              </button>
+            </div>
+            <ul className="max-h-[min(52vh,26rem)] space-y-1.5 overflow-y-auto [scrollbar-color:rgba(15,23,42,0.28)_transparent] [scrollbar-width:thin] xl:max-h-[min(72vh,44rem)]">
+              {rows.length === 0 ? (
+                <li className="rounded-lg border border-dashed border-slate-200 px-4 py-8 text-center">
+                  <p className={`${deskHint}`}>{t(locale, "admin.events.emptyList")}</p>
+                </li>
+              ) : (
+                rows
+                  .slice()
+                  .sort((a, b) => a.sortDate.localeCompare(b.sortDate))
+                  .map((ev) => {
+                    const past = isEventPastForAdmin(ev);
+                    const selected = editingId === ev.id && !isNew;
+                    return (
+                      <EventIndexRow
+                        key={ev.id}
+                        event={ev}
+                        locale={locale}
+                        selected={selected}
+                        past={past}
+                        locked={locked}
+                        rowRef={selected ? selectedRowRef : undefined}
+                        onEdit={() => startEdit(ev)}
+                        onDuplicate={() => duplicateFrom(ev)}
+                        onDelete={() => void deleteEventById(ev.id)}
+                      />
+                    );
+                  })
+              )}
+            </ul>
           </div>
-          <ul className="max-h-[min(50vh,24rem)] space-y-2 overflow-y-auto rounded-xl border border-zinc-200 bg-white p-2 text-sm shadow-sm xl:max-h-[min(72vh,40rem)] xl:p-3">
-            {rows.length === 0 ? (
-              <li className="px-2 py-4 text-zinc-500">{t(locale, "admin.events.emptyList")}</li>
-            ) : (
-              rows
-                .slice()
-                .sort((a, b) => a.sortDate.localeCompare(b.sortDate))
-                .map((ev) => {
-                  const past = isEventPastForAdmin(ev);
-                  const selected = editingId === ev.id && !isNew;
-                  return (
-                    <li key={ev.id} className="flex gap-1.5">
-                      <button
-                        type="button"
-                        aria-current={selected ? "true" : undefined}
-                        className={[
-                          "min-w-0 flex-1 rounded-md border px-3 py-2.5 text-left transition-[background-color,border-color,box-shadow]",
-                          selected
-                            ? "border-sky-400 bg-sky-50 shadow-sm ring-2 ring-sky-200 border-l-[5px] border-l-sky-500"
-                            : past
-                              ? "border-red-200 bg-red-50 hover:border-red-300"
-                              : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50",
-                        ].join(" ")}
-                        onClick={() => startEdit(ev)}
-                      >
-                        <p
-                          className={[
-                            "text-[10px] font-mono",
-                            selected ? "text-sky-700" : "text-zinc-400",
-                          ].join(" ")}
-                        >
-                          {ev.id}
-                        </p>
-                        <p
-                          className={[
-                            "mt-0.5 leading-snug",
-                            selected ? "font-semibold text-zinc-900" : "font-medium text-zinc-800",
-                          ].join(" ")}
-                        >
-                          {pickLocaleText(ev.title, locale)}
-                        </p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-zinc-500">
-                          <span>{ev.sortDate}</span>
-                          {ev.published === false ? (
-                            <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-px text-[10px] font-semibold tracking-wide text-amber-800 uppercase">
-                              {t(locale, "admin.events.draft")}
-                            </span>
-                          ) : ev.localOnly ? (
-                            <span className="rounded border border-sky-200 bg-sky-50 px-1.5 py-px text-[10px] font-semibold tracking-wide text-sky-800 uppercase">
-                              {t(locale, "admin.events.localOnly")}
-                            </span>
-                          ) : null}
-                          {past ? (
-                            <span className="text-[10px] font-semibold text-red-700">
-                              {t(locale, "admin.events.pastRemove")}
-                            </span>
-                          ) : null}
-                        </div>
-                      </button>
-                      <div className="flex shrink-0 flex-col gap-1.5 self-stretch">
-                        <button
-                          type="button"
-                          className="flex min-h-0 flex-1 items-center justify-center rounded-md border border-zinc-200 bg-white px-2 py-2 text-[11px] font-semibold tracking-wide text-zinc-700 uppercase transition-colors hover:bg-zinc-50 disabled:opacity-50"
-                          onClick={() => duplicateFrom(ev)}
-                          disabled={locked}
-                        >
-                          <span className="inline-flex items-center gap-1.5">
-                            <Copy className="size-3.5 shrink-0" aria-hidden />
-                            {t(locale, "admin.events.duplicate")}
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          className="flex min-h-0 flex-1 items-center justify-center rounded-md border border-red-200 bg-red-50 px-2 py-2 text-[11px] font-semibold tracking-wide text-red-800 uppercase transition-colors hover:bg-red-100 disabled:opacity-50"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            void deleteEventById(ev.id);
-                          }}
-                          disabled={locked}
-                        >
-                          <span className="inline-flex items-center gap-1.5">
-                            <Trash2 className="size-3.5 shrink-0" aria-hidden />
-                            {t(locale, "admin.events.delete")}
-                          </span>
-                        </button>
-                      </div>
-                    </li>
-                  );
-                })
-            )}
-          </ul>
         </aside>
 
         <div className="min-w-0 space-y-6 xl:col-span-8 2xl:col-span-9">
-          <div className={adminPanel}>
-            <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-zinc-200 pb-3">
+          <div className={deskPanel}>
+            <div className="flex flex-wrap items-start justify-between gap-4">
               <StepHeading
                 locale={locale}
                 step={1}
                 title={t(locale, "admin.events.step1Title")}
                 hint={t(locale, "admin.events.previewHint")}
               />
-              <EventPreviewLocaleMenu
-                uiLocale={locale}
-                previewLocale={previewLocale}
-                title={draft.title}
-                excerpt={draft.excerpt}
-                onChange={setPreviewLocale}
-                disabled={locked}
-              />
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={[
+                    "rounded-md px-2 py-1 text-xs font-medium",
+                    isDirty ? "bg-amber-50 text-amber-800" : "bg-slate-100 text-slate-600",
+                  ].join(" ")}
+                >
+                  {t(locale, isNew ? "admin.events.formNew" : "admin.events.formEdit")}
+                </span>
+                <EventPreviewLocaleMenu
+                  uiLocale={locale}
+                  previewLocale={previewLocale}
+                  title={draft.title}
+                  excerpt={draft.excerpt}
+                  onChange={setPreviewLocale}
+                  disabled={locked}
+                />
+              </div>
             </div>
             <input
               ref={fileInputRef}
@@ -715,7 +601,7 @@ export function EventsAdminPage() {
                 e.target.value = "";
               }}
             />
-            <div className="rounded-xl bg-ink">
+            <div className="mt-5 rounded-xl bg-ink p-3 sm:p-4">
               <EditableEventCard
                 key={editingId ?? "new-event"}
                 event={previewEvent}
@@ -765,36 +651,36 @@ export function EventsAdminPage() {
                 }
               />
             </div>
-            <div className="mt-4 flex flex-col items-start gap-3 border-t border-zinc-200 pt-4">
-              <StepHeading
-                locale={locale}
-                step={2}
-                title={t(locale, "admin.events.translateContent")}
-                hint={t(locale, "admin.events.sourceHint")}
-              />
-              <button
-                type="button"
-                className={adminBtnAi}
-                onClick={() => void onTranslate()}
-                disabled={locked}
-              >
-                <span className="inline-flex items-center gap-2">
+            <div className="mt-6 border-t border-slate-200 pt-6">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <StepHeading
+                  locale={locale}
+                  step={2}
+                  title={t(locale, "admin.events.translateContent")}
+                  hint={t(locale, "admin.events.sourceHint")}
+                />
+                <button
+                  type="button"
+                  className={`${deskGhost} shrink-0`}
+                  onClick={() => void onTranslate()}
+                  disabled={locked}
+                >
                   {translating ? (
                     <Loader2 className="size-4 animate-spin" aria-hidden />
                   ) : (
-                    <Sparkles className="size-4" aria-hidden />
+                    <Sparkles className="size-4 text-blue-600" aria-hidden />
                   )}
                   {translating
                     ? t(locale, "admin.events.translating")
                     : t(locale, "admin.events.translateContent")}
-                </span>
-              </button>
+                </button>
+              </div>
               {translating ? (
-                <div className={`${adminCalloutInfo} w-full`}>
+                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-semibold">{t(locale, "admin.events.translating")}</p>
+                    <p className="font-medium text-slate-900">{t(locale, "admin.events.translating")}</p>
                     <p
-                      className="font-mono text-sm tabular-nums text-sky-800/80"
+                      className="font-mono text-sm tabular-nums text-slate-500"
                       aria-label={t(locale, "admin.events.translateElapsed").replaceAll(
                         "{time}",
                         formatTranslateElapsed(translateSeconds),
@@ -807,8 +693,8 @@ export function EventsAdminPage() {
                     {locales.map((code, index) => (
                       <span
                         key={code}
-                        className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                          index === translateBeat % locales.length ? "bg-sky-600" : "bg-sky-200"
+                        className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+                          index === translateBeat % locales.length ? "bg-blue-600" : "bg-slate-200"
                         }`}
                       />
                     ))}
@@ -819,10 +705,10 @@ export function EventsAdminPage() {
                       return (
                         <li
                           key={code}
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-all duration-300 ${
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-300 ${
                             active
-                              ? "border-sky-400 bg-white text-sky-950 shadow-sm"
-                              : "border-transparent bg-sky-100/70 text-sky-900/55"
+                              ? "border-blue-200 bg-white text-slate-900 shadow-sm"
+                              : "border-transparent bg-white/70 text-slate-500"
                           }`}
                         >
                           <LocaleFlag locale={code} />
@@ -831,7 +717,7 @@ export function EventsAdminPage() {
                       );
                     })}
                   </ul>
-                  <p className="mt-3" role="status" aria-live="polite">
+                  <p className="mt-3 text-slate-600" role="status" aria-live="polite">
                     {t(locale, translateWaitNotes[Math.floor(translateSeconds / 4) % translateWaitNotes.length]!)}
                   </p>
                 </div>
@@ -839,8 +725,8 @@ export function EventsAdminPage() {
             </div>
           </div>
 
-          <div className={`${adminPanel} lg:p-8`}>
-            <div className="space-y-8">
+          <div className={deskPanel}>
+            <div className="space-y-10">
           <div className="space-y-6">
             <StepHeading
               locale={locale}
@@ -849,19 +735,19 @@ export function EventsAdminPage() {
             />
             <div className="grid items-start gap-6 lg:grid-cols-2">
               <div>
-                <label className={adminLabel} htmlFor="ev-id">
+                <label className={deskLabel} htmlFor="ev-id">
                   {t(locale, "admin.events.idLabel")}
                 </label>
                 <input
                   id="ev-id"
-                  className={`${adminFieldInput} mt-1 font-mono text-sm tracking-tight`}
+                  className={`${deskField} font-mono text-[13px] tracking-tight`}
                   value={draft.id}
                   onChange={(e) => setDraft((d) => ({ ...d, id: e.target.value }))}
                   disabled={!isNew}
                   autoComplete="off"
                   placeholder={t(locale, "admin.events.idPlaceholder")}
                 />
-                <p className={`mt-1 ${adminHint}`}>
+                <p className={`mt-2 ${deskHint}`}>
                   {isNew ? t(locale, "admin.events.idHint") : t(locale, "admin.events.idLocked")}
                 </p>
               </div>
@@ -881,43 +767,25 @@ export function EventsAdminPage() {
             </div>
           </div>
 
-          <div className="space-y-6 border-t border-zinc-200 pt-8">
+          <div className="space-y-8 border-t border-slate-200 pt-8">
             <StepHeading
               locale={locale}
               step={4}
               title={t(locale, "admin.events.step4Title")}
               hint={t(locale, "admin.events.step4Hint")}
             />
-          <div className="space-y-3">
-            <label className="inline-flex items-center gap-2.5 text-sm font-medium text-zinc-800">
-              <input
-                type="checkbox"
-                className={adminCheckbox}
-                checked={draft.hasSpecificTime !== false}
-                onChange={(e) => {
-                  const on = e.target.checked;
-                  setDraft((d) =>
-                    syncDerivedEventFields(
-                      applySlotsToTimeDetail({
-                        ...d,
-                        hasSpecificTime: on,
-                        timeSlotStart: on ? d.timeSlotStart : undefined,
-                        timeSlotEnd: on ? d.timeSlotEnd : undefined,
-                      }),
-                    ),
-                  );
-                }}
-              />
-              {t(locale, "admin.events.specificTime")}
-            </label>
-            <div className="flex flex-wrap gap-8">
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-slate-900">
+              {t(locale, "admin.events.sectionTime")}
+            </h3>
+            <div className={`flex flex-wrap items-end gap-3 ${draft.hasSpecificTime === false ? "opacity-45" : ""}`}>
               <div>
-                <label className={adminLabel} htmlFor="ev-start">
+                <label className={deskLabel} htmlFor="ev-start">
                   {t(locale, "admin.events.startTime")}
                 </label>
                 <select
                   id="ev-start"
-                  className={eventTimeSelectClass}
+                  className={deskTimeSelect}
                   value={draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START}
                   disabled={locked || draft.hasSpecificTime === false}
                   onChange={(e) => {
@@ -942,13 +810,16 @@ export function EventsAdminPage() {
                   ))}
                 </select>
               </div>
+              <span className="mb-2 hidden text-slate-300 sm:block" aria-hidden>
+                —
+              </span>
               <div>
-                <label className={adminLabel} htmlFor="ev-end">
+                <label className={deskLabel} htmlFor="ev-end">
                   {t(locale, "admin.events.endTime")}
                 </label>
                 <select
                   id="ev-end"
-                  className={eventTimeSelectClass}
+                  className={deskTimeSelect}
                   value={draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END}
                   disabled={locked || draft.hasSpecificTime === false}
                   onChange={(e) => {
@@ -973,17 +844,40 @@ export function EventsAdminPage() {
                 </select>
               </div>
             </div>
-            <p className={adminHint}>{t(locale, "admin.events.timeOnlyHint")}</p>
+            <label className="inline-flex cursor-pointer items-center gap-3">
+              <DeskToggle
+                checked={draft.hasSpecificTime === false}
+                disabled={locked}
+                onChange={(hide) => {
+                  setDraft((d) =>
+                    syncDerivedEventFields(
+                      applySlotsToTimeDetail({
+                        ...d,
+                        hasSpecificTime: !hide,
+                        timeSlotStart: hide ? undefined : d.timeSlotStart,
+                        timeSlotEnd: hide ? undefined : d.timeSlotEnd,
+                      }),
+                    ),
+                  );
+                }}
+              />
+              <span className="text-sm font-medium text-slate-800">{t(locale, "admin.events.specificTime")}</span>
+            </label>
+            <p className={deskHint}>{t(locale, "admin.events.timeOnlyHint")}</p>
           </div>
 
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-slate-900">
+              {t(locale, "admin.events.sectionPhoto")}
+            </h3>
           <div className="grid items-start gap-6 lg:grid-cols-2">
             <div>
-              <label className={adminLabel} htmlFor="ev-img">
+              <label className={deskLabel} htmlFor="ev-img">
                 {t(locale, "admin.events.imageUrl")}
               </label>
               <input
                 id="ev-img"
-                className={`${adminFieldInput} mt-1`}
+                className={deskField}
                 value={pendingImageFile ? "" : draft.imageSrc}
                 onChange={(e) => {
                   clearPendingImage();
@@ -993,15 +887,15 @@ export function EventsAdminPage() {
                     imageStoragePath: undefined,
                   }));
                 }}
-                placeholder="https://…"
+                placeholder={pendingImageFile?.name || "https://…"}
                 inputMode="url"
                 autoComplete="off"
               />
-              <p className={`mt-1 ${adminHint}`}>{t(locale, "admin.events.imageHint")}</p>
+              <p className={`mt-2 ${deskHint}`}>{t(locale, "admin.events.imageHint")}</p>
               {draft.imageSrc || pendingImageFile ? (
                 <button
                   type="button"
-                  className="mt-2 text-xs font-semibold tracking-wide text-red-700 uppercase hover:text-red-800"
+                  className="mt-2 text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:opacity-40"
                   onClick={onRemoveImage}
                   disabled={locked}
                 >
@@ -1010,12 +904,12 @@ export function EventsAdminPage() {
               ) : null}
             </div>
             <div>
-              <label className={adminLabel} htmlFor="ev-alt">
+              <label className={deskLabel} htmlFor="ev-alt">
                 {t(locale, "admin.events.imageAlt")} ({localeLabels[previewLocale]})
               </label>
               <input
                 id="ev-alt"
-                className={`${adminFieldInput} mt-1`}
+                className={deskField}
                 value={draft.imageAlt[previewLocale] ?? ""}
                 onChange={(e) =>
                   setDraft((d) => ({
@@ -1024,52 +918,57 @@ export function EventsAdminPage() {
                   }))
                 }
               />
-              <p className={`mt-1 ${adminHint}`}>{t(locale, "admin.events.imageAltHint")}</p>
+              <p className={`mt-2 ${deskHint}`}>{t(locale, "admin.events.imageAltHint")}</p>
             </div>
           </div>
+          </div>
 
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <button
-              type="button"
-              className={[
-                isNew ? adminBtnGreen : adminBtnBlue,
-                isDirty ? "ring-2 ring-sky-300 ring-offset-2 ring-offset-white" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              onClick={onSave}
-              disabled={locked || !isDirty}
-              title={
-                isDirty
-                  ? isNew
-                    ? t(locale, "admin.events.saveNewTooltip")
-                    : t(locale, "admin.events.saveEditTooltip")
-                  : isNew
-                    ? t(locale, "admin.events.saveNewDisabledTooltip")
-                    : t(locale, "admin.events.saveEditDisabledTooltip")
-              }
-            >
-              <span className="inline-flex items-center gap-2">
-                {isNew ? <Plus className="size-4" aria-hidden /> : <Save className="size-4" aria-hidden />}
-                {isNew ? t(locale, "admin.events.create") : t(locale, "admin.events.saveChanges")}
-              </span>
-            </button>
-            {!isNew && editingId ? (
+          <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className={`min-w-0 flex-1 text-sm ${isDirty ? "font-medium text-amber-700" : "text-slate-500"}`}>
+              {isDirty
+                ? t(locale, isNew ? "admin.events.saveNewTooltip" : "admin.events.saveEditTooltip")
+                : t(locale, isNew ? "admin.events.saveNewDisabledTooltip" : "admin.events.saveEditDisabledTooltip")}
+            </p>
+            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+              {!isNew && editingId ? (
+                <button
+                  type="button"
+                  className={deskDanger}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void onDelete();
+                  }}
+                  disabled={locked}
+                >
+                  <Trash2 className="size-3.5" aria-hidden />
+                  {t(locale, "admin.events.delete")}
+                </button>
+              ) : null}
               <button
                 type="button"
-                className={adminBtnDanger}
-                onClick={(e) => {
-                  e.preventDefault();
-                  void onDelete();
-                }}
-                disabled={locked}
+                className={deskPrimary}
+                onClick={onSave}
+                disabled={locked || !isDirty}
+                title={
+                  isDirty
+                    ? isNew
+                      ? t(locale, "admin.events.saveNewTooltip")
+                      : t(locale, "admin.events.saveEditTooltip")
+                    : isNew
+                      ? t(locale, "admin.events.saveNewDisabledTooltip")
+                      : t(locale, "admin.events.saveEditDisabledTooltip")
+                }
               >
-                <span className="inline-flex items-center gap-2">
-                  <Trash2 className="size-4" aria-hidden />
-                  {t(locale, "admin.events.delete")}
-                </span>
+                {busy ? (
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                ) : isNew ? (
+                  <Plus className="size-3.5" aria-hidden />
+                ) : (
+                  <Save className="size-3.5" aria-hidden />
+                )}
+                {isNew ? t(locale, "admin.events.create") : t(locale, "admin.events.saveChanges")}
               </button>
-            ) : null}
+            </div>
           </div>
             </div>
           </div>

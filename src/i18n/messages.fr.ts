@@ -299,7 +299,7 @@ export const frMessages = {
   "admin.events.previewHint": "Cliquez sur la carte pour modifier ce que voient les clients. Changez de langue en haut à droite.",
   "admin.events.guestDateLabel": "Affiché aux clients comme",
   "admin.events.calendarDate": "Date du calendrier",
-  "admin.events.specificTime": "Afficher l’heure de début et de fin",
+  "admin.events.specificTime": "Ne pas afficher",
   "admin.events.fullyBooked": "Complet",
   "admin.events.published": "En ligne sur le vrai site",
   "admin.events.publishedHint": "Les clients sur www.el-portero.com peuvent voir cet événement.",

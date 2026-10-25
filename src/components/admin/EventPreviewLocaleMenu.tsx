@@ -36,7 +36,7 @@ export function EventPreviewLocaleMenu({
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={open ? listId : undefined}
@@ -46,14 +46,14 @@ export function EventPreviewLocaleMenu({
       >
         <LocaleFlag locale={previewLocale} />
         {localeLabels[previewLocale]}
-        <ChevronDown className="size-3.5 text-zinc-500" aria-hidden />
+        <ChevronDown className={`size-3.5 text-stone-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden />
       </button>
       {open ? (
         <ul
           id={listId}
           role="listbox"
           aria-label={t(uiLocale, "admin.events.chooseLanguage")}
-          className="absolute right-0 z-30 mt-1 min-w-56 overflow-hidden rounded-lg border border-zinc-200 bg-white py-1 shadow-lg"
+          className="absolute right-0 z-30 mt-1.5 min-w-64 overflow-hidden rounded-lg border border-slate-200 bg-white p-1 shadow-lg"
         >
           {adminContentLocales.map((code) => {
             const selected = previewLocale === code;
@@ -65,8 +65,8 @@ export function EventPreviewLocaleMenu({
                   role="option"
                   aria-selected={selected}
                   className={[
-                    "flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold",
-                    selected ? "bg-sky-50 text-sky-900" : "text-zinc-700 hover:bg-zinc-50",
+                    "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm",
+                    selected ? "bg-blue-50 text-blue-900" : "text-slate-800 hover:bg-slate-50",
                   ].join(" ")}
                   onClick={() => {
                     onChange(code);
@@ -74,9 +74,11 @@ export function EventPreviewLocaleMenu({
                   }}
                 >
                   <LocaleFlag locale={code} />
-                  <span className="min-w-0 flex-1">{localeLabels[code]}</span>
+                  <span className="min-w-0 flex-1 font-medium">{localeLabels[code]}</span>
                   {translated ? null : (
-                    <span className="shrink-0 font-medium text-amber-800">
+                    <span
+                      className="max-w-32 shrink-0 text-right text-xs font-medium text-amber-700"
+                    >
                       {t(uiLocale, "admin.events.notTranslatedYet")}
                     </span>
                   )}

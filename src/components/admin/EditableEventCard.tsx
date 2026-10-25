@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
-import { Bold, ChevronDown, Italic, List, Type } from "lucide-react";
+import { Bold, Calendar, ChevronDown, ImagePlus, Italic, List, Type } from "lucide-react";
 import { EventImage } from "@/components/events/EventImage";
 import { useClickAway } from "@/hooks/useClickAway";
 import { t, type Locale } from "@/i18n/strings";
@@ -142,7 +142,7 @@ export function EditableEventCard({
             loading="eager"
           />
         ) : (
-          <div className="flex h-full min-h-48 items-center justify-center bg-paper/8 px-6" />
+          <div className="flex h-full min-h-48 items-center justify-center bg-[radial-gradient(circle_at_center,rgba(241,240,234,0.09),transparent_62%)] px-6" />
         )}
         <div
           className="pointer-events-none absolute inset-0 bg-linear-to-t from-ink/35 via-transparent to-transparent md:bg-linear-to-r md:from-transparent md:via-transparent md:to-paper/8"
@@ -161,12 +161,13 @@ export function EditableEventCard({
         >
           <span
             className={[
-              "rounded-md border border-paper/25 bg-ink/70 px-3 py-1.5 text-xs font-semibold tracking-[0.16em] text-paper uppercase",
+              "inline-flex items-center gap-2 rounded-full border border-paper/20 bg-ink/55 px-4 py-2 text-[10px] font-semibold tracking-[0.2em] text-paper uppercase backdrop-blur-md",
               imageSrc
-                ? "opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+                ? "opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
                 : "",
             ].join(" ")}
           >
+            <ImagePlus className="size-3.5" aria-hidden />
             {imageSrc
               ? t(uiLocale, "admin.events.changePhoto")
               : t(uiLocale, "admin.events.uploadImage")}
@@ -176,13 +177,14 @@ export function EditableEventCard({
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-between gap-4 px-5 py-6 sm:gap-5 sm:px-6 sm:py-7">
         <div className="min-w-0">
-          <label className={`relative mb-3 block cursor-pointer ${editHit}`}>
+          <label className={`group/date relative mb-3 block cursor-pointer ${editHit}`}>
             <span className="sr-only">{t(uiLocale, "admin.events.editDate")}</span>
             <span
               aria-hidden
-              className="pointer-events-none block px-1 py-0.5 text-left text-[10px] font-semibold leading-snug tracking-[0.2em] text-ink-muted uppercase sm:text-[11px]"
+              className="pointer-events-none flex items-center gap-2 px-1 py-0.5 text-left text-[10px] font-semibold leading-snug tracking-[0.2em] text-ink-muted uppercase sm:text-[11px]"
             >
               {dateLabel}
+              <Calendar className="size-3 -translate-y-px text-paper/0 transition-colors group-hover/date:text-paper/60 group-focus-within/date:text-paper/75" />
             </span>
             <input
               ref={dateInputRef}
@@ -251,23 +253,13 @@ export function EditableEventCard({
               }
             }}
           >
-            <DescriptionEditor
-              editorRef={excerptRef}
-              value={excerpt}
-              emittedRef={excerptEmitted}
-              disabled={disabled}
-              ariaLabel={t(uiLocale, "admin.events.excerpt")}
-              onInput={publishExcerpt}
-            />
-            {!excerpt && !excerptFocused ? (
-              <span className="pointer-events-none absolute top-1 left-2 text-sm text-ink-muted/45">
-                {t(uiLocale, "admin.events.excerpt")}
-              </span>
-            ) : null}
-            {excerptFocused ? (
+            <div className="relative order-2">
               <div
-                className="order-1 flex flex-wrap gap-1 border-b border-paper/15 py-1"
+                className={`absolute bottom-full left-0 z-10 mb-1.5 inline-flex w-fit flex-wrap items-center gap-0.5 rounded-lg border border-slate-200 bg-white p-1 shadow-md transition-opacity ${
+                  excerptFocused ? "opacity-100" : "pointer-events-none opacity-0"
+                }`}
                 role="toolbar"
+                aria-label={t(uiLocale, "admin.events.excerpt")}
               >
                 <DescriptionFormatButton
                   label={t(uiLocale, "admin.events.descriptionText")}
@@ -298,7 +290,20 @@ export function EditableEventCard({
                   <List className="size-3.5" aria-hidden />
                 </DescriptionFormatButton>
               </div>
-            ) : null}
+              <DescriptionEditor
+                editorRef={excerptRef}
+                value={excerpt}
+                emittedRef={excerptEmitted}
+                disabled={disabled}
+                ariaLabel={t(uiLocale, "admin.events.excerpt")}
+                onInput={publishExcerpt}
+              />
+              {!excerpt && !excerptFocused ? (
+                <span className="pointer-events-none absolute top-1 left-0 text-sm text-ink-muted/45">
+                  {t(uiLocale, "admin.events.excerpt")}
+                </span>
+              ) : null}
+            </div>
           </div>
         </div>
 
@@ -329,7 +334,7 @@ export function EditableEventCard({
               <ul
                 role="listbox"
                 aria-label={t(uiLocale, "admin.events.editAvailability")}
-                className="absolute bottom-full left-0 z-20 mb-2 min-w-44 overflow-hidden rounded-lg border border-zinc-200 bg-white py-1 shadow-lg"
+                className="absolute bottom-full left-0 z-30 mb-2 min-w-44 overflow-hidden rounded-lg border border-slate-200 bg-white p-1 shadow-lg"
               >
                 <BookingOption
                   selected={!fullyBooked}
@@ -374,15 +379,15 @@ function TimePopover({
     <div
       role="dialog"
       aria-labelledby={labelId}
-      className="absolute left-0 top-full z-20 mt-2 flex flex-wrap gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-lg"
+      className="absolute top-full left-0 z-30 mt-2 flex flex-wrap gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-lg"
     >
       <p id={labelId} className="sr-only">
         {t(uiLocale, "admin.events.editTime")}
       </p>
-      <label className="block text-[10px] font-semibold tracking-wide text-zinc-600 uppercase">
+      <label className="block text-xs font-medium text-slate-500">
         {t(uiLocale, "admin.events.startTime")}
         <select
-          className="mt-1 block rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm font-medium tracking-normal text-zinc-900 normal-case"
+          className="mt-1 block rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-900 tabular-nums focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           value={start}
           disabled={disabled}
           onChange={(e) => {
@@ -397,10 +402,10 @@ function TimePopover({
           ))}
         </select>
       </label>
-      <label className="block text-[10px] font-semibold tracking-wide text-zinc-600 uppercase">
+      <label className="block text-xs font-medium text-slate-500">
         {t(uiLocale, "admin.events.endTime")}
         <select
-          className="mt-1 block rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm font-medium tracking-normal text-zinc-900 normal-case"
+          className="mt-1 block rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-medium text-slate-900 tabular-nums focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           value={end}
           disabled={disabled}
           onChange={(e) => onChangeTime(start, e.target.value)}
@@ -432,8 +437,8 @@ function BookingOption({
         role="option"
         aria-selected={selected}
         className={[
-          "w-full px-3 py-2 text-left text-xs font-semibold",
-          selected ? "bg-sky-50 text-sky-900" : "text-zinc-700 hover:bg-zinc-50",
+          "w-full rounded-md px-2.5 py-2 text-left text-sm",
+          selected ? "bg-blue-50 font-medium text-blue-800" : "text-slate-700 hover:bg-slate-50",
         ].join(" ")}
         onClick={onSelect}
       >
@@ -497,7 +502,7 @@ function DescriptionFormatButton({
   return (
     <button
       type="button"
-      className="inline-flex items-center gap-1.5 rounded-md border border-paper/25 bg-ink/25 px-2 py-1 text-[10px] font-semibold tracking-[0.14em] text-paper/85 uppercase transition-colors hover:bg-paper/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper/35 disabled:cursor-not-allowed disabled:opacity-50"
+      className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
       aria-label={label}
       disabled={disabled}
       onMouseDown={(event) => event.preventDefault()}

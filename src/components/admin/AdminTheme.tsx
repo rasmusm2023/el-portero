@@ -20,10 +20,10 @@ export function AdminTheme({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-zinc-100 text-zinc-900">
-      <div className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-2 sm:px-6 lg:px-8">
-          <p className="text-[11px] font-semibold tracking-[0.2em] text-zinc-500 uppercase">
+    <div className="flex min-h-0 flex-1 flex-col bg-slate-100 text-slate-900">
+      <div className="border-b border-slate-200 bg-white">
+        <div className="mx-auto w-full max-w-[min(100%,112rem)] px-4 py-2.5 sm:px-6 lg:px-8">
+          <p className="text-xs font-medium text-slate-500">
             {t(locale, "admin.chrome.staff")}
           </p>
         </div>

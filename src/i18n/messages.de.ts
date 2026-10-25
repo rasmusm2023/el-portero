@@ -299,7 +299,7 @@ export const deMessages = {
   "admin.events.previewHint": "Auf die Karte klicken, um zu bearbeiten, was Gäste sehen. Sprache oben rechts wechseln.",
   "admin.events.guestDateLabel": "Für Gäste angezeigt als",
   "admin.events.calendarDate": "Datum im Kalender",
-  "admin.events.specificTime": "Start- und Endzeit zeigen",
+  "admin.events.specificTime": "Nicht anzeigen",
   "admin.events.fullyBooked": "Ausgebucht",
   "admin.events.published": "Live auf der echten Website",
   "admin.events.publishedHint": "Gäste auf www.el-portero.com können dieses Event sehen.",
