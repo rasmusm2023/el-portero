@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, X } from "lucide-react";
-import { adminBtnNeutral, adminFieldInput } from "@/lib/adminUiStyles";
+import { deskField, deskHint, deskLabel } from "@/components/admin/events/EventsDesk";
 import type { EditableMenuItem, EditableMenuKind } from "@/lib/editableMenuTypes";
 import { t, type Locale } from "@/i18n/strings";
 import type { DietaryTagOption } from "@/lib/dietaryTags";
@@ -9,7 +9,20 @@ import { ALLERGEN_OPTIONS } from "@/lib/menuAllergens";
 import type { DietaryTagId } from "@/lib/dietaryTags";
 import type { AllergenId } from "@/lib/menuAllergens";
 
-const fieldClass = `mt-2 ${adminFieldInput}`;
+const fieldClass = deskField;
+
+/** Solid fills — the public pill styles are tuned for a dark menu and disappear on this light desk. */
+const adminDietaryActive: Record<string, string> = {
+  alcoholFree: "border-violet-700 bg-violet-600 text-white shadow-sm",
+  vegan: "border-emerald-700 bg-emerald-600 text-white shadow-sm",
+  vegetarian: "border-lime-800 bg-lime-600 text-white shadow-sm",
+  glutenFree: "border-amber-700 bg-amber-400 text-amber-950 shadow-sm",
+  lactoseFree: "border-sky-700 bg-sky-600 text-white shadow-sm",
+};
+const inlineField =
+  "h-10 min-w-0 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 shadow-sm transition-[border-color,box-shadow] placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400";
+const areaClass =
+  "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition-[border-color,box-shadow] placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400";
 
 type Props = {
   locale: Locale;
@@ -51,7 +64,7 @@ export function EditableMenuItemFields({
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
-        <label className="block text-sm font-medium text-zinc-800">
+        <label className={deskLabel}>
           {t(locale, "admin.menus.nameLabel")}
         </label>
         <input
@@ -62,9 +75,9 @@ export function EditableMenuItemFields({
         />
       </div>
       <div className="sm:col-span-2">
-        <label className="block text-sm font-medium text-zinc-800">
+        <label className={deskLabel}>
           {t(locale, "admin.menus.nameExtensionLabel")}{" "}
-          <span className="font-normal text-zinc-400">{t(locale, "admin.menus.optional")}</span>
+          <span className="font-normal text-slate-400">{t(locale, "admin.menus.optional")}</span>
         </label>
         <input
           value={item.nameExtension}
@@ -75,19 +88,19 @@ export function EditableMenuItemFields({
         />
       </div>
       <div className="sm:col-span-2">
-        <label className="block text-sm font-medium text-zinc-800">
+        <label className={deskLabel}>
           {t(locale, "admin.menus.descriptionLabel")}
         </label>
         <textarea
           value={item.description}
           onChange={(e) => onDescriptionChange(e.target.value)}
           rows={3}
-          className={fieldClass}
+          className={areaClass}
           disabled={busy}
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-zinc-800">
+        <label className={deskLabel}>
           {t(locale, "admin.menus.priceLabel")}
         </label>
         <input
@@ -102,17 +115,17 @@ export function EditableMenuItemFields({
           disabled={busy}
         />
         {priceOptionsEnabled && item.priceOptions.length > 0 ? (
-          <p className="mt-1 text-[11px] leading-snug text-zinc-500">
+          <p className={`mt-2 ${deskHint}`}>
             {t(locale, "admin.menus.priceHiddenNote")}
           </p>
         ) : null}
       </div>
       {priceOptionsEnabled ? (
         <div className="sm:col-span-2">
-          <p className="block text-sm font-medium text-zinc-800">
+          <p className={deskLabel}>
             {t(locale, "admin.menus.sizeVariantsTitle")}
           </p>
-          <p className="mt-0.5 text-xs text-zinc-500">{t(locale, "admin.menus.sizeVariantsHint")}</p>
+          <p className={`mt-1 ${deskHint}`}>{t(locale, "admin.menus.sizeVariantsHint")}</p>
           {item.priceOptions.length > 0 ? (
             <ul className="mt-3 flex flex-col gap-2">
               {item.priceOptions.map((opt, pi) => (
@@ -121,21 +134,21 @@ export function EditableMenuItemFields({
                     value={opt.label}
                     onChange={(e) => onUpdatePriceOption(pi, "label", e.target.value)}
                     placeholder={t(locale, "admin.menus.sizeLabelPlaceholder")}
-                    className={`min-w-0 flex-1 ${adminFieldInput} py-1.5`}
+                    className={`${inlineField} flex-1`}
                     disabled={busy}
                   />
                   <input
                     value={opt.price}
                     onChange={(e) => onUpdatePriceOption(pi, "price", e.target.value)}
                     placeholder={t(locale, "admin.menus.priceFieldPlaceholder")}
-                    className={`w-24 ${adminFieldInput} py-1.5`}
+                    className={`${inlineField} w-28 shrink-0`}
                     disabled={busy}
                   />
                   <button
                     type="button"
                     aria-label={t(locale, "admin.menus.removeVariantAria").replace("{n}", String(pi + 1))}
                     onClick={() => onRemovePriceOption(pi)}
-                    className={`inline-flex items-center gap-1.5 ${adminBtnNeutral}`}
+                    className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg px-2 text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
                     disabled={busy}
                   >
                     <X className="size-3.5" aria-hidden />
@@ -147,7 +160,7 @@ export function EditableMenuItemFields({
           ) : null}
           <button
             type="button"
-            className={`mt-3 inline-flex items-center gap-2 ${adminBtnNeutral}`}
+            className="mt-3 inline-flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={onAddPriceOption}
             disabled={busy}
           >
@@ -157,8 +170,8 @@ export function EditableMenuItemFields({
         </div>
       ) : null}
       <div className="sm:col-span-2">
-        <p className="block text-sm font-medium text-zinc-800">{t(locale, "admin.menus.dietaryTagsTitle")}</p>
-        <p className="mt-0.5 text-xs text-zinc-500">
+        <p className={deskLabel}>{t(locale, "admin.menus.dietaryTagsTitle")}</p>
+        <p className={`mt-1 ${deskHint}`}>
           {tab === "drinks"
             ? t(locale, "admin.menus.dietaryHintDrinks")
             : t(locale, "admin.menus.dietaryHintFood")}
@@ -175,10 +188,10 @@ export function EditableMenuItemFields({
                 aria-pressed={selected}
                 onClick={() => onToggleDietaryTag(opt.id)}
                 className={[
-                  "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-2 text-left text-xs font-semibold tracking-[0.06em] uppercase transition-colors",
+                  "inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-left text-xs font-medium transition-colors disabled:cursor-not-allowed",
                   selected
-                    ? opt.pillClass
-                    : "border-dashed border-zinc-300 bg-white text-zinc-400 hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-600",
+                    ? adminDietaryActive[opt.id]
+                    : "border-dashed border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50 hover:text-slate-800",
                 ].join(" ")}
               >
                 <Icon className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />
@@ -190,8 +203,8 @@ export function EditableMenuItemFields({
       </div>
       {allergensEnabled ? (
         <div className="sm:col-span-2">
-          <p className="block text-sm font-medium text-zinc-800">{t(locale, "admin.menus.allergensTitle")}</p>
-          <p className="mt-0.5 text-xs text-zinc-500">{t(locale, "admin.menus.allergensHint")}</p>
+          <p className={deskLabel}>{t(locale, "admin.menus.allergensTitle")}</p>
+          <p className={`mt-1 ${deskHint}`}>{t(locale, "admin.menus.allergensHint")}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {ALLERGEN_OPTIONS.map((opt) => {
               const selected = item.allergenIds.includes(opt.id);
@@ -204,10 +217,10 @@ export function EditableMenuItemFields({
                   title={`${opt.number}. ${opt.name}`}
                   onClick={() => onToggleAllergen(opt.id)}
                   className={[
-                    "inline-flex items-center gap-2 rounded-full border px-2 py-1 text-left text-xs font-semibold tracking-[0.06em] transition-colors",
+                    "inline-flex cursor-pointer items-center gap-2 rounded-full border px-2 py-1 text-left text-xs font-medium transition-colors disabled:cursor-not-allowed",
                     selected
                       ? "border-amber-300 bg-amber-50 text-amber-900"
-                      : "border-dashed border-zinc-300 bg-white text-zinc-400 hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-600",
+                      : "border-dashed border-slate-300 bg-white text-slate-500 hover:border-slate-400 hover:bg-slate-50 hover:text-slate-700",
                   ].join(" ")}
                 >
                   <span
@@ -216,7 +229,7 @@ export function EditableMenuItemFields({
                       "inline-flex size-6 shrink-0 items-center justify-center rounded-full border text-[11px] tabular-nums leading-none",
                       selected
                         ? "border-amber-300 bg-amber-100 text-amber-900"
-                        : "border-zinc-300 bg-zinc-50 text-zinc-600",
+                        : "border-slate-300 bg-white text-slate-600",
                     ].join(" ")}
                   >
                     {opt.number}

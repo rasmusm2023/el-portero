@@ -9,6 +9,7 @@ import { EventPreviewLocaleMenu } from "@/components/admin/EventPreviewLocaleMen
 import {
   DeskNotice,
   DeskToggle,
+  EventEditorBar,
   EventIndexRow,
   StepHeading,
   WebsiteStatusCard,
@@ -228,7 +229,7 @@ export function EventsAdminPage() {
   }, [clearPendingImage]);
 
   const duplicateFrom = useCallback(
-    (ev: HomeEvent) => {
+    (ev: HomeEvent, options?: { keepPendingImage?: boolean }) => {
       const normalized = normalizeEventForEditor(cloneHomeEvent(ev));
       let id = suggestDuplicateEventId(ev.id);
       let guard = 0;
@@ -247,7 +248,7 @@ export function EventsAdminPage() {
       setDraft(next);
       setSavedBaseline(cloneHomeEvent(emptyHomeEvent(todayYmd())));
       setPreviewLocale("en");
-      clearPendingImage();
+      if (!options?.keepPendingImage) clearPendingImage();
       setError(null);
       setMessage(t(locale, "admin.events.duplicateLoaded"));
     },
@@ -572,24 +573,36 @@ export function EventsAdminPage() {
                 title={t(locale, "admin.events.step1Title")}
                 hint={t(locale, "admin.events.previewHint")}
               />
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={[
-                    "rounded-md px-2 py-1 text-xs font-medium",
-                    isDirty ? "bg-amber-50 text-amber-800" : "bg-slate-100 text-slate-600",
-                  ].join(" ")}
-                >
-                  {t(locale, isNew ? "admin.events.formNew" : "admin.events.formEdit")}
-                </span>
-                <EventPreviewLocaleMenu
-                  uiLocale={locale}
-                  previewLocale={previewLocale}
-                  title={draft.title}
-                  excerpt={draft.excerpt}
-                  onChange={setPreviewLocale}
-                  disabled={locked}
-                />
-              </div>
+              <EventPreviewLocaleMenu
+                uiLocale={locale}
+                previewLocale={previewLocale}
+                title={draft.title}
+                excerpt={draft.excerpt}
+                onChange={setPreviewLocale}
+                disabled={locked}
+              />
+            </div>
+            <div className="mt-5">
+              <EventEditorBar
+                locale={locale}
+                localPublish={localPublish}
+                publishOn={publishOn}
+                disabled={locked}
+                isNew={isNew}
+                isDirty={isDirty}
+                past={!isNew && isEventPastForAdmin(draft)}
+                fullyBooked={draft.fullyBooked === true}
+                canCopy={Boolean(draft.id.trim())}
+                onPublishChange={(checked) =>
+                  setDraft((d) =>
+                    onLocalhost && !editingLiveEvent
+                      ? { ...d, published: false, localOnly: checked }
+                      : { ...d, published: checked },
+                  )
+                }
+                onCopy={() => duplicateFrom(draft, { keepPendingImage: Boolean(pendingImageFile) })}
+                onDelete={() => void onDelete()}
+              />
             </div>
             <input
               ref={fileInputRef}
@@ -652,16 +665,16 @@ export function EventsAdminPage() {
               />
             </div>
             <div className="mt-6 border-t border-slate-200 pt-6">
-              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-                <StepHeading
-                  locale={locale}
-                  step={2}
-                  title={t(locale, "admin.events.translateContent")}
-                  hint={t(locale, "admin.events.sourceHint")}
-                />
+              <StepHeading
+                locale={locale}
+                step={2}
+                title={t(locale, "admin.events.translateContent")}
+                hint={t(locale, "admin.events.sourceHint")}
+              />
+              <div className="mt-4 ml-9">
                 <button
                   type="button"
-                  className={`${deskGhost} group shrink-0`}
+                  className={`${deskGhost} group`}
                   onClick={() => void onTranslate()}
                   disabled={locked}
                 >

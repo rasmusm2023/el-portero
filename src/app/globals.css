@@ -59,9 +59,28 @@
   animation: status-breathe 2.4s ease-in-out infinite;
 }
 
+@keyframes sign-in-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(340%);
+  }
+}
+
+.sign-in-slide {
+  animation: sign-in-slide 1.35s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .status-breathe {
     animation: none;
+  }
+
+  .sign-in-slide {
+    animation: none;
+    transform: none;
+    width: 100%;
   }
 }
 

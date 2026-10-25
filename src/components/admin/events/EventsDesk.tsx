@@ -1,7 +1,8 @@
 "use client";
 
 import type { ReactNode, Ref } from "react";
-import { Copy, Eye, EyeOff, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Copy, ExternalLink, Eye, EyeOff, Trash2 } from "lucide-react";
 import { intlLocaleTag, pickLocaleText } from "@/i18n/localeMeta";
 import { t, type Locale } from "@/i18n/strings";
 import type { HomeEvent } from "@/lib/publicEventTypes";
@@ -166,6 +167,100 @@ export function WebsiteStatusCard({
       </span>
       <DeskToggle checked={checked} disabled={disabled} onChange={onChange} />
     </label>
+  );
+}
+
+export function EventEditorBar({
+  locale,
+  localPublish,
+  publishOn,
+  disabled,
+  isNew,
+  isDirty,
+  past,
+  fullyBooked,
+  canCopy,
+  onPublishChange,
+  onCopy,
+  onDelete,
+}: {
+  locale: Locale;
+  localPublish: boolean;
+  publishOn: boolean;
+  disabled?: boolean;
+  isNew: boolean;
+  isDirty: boolean;
+  past: boolean;
+  fullyBooked: boolean;
+  canCopy: boolean;
+  onPublishChange: (checked: boolean) => void;
+  onCopy: () => void;
+  onDelete: () => void;
+}) {
+  const statusTitle = publishOn
+    ? t(locale, localPublish ? "admin.events.publishedLocal" : "admin.events.published")
+    : t(locale, "admin.events.statusHidden");
+  const statusHint = publishOn
+    ? t(locale, localPublish ? "admin.events.publishedLocalHint" : "admin.events.publishedHint")
+    : t(locale, localPublish ? "admin.events.statusHiddenLocalHint" : "admin.events.statusHiddenHint");
+
+  return (
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 sm:p-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className={`size-2 shrink-0 rounded-full ${statusDotClass(publishOn)}`} aria-hidden />
+          <span className="min-w-0">
+            <span id="event-editor-status" className="block text-sm font-medium text-slate-900">
+              {statusTitle}
+            </span>
+            <span className="mt-0.5 block text-sm leading-relaxed text-slate-500">{statusHint}</span>
+          </span>
+          <DeskToggle
+            checked={publishOn}
+            disabled={disabled}
+            labelledBy="event-editor-status"
+            onChange={onPublishChange}
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+          <Link href="/events" target="_blank" rel="noreferrer" className={deskGhost}>
+            <ExternalLink className="size-3.5" aria-hidden />
+            {t(locale, "admin.events.openEventsPage")}
+          </Link>
+          <button type="button" className={deskGhost} onClick={onCopy} disabled={disabled || !canCopy}>
+            <Copy className="size-3.5" aria-hidden />
+            {t(locale, "admin.events.makeCopy")}
+          </button>
+          {isNew ? null : (
+            <button type="button" className={deskDanger} onClick={onDelete} disabled={disabled}>
+              <Trash2 className="size-3.5" aria-hidden />
+              {t(locale, "admin.events.delete")}
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <span
+          className={`rounded-md px-2 py-1 text-xs font-medium ${
+            isDirty ? "bg-amber-100 text-amber-800" : "bg-white text-slate-600"
+          }`}
+        >
+          {isDirty
+            ? t(locale, "admin.events.unsaved")
+            : t(locale, isNew ? "admin.events.formNew" : "admin.events.saved")}
+        </span>
+        {past ? (
+          <span className="rounded-md bg-white px-2 py-1 text-xs font-medium text-slate-600">
+            {t(locale, "admin.events.pastRemove")}
+          </span>
+        ) : null}
+        {fullyBooked ? (
+          <span className="rounded-md bg-white px-2 py-1 text-xs font-medium text-slate-600">
+            {t(locale, "admin.events.fullyBooked")}
+          </span>
+        ) : null}
+      </div>
+    </div>
   );
 }
 

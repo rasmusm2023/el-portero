@@ -6,7 +6,7 @@ import { useLocale } from "@/i18n/useLocale";
 import { t } from "@/i18n/strings";
 import { MENU_TAB_NAV_CLASS } from "@/components/menu/menuPageTypography";
 import { useEditablePublishedMenu } from "@/hooks/useEditablePublishedMenu";
-import { showGuestMenuTab } from "@/lib/editableMenuPublished";
+import { guestMenuTabLabel, showGuestMenuTab } from "@/lib/editableMenuPublished";
 import {
   MENUS_DINNER_PATH,
   MENUS_DRINKS_PATH,
@@ -48,6 +48,7 @@ export function MenuPager({ className }: MenuPagerProps) {
       {visibleItems.map((item) => {
         const active =
           pathname === item.href || pathname.startsWith(`${item.href}/`);
+        const remote = item.href === MENUS_DRINKS_PATH ? drinks.remote : dinner.remote;
         return (
           <Link
             key={item.href}
@@ -56,7 +57,7 @@ export function MenuPager({ className }: MenuPagerProps) {
             data-active={active}
             className={MENU_TAB_NAV_CLASS}
           >
-            {t(locale, item.labelKey)}
+            {guestMenuTabLabel(remote, t(locale, item.labelKey))}
           </Link>
         );
       })}

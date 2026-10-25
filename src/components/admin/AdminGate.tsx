@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
+import { AdminEntryScreen } from "@/components/admin/AdminEntryScreen";
 import { PageShell } from "@/components/layout/PageShell";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { getFirebaseWebConfig } from "@/lib/firebase/client";
@@ -36,12 +37,12 @@ export function AdminGate({ children }: { children: ReactNode }) {
     );
   }
 
-  if (!ready || !adminReady) {
-    return (
-      <PageShell tone="admin" title="Admin" intro="Loading…">
-        <p className="text-sm text-zinc-600">Checking sign-in…</p>
-      </PageShell>
-    );
+  if (!ready || (!user && !adminReady)) {
+    return <AdminEntryScreen phase="checking" />;
+  }
+
+  if (user && !adminReady) {
+    return <AdminEntryScreen phase="signed-in" email={user.email} />;
   }
 
   if (!isLoginRoute && !user) {

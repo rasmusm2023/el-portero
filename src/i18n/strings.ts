@@ -226,6 +226,12 @@ type AdminKey =
   | "admin.dashboard.hoursDescription"
   | "admin.dashboard.hoursLink"
   | "admin.dashboard.backToSite"
+  | "admin.dashboard.now"
+  | "admin.dashboard.liveEvents"
+  | "admin.dashboard.inactiveEvents"
+  | "admin.dashboard.nextEvent"
+  | "admin.dashboard.noUpcoming"
+  | "admin.dashboard.fullyBookedCount"
   | "openingHours.day.mon"
   | "openingHours.day.tue"
   | "openingHours.day.wed"
@@ -261,6 +267,9 @@ type AdminKey =
   | "admin.openingHours.unpublishError"
   | "admin.loading"
   | "admin.checkingSignIn"
+  | "admin.signingIn"
+  | "admin.signedInTitle"
+  | "admin.signedInOpening"
   | "admin.chrome.staff"
   | "admin.events.title"
   | "admin.events.introLead"
@@ -270,6 +279,10 @@ type AdminKey =
   | "admin.events.draft"
   | "admin.events.pastRemove"
   | "admin.events.duplicate"
+  | "admin.events.makeCopy"
+  | "admin.events.unsaved"
+  | "admin.events.saved"
+  | "admin.events.openEventsPage"
   | "admin.events.formNew"
   | "admin.events.formEdit"
   | "admin.events.idLabel"
@@ -437,6 +450,19 @@ type AdminKey =
   | "admin.menus.untitledSection"
   | "admin.menus.untitledDish"
   | "admin.menus.untitledDrink"
+  | "admin.menus.outline"
+  | "admin.menus.sectionsLabel"
+  | "admin.menus.connectionHint"
+  | "admin.menus.editingSection"
+  | "admin.menus.noSection"
+  | "admin.menus.visibleOnSite"
+  | "admin.menus.hiddenOnSite"
+  | "admin.menus.shownToGuests"
+  | "admin.menus.unsavedChanges"
+  | "admin.menus.allSaved"
+  | "admin.menus.breadcrumb"
+  | "admin.menus.menuTitleHint"
+  | "admin.menus.chooseSection"
   | "admin.confirm.title"
   | "admin.confirm.cancel"
   | "admin.confirm.proceed"
@@ -690,18 +716,24 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.eventsHeading": "Events",
     "admin.dashboard.eventsDescription":
       "Add and update evenings and happenings on the home page and Events page. Keep drafts hidden until you are ready for guests to see them.",
-    "admin.dashboard.eventsLink": "Open events →",
+    "admin.dashboard.eventsLink": "Manage events",
     "admin.dashboard.menusLabel": "Menus",
     "admin.dashboard.menusHeading": "Menu",
     "admin.dashboard.menusDescription":
       "Edit dinner and drinks menus section by section. Save your draft, then publish when guests should see the menu on the website.",
-    "admin.dashboard.menusLink": "Open menus →",
+    "admin.dashboard.menusLink": "Manage menus",
     "admin.dashboard.hoursLabel": "Hours",
     "admin.dashboard.hoursHeading": "Opening hours",
     "admin.dashboard.hoursDescription":
       "Weekly schedule and open/closed times shown on the home page. Save, then publish when guests should see updates.",
-    "admin.dashboard.hoursLink": "Open opening hours →",
+    "admin.dashboard.hoursLink": "Manage opening hours",
     "admin.dashboard.backToSite": "← Back to site",
+    "admin.dashboard.now": "Right now",
+    "admin.dashboard.liveEvents": "Live on the website",
+    "admin.dashboard.inactiveEvents": "Inactive or past",
+    "admin.dashboard.nextEvent": "Next",
+    "admin.dashboard.noUpcoming": "Nothing coming up",
+    "admin.dashboard.fullyBookedCount": "Fully booked: {count}",
     "openingHours.day.mon": "Mon",
     "openingHours.day.tue": "Tue",
     "openingHours.day.wed": "Wed",
@@ -740,6 +772,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "Could not unpublish. Try again.",
     "admin.loading": "Loading…",
     "admin.checkingSignIn": "Checking sign-in…",
+    "admin.signingIn": "Signing in…",
+    "admin.signedInTitle": "Signed in",
+    "admin.signedInOpening": "Opening the workspace…",
     "admin.chrome.staff": "Staff workspace",
     "admin.events.title": "Events",
     "admin.events.introLead":
@@ -750,6 +785,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.draft": "Draft",
     "admin.events.pastRemove": "Past — you can delete",
     "admin.events.duplicate": "Duplicate",
+    "admin.events.makeCopy": "Make a copy",
+    "admin.events.unsaved": "Unsaved changes",
+    "admin.events.saved": "Saved",
+    "admin.events.openEventsPage": "Open events page",
     "admin.events.formNew": "New event",
     "admin.events.formEdit": "Edit event",
     "admin.events.idLabel": "Short name (ID)",
@@ -839,7 +878,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.imageAltHint":
       "Applies to the language selected on the preview. Filled when you translate. Edit if you want it more specific.",
     "admin.events.sourceHint":
-      "Write the title and description on the card. Translate content detects the real language, keeps your wording there, and fills the other languages and the photo description.",
+      "Write the title and description on the card, then press Translate content.",
     "admin.events.orPasteLink": "Or paste a photo link",
     "admin.events.notTranslatedYet": "Not translated yet",
     "admin.events.previewLanguage": "Preview language",
@@ -862,7 +901,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.step4Hint": "Look over the rest before you save.",
     "admin.menus.title": "Menus",
     "admin.menus.intro":
-      "Choose dinner or drinks. Save keeps your draft; Publish shows it on the site.",
+      "Dinner and drinks are separate menus. Each menu is made of sections, and each section holds the dishes guests see under that heading.",
     "admin.menus.reload": "Reload",
     "admin.menus.tabDinner": "Dinner",
     "admin.menus.tabDrinks": "Drinks",
@@ -874,7 +913,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.no": "No",
     "admin.menus.publish": "Publish",
     "admin.menus.unpublish": "Unpublish",
-    "admin.menus.menuTitleLabel": "Menu title (shown on the page when set)",
+    "admin.menus.menuTitleLabel": "Menu title",
     "admin.menus.menuTitlePlaceholder": "e.g. Spring dinner menu",
     "admin.menus.sectionTitleLabel": "Section title",
     "admin.menus.removeSection": "Remove section",
@@ -942,6 +981,21 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.untitledSection": "Untitled section",
     "admin.menus.untitledDish": "Untitled dish",
     "admin.menus.untitledDrink": "Untitled drink",
+    "admin.menus.outline": "Menus",
+    "admin.menus.sectionsLabel": "Sections",
+    "admin.menus.connectionHint":
+      "A section is a heading on the menu. The dishes nested under it are what guests read in that group.",
+    "admin.menus.editingSection": "Dishes in this section",
+    "admin.menus.noSection": "This menu has no sections yet. Add one to start a group of dishes.",
+    "admin.menus.visibleOnSite": "On the website",
+    "admin.menus.hiddenOnSite": "Draft only",
+    "admin.menus.shownToGuests": "Shown to guests",
+    "admin.menus.unsavedChanges": "Unsaved changes",
+    "admin.menus.allSaved": "All changes saved",
+    "admin.menus.breadcrumb": "Where you are in the menu",
+    "admin.menus.menuTitleHint":
+      "This is the button at the top of the menu on the website. Without a title, that button is not shown.",
+    "admin.menus.chooseSection": "Choose a section on the left to edit its dishes.",
     "admin.confirm.title": "Warning",
     "admin.confirm.cancel": "Cancel",
     "admin.confirm.proceed": "Yes, continue",
@@ -1204,18 +1258,24 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.eventsHeading": "Eventos",
     "admin.dashboard.eventsDescription":
       "Añadid y actualizad veladas y actividades en la página de inicio y en Eventos. Dejad los borradores ocultos hasta que estén listos para los clientes.",
-    "admin.dashboard.eventsLink": "Abrir eventos →",
+    "admin.dashboard.eventsLink": "Gestionar eventos",
     "admin.dashboard.menusLabel": "Cartas",
     "admin.dashboard.menusHeading": "Carta",
     "admin.dashboard.menusDescription":
       "Editad las cartas de cena y bebidas por secciones. Guardad el borrador y publicad cuando los clientes deban ver la carta en la web.",
-    "admin.dashboard.menusLink": "Abrir cartas →",
+    "admin.dashboard.menusLink": "Gestionar cartas",
     "admin.dashboard.hoursLabel": "Horario",
     "admin.dashboard.hoursHeading": "Horario de apertura",
     "admin.dashboard.hoursDescription":
       "Horario semanal y horas de apertura/cierre en la página de inicio. Guardad y publicad cuando los clientes deban ver los cambios.",
-    "admin.dashboard.hoursLink": "Abrir horario →",
+    "admin.dashboard.hoursLink": "Gestionar horario",
     "admin.dashboard.backToSite": "← Volver al sitio",
+    "admin.dashboard.now": "Ahora",
+    "admin.dashboard.liveEvents": "En la web",
+    "admin.dashboard.inactiveEvents": "Inactivos o pasados",
+    "admin.dashboard.nextEvent": "Siguiente",
+    "admin.dashboard.noUpcoming": "Nada próximo",
+    "admin.dashboard.fullyBookedCount": "Completos: {count}",
     "openingHours.day.mon": "Lun",
     "openingHours.day.tue": "Mar",
     "openingHours.day.wed": "Mié",
@@ -1254,6 +1314,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "No se pudo despublicar. Intentad de nuevo.",
     "admin.loading": "Cargando…",
     "admin.checkingSignIn": "Comprobando acceso…",
+    "admin.signingIn": "Entrando…",
+    "admin.signedInTitle": "Sesión iniciada",
+    "admin.signedInOpening": "Abriendo el espacio de trabajo…",
     "admin.chrome.staff": "Zona de personal",
     "admin.events.title": "Eventos",
     "admin.events.introLead":
@@ -1264,6 +1327,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.draft": "Borrador",
     "admin.events.pastRemove": "Pasado — podéis borrarlo",
     "admin.events.duplicate": "Duplicar",
+    "admin.events.makeCopy": "Hacer una copia",
+    "admin.events.unsaved": "Cambios sin guardar",
+    "admin.events.saved": "Guardado",
+    "admin.events.openEventsPage": "Abrir la página de eventos",
     "admin.events.formNew": "Nuevo evento",
     "admin.events.formEdit": "Editar evento",
     "admin.events.idLabel": "Nombre corto (ID)",
@@ -1353,7 +1420,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.imageAltHint":
       "Corresponde al idioma seleccionado en la vista previa. Se rellena al traducir. Editadla si queréis más detalle.",
     "admin.events.sourceHint":
-      "Escribid el título y la descripción en la tarjeta. Traducir contenido detecta el idioma real, conserva ese texto ahí y rellena los demás idiomas y la descripción de la foto.",
+      "Escribid el título y la descripción en la tarjeta y pulsad Traducir contenido.",
     "admin.events.orPasteLink": "O pegar un enlace de foto",
     "admin.events.notTranslatedYet": "Aún no traducido",
     "admin.events.previewLanguage": "Idioma de la vista previa",
@@ -1376,7 +1443,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.step4Hint": "Revisad el resto antes de guardar.",
     "admin.menus.title": "Cartas",
     "admin.menus.intro":
-      "Elegid cena o bebidas. Guardar conserva el borrador; Publicar lo muestra en la web.",
+      "Cena y bebidas son cartas distintas. Cada carta se compone de secciones, y cada sección agrupa los platos que ven los clientes bajo ese título.",
     "admin.menus.reload": "Recargar",
     "admin.menus.tabDinner": "Cena",
     "admin.menus.tabDrinks": "Bebidas",
@@ -1388,7 +1455,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.no": "No",
     "admin.menus.publish": "Publicar",
     "admin.menus.unpublish": "Despublicar",
-    "admin.menus.menuTitleLabel": "Título de la carta (se muestra en la página si se rellena)",
+    "admin.menus.menuTitleLabel": "Título de la carta",
     "admin.menus.menuTitlePlaceholder": "p. ej. Carta de primavera",
     "admin.menus.sectionTitleLabel": "Título de sección",
     "admin.menus.removeSection": "Eliminar sección",
@@ -1456,6 +1523,21 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.untitledSection": "Sección sin título",
     "admin.menus.untitledDish": "Plato sin nombre",
     "admin.menus.untitledDrink": "Bebida sin nombre",
+    "admin.menus.outline": "Cartas",
+    "admin.menus.sectionsLabel": "Secciones",
+    "admin.menus.connectionHint":
+      "Una sección es un título de la carta. Los platos anidados debajo son lo que leen los clientes en ese grupo.",
+    "admin.menus.editingSection": "Platos de esta sección",
+    "admin.menus.noSection": "Esta carta aún no tiene secciones. Añadid una para empezar un grupo de platos.",
+    "admin.menus.visibleOnSite": "En la web",
+    "admin.menus.hiddenOnSite": "Solo borrador",
+    "admin.menus.shownToGuests": "Visible para clientes",
+    "admin.menus.unsavedChanges": "Cambios sin guardar",
+    "admin.menus.allSaved": "Todos los cambios guardados",
+    "admin.menus.breadcrumb": "Dónde estáis en la carta",
+    "admin.menus.menuTitleHint":
+      "Este es el botón en la parte superior de la carta en la web. Sin título, ese botón no se muestra.",
+    "admin.menus.chooseSection": "Elegid una sección a la izquierda para editar sus platos.",
     "admin.confirm.title": "Atención",
     "admin.confirm.cancel": "Cancelar",
     "admin.confirm.proceed": "Sí, continuar",
@@ -1707,18 +1789,24 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.eventsHeading": "Evenemang",
     "admin.dashboard.eventsDescription":
       "Lägg till och uppdatera kvällar och aktiviteter på startsidan och under Evenemang. Behåll utkast dolda tills ni är redo för gäster.",
-    "admin.dashboard.eventsLink": "Öppna evenemang →",
+    "admin.dashboard.eventsLink": "Hantera evenemang",
     "admin.dashboard.menusLabel": "Menyer",
     "admin.dashboard.menusHeading": "Meny",
     "admin.dashboard.menusDescription":
       "Redigera middags- och dryckesmenyer sektion för sektion. Spara utkastet och publicera när gäster ska se menyn på webbplatsen.",
-    "admin.dashboard.menusLink": "Öppna menyer →",
+    "admin.dashboard.menusLink": "Hantera menyer",
     "admin.dashboard.hoursLabel": "Öppettider",
     "admin.dashboard.hoursHeading": "Öppettider",
     "admin.dashboard.hoursDescription":
       "Veckoschema och öppet/stängt på startsidan. Spara och publicera när gäster ska se uppdateringarna.",
-    "admin.dashboard.hoursLink": "Öppna öppettider →",
+    "admin.dashboard.hoursLink": "Hantera öppettider",
     "admin.dashboard.backToSite": "← Tillbaka till sajten",
+    "admin.dashboard.now": "Just nu",
+    "admin.dashboard.liveEvents": "Synliga på sajten",
+    "admin.dashboard.inactiveEvents": "Inaktiva eller passerade",
+    "admin.dashboard.nextEvent": "Nästa",
+    "admin.dashboard.noUpcoming": "Inget på gång",
+    "admin.dashboard.fullyBookedCount": "Fullbokade: {count}",
     "openingHours.day.mon": "Mån",
     "openingHours.day.tue": "Tis",
     "openingHours.day.wed": "Ons",
@@ -1757,6 +1845,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "Kunde inte avpublicera. Försök igen.",
     "admin.loading": "Laddar…",
     "admin.checkingSignIn": "Kontrollerar inloggning…",
+    "admin.signingIn": "Loggar in…",
+    "admin.signedInTitle": "Inloggad",
+    "admin.signedInOpening": "Öppnar arbetsytan…",
     "admin.chrome.staff": "Personalyta",
     "admin.events.title": "Evenemang",
     "admin.events.introLead":
@@ -1767,6 +1858,10 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.draft": "Utkast",
     "admin.events.pastRemove": "Passerat — kan tas bort",
     "admin.events.duplicate": "Duplicera",
+    "admin.events.makeCopy": "Gör en kopia",
+    "admin.events.unsaved": "Osparade ändringar",
+    "admin.events.saved": "Sparat",
+    "admin.events.openEventsPage": "Öppna evenemangssidan",
     "admin.events.formNew": "Nytt evenemang",
     "admin.events.formEdit": "Redigera evenemang",
     "admin.events.idLabel": "Kort namn (ID)",
@@ -1857,7 +1952,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.imageAltHint":
       "Gäller språket som är valt i förhandsvisningen. Fylls i när ni översätter. Redigera om ni vill mer precist.",
     "admin.events.sourceHint":
-      "Skriv titel och beskrivning på kortet. Översätt innehåll känner av det riktiga språket, behåller er text där och fyller övriga språk samt bildbeskrivningen.",
+      "Skriv titel och beskrivning på kortet och tryck sedan på Översätt innehåll.",
     "admin.events.orPasteLink": "Eller klistra in en fotolänk",
     "admin.events.notTranslatedYet": "Inte översatt än",
     "admin.events.previewLanguage": "Förhandsvisningsspråk",
@@ -1880,7 +1975,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.step4Hint": "Gå igenom resten innan ni sparar.",
     "admin.menus.title": "Menyer",
     "admin.menus.intro":
-      "Välj middag eller dryck. Spara behåller utkastet; Publicera visar det på webbplatsen.",
+      "Middag och dryck är separata menyer. Varje meny består av sektioner, och varje sektion samlar rätterna gästerna ser under den rubriken.",
     "admin.menus.reload": "Ladda om",
     "admin.menus.tabDinner": "Middag",
     "admin.menus.tabDrinks": "Dryck",
@@ -1892,7 +1987,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.no": "Nej",
     "admin.menus.publish": "Publicera",
     "admin.menus.unpublish": "Avpublicera",
-    "admin.menus.menuTitleLabel": "Menytitel (visas på sidan om den fylls i)",
+    "admin.menus.menuTitleLabel": "Menytitel",
     "admin.menus.menuTitlePlaceholder": "t.ex. Vårmiddagsmeny",
     "admin.menus.sectionTitleLabel": "Sektionsrubrik",
     "admin.menus.removeSection": "Ta bort sektion",
@@ -1960,6 +2055,21 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.untitledSection": "Sektion utan titel",
     "admin.menus.untitledDish": "Rätt utan namn",
     "admin.menus.untitledDrink": "Dryck utan namn",
+    "admin.menus.outline": "Menyer",
+    "admin.menus.sectionsLabel": "Sektioner",
+    "admin.menus.connectionHint":
+      "En sektion är en rubrik på menyn. Rätterna under den är det gästerna läser i den gruppen.",
+    "admin.menus.editingSection": "Rätter i den här sektionen",
+    "admin.menus.noSection": "Den här menyn har inga sektioner ännu. Lägg till en för att starta en grupp rätter.",
+    "admin.menus.visibleOnSite": "På webbplatsen",
+    "admin.menus.hiddenOnSite": "Endast utkast",
+    "admin.menus.shownToGuests": "Visas för gäster",
+    "admin.menus.unsavedChanges": "Osparade ändringar",
+    "admin.menus.allSaved": "Alla ändringar sparade",
+    "admin.menus.breadcrumb": "Var ni är i menyn",
+    "admin.menus.menuTitleHint":
+      "Det här är knappen högst upp på menyn på webbplatsen. Utan titel visas inte knappen.",
+    "admin.menus.chooseSection": "Välj en sektion till vänster för att redigera dess rätter.",
     "admin.confirm.title": "Varning",
     "admin.confirm.cancel": "Avbryt",
     "admin.confirm.proceed": "Ja, fortsätt",

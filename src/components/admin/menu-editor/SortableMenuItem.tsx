@@ -15,11 +15,13 @@ type Props = {
   ii: number;
   collapsed: boolean;
   hidden: boolean;
+  selected: boolean;
   busy: boolean;
   expandLabel: string;
   collapseLabel: string;
   dragLabel: string;
-  summary?: string;
+  contextLabel: string;
+  summary: string;
   actions: ReactNode;
   visibilityButton?: ReactNode;
   onToggleCollapse: () => void;
@@ -31,10 +33,12 @@ export function SortableMenuItem({
   ii,
   collapsed,
   hidden,
+  selected,
   busy,
   expandLabel,
   collapseLabel,
   dragLabel,
+  contextLabel,
   summary,
   actions,
   visibilityButton,
@@ -51,14 +55,19 @@ export function SortableMenuItem({
   };
 
   return (
-    <div
+    <article
       ref={setNodeRef}
+      id={`menu-item-${itemSortableId(ci, ii)}`}
       style={style}
       className={[
-        "rounded-lg border bg-white p-4 transition-[opacity,border-color,background-color]",
-        hidden ? "border-amber-200 bg-amber-50" : "border-zinc-200",
-        hidden && !isDragging ? "opacity-50" : "",
-        isDragging ? "z-10 opacity-70 ring-2 ring-sky-400/30" : "",
+        "rounded-xl border bg-white p-3 shadow-sm transition-[opacity,border-color,background-color] sm:p-4",
+        selected
+          ? "border-blue-200 shadow-[inset_3px_0_0_0_#2563eb]"
+          : hidden
+            ? "border-amber-200"
+            : "border-slate-200",
+        hidden && !isDragging ? "bg-amber-50/60" : "",
+        isDragging ? "z-10 opacity-70 ring-2 ring-blue-300" : "",
       ].join(" ")}
       data-menu-hidden={hidden ? "true" : undefined}
     >
@@ -82,20 +91,27 @@ export function SortableMenuItem({
           />
         }
         title={
-          collapsed && summary ? (
-            <p
+          <button
+            type="button"
+            className="block w-full cursor-pointer rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            onClick={onToggleCollapse}
+          >
+            <span className="block truncate text-xs text-slate-500">{contextLabel}</span>
+            <span
               className={[
-                "text-sm font-medium",
-                hidden ? "text-zinc-500" : "text-zinc-900",
+                "mt-0.5 block truncate text-sm font-medium",
+                hidden ? "text-slate-500" : "text-slate-900",
               ].join(" ")}
             >
               {summary}
-            </p>
-          ) : null
+            </span>
+          </button>
         }
         actions={actions}
       />
-      {!collapsed ? <div className="mt-4">{children}</div> : null}
-    </div>
+      {!collapsed ? (
+        <div className="mt-4 border-t border-slate-200 pt-4">{children}</div>
+      ) : null}
+    </article>
   );
 }

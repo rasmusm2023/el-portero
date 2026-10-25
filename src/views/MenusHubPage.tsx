@@ -14,6 +14,7 @@ import { useMenusPublicVisibility } from "@/hooks/useMenusPublicVisibility";
 import { editableDocToSimpleCategories } from "@/lib/editableMenuDisplay";
 import { isFirebaseConfigured } from "@/lib/firebase/client";
 import {
+  guestMenuTabLabel,
   isEditableMenuPublished,
   showGuestMenuTab,
 } from "@/lib/editableMenuPublished";
@@ -92,7 +93,7 @@ export function MenusHubPage() {
               data-active={active}
               className={MENU_TAB_NAV_CLASS}
             >
-              {t(locale, tab.labelKey)}
+              {guestMenuTabLabel(stateFor(tab.key).remote, t(locale, tab.labelKey))}
             </button>
           );
         })}

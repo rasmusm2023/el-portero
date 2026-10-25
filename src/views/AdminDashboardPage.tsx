@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ReactNode } from "react";
 import { LogOut } from "lucide-react";
+import { DashboardBento } from "@/components/admin/DashboardBento";
 import { PageShell } from "@/components/layout/PageShell";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { t } from "@/i18n/strings";
@@ -159,7 +160,7 @@ function DashboardCard({
   return (
     <Link
       href={href}
-      className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-slate-300"
+      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-colors hover:border-blue-200 hover:bg-blue-50 focus-visible:border-blue-200 focus-visible:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
     >
       <CardMotif tilt={tilt}>{motif}</CardMotif>
       <div className="relative flex min-h-40 flex-1 flex-col">
@@ -237,6 +238,8 @@ export function AdminDashboardPage() {
           link={t(locale, "admin.dashboard.hoursLink")}
         />
       </div>
+
+      <DashboardBento />
 
       <div className="mt-6">
         <Link href="/" className={deskButton}>
