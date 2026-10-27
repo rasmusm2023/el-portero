@@ -9,8 +9,11 @@ import { EventPreviewLocaleMenu } from "@/components/admin/EventPreviewLocaleMen
 import {
   DeskNotice,
   DeskToggle,
+  EmptyEventSlot,
+  EventCreateFullNotice,
   EventEditorBar,
   EventIndexRow,
+  EventListFullNotice,
   StepHeading,
   WebsiteStatusCard,
   deskDanger,
@@ -57,6 +60,7 @@ import { getFirebaseFirestore } from "@/lib/firebase/client";
 import { translateEventContent } from "@/lib/firebase/eventAi";
 import { deleteEventImageIfManaged, uploadEventImage } from "@/lib/firebase/eventImageStorage";
 import { removePublicEvent, subscribeAdminPublicEvents, upsertPublicEvent } from "@/lib/firebase/eventsStore";
+import { MAX_STORED_EVENTS, eventStorageLimitState, fillEventStorageMessage } from "@/lib/eventStorageLimit";
 
 function todayYmd() {
   return new Date().toISOString().slice(0, 10);
@@ -159,6 +163,15 @@ export function EventsAdminPage() {
     () => Boolean(pendingImageFile) || !homeEventsEqual(draft, savedBaseline),
     [draft, savedBaseline, pendingImageFile],
   );
+  const sortedEvents = useMemo(
+    () => rows.slice().sort((a, b) => a.sortDate.localeCompare(b.sortDate)),
+    [rows],
+  );
+  const eventSlots = useMemo(
+    () => Array.from({ length: MAX_STORED_EVENTS }, (_, index) => sortedEvents[index] ?? null),
+    [sortedEvents],
+  );
+  const overflowEvents = sortedEvents.slice(MAX_STORED_EVENTS);
   const previewEvent = useMemo(() => {
     const ev = syncDerivedEventFields(cloneHomeEvent(draft));
     if (pendingImagePreview) ev.imageSrc = pendingImagePreview;
@@ -217,6 +230,7 @@ export function EventsAdminPage() {
   }
 
   const startNew = useCallback(() => {
+    if (eventStorageLimitState(rows.length).showWarning) return;
     setIsNew(true);
     setEditingId(null);
     const blank = applySlotsToTimeDetail(emptyHomeEvent(todayYmd()));
@@ -226,10 +240,17 @@ export function EventsAdminPage() {
     clearPendingImage();
     setError(null);
     setMessage(null);
-  }, [clearPendingImage]);
+  }, [clearPendingImage, rows.length]);
 
   const duplicateFrom = useCallback(
     (ev: HomeEvent, options?: { keepPendingImage?: boolean }) => {
+      if (eventStorageLimitState(rows.length).blockNewEvents) {
+        setError(
+          fillEventStorageMessage(t(locale, "admin.events.storageFullSaveError"), rows.length),
+        );
+        setMessage(null);
+        return;
+      }
       const normalized = normalizeEventForEditor(cloneHomeEvent(ev));
       let id = suggestDuplicateEventId(ev.id);
       let guard = 0;
@@ -368,6 +389,10 @@ export function EventsAdminPage() {
     if (!isDirty) {
       return;
     }
+    if (wasNew && eventStorageLimitState(rows.length).blockNewEvents) {
+      setError(fillEventStorageMessage(t(locale, "admin.events.storageFullSaveError"), rows.length));
+      return;
+    }
     const startHm = draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START;
     const endHm = draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END;
     const sm = parseHmToMinutes(startHm);
@@ -482,6 +507,11 @@ export function EventsAdminPage() {
   }
 
   const locked = busy || translating;
+  const storageLimit = eventStorageLimitState(rows.length);
+  const storageFullMessage = fillEventStorageMessage(
+    t(locale, "admin.events.storageFullSaveError"),
+    storageLimit.displayCount,
+  );
 
   return (
     <>
@@ -517,49 +547,78 @@ export function EventsAdminPage() {
                 <h2 className="text-sm font-semibold text-slate-900">
                   {t(locale, "admin.events.allEvents")}
                 </h2>
-                <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-xs tabular-nums text-slate-500">
-                  {rows.length}
+                <span
+                  className={`rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums ${
+                    rows.length >= MAX_STORED_EVENTS
+                      ? "bg-red-100 text-red-800"
+                      : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {fillEventStorageMessage(t(locale, "admin.events.storageCount"), rows.length)}
                 </span>
               </div>
               <button
                 type="button"
                 className={deskPrimary}
                 onClick={startNew}
-                disabled={locked}
+                disabled={locked || storageLimit.showWarning}
+                title={storageLimit.showWarning ? storageFullMessage : undefined}
                 aria-pressed={isNew}
               >
                 <Plus className="size-3.5" aria-hidden />
                 {t(locale, "admin.events.newEvent")}
               </button>
             </div>
-            <ul className="max-h-[min(52vh,26rem)] space-y-1.5 overflow-y-auto [scrollbar-color:rgba(15,23,42,0.28)_transparent] [scrollbar-width:thin] xl:max-h-[min(72vh,44rem)]">
-              {rows.length === 0 ? (
-                <li className="rounded-lg border border-dashed border-slate-200 px-4 py-8 text-center">
-                  <p className={`${deskHint}`}>{t(locale, "admin.events.emptyList")}</p>
-                </li>
-              ) : (
-                rows
-                  .slice()
-                  .sort((a, b) => a.sortDate.localeCompare(b.sortDate))
-                  .map((ev) => {
-                    const past = isEventPastForAdmin(ev);
-                    const selected = editingId === ev.id && !isNew;
-                    return (
-                      <EventIndexRow
-                        key={ev.id}
-                        event={ev}
-                        locale={locale}
-                        selected={selected}
-                        past={past}
-                        locked={locked}
-                        rowRef={selected ? selectedRowRef : undefined}
-                        onEdit={() => startEdit(ev)}
-                        onDuplicate={() => duplicateFrom(ev)}
-                        onDelete={() => void deleteEventById(ev.id)}
-                      />
-                    );
-                  })
-              )}
+            {storageLimit.showWarning ? (
+              <EventListFullNotice>{t(locale, "admin.events.storageListWarning")}</EventListFullNotice>
+            ) : null}
+            <ul className="max-h-[min(70vh,40rem)] space-y-1.5 overflow-y-auto [scrollbar-color:rgba(15,23,42,0.28)_transparent] [scrollbar-width:thin] xl:max-h-[min(78vh,48rem)]">
+              {eventSlots.map((ev, index) => {
+                if (!ev) {
+                  return (
+                    <EmptyEventSlot
+                      key={`empty-slot-${index}`}
+                      label={t(locale, "admin.events.storageEmptySlot")}
+                    />
+                  );
+                }
+                const past = isEventPastForAdmin(ev);
+                const selected = editingId === ev.id && !isNew;
+                return (
+                  <EventIndexRow
+                    key={ev.id}
+                    event={ev}
+                    locale={locale}
+                    selected={selected}
+                    past={past}
+                    locked={locked}
+                    duplicateBlocked={storageLimit.blockNewEvents}
+                    rowRef={selected ? selectedRowRef : undefined}
+                    onEdit={() => startEdit(ev)}
+                    onDuplicate={() => duplicateFrom(ev)}
+                    onDelete={() => void deleteEventById(ev.id)}
+                  />
+                );
+              })}
+              {overflowEvents.map((ev) => {
+                const past = isEventPastForAdmin(ev);
+                const selected = editingId === ev.id && !isNew;
+                return (
+                  <EventIndexRow
+                    key={ev.id}
+                    event={ev}
+                    locale={locale}
+                    selected={selected}
+                    past={past}
+                    locked={locked}
+                    duplicateBlocked={storageLimit.blockNewEvents}
+                    rowRef={selected ? selectedRowRef : undefined}
+                    onEdit={() => startEdit(ev)}
+                    onDuplicate={() => duplicateFrom(ev)}
+                    onDelete={() => void deleteEventById(ev.id)}
+                  />
+                );
+              })}
             </ul>
           </div>
         </aside>
@@ -593,6 +652,7 @@ export function EventsAdminPage() {
                 past={!isNew && isEventPastForAdmin(draft)}
                 fullyBooked={draft.fullyBooked === true}
                 canCopy={Boolean(draft.id.trim())}
+                copyBlocked={storageLimit.blockNewEvents}
                 onPublishChange={(checked) =>
                   setDraft((d) =>
                     onLocalhost && !editingLiveEvent
@@ -936,7 +996,14 @@ export function EventsAdminPage() {
           </div>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="border-t border-slate-200 pt-5">
+            {isNew && storageLimit.showWarning ? (
+              <EventCreateFullNotice
+                title={t(locale, "admin.events.storageCreateTitle")}
+                body={t(locale, "admin.events.storageCreateBody")}
+              />
+            ) : null}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className={`min-w-0 flex-1 text-sm ${isDirty ? "font-medium text-amber-700" : "text-slate-500"}`}>
               {isDirty
                 ? t(locale, isNew ? "admin.events.saveNewTooltip" : "admin.events.saveEditTooltip")
@@ -961,15 +1028,17 @@ export function EventsAdminPage() {
                 type="button"
                 className={deskPrimary}
                 onClick={onSave}
-                disabled={locked || !isDirty}
+                disabled={locked || !isDirty || (isNew && storageLimit.blockNewEvents)}
                 title={
-                  isDirty
-                    ? isNew
-                      ? t(locale, "admin.events.saveNewTooltip")
-                      : t(locale, "admin.events.saveEditTooltip")
-                    : isNew
-                      ? t(locale, "admin.events.saveNewDisabledTooltip")
-                      : t(locale, "admin.events.saveEditDisabledTooltip")
+                  isNew && storageLimit.blockNewEvents
+                    ? storageFullMessage
+                    : isDirty
+                      ? isNew
+                        ? t(locale, "admin.events.saveNewTooltip")
+                        : t(locale, "admin.events.saveEditTooltip")
+                      : isNew
+                        ? t(locale, "admin.events.saveNewDisabledTooltip")
+                        : t(locale, "admin.events.saveEditDisabledTooltip")
                 }
               >
                 {busy ? (
@@ -982,6 +1051,7 @@ export function EventsAdminPage() {
                 {isNew ? t(locale, "admin.events.create") : t(locale, "admin.events.saveChanges")}
               </button>
             </div>
+          </div>
           </div>
             </div>
           </div>

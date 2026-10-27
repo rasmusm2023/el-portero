@@ -334,6 +334,15 @@ type AdminKey =
   | "admin.events.loadError"
   | "admin.events.saveError"
   | "admin.events.deleteError"
+  | "admin.events.storageFullTitle"
+  | "admin.events.storageFullBody"
+  | "admin.events.storageCreateTitle"
+  | "admin.events.storageCreateBody"
+  | "admin.events.storageListWarning"
+  | "admin.events.storageEmptySlot"
+  | "admin.events.storageCount"
+  | "admin.events.storageMeterAria"
+  | "admin.events.storageFullSaveError"
   | "admin.events.invalidId"
   | "admin.events.invalidTime"
   | "admin.events.loadingTitle"
@@ -847,6 +856,15 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadError": "Could not load events. Try refreshing the page.",
     "admin.events.saveError": "Could not save. Check your connection and try again.",
     "admin.events.deleteError": "Could not delete. Try again.",
+    "admin.events.storageFullTitle": "The event list is full",
+    "admin.events.storageFullBody": "You can keep {max} events. Delete one before you add another.",
+    "admin.events.storageCreateTitle": "You can’t save a new event yet",
+    "admin.events.storageCreateBody": "The list is full. Delete an event on the left, then try again.",
+    "admin.events.storageListWarning": "The list is full. Delete an event to add a new one.",
+    "admin.events.storageEmptySlot": "Empty",
+    "admin.events.storageCount": "{count} of {max}",
+    "admin.events.storageMeterAria": "{count} of {max} events",
+    "admin.events.storageFullSaveError": "The list is full. Delete an event first.",
     "admin.events.invalidId":
       "Short name (ID): use 1–64 characters — lowercase letters, numbers, and hyphens only (e.g. summer-dinner-2026).",
     "admin.events.invalidTime": "End time must be the same as or after the start time.",
@@ -1388,6 +1406,15 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadError": "No se pudieron cargar los eventos. Actualizad la página.",
     "admin.events.saveError": "No se pudo guardar. Comprobad la conexión e intentad de nuevo.",
     "admin.events.deleteError": "No se pudo eliminar. Intentad de nuevo.",
+    "admin.events.storageFullTitle": "La lista de eventos está llena",
+    "admin.events.storageFullBody": "Podéis guardar {max} eventos. Borrad uno antes de añadir otro.",
+    "admin.events.storageCreateTitle": "Aún no podéis guardar un evento nuevo",
+    "admin.events.storageCreateBody": "La lista está llena. Borrad un evento de la izquierda e intentadlo de nuevo.",
+    "admin.events.storageListWarning": "La lista está llena. Borrad un evento para añadir uno nuevo.",
+    "admin.events.storageEmptySlot": "Vacío",
+    "admin.events.storageCount": "{count} de {max}",
+    "admin.events.storageMeterAria": "{count} de {max} eventos",
+    "admin.events.storageFullSaveError": "La lista está llena. Borrad un evento primero.",
     "admin.events.invalidId":
       "Nombre corto (ID): de 1 a 64 caracteres — solo letras minúsculas, números y guiones (p. ej. cena-verano-2026).",
     "admin.events.invalidTime": "La hora de fin debe ser igual o posterior a la de inicio.",
@@ -1920,6 +1947,15 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadError": "Kunde inte ladda evenemang. Uppdatera sidan.",
     "admin.events.saveError": "Kunde inte spara. Kontrollera anslutningen och försök igen.",
     "admin.events.deleteError": "Kunde inte ta bort. Försök igen.",
+    "admin.events.storageFullTitle": "Evenemangslistan är full",
+    "admin.events.storageFullBody": "Ni kan spara {max} evenemang. Ta bort ett innan ni lägger till ett nytt.",
+    "admin.events.storageCreateTitle": "Ni kan inte spara ett nytt evenemang ännu",
+    "admin.events.storageCreateBody": "Listan är full. Ta bort ett evenemang till vänster och försök igen.",
+    "admin.events.storageListWarning": "Listan är full. Ta bort ett evenemang för att lägga till ett nytt.",
+    "admin.events.storageEmptySlot": "Tom",
+    "admin.events.storageCount": "{count} av {max}",
+    "admin.events.storageMeterAria": "{count} av {max} evenemang",
+    "admin.events.storageFullSaveError": "Listan är full. Ta bort ett evenemang först.",
     "admin.events.invalidId":
       "Kort namn (ID): 1–64 tecken — endast små bokstäver, siffror och bindestreck (t.ex. sommar-middag-2026).",
     "admin.events.invalidTime": "Sluttiden måste vara samma som eller efter starttiden.",

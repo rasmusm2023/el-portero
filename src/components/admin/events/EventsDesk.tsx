@@ -2,7 +2,7 @@
 
 import type { ReactNode, Ref } from "react";
 import Link from "next/link";
-import { Copy, ExternalLink, Eye, EyeOff, Trash2 } from "lucide-react";
+import { Copy, ExternalLink, Eye, EyeOff, Trash2, TriangleAlert } from "lucide-react";
 import { intlLocaleTag, pickLocaleText } from "@/i18n/localeMeta";
 import { t, type Locale } from "@/i18n/strings";
 import type { HomeEvent } from "@/lib/publicEventTypes";
@@ -180,6 +180,7 @@ export function EventEditorBar({
   past,
   fullyBooked,
   canCopy,
+  copyBlocked,
   onPublishChange,
   onCopy,
   onDelete,
@@ -193,6 +194,7 @@ export function EventEditorBar({
   past: boolean;
   fullyBooked: boolean;
   canCopy: boolean;
+  copyBlocked?: boolean;
   onPublishChange: (checked: boolean) => void;
   onCopy: () => void;
   onDelete: () => void;
@@ -227,7 +229,7 @@ export function EventEditorBar({
             <ExternalLink className="size-3.5" aria-hidden />
             {t(locale, "admin.events.openEventsPage")}
           </Link>
-          <button type="button" className={deskGhost} onClick={onCopy} disabled={disabled || !canCopy}>
+          <button type="button" className={deskGhost} onClick={onCopy} disabled={disabled || !canCopy || copyBlocked}>
             <Copy className="size-3.5" aria-hidden />
             {t(locale, "admin.events.makeCopy")}
           </button>
@@ -317,6 +319,7 @@ export function EventIndexRow({
   past,
   locked,
   rowRef,
+  duplicateBlocked,
   onEdit,
   onDuplicate,
   onDelete,
@@ -327,6 +330,7 @@ export function EventIndexRow({
   past: boolean;
   locked: boolean;
   rowRef?: Ref<HTMLLIElement>;
+  duplicateBlocked?: boolean;
   onEdit: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
@@ -394,7 +398,7 @@ export function EventIndexRow({
       <div className="flex shrink-0 items-center">
         <IndexIconButton
           label={t(locale, "admin.events.duplicate")}
-          disabled={locked}
+          disabled={locked || duplicateBlocked}
           tone="neutral"
           onClick={onDuplicate}
         >
@@ -410,5 +414,42 @@ export function EventIndexRow({
         </IndexIconButton>
       </div>
     </li>
+  );
+}
+
+export function EmptyEventSlot({ label }: { label: string }) {
+  return (
+    <li className="flex min-h-[4.25rem] items-center rounded-lg border border-dashed border-slate-300 bg-white px-3.5">
+      <span className="text-sm text-slate-400">{label}</span>
+    </li>
+  );
+}
+
+export function EventListFullNotice({ children }: { children: ReactNode }) {
+  return (
+    <div
+      role="status"
+      className="mb-2 flex items-start gap-2.5 rounded-lg border border-red-300 bg-red-50 px-3 py-2.5 text-sm font-medium leading-snug text-red-950"
+    >
+      <TriangleAlert className="mt-0.5 size-4 shrink-0 text-red-600" aria-hidden />
+      <p>{children}</p>
+    </div>
+  );
+}
+
+export function EventCreateFullNotice({ title, body }: { title: string; body: string }) {
+  return (
+    <div
+      role="alert"
+      className="mb-4 flex items-start gap-3 rounded-lg border-2 border-red-400 bg-red-50 px-4 py-3.5 shadow-sm"
+    >
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
+        <TriangleAlert className="size-5" aria-hidden />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-sm font-semibold text-red-950">{title}</span>
+        <span className="mt-1 block text-sm leading-relaxed text-red-900">{body}</span>
+      </span>
+    </div>
   );
 }
