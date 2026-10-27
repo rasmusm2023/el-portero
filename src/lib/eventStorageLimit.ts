@@ -6,7 +6,7 @@ export const MAX_STORED_EVENTS = 10;
  * shown, as if 10 events are stored. Set to false so the warning follows the
  * real stored count.
  */
-export const PREVIEW_EVENT_STORAGE_WARNING = true;
+export const PREVIEW_EVENT_STORAGE_WARNING = false;
 
 export type EventStorageLimitState = {
   /** The list is at the maximum, so staff need to delete an event. */
