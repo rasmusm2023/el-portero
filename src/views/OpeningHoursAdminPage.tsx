@@ -3,20 +3,21 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Clock, LayoutDashboard, LogOut, RefreshCcw, Save, Upload } from "lucide-react";
+import { LayoutDashboard, Loader2, LogOut, RefreshCcw, Save } from "lucide-react";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import {
+  DeskNotice,
+  deskField,
+  deskGhost,
+  deskHint,
+  deskLabel,
+  deskPanel,
+  deskPrimary,
+  deskTimeSelect,
+} from "@/components/admin/events/EventsDesk";
 import { PageShell } from "@/components/layout/PageShell";
 import { t, type Locale, type MessageKey } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
-import {
-  adminBtnBlue,
-  adminBtnCaution,
-  adminBtnGreen,
-  adminBtnNeutral,
-  adminBtnSignOut,
-  adminCalloutSuccess,
-  adminTextMuted,
-} from "@/lib/adminUiStyles";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
 import {
   readOpeningHours,
@@ -49,8 +50,15 @@ function dayAdminLabel(locale: Locale, dayKey: OpeningHoursDayKey): string {
   return t(locale, DAY_ADMIN_LABEL_KEYS[dayKey]);
 }
 
-const fieldSelectClass =
-  "w-full rounded-none border border-paper/15 bg-paper/8 px-3 py-2 text-sm text-paper shadow-sm transition-shadow focus:border-gold/45 focus:outline-none focus:ring-1 focus:ring-gold/20 disabled:cursor-not-allowed disabled:bg-paper/6 disabled:text-paper/45";
+function patchSnapshotPublished(snapshot: string | null, isPublished: boolean): string | null {
+  if (!snapshot) return snapshot;
+  try {
+    const parsed = JSON.parse(snapshot) as OpeningHoursDoc;
+    return openingHoursSnapshot({ ...parsed, isPublished });
+  } catch {
+    return snapshot;
+  }
+}
 
 function patchDayRow(
   draft: OpeningHoursDoc,
@@ -72,6 +80,7 @@ export function OpeningHoursAdminPage() {
   const [draft, setDraft] = useState<OpeningHoursDoc>(() => DEFAULT_OPENING_HOURS);
   const [published, setPublished] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
@@ -80,6 +89,7 @@ export function OpeningHoursAdminPage() {
     setError(null);
     setMessage(null);
     setBusy(true);
+    setLoading(true);
     try {
       const db = getFirebaseFirestore();
       const existing = await readOpeningHours(db);
@@ -99,6 +109,7 @@ export function OpeningHoursAdminPage() {
       setError(unknownErrorMessage(err, t(locale, "admin.openingHours.loadError")));
     } finally {
       setBusy(false);
+      setLoading(false);
     }
   }, [locale]);
 
@@ -169,9 +180,7 @@ export function OpeningHoursAdminPage() {
       const db = getFirebaseFirestore();
       await setOpeningHoursPublished(db, false);
       setPublished(false);
-      setSavedSnapshot(
-        openingHoursSnapshot(normalizeOpeningHours({ ...draft, isPublished: false })),
-      );
+      setSavedSnapshot((prev) => patchSnapshotPublished(prev, false));
       setMessage(t(locale, "admin.openingHours.unpublishedSuccess"));
     } catch (err) {
       console.error(err);
@@ -183,191 +192,229 @@ export function OpeningHoursAdminPage() {
 
   if (!ready || !user) {
     return (
-      <PageShell title={t(locale, "admin.openingHours.title")} intro={t(locale, "admin.loading")}>
-        <p className={`text-sm ${adminTextMuted}`}>{t(locale, "admin.checkingSignIn")}</p>
+      <PageShell
+        tone="admin"
+        title={t(locale, "admin.openingHours.title")}
+        intro={t(locale, "admin.openingHours.intro")}
+      >
+        <p className={deskHint}>{t(locale, "admin.checkingSignIn")}</p>
       </PageShell>
     );
   }
 
   return (
     <PageShell
+      tone="admin"
       title={t(locale, "admin.openingHours.title")}
-      intro={<p className={adminTextMuted}>{t(locale, "admin.openingHours.intro")}</p>}
+      intro={t(locale, "admin.openingHours.intro")}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
-      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-3">
-          <Link href="/admin/dashboard" className={`inline-flex items-center justify-center ${adminBtnNeutral}`}>
-            <span className="inline-flex items-center gap-2">
-              <LayoutDashboard className="size-4" aria-hidden />
-              {t(locale, "admin.dashboard")}
-            </span>
-          </Link>
-          <button
-            type="button"
-            className={`inline-flex items-center justify-center ${adminBtnNeutral}`}
-            onClick={() => void load()}
-            disabled={busy}
-          >
-            <span className="inline-flex items-center gap-2">
-              <RefreshCcw className="size-4" aria-hidden />
-              {t(locale, "admin.menus.reload")}
-            </span>
-          </button>
-        </div>
-        <button type="button" className={adminBtnSignOut} onClick={() => void onLogout()} disabled={busy}>
-          <span className="inline-flex items-center gap-2">
-            <LogOut className="size-4" aria-hidden />
-            {t(locale, "admin.signOut")}
-          </span>
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <Link href="/admin/dashboard" className={deskGhost}>
+          <LayoutDashboard className="size-3.5" aria-hidden />
+          {t(locale, "admin.dashboard")}
+        </Link>
+        <button type="button" className={deskGhost} onClick={() => void load()} disabled={busy}>
+          <RefreshCcw className={`size-3.5 ${loading ? "animate-spin" : ""}`} aria-hidden />
+          {t(locale, "admin.menus.reload")}
+        </button>
+        <button type="button" className={deskGhost} onClick={() => void onLogout()} disabled={busy}>
+          <LogOut className="size-3.5" aria-hidden />
+          {t(locale, "admin.signOut")}
         </button>
       </div>
 
-      {error ? (
-        <div className="mb-4 rounded-none border border-red-400/25 bg-red-950/25 px-4 py-3 text-sm text-red-100">
-          {error}
+      {message || error ? (
+        <div className="mb-6 space-y-3">
+          {message ? <DeskNotice tone="success">{message}</DeskNotice> : null}
+          {error ? <DeskNotice tone="error">{error}</DeskNotice> : null}
         </div>
       ) : null}
-      {message ? <div className={`mb-4 ${adminCalloutSuccess}`}>{message}</div> : null}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-[calc(var(--header-h)+1rem)] lg:self-start">
-          <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-            <h2 className="font-display text-xl font-medium text-paper">
-              {t(locale, "admin.openingHours.statusTitle")}
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-paper/65">
-              {t(locale, "admin.openingHours.statusIntro")}
-            </p>
-            <div className="mt-6 text-sm">
-              <p>
-                <span className="text-paper/60">{t(locale, "admin.menus.publishedLabel")}</span>{" "}
-                <span className="font-semibold text-paper">
-                  {published ? t(locale, "admin.menus.yes") : t(locale, "admin.menus.no")}
-                </span>
+      {loading ? (
+        <div className={deskPanel}>
+          <p className="flex items-center gap-2.5 text-sm text-slate-600">
+            <Loader2 className="size-4 animate-spin text-blue-600" aria-hidden />
+            {t(locale, "admin.loading")}
+          </p>
+        </div>
+      ) : (
+        <div className="grid min-w-0 items-start gap-6 xl:grid-cols-12 xl:gap-8">
+          <aside className="min-w-0 xl:sticky xl:top-[calc(var(--header-h)+1rem)] xl:col-span-4 xl:self-start 2xl:col-span-3">
+            <div className={deskPanel}>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3.5">
+                <p className="text-xs font-medium text-slate-500">
+                  {t(locale, "admin.openingHours.statusTitle")}
+                </p>
+                <p className="mt-1 flex items-center gap-2 text-sm font-medium text-slate-900">
+                  <span
+                    className={`size-2 shrink-0 rounded-full ${
+                      published ? "bg-emerald-500 status-breathe" : "bg-slate-400"
+                    }`}
+                    aria-hidden
+                  />
+                  {published
+                    ? t(locale, "admin.menus.visibleOnSite")
+                    : t(locale, "admin.menus.hiddenOnSite")}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-500">
+                  {t(locale, "admin.openingHours.statusIntro")}
+                </p>
+              </div>
+              <div className="mt-3 flex flex-col gap-2">
+                {published ? (
+                  <button
+                    type="button"
+                    className={`w-full ${deskGhost}`}
+                    onClick={() => void onUnpublish()}
+                    disabled={busy}
+                  >
+                    {t(locale, "admin.menus.unpublish")}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={`w-full ${deskPrimary}`}
+                    onClick={() => void onPublish()}
+                    disabled={busy}
+                  >
+                    {t(locale, "admin.menus.publish")}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={`w-full ${published ? deskPrimary : deskGhost}`}
+                  onClick={() => void onSave()}
+                  disabled={!saveEnabled}
+                >
+                  {busy ? (
+                    <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                  ) : (
+                    <Save className="size-3.5" aria-hidden />
+                  )}
+                  {t(locale, "admin.events.saveChanges")}
+                </button>
+              </div>
+              <p
+                className={`mt-3 text-sm ${hasUnsavedChanges ? "font-medium text-amber-700" : "text-slate-500"}`}
+              >
+                {hasUnsavedChanges
+                  ? t(locale, "admin.menus.unsavedChanges")
+                  : t(locale, "admin.menus.allSaved")}
               </p>
             </div>
-            <div className="mt-8 flex flex-col gap-3">
-              <button
-                type="button"
-                className={`w-full ${adminBtnGreen}`}
-                onClick={() => void onPublish()}
-                disabled={busy}
-              >
-                <span className="inline-flex items-center justify-center gap-2">
-                  <Upload className="size-4" aria-hidden />
-                  {t(locale, "admin.menus.publish")}
-                </span>
-              </button>
-              <button
-                type="button"
-                className={`w-full ${adminBtnCaution}`}
-                onClick={() => void onUnpublish()}
-                disabled={busy || !published}
-              >
-                {t(locale, "admin.menus.unpublish")}
-              </button>
-              <button
-                type="button"
-                className={`w-full ${saveEnabled ? adminBtnBlue : adminBtnNeutral}`}
-                onClick={() => void onSave()}
-                disabled={!saveEnabled}
-              >
-                <span className="inline-flex items-center justify-center gap-2">
-                  <Save className="size-4" aria-hidden />
-                  {t(locale, "admin.events.saveChanges")}
-                </span>
-              </button>
-            </div>
-          </div>
-        </aside>
+          </aside>
 
-        <div className="rounded-none border border-border bg-paper-dark/35 p-6">
-          <div className="flex items-start gap-3 border-b border-paper/10 pb-6">
-            <Clock className="mt-0.5 size-5 shrink-0 text-paper/70" aria-hidden />
-            <div>
-              <h2 className="font-display text-xl font-medium text-paper">
+          <div className="min-w-0 xl:col-span-8 2xl:col-span-9">
+            <div className={deskPanel}>
+              <h2 className="text-base font-semibold text-slate-900">
                 {t(locale, "admin.openingHours.scheduleTitle")}
               </h2>
-              <p className="mt-2 text-sm leading-relaxed text-paper/65">
+              <p className={`mt-1 max-w-2xl ${deskHint}`}>
                 {t(locale, "admin.openingHours.scheduleIntro")}
               </p>
+
+              <ul className="mt-6 space-y-3">
+                {OPENING_HOURS_DAY_KEYS.map((dayKey) => {
+                  const row = draft.rows.find((r) => r.dayKey === dayKey);
+                  if (!row) return null;
+                  const dayName = dayAdminLabel(locale, dayKey);
+                  return (
+                    <li
+                      key={dayKey}
+                      className="rounded-lg border border-slate-200 bg-slate-50 p-3 sm:p-4"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <p className="text-sm font-semibold text-slate-900">{dayName}</p>
+                        <p className="flex items-center gap-2 text-sm text-slate-600">
+                          <span
+                            className={`size-2 shrink-0 rounded-full ${
+                              row.closed ? "bg-slate-400" : "bg-emerald-500"
+                            }`}
+                            aria-hidden
+                          />
+                          {row.closed ? (
+                            t(locale, "admin.openingHours.statusClosed")
+                          ) : (
+                            <span className="tabular-nums">
+                              {row.open}
+                              <span className="px-1.5 text-slate-300" aria-hidden>
+                                —
+                              </span>
+                              {row.close}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                      <div className="mt-4 flex flex-wrap items-end gap-3">
+                        <div className="w-full sm:w-36">
+                          <label className={deskLabel} htmlFor={`oh-status-${dayKey}`}>
+                            {t(locale, "admin.openingHours.dayStatus")}
+                          </label>
+                          <select
+                            id={`oh-status-${dayKey}`}
+                            value={row.closed ? "closed" : "open"}
+                            onChange={(e) =>
+                              setDraft((d) =>
+                                patchDayRow(d, dayKey, { closed: e.target.value === "closed" }),
+                              )
+                            }
+                            className={`${deskField} cursor-pointer`}
+                            disabled={busy}
+                          >
+                            <option value="open">{t(locale, "admin.openingHours.statusOpen")}</option>
+                            <option value="closed">{t(locale, "admin.openingHours.statusClosed")}</option>
+                          </select>
+                        </div>
+                        <div className={row.closed ? "opacity-45" : undefined}>
+                          <label className={deskLabel} htmlFor={`oh-open-${dayKey}`}>
+                            {t(locale, "admin.openingHours.openFrom")}
+                          </label>
+                          <select
+                            id={`oh-open-${dayKey}`}
+                            value={row.open}
+                            onChange={(e) =>
+                              setDraft((d) => patchDayRow(d, dayKey, { open: e.target.value }))
+                            }
+                            className={deskTimeSelect}
+                            disabled={busy || row.closed}
+                          >
+                            {OPENING_HOURS_TIME_OPTIONS.map((time) => (
+                              <option key={time} value={time}>
+                                {time}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className={row.closed ? "opacity-45" : undefined}>
+                          <label className={deskLabel} htmlFor={`oh-close-${dayKey}`}>
+                            {t(locale, "admin.openingHours.openUntil")}
+                          </label>
+                          <select
+                            id={`oh-close-${dayKey}`}
+                            value={row.close}
+                            onChange={(e) =>
+                              setDraft((d) => patchDayRow(d, dayKey, { close: e.target.value }))
+                            }
+                            className={deskTimeSelect}
+                            disabled={busy || row.closed}
+                          >
+                            {OPENING_HOURS_TIME_OPTIONS.map((time) => (
+                              <option key={time} value={time}>
+                                {time}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
-
-          <ul className="mt-10 space-y-5">
-            {OPENING_HOURS_DAY_KEYS.map((dayKey) => {
-              const row = draft.rows.find((r) => r.dayKey === dayKey);
-              if (!row) return null;
-              return (
-                <li
-                  key={dayKey}
-                  className="grid gap-3 border-b border-paper/10 pb-5 last:border-b-0 last:pb-0 sm:grid-cols-[minmax(0,8rem)_minmax(0,9rem)_minmax(0,1fr)_minmax(0,1fr)] sm:items-end sm:gap-4"
-                >
-                  <span className="text-sm font-semibold tracking-wide text-paper uppercase sm:pb-2">
-                    {dayAdminLabel(locale, dayKey)}
-                  </span>
-                  <div>
-                    <label className="sr-only" htmlFor={`oh-status-${dayKey}`}>
-                      {t(locale, "admin.openingHours.dayStatus")} — {dayAdminLabel(locale, dayKey)}
-                    </label>
-                    <select
-                      id={`oh-status-${dayKey}`}
-                      value={row.closed ? "closed" : "open"}
-                      onChange={(e) =>
-                        setDraft((d) =>
-                          patchDayRow(d, dayKey, { closed: e.target.value === "closed" }),
-                        )
-                      }
-                      className={fieldSelectClass}
-                      disabled={busy}
-                    >
-                      <option value="open">{t(locale, "admin.openingHours.statusOpen")}</option>
-                      <option value="closed">{t(locale, "admin.openingHours.statusClosed")}</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-paper/60" htmlFor={`oh-open-${dayKey}`}>
-                      {t(locale, "admin.openingHours.openFrom")}
-                    </label>
-                    <select
-                      id={`oh-open-${dayKey}`}
-                      value={row.open}
-                      onChange={(e) => setDraft((d) => patchDayRow(d, dayKey, { open: e.target.value }))}
-                      className={`${fieldSelectClass} mt-1`}
-                      disabled={busy || row.closed}
-                    >
-                      {OPENING_HOURS_TIME_OPTIONS.map((time) => (
-                        <option key={time} value={time}>
-                          {time}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-paper/60" htmlFor={`oh-close-${dayKey}`}>
-                      {t(locale, "admin.openingHours.openUntil")}
-                    </label>
-                    <select
-                      id={`oh-close-${dayKey}`}
-                      value={row.close}
-                      onChange={(e) => setDraft((d) => patchDayRow(d, dayKey, { close: e.target.value }))}
-                      className={`${fieldSelectClass} mt-1`}
-                      disabled={busy || row.closed}
-                    >
-                      {OPENING_HOURS_TIME_OPTIONS.map((time) => (
-                        <option key={time} value={time}>
-                          {time}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
         </div>
-      </div>
+      )}
     </PageShell>
   );
 }

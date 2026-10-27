@@ -31,11 +31,11 @@ function getMadridNowMinutes(): number {
   return hour * 60 + minute;
 }
 
-function getMadridWeekdayIndex(): number {
+function getMadridWeekdayIndex(now = new Date()): number {
   const wd = new Intl.DateTimeFormat("en-US", {
     timeZone: "Europe/Madrid",
     weekday: "short",
-  }).format(new Date());
+  }).format(now);
   const map: Record<string, number> = {
     Sun: 0,
     Mon: 1,
@@ -45,11 +45,16 @@ function getMadridWeekdayIndex(): number {
     Fri: 5,
     Sat: 6,
   };
-  return map[wd] ?? new Date().getDay();
+  return map[wd] ?? now.getDay();
+}
+
+/** Weekday in Europe/Madrid, matching the opening-hours rows. */
+export function currentOpeningDayKey(now = new Date()): OpeningHoursDayKey {
+  return JS_DAY_TO_KEY[getMadridWeekdayIndex(now)] ?? "mon";
 }
 
 function getTodayKey(): OpeningHoursDayKey {
-  return JS_DAY_TO_KEY[getMadridWeekdayIndex()] ?? "mon";
+  return currentOpeningDayKey();
 }
 
 function scheduleForDay(doc: OpeningHoursDoc, dayKey: OpeningHoursDayKey): OpeningHoursDaySchedule | null {
@@ -120,14 +125,32 @@ export function getVenueStatus(locale: Locale, doc: OpeningHoursDoc): VenueStatu
             today: "i dag",
             closedToday: "Stängt idag",
           }
-        : {
-            open: "Open now",
-            closed: "Closed now",
-            closesAt: "Closes at",
-            opensAt: "Opens at",
-            today: "tonight",
-            closedToday: "Closed today",
-          };
+        : locale === "de"
+          ? {
+              open: "Jetzt geöffnet",
+              closed: "Jetzt geschlossen",
+              closesAt: "Schließt um",
+              opensAt: "Öffnet um",
+              today: "heute",
+              closedToday: "Heute geschlossen",
+            }
+          : locale === "fr"
+            ? {
+                open: "Ouvert maintenant",
+                closed: "Fermé maintenant",
+                closesAt: "Ferme à",
+                opensAt: "Ouvre à",
+                today: "aujourd’hui",
+                closedToday: "Fermé aujourd’hui",
+              }
+            : {
+                open: "Open now",
+                closed: "Closed now",
+                closesAt: "Closes at",
+                opensAt: "Opens at",
+                today: "tonight",
+                closedToday: "Closed today",
+              };
 
   if (!today || today.closed) {
     const next = findNextOpenDay(doc, todayKey);

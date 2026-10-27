@@ -4,6 +4,8 @@ const intlLocale: Record<Locale, string> = {
   en: "en-IE",
   es: "es-ES",
   sv: "sv-SE",
+  de: "de-DE",
+  fr: "fr-FR",
 };
 
 /** Amounts are in EUR; shown as numbers only (no symbol). */

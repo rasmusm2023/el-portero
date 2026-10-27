@@ -23,6 +23,65 @@
   :focus-visible {
     @apply outline-solid outline-2 outline-offset-2 outline-gold/45;
   }
+
+  html[data-theme="admin"] {
+    color-scheme: light;
+  }
+
+  html[data-theme="admin"] body {
+    @apply bg-slate-100 text-slate-900;
+    background-image: none;
+  }
+
+  html[data-theme="admin"] :focus-visible {
+    outline-color: rgb(37 99 235 / 0.55);
+  }
+
+  html[data-theme="admin"] ::selection {
+    background: rgb(37 99 235 / 0.16);
+    color: #0f172a;
+  }
+}
+
+@keyframes status-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+}
+
+.status-breathe {
+  animation: status-breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes sign-in-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(340%);
+  }
+}
+
+.sign-in-slide {
+  animation: sign-in-slide 1.35s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-breathe {
+    animation: none;
+  }
+
+  .sign-in-slide {
+    animation: none;
+    transform: none;
+    width: 100%;
+  }
 }
 
 @layer utilities {

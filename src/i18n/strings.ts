@@ -1,11 +1,16 @@
-export type Locale = "en" | "es" | "sv";
+import { deMessages } from "./messages.de";
+import { frMessages } from "./messages.fr";
 
-export const locales: Locale[] = ["en", "es", "sv"];
+export type Locale = "en" | "es" | "sv" | "de" | "fr";
+
+export const locales: Locale[] = ["en", "es", "sv", "de", "fr"];
 
 export const localeLabels: Record<Locale, string> = {
   en: "English",
   es: "Español",
   sv: "Svenska",
+  de: "Deutsch",
+  fr: "Français",
 };
 
 /**
@@ -13,11 +18,15 @@ export const localeLabels: Record<Locale, string> = {
  * — en: en.wikipedia File:Flag_of_the_United_Kingdom.svg
  * — es: commons File:Flag_of_Spain.svg
  * — sv: commons File:Flag_of_Sweden.svg
+ * — de: en.wikipedia File:Flag_of_Germany.svg
+ * — fr: en.wikipedia File:Flag_of_France.svg
  */
 export const localeFlagSrc: Record<Locale, string> = {
   en: "https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg",
   es: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg",
   sv: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Sweden.svg",
+  de: "https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg",
+  fr: "https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg",
 };
 
 export type NavKey =
@@ -190,7 +199,12 @@ type PageKey =
   | "page.hours.title"
   | "page.hours.map"
   | "page.hours.mapIframeTitle"
-  | "page.admin.title";
+  | "page.admin.title"
+  | "page.admin.intro"
+  | "page.admin.email"
+  | "page.admin.password"
+  | "page.admin.signIn"
+  | "page.admin.backToSite";
 
 type AdminKey =
   | "admin.signOut"
@@ -212,6 +226,12 @@ type AdminKey =
   | "admin.dashboard.hoursDescription"
   | "admin.dashboard.hoursLink"
   | "admin.dashboard.backToSite"
+  | "admin.dashboard.now"
+  | "admin.dashboard.liveEvents"
+  | "admin.dashboard.inactiveEvents"
+  | "admin.dashboard.nextEvent"
+  | "admin.dashboard.noUpcoming"
+  | "admin.dashboard.fullyBookedCount"
   | "openingHours.day.mon"
   | "openingHours.day.tue"
   | "openingHours.day.wed"
@@ -247,29 +267,47 @@ type AdminKey =
   | "admin.openingHours.unpublishError"
   | "admin.loading"
   | "admin.checkingSignIn"
+  | "admin.signingIn"
+  | "admin.signedInTitle"
+  | "admin.signedInOpening"
+  | "admin.chrome.staff"
   | "admin.events.title"
   | "admin.events.introLead"
-  | "admin.events.introBulletNewEvent"
-  | "admin.events.introBulletEditList"
-  | "admin.events.introBulletDuplicate"
-  | "admin.events.introBulletPublished"
-  | "admin.events.introBulletSpecificTime"
-  | "admin.events.introBulletFullyBooked"
   | "admin.events.allEvents"
   | "admin.events.newEvent"
   | "admin.events.emptyList"
   | "admin.events.draft"
   | "admin.events.pastRemove"
   | "admin.events.duplicate"
+  | "admin.events.makeCopy"
+  | "admin.events.unsaved"
+  | "admin.events.saved"
+  | "admin.events.openEventsPage"
   | "admin.events.formNew"
   | "admin.events.formEdit"
   | "admin.events.idLabel"
   | "admin.events.idPlaceholder"
+  | "admin.events.idHint"
   | "admin.events.idLocked"
+  | "admin.events.sectionBasics"
+  | "admin.events.sectionTime"
+  | "admin.events.sectionPhoto"
+  | "admin.events.sectionCopy"
+  | "admin.events.sectionReview"
+  | "admin.events.sectionPublish"
+  | "admin.events.previewHint"
+  | "admin.events.guestDateLabel"
   | "admin.events.calendarDate"
   | "admin.events.specificTime"
   | "admin.events.fullyBooked"
   | "admin.events.published"
+  | "admin.events.publishedHint"
+  | "admin.events.publishedLocal"
+  | "admin.events.publishedLocalHint"
+  | "admin.events.statusHidden"
+  | "admin.events.statusHiddenHint"
+  | "admin.events.statusHiddenLocalHint"
+  | "admin.events.localOnly"
   | "admin.events.imageUrl"
   | "admin.events.imageUrlHint"
   | "admin.events.datePreviewHint"
@@ -296,10 +334,61 @@ type AdminKey =
   | "admin.events.loadError"
   | "admin.events.saveError"
   | "admin.events.deleteError"
+  | "admin.events.storageFullTitle"
+  | "admin.events.storageFullBody"
+  | "admin.events.storageCreateTitle"
+  | "admin.events.storageCreateBody"
+  | "admin.events.storageListWarning"
+  | "admin.events.storageEmptySlot"
+  | "admin.events.storageCount"
+  | "admin.events.storageMeterAria"
+  | "admin.events.storageFullSaveError"
   | "admin.events.invalidId"
   | "admin.events.invalidTime"
   | "admin.events.loadingTitle"
   | "admin.events.loadingIntro"
+  | "admin.events.translateContent"
+  | "admin.events.translating"
+  | "admin.events.translateWait1"
+  | "admin.events.translateWait2"
+  | "admin.events.translateWait3"
+  | "admin.events.translateElapsed"
+  | "admin.events.translateLanguageCorrected"
+  | "admin.events.translateLanguageCorrectedSplit"
+  | "admin.events.translateError"
+  | "admin.events.translateSuccess"
+  | "admin.events.translateDoneTitle"
+  | "admin.events.translateDoneBody"
+  | "admin.events.translateNeedText"
+  | "admin.events.reviewTranslations"
+  | "admin.events.uploadImage"
+  | "admin.events.replaceImage"
+  | "admin.events.removeImage"
+  | "admin.events.imageUploading"
+  | "admin.events.imageUploadError"
+  | "admin.events.imageHint"
+  | "admin.events.imageAltHint"
+  | "admin.events.sourceHint"
+  | "admin.events.orPasteLink"
+  | "admin.events.notTranslatedYet"
+  | "admin.events.previewLanguage"
+  | "admin.events.changePhoto"
+  | "admin.events.addTime"
+  | "admin.events.descriptionText"
+  | "admin.events.descriptionBullets"
+  | "admin.events.descriptionBold"
+  | "admin.events.descriptionItalic"
+  | "admin.events.available"
+  | "admin.events.editDate"
+  | "admin.events.editTime"
+  | "admin.events.editAvailability"
+  | "admin.events.chooseLanguage"
+  | "admin.events.staffHint"
+  | "admin.events.step"
+  | "admin.events.step1Title"
+  | "admin.events.step3Title"
+  | "admin.events.step4Title"
+  | "admin.events.step4Hint"
   | "admin.menus.title"
   | "admin.menus.intro"
   | "admin.menus.reload"
@@ -372,6 +461,19 @@ type AdminKey =
   | "admin.menus.untitledSection"
   | "admin.menus.untitledDish"
   | "admin.menus.untitledDrink"
+  | "admin.menus.outline"
+  | "admin.menus.sectionsLabel"
+  | "admin.menus.connectionHint"
+  | "admin.menus.editingSection"
+  | "admin.menus.noSection"
+  | "admin.menus.visibleOnSite"
+  | "admin.menus.hiddenOnSite"
+  | "admin.menus.shownToGuests"
+  | "admin.menus.unsavedChanges"
+  | "admin.menus.allSaved"
+  | "admin.menus.breadcrumb"
+  | "admin.menus.menuTitleHint"
+  | "admin.menus.chooseSection"
   | "admin.confirm.title"
   | "admin.confirm.cancel"
   | "admin.confirm.proceed"
@@ -610,6 +712,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.map": "Location",
     "page.hours.mapIframeTitle": "Map: el PORTERO, Torrevieja",
     "page.admin.title": "Admin sign-in",
+    "page.admin.intro": "Restricted access for staff.",
+    "page.admin.email": "Email",
+    "page.admin.password": "Password",
+    "page.admin.signIn": "Sign in",
+    "page.admin.backToSite": "Back to site",
     "admin.signOut": "Sign out",
     "admin.signOutAria": "Sign out of admin",
     "admin.dashboard": "Dashboard",
@@ -617,21 +724,27 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.intro": "Choose what you want to edit.",
     "admin.dashboard.signedInAs": "Signed in as",
     "admin.dashboard.eventsLabel": "Events",
-    "admin.dashboard.eventsHeading": "Public events",
+    "admin.dashboard.eventsHeading": "Events",
     "admin.dashboard.eventsDescription":
       "Add and update evenings and happenings on the home page and Events page. Keep drafts hidden until you are ready for guests to see them.",
-    "admin.dashboard.eventsLink": "Open events →",
+    "admin.dashboard.eventsLink": "Manage events",
     "admin.dashboard.menusLabel": "Menus",
-    "admin.dashboard.menusHeading": "Dinner & drinks",
+    "admin.dashboard.menusHeading": "Menu",
     "admin.dashboard.menusDescription":
       "Edit dinner and drinks menus section by section. Save your draft, then publish when guests should see the menu on the website.",
-    "admin.dashboard.menusLink": "Open menus →",
+    "admin.dashboard.menusLink": "Manage menus",
     "admin.dashboard.hoursLabel": "Hours",
     "admin.dashboard.hoursHeading": "Opening hours",
     "admin.dashboard.hoursDescription":
       "Weekly schedule and open/closed times shown on the home page. Save, then publish when guests should see updates.",
-    "admin.dashboard.hoursLink": "Open opening hours →",
+    "admin.dashboard.hoursLink": "Manage opening hours",
     "admin.dashboard.backToSite": "← Back to site",
+    "admin.dashboard.now": "Status",
+    "admin.dashboard.liveEvents": "Live on the website",
+    "admin.dashboard.inactiveEvents": "Inactive or past",
+    "admin.dashboard.nextEvent": "Next",
+    "admin.dashboard.noUpcoming": "Nothing coming up",
+    "admin.dashboard.fullyBookedCount": "Fully booked: {count}",
     "openingHours.day.mon": "Mon",
     "openingHours.day.tue": "Tue",
     "openingHours.day.wed": "Wed",
@@ -670,44 +783,59 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "Could not unpublish. Try again.",
     "admin.loading": "Loading…",
     "admin.checkingSignIn": "Checking sign-in…",
+    "admin.signingIn": "Signing in…",
+    "admin.signedInTitle": "Signed in",
+    "admin.signedInOpening": "Opening the workspace…",
+    "admin.chrome.staff": "Staff workspace",
     "admin.events.title": "Events",
     "admin.events.introLead":
       "Here you manage the evenings and happenings that guests see on the home page and Events page.",
-    "admin.events.introBulletNewEvent":
-      "**New event** — start with a blank form.",
-    "admin.events.introBulletEditList":
-      "**Pick an event from the list** — edit it in the form on the right.",
-    "admin.events.introBulletDuplicate":
-      "**Duplicate** — copy an existing event; remember to change the date, title, and photo.",
-    "admin.events.introBulletPublished":
-      "**Published on website** — when unchecked, the event is a draft and stays hidden from guests until you check this again and save.",
-    "admin.events.introBulletSpecificTime":
-      "**Show start and end time** — when checked, guests see start and end times; when unchecked, only the date line is shown.",
-    "admin.events.introBulletFullyBooked":
-      "**Fully booked** — tells guests the event is full on the website (they can still contact the restaurant as usual).",
     "admin.events.allEvents": "All events",
     "admin.events.newEvent": "New event",
     "admin.events.emptyList": "No events yet. Tap New event above to add the first one.",
     "admin.events.draft": "Draft",
     "admin.events.pastRemove": "Past — you can delete",
     "admin.events.duplicate": "Duplicate",
+    "admin.events.makeCopy": "Make a copy",
+    "admin.events.unsaved": "Unsaved changes",
+    "admin.events.saved": "Saved",
+    "admin.events.openEventsPage": "Open events page",
     "admin.events.formNew": "New event",
     "admin.events.formEdit": "Edit event",
     "admin.events.idLabel": "Short name (ID)",
     "admin.events.idPlaceholder": "e.g. wine-night-june-2026",
+    "admin.events.idHint":
+      "Guests never see this short name. It is only used in this list and when saving the event.",
     "admin.events.idLocked": "The short name cannot be changed after the event is created.",
+    "admin.events.sectionBasics": "Name and date",
+    "admin.events.sectionTime": "Time",
+    "admin.events.sectionPhoto": "Photo",
+    "admin.events.sectionCopy": "Text guests will see",
+    "admin.events.sectionReview": "Review translations",
+    "admin.events.sectionPublish": "Website status",
+    "admin.events.previewHint": "Click the card to edit what guests see. Switch language at the top right.",
+    "admin.events.guestDateLabel": "Shown to guests as",
     "admin.events.calendarDate": "Date on calendar",
-    "admin.events.specificTime": "Show start and end time",
+    "admin.events.specificTime": "Don't show",
     "admin.events.fullyBooked": "Fully booked",
-    "admin.events.published": "Published on website",
-    "admin.events.imageUrl": "Event photo link",
+    "admin.events.published": "Live on the real website",
+    "admin.events.publishedHint": "Guests on www.el-portero.com can see this event.",
+    "admin.events.publishedLocal": "Only on this computer",
+    "admin.events.publishedLocalHint":
+      "Visible here on localhost. The real website will not show it.",
+    "admin.events.statusHidden": "Hidden",
+    "admin.events.statusHiddenHint": "Guests on www.el-portero.com cannot see this event.",
+    "admin.events.statusHiddenLocalHint":
+      "Not shown on localhost, and not on the real website.",
+    "admin.events.localOnly": "Local only",
+    "admin.events.imageUrl": "Photo link",
     "admin.events.imageUrlHint":
-      "Upload the photo at www.imgbox.com (no account needed). When it appears, right-click the image → Get link (or Copy image address) and paste that link here. It must start with https:// and end with .jpg, .jpeg, or .png — not the imgbox page address.",
+      "Upload a photo from your computer (we resize it automatically). You can still paste an image link if you prefer.",
     "admin.events.datePreviewHint":
       "Date shown to guests (filled in automatically from the calendar date above):",
     "admin.events.timeOnly": "Time",
     "admin.events.timeOnlyHint":
-      "Start and end times appear on the website (24-hour clock). The venue is always el PORTERO in Torrevieja.",
+      "Start and end times appear on the website (24-hour clock).",
     "admin.events.startTime": "Start time",
     "admin.events.endTime": "End time",
     "admin.events.preview": "Preview",
@@ -719,8 +847,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.delete": "Delete",
     "admin.events.saveNewTooltip": "Save new event",
     "admin.events.saveEditTooltip": "Save your edits",
-    "admin.events.saveNewDisabledTooltip": "Change the form to create an event",
-    "admin.events.saveEditDisabledTooltip": "No unsaved changes — edit a field to save",
+    "admin.events.saveNewDisabledTooltip": "Edit the preview or the details below to create an event",
+    "admin.events.saveEditDisabledTooltip": "No unsaved changes — edit the preview or the details below to save",
     "admin.events.duplicateLoaded":
       "Copy loaded — check the short name (ID) and date, then tap Create.",
     "admin.events.created": "Event created.",
@@ -730,14 +858,73 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadError": "Could not load events. Try refreshing the page.",
     "admin.events.saveError": "Could not save. Check your connection and try again.",
     "admin.events.deleteError": "Could not delete. Try again.",
+    "admin.events.storageFullTitle": "The event list is full",
+    "admin.events.storageFullBody": "You can keep {max} events. Delete at least one before you add another.",
+    "admin.events.storageCreateTitle": "You can’t save a new event yet",
+    "admin.events.storageCreateBody": "The list is full. Delete an event on the left, then try again.",
+    "admin.events.storageListWarning": "The list is full. Delete an event to add a new one.",
+    "admin.events.storageEmptySlot": "Empty",
+    "admin.events.storageCount": "{count} of {max}",
+    "admin.events.storageMeterAria": "{count} of {max} events",
+    "admin.events.storageFullSaveError": "The list is full. Delete an event first.",
     "admin.events.invalidId":
       "Short name (ID): use 1–64 characters — lowercase letters, numbers, and hyphens only (e.g. summer-dinner-2026).",
     "admin.events.invalidTime": "End time must be the same as or after the start time.",
     "admin.events.loadingTitle": "Events",
     "admin.events.loadingIntro": "Loading…",
+    "admin.events.translateContent": "Translate content",
+    "admin.events.translating": "Translating…",
+    "admin.events.translateWait1": "Translation is running. Please wait a couple of seconds.",
+    "admin.events.translateWait2": "Checking which language you wrote in, then translating the rest.",
+    "admin.events.translateWait3": "The preview updates when every language is ready. You can leave this open.",
+    "admin.events.translateElapsed": "Elapsed time {time}",
+    "admin.events.translateLanguageCorrected":
+      "What you wrote in the {source} field is {detected}. That original text is saved as {detected}, and {source} now has the translation. Other empty languages were filled too. Switch language on the preview to review, then save.",
+    "admin.events.translateLanguageCorrectedSplit":
+      "The title is {titleLanguage} and the description is {excerptLanguage}. Each original is saved in that language, and the {source} fields now have the {source} translation. Switch language on the preview to review, then save.",
+    "admin.events.translateError":
+      "Could not translate. Firebase AI Logic needs to be enabled on the project, then try again.",
+    "admin.events.translateSuccess":
+      "Empty languages and photo descriptions were filled from {language}. Switch language on the preview to review, then save.",
+    "admin.events.translateDoneTitle": "Everything is translated",
+    "admin.events.translateDoneBody":
+      "Check each language in the menu at the top of this section.",
+    "admin.events.translateNeedText": "Add a title or description before translating.",
+    "admin.events.reviewTranslations": "Review translations",
+    "admin.events.uploadImage": "Upload photo",
+    "admin.events.replaceImage": "Replace photo",
+    "admin.events.removeImage": "Remove photo",
+    "admin.events.imageUploading": "Uploading photo…",
+    "admin.events.imageUploadError":
+      "Could not upload the photo. Try again, or paste a link instead.",
+    "admin.events.imageHint": "Prefer a link? Paste it here instead.",
+    "admin.events.imageAltHint":
+      "Applies to the language selected on the preview. Filled when you translate. Edit if you want it more specific.",
+    "admin.events.sourceHint":
+      "Write the title and description on the card, then press Translate content.",
+    "admin.events.orPasteLink": "Or paste a photo link",
+    "admin.events.notTranslatedYet": "Not translated yet",
+    "admin.events.previewLanguage": "Preview language",
+    "admin.events.changePhoto": "Change photo",
+    "admin.events.addTime": "Add time",
+    "admin.events.descriptionText": "Text",
+    "admin.events.descriptionBullets": "Bullets",
+    "admin.events.descriptionBold": "Bold",
+    "admin.events.descriptionItalic": "Italic",
+    "admin.events.available": "Available",
+    "admin.events.editDate": "Event date",
+    "admin.events.editTime": "Start and end time",
+    "admin.events.editAvailability": "Booking status",
+    "admin.events.chooseLanguage": "Choose preview language",
+    "admin.events.staffHint": "Guests do not see these fields. They are only used here.",
+    "admin.events.step": "Step {n}",
+    "admin.events.step1Title": "Details & Preview",
+    "admin.events.step3Title": "Short name and website status",
+    "admin.events.step4Title": "Double-check",
+    "admin.events.step4Hint": "Look over the rest before you save.",
     "admin.menus.title": "Menus",
     "admin.menus.intro":
-      "Choose dinner or drinks. Save keeps your draft; Publish shows it on the site.",
+      "Dinner and drinks are separate menus. Each menu is made of sections, and each section holds the dishes guests see under that heading.",
     "admin.menus.reload": "Reload",
     "admin.menus.tabDinner": "Dinner",
     "admin.menus.tabDrinks": "Drinks",
@@ -749,7 +936,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.no": "No",
     "admin.menus.publish": "Publish",
     "admin.menus.unpublish": "Unpublish",
-    "admin.menus.menuTitleLabel": "Menu title (shown on the page when set)",
+    "admin.menus.menuTitleLabel": "Menu title",
     "admin.menus.menuTitlePlaceholder": "e.g. Spring dinner menu",
     "admin.menus.sectionTitleLabel": "Section title",
     "admin.menus.removeSection": "Remove section",
@@ -817,6 +1004,21 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.untitledSection": "Untitled section",
     "admin.menus.untitledDish": "Untitled dish",
     "admin.menus.untitledDrink": "Untitled drink",
+    "admin.menus.outline": "Menus",
+    "admin.menus.sectionsLabel": "Sections",
+    "admin.menus.connectionHint":
+      "A section is a heading on the menu. The dishes nested under it are what guests read in that group.",
+    "admin.menus.editingSection": "Dishes in this section",
+    "admin.menus.noSection": "This menu has no sections yet. Add one to start a group of dishes.",
+    "admin.menus.visibleOnSite": "On the website",
+    "admin.menus.hiddenOnSite": "Draft only",
+    "admin.menus.shownToGuests": "Shown to guests",
+    "admin.menus.unsavedChanges": "Unsaved changes",
+    "admin.menus.allSaved": "All changes saved",
+    "admin.menus.breadcrumb": "Where you are in the menu",
+    "admin.menus.menuTitleHint":
+      "This is the button at the top of the menu on the website. Without a title, that button is not shown.",
+    "admin.menus.chooseSection": "Choose a section on the left to edit its dishes.",
     "admin.confirm.title": "Warning",
     "admin.confirm.cancel": "Cancel",
     "admin.confirm.proceed": "Yes, continue",
@@ -1064,6 +1266,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.map": "Ubicación",
     "page.hours.mapIframeTitle": "Mapa: el PORTERO, Torrevieja",
     "page.admin.title": "Acceso admin",
+    "page.admin.intro": "Acceso restringido para el equipo.",
+    "page.admin.email": "Correo",
+    "page.admin.password": "Contraseña",
+    "page.admin.signIn": "Entrar",
+    "page.admin.backToSite": "Volver al sitio",
     "admin.signOut": "Cerrar sesión",
     "admin.signOutAria": "Cerrar sesión de administración",
     "admin.dashboard": "Panel",
@@ -1071,21 +1278,27 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.intro": "Elegid qué queréis editar.",
     "admin.dashboard.signedInAs": "Sesión iniciada como",
     "admin.dashboard.eventsLabel": "Eventos",
-    "admin.dashboard.eventsHeading": "Eventos públicos",
+    "admin.dashboard.eventsHeading": "Eventos",
     "admin.dashboard.eventsDescription":
       "Añadid y actualizad veladas y actividades en la página de inicio y en Eventos. Dejad los borradores ocultos hasta que estén listos para los clientes.",
-    "admin.dashboard.eventsLink": "Abrir eventos →",
+    "admin.dashboard.eventsLink": "Gestionar eventos",
     "admin.dashboard.menusLabel": "Cartas",
-    "admin.dashboard.menusHeading": "Cena y bebidas",
+    "admin.dashboard.menusHeading": "Carta",
     "admin.dashboard.menusDescription":
       "Editad las cartas de cena y bebidas por secciones. Guardad el borrador y publicad cuando los clientes deban ver la carta en la web.",
-    "admin.dashboard.menusLink": "Abrir cartas →",
+    "admin.dashboard.menusLink": "Gestionar cartas",
     "admin.dashboard.hoursLabel": "Horario",
     "admin.dashboard.hoursHeading": "Horario de apertura",
     "admin.dashboard.hoursDescription":
       "Horario semanal y horas de apertura/cierre en la página de inicio. Guardad y publicad cuando los clientes deban ver los cambios.",
-    "admin.dashboard.hoursLink": "Abrir horario →",
+    "admin.dashboard.hoursLink": "Gestionar horario",
     "admin.dashboard.backToSite": "← Volver al sitio",
+    "admin.dashboard.now": "Estado",
+    "admin.dashboard.liveEvents": "En la web",
+    "admin.dashboard.inactiveEvents": "Inactivos o pasados",
+    "admin.dashboard.nextEvent": "Siguiente",
+    "admin.dashboard.noUpcoming": "Nada próximo",
+    "admin.dashboard.fullyBookedCount": "Completos: {count}",
     "openingHours.day.mon": "Lun",
     "openingHours.day.tue": "Mar",
     "openingHours.day.wed": "Mié",
@@ -1124,44 +1337,58 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "No se pudo despublicar. Intentad de nuevo.",
     "admin.loading": "Cargando…",
     "admin.checkingSignIn": "Comprobando acceso…",
+    "admin.signingIn": "Entrando…",
+    "admin.signedInTitle": "Sesión iniciada",
+    "admin.signedInOpening": "Abriendo el espacio de trabajo…",
+    "admin.chrome.staff": "Zona de personal",
     "admin.events.title": "Eventos",
     "admin.events.introLead":
       "Aquí gestionáis las veladas y actividades que ven los clientes en la página de inicio y en Eventos.",
-    "admin.events.introBulletNewEvent":
-      "**Nuevo evento** — empezad con un formulario en blanco.",
-    "admin.events.introBulletEditList":
-      "**Elegid un evento de la lista** — editadlo en el formulario de la derecha.",
-    "admin.events.introBulletDuplicate":
-      "**Duplicar** — copia un evento existente; acordaos de cambiar fecha, título y foto.",
-    "admin.events.introBulletPublished":
-      "**Publicado en la web** — si está desmarcado, el evento es un borrador y los clientes no lo ven hasta que lo volváis a marcar y guardéis.",
-    "admin.events.introBulletSpecificTime":
-      "**Mostrar hora de inicio y fin** — marcado: los clientes ven las horas; desmarcado: solo la fecha.",
-    "admin.events.introBulletFullyBooked":
-      "**Completo** — indica a los clientes que el evento está lleno en la web (pueden seguir contactando con el restaurante).",
     "admin.events.allEvents": "Todos los eventos",
     "admin.events.newEvent": "Nuevo evento",
     "admin.events.emptyList": "Aún no hay eventos. Pulsad Nuevo evento arriba para añadir el primero.",
     "admin.events.draft": "Borrador",
     "admin.events.pastRemove": "Pasado — podéis borrarlo",
     "admin.events.duplicate": "Duplicar",
+    "admin.events.makeCopy": "Hacer una copia",
+    "admin.events.unsaved": "Cambios sin guardar",
+    "admin.events.saved": "Guardado",
+    "admin.events.openEventsPage": "Abrir la página de eventos",
     "admin.events.formNew": "Nuevo evento",
     "admin.events.formEdit": "Editar evento",
     "admin.events.idLabel": "Nombre corto (ID)",
     "admin.events.idPlaceholder": "p. ej. cena-vino-junio-2026",
+    "admin.events.idHint":
+      "Los clientes no ven este nombre corto. Solo se usa en esta lista y al guardar el evento.",
     "admin.events.idLocked": "El nombre corto no se puede cambiar después de crear el evento.",
+    "admin.events.sectionBasics": "Nombre y fecha",
+    "admin.events.sectionTime": "Hora",
+    "admin.events.sectionPhoto": "Foto",
+    "admin.events.sectionCopy": "Texto que verán los clientes",
+    "admin.events.sectionReview": "Revisar traducciones",
+    "admin.events.sectionPublish": "Estado en la web",
+    "admin.events.previewHint": "Pulsad la tarjeta para editar lo que ven los clientes. El idioma se cambia arriba a la derecha.",
+    "admin.events.guestDateLabel": "Los clientes lo ven como",
     "admin.events.calendarDate": "Fecha en el calendario",
-    "admin.events.specificTime": "Mostrar hora de inicio y fin",
+    "admin.events.specificTime": "No mostrar",
     "admin.events.fullyBooked": "Completo",
-    "admin.events.published": "Publicado en la web",
-    "admin.events.imageUrl": "Enlace de la foto del evento",
+    "admin.events.published": "Visible en la web real",
+    "admin.events.publishedHint": "Los clientes en www.el-portero.com pueden ver este evento.",
+    "admin.events.publishedLocal": "Solo en este ordenador",
+    "admin.events.publishedLocalHint":
+      "Se ve aquí en localhost. La web real no lo mostrará.",
+    "admin.events.statusHidden": "Oculto",
+    "admin.events.statusHiddenHint": "Los clientes en www.el-portero.com no pueden ver este evento.",
+    "admin.events.statusHiddenLocalHint": "No se muestra en localhost ni en la web real.",
+    "admin.events.localOnly": "Solo local",
+    "admin.events.imageUrl": "Enlace de la foto",
     "admin.events.imageUrlHint":
-      "Subid la foto en www.imgbox.com (no hace falta cuenta). Cuando aparezca, clic derecho en la imagen → Get link (o Copiar dirección de la imagen) y pegad ese enlace aquí. Debe empezar por https:// y terminar en .jpg, .jpeg o .png — no la página de imgbox.",
+      "Subid una foto desde el ordenador (la redimensionamos). También podéis pegar un enlace si lo preferís.",
     "admin.events.datePreviewHint":
       "Fecha que verán los clientes (se rellena sola según la fecha del calendario):",
     "admin.events.timeOnly": "Hora",
     "admin.events.timeOnlyHint":
-      "Las horas de inicio y fin se muestran en la web (24 h). El lugar es siempre el PORTERO en Torrevieja.",
+      "Las horas de inicio y fin se muestran en la web (24 h).",
     "admin.events.startTime": "Hora de inicio",
     "admin.events.endTime": "Hora de fin",
     "admin.events.preview": "Vista previa",
@@ -1173,8 +1400,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.delete": "Eliminar",
     "admin.events.saveNewTooltip": "Guardar nuevo evento",
     "admin.events.saveEditTooltip": "Guardar cambios",
-    "admin.events.saveNewDisabledTooltip": "Rellenad el formulario para crear un evento",
-    "admin.events.saveEditDisabledTooltip": "Sin cambios pendientes — editad un campo para guardar",
+    "admin.events.saveNewDisabledTooltip": "Editad la vista previa o los datos de abajo para crear un evento",
+    "admin.events.saveEditDisabledTooltip": "Sin cambios pendientes — editad la vista previa o los datos de abajo para guardar",
     "admin.events.duplicateLoaded":
       "Copia cargada — revisad el nombre corto (ID) y la fecha, luego pulsad Crear.",
     "admin.events.created": "Evento creado.",
@@ -1184,14 +1411,74 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadError": "No se pudieron cargar los eventos. Actualizad la página.",
     "admin.events.saveError": "No se pudo guardar. Comprobad la conexión e intentad de nuevo.",
     "admin.events.deleteError": "No se pudo eliminar. Intentad de nuevo.",
+    "admin.events.storageFullTitle": "La lista de eventos está llena",
+    "admin.events.storageFullBody": "Podéis guardar {max} eventos. Borrad al menos uno antes de añadir otro.",
+    "admin.events.storageCreateTitle": "Aún no podéis guardar un evento nuevo",
+    "admin.events.storageCreateBody": "La lista está llena. Borrad un evento de la izquierda e intentadlo de nuevo.",
+    "admin.events.storageListWarning": "La lista está llena. Borrad un evento para añadir uno nuevo.",
+    "admin.events.storageEmptySlot": "Vacío",
+    "admin.events.storageCount": "{count} de {max}",
+    "admin.events.storageMeterAria": "{count} de {max} eventos",
+    "admin.events.storageFullSaveError": "La lista está llena. Borrad un evento primero.",
     "admin.events.invalidId":
       "Nombre corto (ID): de 1 a 64 caracteres — solo letras minúsculas, números y guiones (p. ej. cena-verano-2026).",
     "admin.events.invalidTime": "La hora de fin debe ser igual o posterior a la de inicio.",
     "admin.events.loadingTitle": "Eventos",
     "admin.events.loadingIntro": "Cargando…",
+    "admin.events.translateContent": "Traducir contenido",
+    "admin.events.translating": "Traduciendo…",
+    "admin.events.translateWait1": "La traducción está en marcha. Esperad un par de segundos.",
+    "admin.events.translateWait2": "Comprobamos en qué idioma escribisteis y luego traducimos el resto.",
+    "admin.events.translateWait3":
+      "La vista previa se actualiza cuando todos los idiomas están listos. Podéis dejar esto abierto.",
+    "admin.events.translateElapsed": "Tiempo transcurrido {time}",
+    "admin.events.translateLanguageCorrected":
+      "Lo que escribisteis en el campo de {source} está en {detected}. Ese texto original queda guardado como {detected}, y {source} tiene ahora la traducción. También se rellenaron los demás idiomas vacíos. Cambiad el idioma en la vista previa para revisarlos y guardad.",
+    "admin.events.translateLanguageCorrectedSplit":
+      "El título está en {titleLanguage} y la descripción en {excerptLanguage}. Cada original se guarda en su idioma, y los campos de {source} tienen ahora la traducción. Cambiad el idioma en la vista previa para revisarlos y guardad.",
+    "admin.events.translateError":
+      "No se pudo traducir. Hay que activar Firebase AI Logic en el proyecto e intentarlo de nuevo.",
+    "admin.events.translateSuccess":
+      "Los idiomas vacíos y las descripciones de la foto se rellenaron desde {language}. Cambiad el idioma en la vista previa para revisarlos y guardad.",
+    "admin.events.translateDoneTitle": "Todo está traducido",
+    "admin.events.translateDoneBody":
+      "Revisad cada idioma en el menú de arriba, en esta sección.",
+    "admin.events.translateNeedText": "Añadid un título o una descripción antes de traducir.",
+    "admin.events.reviewTranslations": "Revisar traducciones",
+    "admin.events.uploadImage": "Subir foto",
+    "admin.events.replaceImage": "Sustituir foto",
+    "admin.events.removeImage": "Quitar foto",
+    "admin.events.imageUploading": "Subiendo foto…",
+    "admin.events.imageUploadError":
+      "No se pudo subir la foto. Intentad de nuevo o pegad un enlace.",
+    "admin.events.imageHint": "¿Preferís un enlace? Pegadlo aquí.",
+    "admin.events.imageAltHint":
+      "Corresponde al idioma seleccionado en la vista previa. Se rellena al traducir. Editadla si queréis más detalle.",
+    "admin.events.sourceHint":
+      "Escribid el título y la descripción en la tarjeta y pulsad Traducir contenido.",
+    "admin.events.orPasteLink": "O pegar un enlace de foto",
+    "admin.events.notTranslatedYet": "Aún no traducido",
+    "admin.events.previewLanguage": "Idioma de la vista previa",
+    "admin.events.changePhoto": "Cambiar foto",
+    "admin.events.addTime": "Añadir hora",
+    "admin.events.descriptionText": "Texto",
+    "admin.events.descriptionBullets": "Viñetas",
+    "admin.events.descriptionBold": "Negrita",
+    "admin.events.descriptionItalic": "Cursiva",
+    "admin.events.available": "Disponible",
+    "admin.events.editDate": "Fecha del evento",
+    "admin.events.editTime": "Hora de inicio y fin",
+    "admin.events.editAvailability": "Estado de reserva",
+    "admin.events.chooseLanguage": "Elegir idioma de la vista previa",
+    "admin.events.staffHint": "Los clientes no ven estos campos. Solo se usan aquí.",
+    "admin.events.step": "Paso {n}",
+    "admin.events.step1Title": "Detalles y vista previa",
+    "admin.events.step3Title": "Nombre corto y estado en la web",
+    "admin.events.step4Title": "Repaso",
+    "admin.events.step4Hint": "Revisad el resto antes de guardar.",
     "admin.menus.title": "Cartas",
     "admin.menus.intro":
-      "Elegid cena o bebidas. Guardar conserva el borrador; Publicar lo muestra en la web.",
+      "Cena y bebidas son cartas distintas. Cada carta se compone de secciones, y cada sección agrupa los platos que ven los clientes bajo ese título.",
     "admin.menus.reload": "Recargar",
     "admin.menus.tabDinner": "Cena",
     "admin.menus.tabDrinks": "Bebidas",
@@ -1203,7 +1490,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.no": "No",
     "admin.menus.publish": "Publicar",
     "admin.menus.unpublish": "Despublicar",
-    "admin.menus.menuTitleLabel": "Título de la carta (se muestra en la página si se rellena)",
+    "admin.menus.menuTitleLabel": "Título de la carta",
     "admin.menus.menuTitlePlaceholder": "p. ej. Carta de primavera",
     "admin.menus.sectionTitleLabel": "Título de sección",
     "admin.menus.removeSection": "Eliminar sección",
@@ -1271,6 +1558,21 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.untitledSection": "Sección sin título",
     "admin.menus.untitledDish": "Plato sin nombre",
     "admin.menus.untitledDrink": "Bebida sin nombre",
+    "admin.menus.outline": "Cartas",
+    "admin.menus.sectionsLabel": "Secciones",
+    "admin.menus.connectionHint":
+      "Una sección es un título de la carta. Los platos anidados debajo son lo que leen los clientes en ese grupo.",
+    "admin.menus.editingSection": "Platos de esta sección",
+    "admin.menus.noSection": "Esta carta aún no tiene secciones. Añadid una para empezar un grupo de platos.",
+    "admin.menus.visibleOnSite": "En la web",
+    "admin.menus.hiddenOnSite": "Solo borrador",
+    "admin.menus.shownToGuests": "Visible para clientes",
+    "admin.menus.unsavedChanges": "Cambios sin guardar",
+    "admin.menus.allSaved": "Todos los cambios guardados",
+    "admin.menus.breadcrumb": "Dónde estáis en la carta",
+    "admin.menus.menuTitleHint":
+      "Este es el botón en la parte superior de la carta en la web. Sin título, ese botón no se muestra.",
+    "admin.menus.chooseSection": "Elegid una sección a la izquierda para editar sus platos.",
     "admin.confirm.title": "Atención",
     "admin.confirm.cancel": "Cancelar",
     "admin.confirm.proceed": "Sí, continuar",
@@ -1507,6 +1809,11 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "page.hours.map": "Plats",
     "page.hours.mapIframeTitle": "Karta: el PORTERO, Torrevieja",
     "page.admin.title": "Admininloggning",
+    "page.admin.intro": "Begränsad åtkomst för personal.",
+    "page.admin.email": "E-post",
+    "page.admin.password": "Lösenord",
+    "page.admin.signIn": "Logga in",
+    "page.admin.backToSite": "Tillbaka till sajten",
     "admin.signOut": "Logga ut",
     "admin.signOutAria": "Logga ut från admin",
     "admin.dashboard": "Översikt",
@@ -1514,21 +1821,27 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.dashboard.intro": "Välj vad ni vill redigera.",
     "admin.dashboard.signedInAs": "Inloggad som",
     "admin.dashboard.eventsLabel": "Evenemang",
-    "admin.dashboard.eventsHeading": "Publika evenemang",
+    "admin.dashboard.eventsHeading": "Evenemang",
     "admin.dashboard.eventsDescription":
       "Lägg till och uppdatera kvällar och aktiviteter på startsidan och under Evenemang. Behåll utkast dolda tills ni är redo för gäster.",
-    "admin.dashboard.eventsLink": "Öppna evenemang →",
+    "admin.dashboard.eventsLink": "Hantera evenemang",
     "admin.dashboard.menusLabel": "Menyer",
-    "admin.dashboard.menusHeading": "Middag & dryck",
+    "admin.dashboard.menusHeading": "Meny",
     "admin.dashboard.menusDescription":
       "Redigera middags- och dryckesmenyer sektion för sektion. Spara utkastet och publicera när gäster ska se menyn på webbplatsen.",
-    "admin.dashboard.menusLink": "Öppna menyer →",
+    "admin.dashboard.menusLink": "Hantera menyer",
     "admin.dashboard.hoursLabel": "Öppettider",
     "admin.dashboard.hoursHeading": "Öppettider",
     "admin.dashboard.hoursDescription":
       "Veckoschema och öppet/stängt på startsidan. Spara och publicera när gäster ska se uppdateringarna.",
-    "admin.dashboard.hoursLink": "Öppna öppettider →",
+    "admin.dashboard.hoursLink": "Hantera öppettider",
     "admin.dashboard.backToSite": "← Tillbaka till sajten",
+    "admin.dashboard.now": "Status",
+    "admin.dashboard.liveEvents": "Synliga på sajten",
+    "admin.dashboard.inactiveEvents": "Inaktiva eller passerade",
+    "admin.dashboard.nextEvent": "Nästa",
+    "admin.dashboard.noUpcoming": "Inget på gång",
+    "admin.dashboard.fullyBookedCount": "Fullbokade: {count}",
     "openingHours.day.mon": "Mån",
     "openingHours.day.tue": "Tis",
     "openingHours.day.wed": "Ons",
@@ -1567,44 +1880,59 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.openingHours.unpublishError": "Kunde inte avpublicera. Försök igen.",
     "admin.loading": "Laddar…",
     "admin.checkingSignIn": "Kontrollerar inloggning…",
+    "admin.signingIn": "Loggar in…",
+    "admin.signedInTitle": "Inloggad",
+    "admin.signedInOpening": "Öppnar arbetsytan…",
+    "admin.chrome.staff": "Personalyta",
     "admin.events.title": "Evenemang",
     "admin.events.introLead":
       "Här hanterar ni kvällar och aktiviteter som gäster ser på startsidan och under Evenemang.",
-    "admin.events.introBulletNewEvent":
-      "**Nytt evenemang** — börja med ett tomt formulär.",
-    "admin.events.introBulletEditList":
-      "**Välj ett evenemang i listan** — redigera det i formuläret till höger.",
-    "admin.events.introBulletDuplicate":
-      "**Duplicera** — kopiera ett befintligt evenemang; kom ihåg att ändra datum, titel och foto.",
-    "admin.events.introBulletPublished":
-      "**Publicerad på webbplatsen** — avmarkerad = utkast som gäster inte ser förrän ni kryssar i igen och sparar.",
-    "admin.events.introBulletSpecificTime":
-      "**Visa start- och sluttid** — ikryssad: gäster ser start- och sluttid; avmarkerad: bara datumraden visas.",
-    "admin.events.introBulletFullyBooked":
-      "**Fullbokat** — visar gäster att evenemanget är fullbokat på webbplatsen (de kan fortfarande kontakta restaurangen som vanligt).",
     "admin.events.allEvents": "Alla evenemang",
     "admin.events.newEvent": "Nytt evenemang",
     "admin.events.emptyList": "Inga evenemang ännu. Tryck Nytt evenemang ovan för att lägga till det första.",
     "admin.events.draft": "Utkast",
     "admin.events.pastRemove": "Passerat — kan tas bort",
     "admin.events.duplicate": "Duplicera",
+    "admin.events.makeCopy": "Gör en kopia",
+    "admin.events.unsaved": "Osparade ändringar",
+    "admin.events.saved": "Sparat",
+    "admin.events.openEventsPage": "Öppna evenemangssidan",
     "admin.events.formNew": "Nytt evenemang",
     "admin.events.formEdit": "Redigera evenemang",
     "admin.events.idLabel": "Kort namn (ID)",
     "admin.events.idPlaceholder": "t.ex. vin-kvall-juni-2026",
+    "admin.events.idHint":
+      "Gäster ser inte det här kortnamnet. Det används bara i den här listan och när evenemanget sparas.",
     "admin.events.idLocked": "Det korta namnet kan inte ändras efter att evenemanget skapats.",
+    "admin.events.sectionBasics": "Namn och datum",
+    "admin.events.sectionTime": "Tid",
+    "admin.events.sectionPhoto": "Foto",
+    "admin.events.sectionCopy": "Text som gästerna ser",
+    "admin.events.sectionReview": "Granska översättningar",
+    "admin.events.sectionPublish": "Status på webbplatsen",
+    "admin.events.previewHint": "Klicka på kortet för att redigera det gästerna ser. Byt språk uppe till höger.",
+    "admin.events.guestDateLabel": "Visas för gäster som",
     "admin.events.calendarDate": "Datum i kalendern",
-    "admin.events.specificTime": "Visa start- och sluttid",
+    "admin.events.specificTime": "Visa inte",
     "admin.events.fullyBooked": "Fullbokat",
-    "admin.events.published": "Publicerad på webbplatsen",
-    "admin.events.imageUrl": "Länk till evenemangsfoto",
+    "admin.events.published": "Synligt på den riktiga webbplatsen",
+    "admin.events.publishedHint": "Gäster på www.el-portero.com kan se evenemanget.",
+    "admin.events.publishedLocal": "Bara på den här datorn",
+    "admin.events.publishedLocalHint":
+      "Syns här på localhost. Den riktiga webbplatsen visar det inte.",
+    "admin.events.statusHidden": "Dolt",
+    "admin.events.statusHiddenHint": "Gäster på www.el-portero.com kan inte se evenemanget.",
+    "admin.events.statusHiddenLocalHint":
+      "Visas inte på localhost och inte på den riktiga webbplatsen.",
+    "admin.events.localOnly": "Bara lokalt",
+    "admin.events.imageUrl": "Fotolänk",
     "admin.events.imageUrlHint":
-      "Ladda upp fotot på www.imgbox.com (inget konto behövs). När bilden visas: högerklicka → Get link (eller Kopiera bildadress) och klistra in länken här. Den ska börja med https:// och sluta med .jpg, .jpeg eller .png — inte imgbox-sidans adress.",
+      "Ladda upp ett foto från datorn (vi förminskar det). Ni kan fortfarande klistra in en länk om ni vill.",
     "admin.events.datePreviewHint":
       "Datum som gäster ser (fylls i automatiskt från kalenderdatumet ovan):",
     "admin.events.timeOnly": "Tid",
     "admin.events.timeOnlyHint":
-      "Start- och sluttid visas på webbplatsen (24-timmarsklocka). Platsen är alltid el PORTERO i Torrevieja.",
+      "Start- och sluttid visas på webbplatsen (24-timmarsklocka).",
     "admin.events.startTime": "Starttid",
     "admin.events.endTime": "Sluttid",
     "admin.events.preview": "Förhandsvisning",
@@ -1616,8 +1944,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.delete": "Ta bort",
     "admin.events.saveNewTooltip": "Spara nytt evenemang",
     "admin.events.saveEditTooltip": "Spara dina ändringar",
-    "admin.events.saveNewDisabledTooltip": "Ändra formuläret för att skapa ett evenemang",
-    "admin.events.saveEditDisabledTooltip": "Inga osparade ändringar — redigera ett fält för att spara",
+    "admin.events.saveNewDisabledTooltip": "Redigera förhandsvisningen eller uppgifterna nedan för att skapa ett evenemang",
+    "admin.events.saveEditDisabledTooltip": "Inga osparade ändringar — redigera förhandsvisningen eller uppgifterna nedan för att spara",
     "admin.events.duplicateLoaded":
       "Kopia inläst — kontrollera kort namn (ID) och datum, tryck sedan Skapa.",
     "admin.events.created": "Evenemanget skapades.",
@@ -1627,14 +1955,74 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.loadError": "Kunde inte ladda evenemang. Uppdatera sidan.",
     "admin.events.saveError": "Kunde inte spara. Kontrollera anslutningen och försök igen.",
     "admin.events.deleteError": "Kunde inte ta bort. Försök igen.",
+    "admin.events.storageFullTitle": "Evenemangslistan är full",
+    "admin.events.storageFullBody": "Ni kan spara {max} evenemang. Ta bort minst ett innan ni lägger till ett nytt.",
+    "admin.events.storageCreateTitle": "Ni kan inte spara ett nytt evenemang ännu",
+    "admin.events.storageCreateBody": "Listan är full. Ta bort ett evenemang till vänster och försök igen.",
+    "admin.events.storageListWarning": "Listan är full. Ta bort ett evenemang för att lägga till ett nytt.",
+    "admin.events.storageEmptySlot": "Tom",
+    "admin.events.storageCount": "{count} av {max}",
+    "admin.events.storageMeterAria": "{count} av {max} evenemang",
+    "admin.events.storageFullSaveError": "Listan är full. Ta bort ett evenemang först.",
     "admin.events.invalidId":
       "Kort namn (ID): 1–64 tecken — endast små bokstäver, siffror och bindestreck (t.ex. sommar-middag-2026).",
     "admin.events.invalidTime": "Sluttiden måste vara samma som eller efter starttiden.",
     "admin.events.loadingTitle": "Evenemang",
     "admin.events.loadingIntro": "Laddar…",
+    "admin.events.translateContent": "Översätt innehåll",
+    "admin.events.translating": "Översätter…",
+    "admin.events.translateWait1": "Översättningen pågår. Vänta ett par sekunder.",
+    "admin.events.translateWait2": "Vi kontrollerar vilket språk ni skrev på och översätter sedan resten.",
+    "admin.events.translateWait3":
+      "Förhandsvisningen uppdateras när alla språk är klara. Ni kan låta det här vara öppet.",
+    "admin.events.translateElapsed": "Förfluten tid {time}",
+    "admin.events.translateLanguageCorrected":
+      "Texten i fältet för {source} är på {detected}. Originalet sparas som {detected}, och {source} har nu översättningen. Övriga tomma språk fylldes också i. Byt språk i förhandsvisningen för att granska och spara sedan.",
+    "admin.events.translateLanguageCorrectedSplit":
+      "Titeln är på {titleLanguage} och beskrivningen på {excerptLanguage}. Varje original sparas på sitt språk, och fälten för {source} har nu översättningen. Byt språk i förhandsvisningen för att granska och spara sedan.",
+    "admin.events.translateError":
+      "Kunde inte översätta. Firebase AI Logic måste vara aktiverat i projektet. Försök sedan igen.",
+    "admin.events.translateSuccess":
+      "Tomma språk och bildbeskrivningar fylldes i från {language}. Byt språk i förhandsvisningen för att granska och spara sedan.",
+    "admin.events.translateDoneTitle": "Allt är översatt",
+    "admin.events.translateDoneBody":
+      "Kontrollera varje språk i menyn högst upp i det här avsnittet.",
+    "admin.events.translateNeedText": "Lägg till en titel eller beskrivning innan ni översätter.",
+    "admin.events.reviewTranslations": "Granska översättningar",
+    "admin.events.uploadImage": "Ladda upp foto",
+    "admin.events.replaceImage": "Byt foto",
+    "admin.events.removeImage": "Ta bort foto",
+    "admin.events.imageUploading": "Laddar upp foto…",
+    "admin.events.imageUploadError":
+      "Kunde inte ladda upp fotot. Försök igen, eller klistra in en länk.",
+    "admin.events.imageHint": "Hellre en länk? Klistra in den här.",
+    "admin.events.imageAltHint":
+      "Gäller språket som är valt i förhandsvisningen. Fylls i när ni översätter. Redigera om ni vill mer precist.",
+    "admin.events.sourceHint":
+      "Skriv titel och beskrivning på kortet och tryck sedan på Översätt innehåll.",
+    "admin.events.orPasteLink": "Eller klistra in en fotolänk",
+    "admin.events.notTranslatedYet": "Inte översatt än",
+    "admin.events.previewLanguage": "Förhandsvisningsspråk",
+    "admin.events.changePhoto": "Byt foto",
+    "admin.events.addTime": "Lägg till tid",
+    "admin.events.descriptionText": "Text",
+    "admin.events.descriptionBullets": "Punkter",
+    "admin.events.descriptionBold": "Fet",
+    "admin.events.descriptionItalic": "Kursiv",
+    "admin.events.available": "Ledigt",
+    "admin.events.editDate": "Evenemangsdatum",
+    "admin.events.editTime": "Start- och sluttid",
+    "admin.events.editAvailability": "Bokningsstatus",
+    "admin.events.chooseLanguage": "Välj förhandsvisningsspråk",
+    "admin.events.staffHint": "Gäster ser inte de här fälten. De används bara här.",
+    "admin.events.step": "Steg {n}",
+    "admin.events.step1Title": "Detaljer och förhandsvisning",
+    "admin.events.step3Title": "Kort namn och status på webbplatsen",
+    "admin.events.step4Title": "Dubbelkolla",
+    "admin.events.step4Hint": "Gå igenom resten innan ni sparar.",
     "admin.menus.title": "Menyer",
     "admin.menus.intro":
-      "Välj middag eller dryck. Spara behåller utkastet; Publicera visar det på webbplatsen.",
+      "Middag och dryck är separata menyer. Varje meny består av sektioner, och varje sektion samlar rätterna gästerna ser under den rubriken.",
     "admin.menus.reload": "Ladda om",
     "admin.menus.tabDinner": "Middag",
     "admin.menus.tabDrinks": "Dryck",
@@ -1646,7 +2034,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.no": "Nej",
     "admin.menus.publish": "Publicera",
     "admin.menus.unpublish": "Avpublicera",
-    "admin.menus.menuTitleLabel": "Menytitel (visas på sidan om den fylls i)",
+    "admin.menus.menuTitleLabel": "Menytitel",
     "admin.menus.menuTitlePlaceholder": "t.ex. Vårmiddagsmeny",
     "admin.menus.sectionTitleLabel": "Sektionsrubrik",
     "admin.menus.removeSection": "Ta bort sektion",
@@ -1714,6 +2102,21 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.menus.untitledSection": "Sektion utan titel",
     "admin.menus.untitledDish": "Rätt utan namn",
     "admin.menus.untitledDrink": "Dryck utan namn",
+    "admin.menus.outline": "Menyer",
+    "admin.menus.sectionsLabel": "Sektioner",
+    "admin.menus.connectionHint":
+      "En sektion är en rubrik på menyn. Rätterna under den är det gästerna läser i den gruppen.",
+    "admin.menus.editingSection": "Rätter i den här sektionen",
+    "admin.menus.noSection": "Den här menyn har inga sektioner ännu. Lägg till en för att starta en grupp rätter.",
+    "admin.menus.visibleOnSite": "På webbplatsen",
+    "admin.menus.hiddenOnSite": "Endast utkast",
+    "admin.menus.shownToGuests": "Visas för gäster",
+    "admin.menus.unsavedChanges": "Osparade ändringar",
+    "admin.menus.allSaved": "Alla ändringar sparade",
+    "admin.menus.breadcrumb": "Var ni är i menyn",
+    "admin.menus.menuTitleHint":
+      "Det här är knappen högst upp på menyn på webbplatsen. Utan titel visas inte knappen.",
+    "admin.menus.chooseSection": "Välj en sektion till vänster för att redigera dess rätter.",
     "admin.confirm.title": "Varning",
     "admin.confirm.cancel": "Avbryt",
     "admin.confirm.proceed": "Ja, fortsätt",
@@ -1735,6 +2138,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "header.reserveNav": "Boka bord",
     "brand.dinnerClub": "Dinner Club",
   },
+  de: deMessages,
+  fr: frMessages,
 };
 
 export function t(locale: Locale, key: MessageKey): string {

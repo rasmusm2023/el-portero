@@ -2,14 +2,33 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Copy, LayoutDashboard, LogOut, Plus, Save, Trash2 } from "lucide-react";
-import { EventsAdminIntro } from "@/components/admin/EventsAdminIntro";
-import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
-import { EventCard } from "@/components/events/EventCard";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { LayoutDashboard, Loader2, LogOut, Plus, Save, Sparkles, Trash2 } from "lucide-react";
+import { EditableEventCard } from "@/components/admin/EditableEventCard";
+import { EventPreviewLocaleMenu } from "@/components/admin/EventPreviewLocaleMenu";
+import {
+  DeskNotice,
+  DeskToggle,
+  EmptyEventSlot,
+  EventCreateFullNotice,
+  EventEditorBar,
+  EventIndexRow,
+  EventListFullNotice,
+  StepHeading,
+  WebsiteStatusCard,
+  deskDanger,
+  deskField,
+  deskGhost,
+  deskHint,
+  deskLabel,
+  deskPanel,
+  deskPrimary,
+  deskPrimaryBlocked,
+  deskTimeSelect,
+} from "@/components/admin/events/EventsDesk";
 import { LocaleFlag } from "@/components/layout/LocaleFlag";
+import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { PageShell } from "@/components/layout/PageShell";
-import { adminBtnBlue, adminBtnDanger, adminBtnGreen, adminBtnNeutral, adminBtnSignOut, adminCalloutSuccess } from "@/lib/adminUiStyles";
 import {
   DEFAULT_EVENT_TIME_END,
   DEFAULT_EVENT_TIME_START,
@@ -17,34 +36,32 @@ import {
   toUpsertBody,
   type HomeEvent,
 } from "@/lib/publicEventTypes";
-import { formatSortDateForEventDisplay } from "@/lib/eventDisplayDate";
 import {
   applySlotsToTimeDetail,
   clampEndAfterStart,
   EVENT_TIME_OPTIONS,
+  eventEndsNextMorning,
   isEventPastForAdmin,
   normalizeEventForEditor,
   parseHmToMinutes,
   suggestDuplicateEventId,
   syncDerivedEventFields,
 } from "@/lib/eventSchedule";
-import { localeLabels, t, type Locale } from "@/i18n/strings";
+import {
+  applyTranslatedLocaleTrio,
+  pickTranslateSourceLocale,
+  sameLocaleTrio,
+} from "@/i18n/localeMeta";
+import { localeLabels, locales, t, type Locale } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
 import { useAdminConfirm } from "@/hooks/useAdminConfirm";
+import { isLocalDevHost } from "@/lib/localDevHost";
 import { unknownErrorMessage } from "@/lib/unknownErrorMessage";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
+import { translateEventContent } from "@/lib/firebase/eventAi";
+import { deleteEventImageIfManaged, uploadEventImage } from "@/lib/firebase/eventImageStorage";
 import { removePublicEvent, subscribeAdminPublicEvents, upsertPublicEvent } from "@/lib/firebase/eventsStore";
-
-const LOCALE_ORDER: Locale[] = ["sv", "es", "en"];
-
-function LocaleFieldLabel({ localeKey }: { localeKey: Locale }) {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <LocaleFlag locale={localeKey} variant="onDark" />
-      <span>{localeLabels[localeKey]}</span>
-    </span>
-  );
-}
+import { MAX_STORED_EVENTS, eventStorageLimitState, fillEventStorageMessage } from "@/lib/eventStorageLimit";
 
 function todayYmd() {
   return new Date().toISOString().slice(0, 10);
@@ -54,18 +71,14 @@ function cloneHomeEvent(e: HomeEvent): HomeEvent {
   return JSON.parse(JSON.stringify(e)) as HomeEvent;
 }
 
-function sameLocaleTrio(
-  a: HomeEvent["title"],
-  b: HomeEvent["title"],
-) {
-  return a.en === b.en && a.es === b.es && a.sv === b.sv;
-}
-
 function homeEventsEqual(a: HomeEvent, b: HomeEvent) {
   if (a.id.trim() !== b.id.trim() || a.sortDate !== b.sortDate) return false;
   if ((a.published !== false) !== (b.published !== false)) return false;
+  if ((a.localOnly === true) !== (b.localOnly === true)) return false;
   if ((a.fullyBooked ?? false) !== (b.fullyBooked ?? false)) return false;
+  if ((a.hasSpecificTime !== false) !== (b.hasSpecificTime !== false)) return false;
   if (a.imageSrc !== b.imageSrc) return false;
+  if ((a.imageStoragePath ?? "") !== (b.imageStoragePath ?? "")) return false;
   if ((a.timeSlotStart ?? "") !== (b.timeSlotStart ?? "")) return false;
   if ((a.timeSlotEnd ?? "") !== (b.timeSlotEnd ?? "")) return false;
   if (!sameLocaleTrio(a.timeDetail, b.timeDetail)) return false;
@@ -75,47 +88,23 @@ function homeEventsEqual(a: HomeEvent, b: HomeEvent) {
   return true;
 }
 
-const fieldInputClass =
-  "w-full rounded-md border border-paper/15 bg-paper/8 px-3 py-2 text-sm text-paper shadow-sm transition-shadow placeholder:text-paper/40 focus:border-gold/45 focus:outline-none focus:ring-2 focus:ring-gold/20";
+const translateWaitNotes = [
+  "admin.events.translateWait1",
+  "admin.events.translateWait2",
+  "admin.events.translateWait3",
+] as const;
 
-function LocaleBlock({
-  label,
-  value,
-  onChange,
-  multiline,
-}: {
-  label: string;
-  value: HomeEvent["title"];
-  onChange: (next: HomeEvent["title"]) => void;
-  multiline: boolean;
-}) {
-  return (
-    <div className="space-y-3">
-      <p className="text-sm font-semibold tracking-wide text-paper">{label}</p>
-      <div className="grid min-w-0 gap-3 sm:gap-4 lg:grid-cols-3">
-        {LOCALE_ORDER.map((k) => (
-          <div key={k} className="min-w-0">
-            <label className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-paper/60">
-              <LocaleFieldLabel localeKey={k} />
-            </label>
-            {multiline ? (
-              <textarea
-                className={`${fieldInputClass} min-h-28 resize-y sm:min-h-32`}
-                value={value[k]}
-                onChange={(e) => onChange({ ...value, [k]: e.target.value })}
-              />
-            ) : (
-              <input
-                className={fieldInputClass}
-                value={value[k]}
-                onChange={(e) => onChange({ ...value, [k]: e.target.value })}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+function formatTranslateElapsed(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function translateBarColor(progress: number): string {
+  const start = 0.72;
+  const amount = progress <= start ? 0 : Math.min(1, (progress - start) / (1 - start));
+  const mix = (from: number, to: number) => Math.round(from + (to - from) * amount);
+  return `rgb(${mix(37, 5)} ${mix(99, 150)} ${mix(235, 105)})`;
 }
 
 export function EventsAdminPage() {
@@ -123,7 +112,19 @@ export function EventsAdminPage() {
   const { locale } = useLocale();
   const { confirm, dialog: confirmDialog } = useAdminConfirm(locale);
   const { user, ready, signOutUser } = useAdminAuth();
+  const onLocalhost = useSyncExternalStore(
+    () => () => {},
+    () => isLocalDevHost(window.location.hostname),
+    () => false,
+  );
   const [busy, setBusy] = useState(false);
+  const [translating, setTranslating] = useState(false);
+  const [translateSeconds, setTranslateSeconds] = useState(0);
+  const [translateBeat, setTranslateBeat] = useState(0);
+  const [translateSuccess, setTranslateSuccess] = useState(false);
+  const [translatePhase, setTranslatePhase] = useState<"idle" | "running" | "finishing">("idle");
+  const [translateProgress, setTranslateProgress] = useState(0);
+  const translateProgressRef = useRef(0);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -131,21 +132,49 @@ export function EventsAdminPage() {
   const [draft, setDraft] = useState<HomeEvent>(() =>
     applySlotsToTimeDetail(emptyHomeEvent(todayYmd())),
   );
-  /** Last saved/loaded form snapshot; edit-mode Save is enabled when `draft` differs. */
   const [savedBaseline, setSavedBaseline] = useState<HomeEvent>(() =>
     applySlotsToTimeDetail(emptyHomeEvent(todayYmd())),
   );
   const [isNew, setIsNew] = useState(true);
+  const editingLiveEvent =
+    !isNew && savedBaseline.published !== false && savedBaseline.localOnly !== true;
+  const localPublish = onLocalhost && !editingLiveEvent;
+  const publishOn = localPublish
+    ? draft.localOnly === true || (isNew && draft.published !== false && draft.localOnly !== false)
+    : draft.published !== false;
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [previewLocale, setPreviewLocale] = useState<Locale>("en");
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const selectedRowRef = useRef<HTMLLIElement>(null);
 
   const isDirty = useMemo(
-    () => !homeEventsEqual(draft, savedBaseline),
-    [draft, savedBaseline],
+    () => Boolean(pendingImageFile) || !homeEventsEqual(draft, savedBaseline),
+    [draft, savedBaseline, pendingImageFile],
   );
-  const previewEvent = useMemo(
-    () => syncDerivedEventFields(cloneHomeEvent(draft)),
-    [draft],
+  const sortedEvents = useMemo(
+    () => rows.slice().sort((a, b) => a.sortDate.localeCompare(b.sortDate)),
+    [rows],
   );
+  const eventSlots = useMemo(
+    () => Array.from({ length: MAX_STORED_EVENTS }, (_, index) => sortedEvents[index] ?? null),
+    [sortedEvents],
+  );
+  const overflowEvents = sortedEvents.slice(MAX_STORED_EVENTS);
+  const previewEvent = useMemo(() => {
+    const ev = syncDerivedEventFields(cloneHomeEvent(draft));
+    if (pendingImagePreview) ev.imageSrc = pendingImagePreview;
+    return ev;
+  }, [draft, pendingImagePreview]);
+
+  const clearPendingImage = useCallback(() => {
+    setPendingImageFile(null);
+    setPendingImagePreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+  }, []);
 
   const load = useCallback(async () => {
     // No-op: Firestore is live-subscribed via onSnapshot below.
@@ -168,6 +197,17 @@ export function EventsAdminPage() {
     return () => unsub();
   }, [ready, user, locale]);
 
+  useEffect(() => {
+    return () => {
+      if (pendingImagePreview) URL.revokeObjectURL(pendingImagePreview);
+    };
+  }, [pendingImagePreview]);
+
+  useEffect(() => {
+    if (!editingId || isNew) return;
+    selectedRowRef.current?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [editingId, isNew]);
+
   async function onLogout() {
     setError(null);
     setBusy(true);
@@ -180,17 +220,28 @@ export function EventsAdminPage() {
   }
 
   const startNew = useCallback(() => {
+    if (eventStorageLimitState(rows.length).showWarning) return;
     setIsNew(true);
     setEditingId(null);
     const blank = applySlotsToTimeDetail(emptyHomeEvent(todayYmd()));
     setDraft(cloneHomeEvent(blank));
     setSavedBaseline(cloneHomeEvent(blank));
+    setPreviewLocale("en");
+    clearPendingImage();
     setError(null);
     setMessage(null);
-  }, []);
+    setTranslateSuccess(false);
+  }, [clearPendingImage, rows.length]);
 
   const duplicateFrom = useCallback(
-    (ev: HomeEvent) => {
+    (ev: HomeEvent, options?: { keepPendingImage?: boolean }) => {
+      if (eventStorageLimitState(rows.length).blockNewEvents) {
+        setError(
+          fillEventStorageMessage(t(locale, "admin.events.storageFullSaveError"), rows.length),
+        );
+        setMessage(null);
+        return;
+      }
       const normalized = normalizeEventForEditor(cloneHomeEvent(ev));
       let id = suggestDuplicateEventId(ev.id);
       let guard = 0;
@@ -202,15 +253,19 @@ export function EventsAdminPage() {
         ...normalized,
         id,
         published: normalized.published !== false,
+        imageStoragePath: undefined,
       });
       setIsNew(true);
       setEditingId(null);
       setDraft(next);
       setSavedBaseline(cloneHomeEvent(emptyHomeEvent(todayYmd())));
+      setPreviewLocale("en");
+      if (!options?.keepPendingImage) clearPendingImage();
       setError(null);
       setMessage(t(locale, "admin.events.duplicateLoaded"));
+      setTranslateSuccess(false);
     },
-    [rows, locale],
+    [rows, locale, clearPendingImage],
   );
 
   const startEdit = (ev: HomeEvent) => {
@@ -222,9 +277,152 @@ export function EventsAdminPage() {
     });
     setDraft(d);
     setSavedBaseline(cloneHomeEvent(d));
+    setPreviewLocale("en");
+    clearPendingImage();
     setError(null);
     setMessage(null);
+    setTranslateSuccess(false);
   };
+
+  function onPickImage(file: File | undefined) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError(t(locale, "admin.events.imageUploadError"));
+      return;
+    }
+    clearPendingImage();
+    setPendingImageFile(file);
+    setPendingImagePreview(URL.createObjectURL(file));
+    setError(null);
+  }
+
+  function onRemoveImage() {
+    clearPendingImage();
+    setDraft((d) => ({ ...d, imageSrc: "", imageStoragePath: undefined }));
+  }
+
+  useEffect(() => {
+    if (translatePhase !== "running") return;
+    const started = Date.now();
+    const timer = window.setInterval(() => {
+      const elapsed = Date.now() - started;
+      setTranslateSeconds(Math.floor(elapsed / 1000));
+      setTranslateBeat(Math.floor(elapsed / 650));
+    }, 200);
+    return () => window.clearInterval(timer);
+  }, [translatePhase]);
+
+  useEffect(() => {
+    if (translatePhase !== "running") return;
+    const started = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const elapsed = now - started;
+      const next = 0.82 * (1 - Math.exp(-elapsed / 9000));
+      translateProgressRef.current = next;
+      setTranslateProgress(next);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [translatePhase]);
+
+  useEffect(() => {
+    if (translatePhase !== "finishing") return;
+    const from = translateProgressRef.current;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      translateProgressRef.current = 1;
+      setTranslateProgress(1);
+      setTranslatePhase("idle");
+      setTranslating(false);
+      setTranslateSuccess(true);
+      return;
+    }
+    const started = performance.now();
+    const duration = 1100;
+    let frame = 0;
+    const tick = (now: number) => {
+      const amount = Math.min(1, (now - started) / duration);
+      const eased = 1 - (1 - amount) ** 3;
+      const next = from + (1 - from) * eased;
+      translateProgressRef.current = next;
+      setTranslateProgress(next);
+      if (amount < 1) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+      setTranslatePhase("idle");
+      setTranslating(false);
+      setTranslateSuccess(true);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [translatePhase]);
+
+  async function onTranslate() {
+    const sourceLocale = pickTranslateSourceLocale(draft.title, draft.excerpt, previewLocale);
+    if (!sourceLocale) {
+      setError(t(locale, "admin.events.translateNeedText"));
+      return;
+    }
+    setError(null);
+    setMessage(null);
+    setTranslateSuccess(false);
+    setTranslateSeconds(0);
+    setTranslateBeat(0);
+    translateProgressRef.current = 0;
+    setTranslateProgress(0);
+    setTranslatePhase("running");
+    setTranslating(true);
+    try {
+      const sourceTitle = draft.title[sourceLocale] ?? "";
+      const sourceExcerpt = draft.excerpt[sourceLocale] ?? "";
+      const sourceAlt = draft.imageAlt[sourceLocale] ?? "";
+      const result = await translateEventContent({
+        title: sourceTitle,
+        excerpt: sourceExcerpt,
+        imageAlt: sourceAlt,
+        sourceLocale,
+        imageFile: pendingImageFile,
+      });
+      const titleApplied = applyTranslatedLocaleTrio(
+        draft.title,
+        result.title,
+        sourceLocale,
+        result.detectedTitleLanguage,
+        sourceTitle,
+      );
+      const excerptApplied = applyTranslatedLocaleTrio(
+        draft.excerpt,
+        result.excerpt,
+        sourceLocale,
+        result.detectedExcerptLanguage,
+        sourceExcerpt,
+      );
+      const altApplied = applyTranslatedLocaleTrio(
+        draft.imageAlt,
+        result.imageAlt,
+        sourceLocale,
+        sourceAlt.trim() ? result.detectedImageAltLanguage : null,
+        sourceAlt,
+      );
+      setDraft((d) => ({
+        ...d,
+        title: titleApplied.trio,
+        excerpt: excerptApplied.trio,
+        imageAlt: altApplied.trio,
+      }));
+      setTranslatePhase("finishing");
+    } catch (err) {
+      console.error(err);
+      setTranslatePhase("idle");
+      translateProgressRef.current = 0;
+      setTranslateProgress(0);
+      setTranslating(false);
+      setError(unknownErrorMessage(err, t(locale, "admin.events.translateError")));
+    }
+  }
 
   async function onSave() {
     const wasNew = isNew;
@@ -236,10 +434,21 @@ export function EventsAdminPage() {
     if (!isDirty) {
       return;
     }
-    const draftToSave: HomeEvent = syncDerivedEventFields({ ...draft, id: idTrim });
-    const sm = parseHmToMinutes(draftToSave.timeSlotStart ?? DEFAULT_EVENT_TIME_START);
-    const em = parseHmToMinutes(draftToSave.timeSlotEnd ?? DEFAULT_EVENT_TIME_END);
-    if (sm != null && em != null && em < sm) {
+    if (wasNew && eventStorageLimitState(rows.length).showWarning) {
+      setError(fillEventStorageMessage(t(locale, "admin.events.storageFullSaveError"), rows.length));
+      return;
+    }
+    const startHm = draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START;
+    const endHm = draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END;
+    const sm = parseHmToMinutes(startHm);
+    const em = parseHmToMinutes(endHm);
+    if (
+      draft.hasSpecificTime !== false &&
+      sm != null &&
+      em != null &&
+      em < sm &&
+      !eventEndsNextMorning(startHm, endHm)
+    ) {
       setError(t(locale, "admin.events.invalidTime"));
       return;
     }
@@ -247,20 +456,47 @@ export function EventsAdminPage() {
     setMessage(null);
     setBusy(true);
     try {
-      const body = toUpsertBody(draftToSave);
-      void body; // kept for shape parity with old API payloads
+      let nextDraft = syncDerivedEventFields({ ...draft, id: idTrim });
+      const onLocalhost = isLocalDevHost(window.location.hostname);
+      const alreadyLive =
+        !wasNew && savedBaseline.published !== false && savedBaseline.localOnly !== true;
+      if (onLocalhost && !alreadyLive) {
+        const showLocally = nextDraft.localOnly === true || (wasNew && nextDraft.published !== false && nextDraft.localOnly !== false);
+        nextDraft = { ...nextDraft, published: false, localOnly: showLocally };
+      } else if (!onLocalhost) {
+        nextDraft = { ...nextDraft, localOnly: false };
+      }
+      const previousPath = savedBaseline.imageStoragePath;
+      if (pendingImageFile) {
+        const uploaded = await uploadEventImage(pendingImageFile);
+        nextDraft = {
+          ...nextDraft,
+          imageSrc: uploaded.url,
+          imageStoragePath: uploaded.path,
+        };
+      }
+      if (previousPath && previousPath !== nextDraft.imageStoragePath) {
+        await deleteEventImageIfManaged(previousPath);
+      }
+
+      const body = toUpsertBody(nextDraft);
+      void body;
 
       const db = getFirebaseFirestore();
-      await upsertPublicEvent(db, draftToSave);
-      const saved = cloneHomeEvent(draftToSave);
+      await upsertPublicEvent(db, nextDraft);
+      const saved = cloneHomeEvent(nextDraft);
       setDraft(saved);
       setSavedBaseline(cloneHomeEvent(saved));
+      clearPendingImage();
       setIsNew(false);
       setEditingId(saved.id);
       setMessage(wasNew ? t(locale, "admin.events.created") : t(locale, "admin.events.updated"));
     } catch (err) {
       console.error(err);
-      setError(unknownErrorMessage(err, t(locale, "admin.events.saveError")));
+      const fallback = pendingImageFile
+        ? t(locale, "admin.events.imageUploadError")
+        : t(locale, "admin.events.saveError");
+      setError(unknownErrorMessage(err, fallback));
     } finally {
       setBusy(false);
     }
@@ -279,8 +515,10 @@ export function EventsAdminPage() {
       setMessage(null);
       setBusy(true);
       try {
+        const existing = rows.find((r) => r.id === id);
         const db = getFirebaseFirestore();
         await removePublicEvent(db, id);
+        await deleteEventImageIfManaged(existing?.imageStoragePath);
         setMessage(t(locale, "admin.events.deleted"));
         if (editingId === id) {
           startNew();
@@ -293,7 +531,7 @@ export function EventsAdminPage() {
         setBusy(false);
       }
     },
-    [locale, editingId, startNew, load, confirm],
+    [locale, editingId, startNew, load, confirm, rows],
   );
 
   async function onDelete() {
@@ -304,428 +542,582 @@ export function EventsAdminPage() {
   if (!ready || !user) {
     return (
       <PageShell
+        tone="admin"
         title={t(locale, "admin.events.loadingTitle")}
         intro={t(locale, "admin.events.loadingIntro")}
       >
-        <p className="text-sm text-paper/70">{t(locale, "admin.checkingSignIn")}</p>
+        <p className="text-sm text-zinc-600">{t(locale, "admin.checkingSignIn")}</p>
       </PageShell>
     );
   }
 
+  const locked = busy || translating;
+  const storageLimit = eventStorageLimitState(rows.length);
+  const storageFullMessage = fillEventStorageMessage(
+    t(locale, "admin.events.storageFullSaveError"),
+    storageLimit.displayCount,
+  );
+
   return (
     <>
     <PageShell
+      tone="admin"
       title={t(locale, "admin.events.title")}
-      intro={<EventsAdminIntro locale={locale} />}
+      intro={t(locale, "admin.events.introLead")}
       maxWidthClassName="w-full max-w-[min(100%,112rem)]"
     >
-      <div className="mb-6 flex flex-wrap items-center gap-2 sm:gap-3">
-        <Link href="/admin/dashboard" className={`inline-flex items-center ${adminBtnNeutral}`}>
-          <span className="inline-flex items-center gap-2">
-            <LayoutDashboard className="size-4" aria-hidden />
-            {t(locale, "admin.dashboard")}
-          </span>
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <Link href="/admin/dashboard" className={deskGhost}>
+          <LayoutDashboard className="size-3.5" aria-hidden />
+          {t(locale, "admin.dashboard")}
         </Link>
-        <button type="button" className={adminBtnSignOut} onClick={onLogout} disabled={busy}>
-          <span className="inline-flex items-center gap-2">
-            <LogOut className="size-4" aria-hidden />
-            {t(locale, "admin.signOut")}
-          </span>
+        <button type="button" className={deskGhost} onClick={onLogout} disabled={locked}>
+          <LogOut className="size-3.5" aria-hidden />
+          {t(locale, "admin.signOut")}
         </button>
       </div>
 
-      {message ? <p className={`mb-4 text-sm ${adminCalloutSuccess}`}>{message}</p> : null}
-      {error ? (
-        <p className="mb-4 rounded-none border border-red-400/25 bg-red-950/25 px-4 py-3 text-sm text-red-100">
-          {error}
-        </p>
+      {message || error ? (
+        <div className="mb-6 space-y-3">
+          {message ? <DeskNotice tone="success">{message}</DeskNotice> : null}
+          {error ? <DeskNotice tone="error">{error}</DeskNotice> : null}
+        </div>
       ) : null}
 
-      <div className="grid min-w-0 gap-8 xl:grid-cols-12 xl:gap-10 2xl:gap-12">
-        <aside className="min-w-0 xl:col-span-4 2xl:col-span-3">
-          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-base font-semibold text-paper sm:text-lg">
-              {t(locale, "admin.events.allEvents")}
-            </h2>
-            <button type="button" className={adminBtnGreen} onClick={startNew} disabled={busy}>
-              <span className="inline-flex items-center gap-2">
-                <Plus className="size-4" aria-hidden />
+      <div className="grid min-w-0 items-start gap-6 xl:grid-cols-12 xl:gap-8">
+        <aside className="min-w-0 xl:sticky xl:top-6 xl:col-span-4 xl:self-start 2xl:col-span-3">
+          <div className={`${deskPanel} p-4 sm:p-5`}>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 px-1.5">
+              <div className="flex items-baseline gap-2.5">
+                <h2 className="text-sm font-semibold text-slate-900">
+                  {t(locale, "admin.events.allEvents")}
+                </h2>
+                <span
+                  className={`rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums ${
+                    rows.length >= MAX_STORED_EVENTS
+                      ? "bg-red-100 text-red-800"
+                      : "bg-slate-100 text-slate-500"
+                  }`}
+                >
+                  {fillEventStorageMessage(t(locale, "admin.events.storageCount"), rows.length)}
+                </span>
+              </div>
+              <button
+                type="button"
+                className={storageLimit.showWarning ? deskPrimaryBlocked : deskPrimary}
+                onClick={startNew}
+                disabled={locked || storageLimit.showWarning}
+                title={storageLimit.showWarning ? storageFullMessage : undefined}
+                aria-pressed={isNew}
+              >
+                <Plus className="size-3.5" aria-hidden />
                 {t(locale, "admin.events.newEvent")}
-              </span>
-            </button>
-          </div>
-          <ul className="max-h-[min(50vh,24rem)] space-y-2 overflow-y-auto rounded-lg border border-border bg-paper/4 p-2 text-sm shadow-inner ring-1 ring-border/60 xl:max-h-[min(72vh,40rem)] xl:p-3">
-            {rows.length === 0 ? (
-              <li className="px-2 py-4 text-paper/60">{t(locale, "admin.events.emptyList")}</li>
-            ) : (
-              rows
-                .slice()
-                .sort((a, b) => a.sortDate.localeCompare(b.sortDate))
-                .map((ev) => {
-                  const past = isEventPastForAdmin(ev);
-                  const selected = editingId === ev.id && !isNew;
+              </button>
+            </div>
+            {storageLimit.showWarning ? (
+              <EventListFullNotice>{t(locale, "admin.events.storageListWarning")}</EventListFullNotice>
+            ) : null}
+            <ul className="max-h-[min(70vh,40rem)] space-y-1.5 overflow-y-auto [scrollbar-color:rgba(15,23,42,0.28)_transparent] [scrollbar-width:thin] xl:max-h-[min(78vh,48rem)]">
+              {eventSlots.map((ev, index) => {
+                if (!ev) {
                   return (
-                    <li key={ev.id} className="flex gap-1.5">
-                      <button
-                        type="button"
-                        aria-current={selected ? "true" : undefined}
-                        className={[
-                          "min-w-0 flex-1 rounded-md border px-3 py-2.5 text-left transition-[background-color,border-color,box-shadow]",
-                          selected
-                            ? [
-                                "border-sky-400/55 bg-sky-950/50 shadow-md",
-                                "ring-2 ring-sky-400/45 ring-offset-2 ring-offset-paper-dark",
-                                "border-l-[5px] border-l-sky-400",
-                                past ? "hover:border-sky-300/65" : "hover:border-sky-300/70 hover:bg-sky-950/60",
-                              ].join(" ")
-                            : past
-                              ? "border-red-400/35 bg-red-950/25 hover:border-red-300/50"
-                              : "border-paper/10 bg-paper/4 hover:border-paper/20 hover:bg-paper/6",
-                        ].join(" ")}
-                        onClick={() => startEdit(ev)}
-                      >
-                        <p
-                          className={[
-                            "text-[10px] font-mono",
-                            selected ? "text-sky-200/90" : "text-paper/55",
-                          ].join(" ")}
-                        >
-                          {ev.id}
-                        </p>
-                        <p
-                          className={[
-                            "mt-0.5 leading-snug",
-                            selected ? "font-semibold text-paper" : "font-medium text-paper/90",
-                          ].join(" ")}
-                        >
-                          {ev.title.en}
-                        </p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-paper/60">
-                          <span>{ev.sortDate}</span>
-                          {ev.published === false ? (
-                            <span className="rounded border border-amber-300/25 bg-amber-950/20 px-1.5 py-px text-[10px] font-semibold tracking-wide text-amber-100 uppercase">
-                              {t(locale, "admin.events.draft")}
-                            </span>
-                          ) : null}
-                          {past ? (
-                            <span className="text-[10px] font-semibold text-red-200">
-                              {t(locale, "admin.events.pastRemove")}
-                            </span>
-                          ) : null}
-                        </div>
-                      </button>
-                      <div className="flex shrink-0 flex-col gap-1.5 self-stretch">
-                        <button
-                          type="button"
-                          className="flex min-h-0 flex-1 items-center justify-center rounded-md border border-paper/18 bg-paper/8 px-2 py-2 text-[11px] font-semibold tracking-wide text-paper uppercase transition-colors hover:bg-paper/12 disabled:opacity-50"
-                          onClick={() => duplicateFrom(ev)}
-                          disabled={busy}
-                        >
-                          <span className="inline-flex items-center gap-1.5">
-                            <Copy className="size-3.5 shrink-0" aria-hidden />
-                            {t(locale, "admin.events.duplicate")}
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          className="flex min-h-0 flex-1 items-center justify-center rounded-md border border-red-300/30 bg-red-950/35 px-2 py-2 text-[11px] font-semibold tracking-wide text-red-100 uppercase transition-colors hover:bg-red-950/55 disabled:opacity-50"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            void deleteEventById(ev.id);
-                          }}
-                          disabled={busy}
-                        >
-                          <span className="inline-flex items-center gap-1.5">
-                            <Trash2 className="size-3.5 shrink-0" aria-hidden />
-                            {t(locale, "admin.events.delete")}
-                          </span>
-                        </button>
-                      </div>
-                    </li>
+                    <EmptyEventSlot
+                      key={`empty-slot-${index}`}
+                      label={t(locale, "admin.events.storageEmptySlot")}
+                    />
                   );
-                })
-            )}
-          </ul>
+                }
+                const past = isEventPastForAdmin(ev);
+                const selected = editingId === ev.id && !isNew;
+                return (
+                  <EventIndexRow
+                    key={ev.id}
+                    event={ev}
+                    locale={locale}
+                    selected={selected}
+                    past={past}
+                    locked={locked}
+                    duplicateBlocked={storageLimit.blockNewEvents}
+                    rowRef={selected ? selectedRowRef : undefined}
+                    onEdit={() => startEdit(ev)}
+                    onDuplicate={() => duplicateFrom(ev)}
+                    onDelete={() => void deleteEventById(ev.id)}
+                  />
+                );
+              })}
+              {overflowEvents.map((ev) => {
+                const past = isEventPastForAdmin(ev);
+                const selected = editingId === ev.id && !isNew;
+                return (
+                  <EventIndexRow
+                    key={ev.id}
+                    event={ev}
+                    locale={locale}
+                    selected={selected}
+                    past={past}
+                    locked={locked}
+                    duplicateBlocked={storageLimit.blockNewEvents}
+                    rowRef={selected ? selectedRowRef : undefined}
+                    onEdit={() => startEdit(ev)}
+                    onDuplicate={() => duplicateFrom(ev)}
+                    onDelete={() => void deleteEventById(ev.id)}
+                  />
+                );
+              })}
+            </ul>
+          </div>
         </aside>
 
         <div className="min-w-0 space-y-6 xl:col-span-8 2xl:col-span-9">
-          <div className="rounded-xl border border-border bg-ink/45 p-5 shadow-md ring-1 ring-border/60 sm:p-6 lg:p-8">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-              <h2 className="text-lg font-semibold text-paper sm:text-xl">
-                {t(locale, "admin.events.preview")}
-              </h2>
-              <span className="inline-flex items-center gap-2 rounded-full border border-paper/15 bg-paper/6 px-3 py-1 text-xs font-semibold text-paper/70">
-                <LocaleFlag locale={locale} variant="onDark" />
-                {localeLabels[locale]}
-              </span>
+          <div className={deskPanel}>
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <StepHeading
+                locale={locale}
+                step={1}
+                title={t(locale, "admin.events.step1Title")}
+                hint={t(locale, "admin.events.previewHint")}
+              />
+              <EventPreviewLocaleMenu
+                uiLocale={locale}
+                previewLocale={previewLocale}
+                title={draft.title}
+                excerpt={draft.excerpt}
+                onChange={setPreviewLocale}
+                disabled={locked}
+              />
             </div>
-            <EventCard
-              event={previewEvent}
-              locale={locale}
-              variant="home"
-              bookingMode="disabled"
-              imageFallbackLabel={t(locale, "admin.events.imageUrl")}
-            />
-          </div>
-
-          <div className="rounded-xl border border-border bg-paper-dark/35 p-5 shadow-md ring-1 ring-border/60 sm:p-6 lg:p-8 xl:p-10">
-            <h2 className="mb-6 border-b border-border pb-3 text-lg font-semibold text-paper sm:text-xl">
-              {isNew ? t(locale, "admin.events.formNew") : t(locale, "admin.events.formEdit")}
-            </h2>
-
-            <div className="space-y-5 lg:space-y-6">
-          <div>
-            <label className="text-xs font-semibold text-paper" htmlFor="ev-id">
-              {t(locale, "admin.events.idLabel")}
-            </label>
+            <div className="mt-5">
+              <EventEditorBar
+                locale={locale}
+                localPublish={localPublish}
+                publishOn={publishOn}
+                disabled={locked}
+                isNew={isNew}
+                isDirty={isDirty}
+                past={!isNew && isEventPastForAdmin(draft)}
+                fullyBooked={draft.fullyBooked === true}
+                canCopy={Boolean(draft.id.trim())}
+                copyBlocked={storageLimit.blockNewEvents}
+                onPublishChange={(checked) =>
+                  setDraft((d) =>
+                    onLocalhost && !editingLiveEvent
+                      ? { ...d, published: false, localOnly: checked }
+                      : { ...d, published: checked },
+                  )
+                }
+                onCopy={() => duplicateFrom(draft, { keepPendingImage: Boolean(pendingImageFile) })}
+                onDelete={() => void onDelete()}
+              />
+            </div>
             <input
-              id="ev-id"
-              className={`${fieldInputClass} mt-1 font-mono text-sm tracking-tight disabled:bg-paper/6 disabled:text-paper/50`}
-              value={draft.id}
-              onChange={(e) => setDraft((d) => ({ ...d, id: e.target.value }))}
-              disabled={!isNew}
-              autoComplete="off"
-              placeholder={t(locale, "admin.events.idPlaceholder")}
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="sr-only"
+              onChange={(e) => {
+                onPickImage(e.target.files?.[0]);
+                e.target.value = "";
+              }}
             />
-            {!isNew ? (
-              <p className="mt-1 text-xs text-paper/55">{t(locale, "admin.events.idLocked")}</p>
-            ) : null}
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:items-end">
-            <div className="sm:col-span-1">
-              <label className="text-xs font-semibold text-paper" htmlFor="ev-date">
-                {t(locale, "admin.events.calendarDate")}
-              </label>
-              <input
-                id="ev-date"
-                type="date"
-                className={`${fieldInputClass} mt-1 font-sans`}
-                value={draft.sortDate}
-                onChange={(e) =>
-                  setDraft((d) => syncDerivedEventFields({ ...d, sortDate: e.target.value }))
+            <div className="mt-5 rounded-xl bg-ink p-3 sm:p-4">
+              <EditableEventCard
+                key={editingId ?? "new-event"}
+                event={previewEvent}
+                previewLocale={previewLocale}
+                uiLocale={locale}
+                disabled={locked}
+                onRequestImagePick={() => fileInputRef.current?.click()}
+                onChangeDate={(ymd) =>
+                  setDraft((d) => syncDerivedEventFields({ ...d, sortDate: ymd }))
+                }
+                onChangeTitle={(value) =>
+                  setDraft((d) => ({
+                    ...d,
+                    title: { ...d.title, [previewLocale]: value },
+                  }))
+                }
+                onChangeExcerpt={(value) =>
+                  setDraft((d) => ({
+                    ...d,
+                    excerpt: { ...d.excerpt, [previewLocale]: value },
+                  }))
+                }
+                onChangeTime={(start, end) =>
+                  setDraft((d) =>
+                    syncDerivedEventFields(
+                      applySlotsToTimeDetail({
+                        ...d,
+                        hasSpecificTime: true,
+                        timeSlotStart: start,
+                        timeSlotEnd: clampEndAfterStart(start, end),
+                      }),
+                    ),
+                  )
+                }
+                onEnableTime={() =>
+                  setDraft((d) =>
+                    syncDerivedEventFields(
+                      applySlotsToTimeDetail({
+                        ...d,
+                        hasSpecificTime: true,
+                      }),
+                    ),
+                  )
+                }
+                onChangeFullyBooked={(fullyBooked) =>
+                  setDraft((d) => ({ ...d, fullyBooked }))
                 }
               />
-              <p className="mt-2 text-xs text-paper/55">
-                {t(locale, "admin.events.datePreviewHint")}
-              </p>
-              <ul className="mt-2 space-y-1 text-sm text-paper/85">
-                {LOCALE_ORDER.map((k) => (
-                  <li key={k} className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span className="font-semibold text-paper/70">
-                      <LocaleFieldLabel localeKey={k} />:
-                    </span>
-                    <span>{formatSortDateForEventDisplay(draft.sortDate, k) || "—"}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
-            <div className="flex flex-col gap-3 pb-1 sm:col-span-1 lg:col-span-2">
-              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
-                <input
-                  type="checkbox"
-                  className="size-4 rounded border-paper/25 bg-paper/5 text-paper focus:ring-gold/30"
-                  checked={draft.hasSpecificTime !== false}
-                  onChange={(e) => {
-                    const on = e.target.checked;
-                    setDraft((d) =>
-                      syncDerivedEventFields(
-                        applySlotsToTimeDetail({
-                          ...d,
-                          hasSpecificTime: on,
-                          timeSlotStart: on ? d.timeSlotStart : undefined,
-                          timeSlotEnd: on ? d.timeSlotEnd : undefined,
-                        }),
-                      ),
-                    );
-                  }}
-                />
-                {t(locale, "admin.events.specificTime")}
-              </label>
-              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
-                <input
-                  type="checkbox"
-                  className="size-4 rounded border-paper/25 bg-paper/5 text-paper focus:ring-gold/30"
-                  checked={draft.fullyBooked ?? false}
-                  onChange={(e) => setDraft((d) => ({ ...d, fullyBooked: e.target.checked }))}
-                />
-                {t(locale, "admin.events.fullyBooked")}
-              </label>
-              <label className="inline-flex items-center gap-2.5 text-sm font-medium text-paper/90">
-                <input
-                  type="checkbox"
-                  className="size-4 rounded border-paper/25 bg-paper/5 text-paper focus:ring-gold/30"
-                  checked={draft.published !== false}
-                  onChange={(e) =>
-                    setDraft((d) => ({
-                      ...d,
-                      published: e.target.checked,
-                    }))
-                  }
-                />
-                {t(locale, "admin.events.published")}
-              </label>
+            <div className="mt-6 border-t border-slate-200 pt-6">
+              <StepHeading
+                locale={locale}
+                step={2}
+                title={t(locale, "admin.events.translateContent")}
+                hint={t(locale, "admin.events.sourceHint")}
+              />
+              <div className="mt-4 ml-9">
+                <button
+                  type="button"
+                  className={`${deskGhost} group`}
+                  onClick={() => void onTranslate()}
+                  disabled={locked}
+                >
+                  {translating ? (
+                    <Loader2 className="size-4 animate-spin" aria-hidden />
+                  ) : (
+                    <Sparkles className="size-4 text-blue-600 motion-safe:group-hover:animate-[spin_0.7s_ease-in-out]" aria-hidden />
+                  )}
+                  {translating
+                    ? t(locale, "admin.events.translating")
+                    : t(locale, "admin.events.translateContent")}
+                </button>
+                {translateSuccess && translatePhase === "idle" ? (
+                  <div
+                    role="status"
+                    className="mt-3 rounded-lg border-2 border-emerald-400 bg-emerald-50 px-4 py-3.5"
+                  >
+                    <p className="text-sm font-semibold text-emerald-950">
+                      {t(locale, "admin.events.translateDoneTitle")}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-emerald-900">
+                      {t(locale, "admin.events.translateDoneBody")}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+              {translating ? (
+                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-medium text-slate-900">{t(locale, "admin.events.translating")}</p>
+                    <p
+                      className="font-mono text-sm tabular-nums text-slate-500"
+                      aria-label={t(locale, "admin.events.translateElapsed").replaceAll(
+                        "{time}",
+                        formatTranslateElapsed(translateSeconds),
+                      )}
+                    >
+                      {formatTranslateElapsed(translateSeconds)}
+                    </p>
+                  </div>
+                  <div
+                    className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-200"
+                    role="progressbar"
+                    aria-label={t(locale, "admin.events.translating")}
+                  >
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${Math.min(100, translateProgress * 100)}%`,
+                        backgroundColor: translateBarColor(translateProgress),
+                      }}
+                    />
+                  </div>
+                  <ul className="mt-3 flex flex-wrap gap-2" aria-hidden>
+                    {locales.map((code, index) => {
+                      const active = index === translateBeat % locales.length;
+                      return (
+                        <li
+                          key={code}
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all duration-300 ${
+                            active
+                              ? "border-blue-200 bg-white text-slate-900 shadow-sm"
+                              : "border-transparent bg-white/70 text-slate-500"
+                          }`}
+                        >
+                          <LocaleFlag locale={code} />
+                          {localeLabels[code]}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p className="mt-3 text-slate-600" role="status" aria-live="polite">
+                    {t(locale, translateWaitNotes[Math.floor(translateSeconds / 4) % translateWaitNotes.length]!)}
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-semibold text-paper" htmlFor="ev-img">
-              {t(locale, "admin.events.imageUrl")}
-            </label>
-            <input
-              id="ev-img"
-              className={`${fieldInputClass} mt-1`}
-              value={draft.imageSrc}
-              onChange={(e) => setDraft((d) => ({ ...d, imageSrc: e.target.value }))}
-              placeholder="https://images2.imgbox.com/…"
-              inputMode="url"
-              autoComplete="off"
+          <div className={deskPanel}>
+            <div className="space-y-10">
+          <div className="space-y-6">
+            <StepHeading
+              locale={locale}
+              step={3}
+              title={t(locale, "admin.events.step3Title")}
             />
-            <p className="mt-2 text-xs leading-relaxed text-paper/60">
-              {t(locale, "admin.events.imageUrlHint")}
-            </p>
+            <div className="grid items-start gap-6 lg:grid-cols-2">
+              <div>
+                <label className={deskLabel} htmlFor="ev-id">
+                  {t(locale, "admin.events.idLabel")}
+                </label>
+                <input
+                  id="ev-id"
+                  className={`${deskField} font-mono text-[13px] tracking-tight`}
+                  value={draft.id}
+                  onChange={(e) => setDraft((d) => ({ ...d, id: e.target.value }))}
+                  disabled={!isNew}
+                  autoComplete="off"
+                  placeholder={t(locale, "admin.events.idPlaceholder")}
+                />
+                <p className={`mt-2 ${deskHint}`}>
+                  {isNew ? t(locale, "admin.events.idHint") : t(locale, "admin.events.idLocked")}
+                </p>
+              </div>
+              <WebsiteStatusCard
+                locale={locale}
+                localPublish={onLocalhost && !editingLiveEvent}
+                checked={publishOn}
+                disabled={locked}
+                onChange={(checked) =>
+                  setDraft((d) =>
+                    onLocalhost && !editingLiveEvent
+                      ? { ...d, published: false, localOnly: checked }
+                      : { ...d, published: checked },
+                  )
+                }
+              />
+            </div>
           </div>
 
-          {draft.hasSpecificTime !== false ? (
-          <div className="space-y-3">
-            <p className="text-sm font-semibold tracking-wide text-paper">
-              {t(locale, "admin.events.timeOnly")}
-            </p>
-            <p className="text-xs text-paper/55">{t(locale, "admin.events.timeOnlyHint")}</p>
-            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+          <div className="space-y-8 border-t border-slate-200 pt-8">
+            <StepHeading
+              locale={locale}
+              step={4}
+              title={t(locale, "admin.events.step4Title")}
+              hint={t(locale, "admin.events.step4Hint")}
+            />
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-slate-900">
+              {t(locale, "admin.events.sectionTime")}
+            </h3>
+            <div className={`flex flex-wrap items-end gap-3 ${draft.hasSpecificTime === false ? "opacity-45" : ""}`}>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-start">
+                <label className={deskLabel} htmlFor="ev-start">
                   {t(locale, "admin.events.startTime")}
                 </label>
                 <select
                   id="ev-start"
-                  className={fieldInputClass}
+                  className={deskTimeSelect}
                   value={draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START}
+                  disabled={locked || draft.hasSpecificTime === false}
                   onChange={(e) => {
-                    const nextStart = e.target.value;
+                    const start = e.target.value;
+                    const end = clampEndAfterStart(start, draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END);
                     setDraft((d) =>
                       syncDerivedEventFields(
                         applySlotsToTimeDetail({
                           ...d,
-                          timeSlotStart: nextStart,
-                          timeSlotEnd: clampEndAfterStart(
-                            nextStart,
-                            d.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
-                          ),
+                          hasSpecificTime: true,
+                          timeSlotStart: start,
+                          timeSlotEnd: end,
                         }),
                       ),
                     );
                   }}
                 >
-                  {EVENT_TIME_OPTIONS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
+                  {EVENT_TIME_OPTIONS.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
                     </option>
                   ))}
                 </select>
               </div>
+              <span className="mb-2 hidden text-slate-300 sm:block" aria-hidden>
+                —
+              </span>
               <div>
-                <label className="mb-1 block text-xs font-semibold text-paper" htmlFor="ev-end">
+                <label className={deskLabel} htmlFor="ev-end">
                   {t(locale, "admin.events.endTime")}
                 </label>
                 <select
                   id="ev-end"
-                  className={fieldInputClass}
+                  className={deskTimeSelect}
                   value={draft.timeSlotEnd ?? DEFAULT_EVENT_TIME_END}
-                  onChange={(e) =>
+                  disabled={locked || draft.hasSpecificTime === false}
+                  onChange={(e) => {
+                    const start = draft.timeSlotStart ?? DEFAULT_EVENT_TIME_START;
                     setDraft((d) =>
                       syncDerivedEventFields(
                         applySlotsToTimeDetail({
                           ...d,
+                          hasSpecificTime: true,
+                          timeSlotStart: start,
                           timeSlotEnd: e.target.value,
                         }),
                       ),
-                    )
-                  }
+                    );
+                  }}
                 >
-                  {EVENT_TIME_OPTIONS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
+                  {EVENT_TIME_OPTIONS.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
                     </option>
                   ))}
                 </select>
               </div>
             </div>
-            <p className="text-xs text-paper/55">
-              {t(locale, "admin.events.preview")}:{" "}
-              <span className="font-medium text-paper">
-                {draft.timeDetail.en?.trim() ? draft.timeDetail.en : "—"}
-              </span>
-            </p>
+            <label className="inline-flex cursor-pointer items-center gap-3">
+              <DeskToggle
+                checked={draft.hasSpecificTime === false}
+                disabled={locked}
+                onChange={(hide) => {
+                  setDraft((d) =>
+                    syncDerivedEventFields(
+                      applySlotsToTimeDetail({
+                        ...d,
+                        hasSpecificTime: !hide,
+                        timeSlotStart: hide ? undefined : d.timeSlotStart,
+                        timeSlotEnd: hide ? undefined : d.timeSlotEnd,
+                      }),
+                    ),
+                  );
+                }}
+              />
+              <span className="text-sm font-medium text-slate-800">{t(locale, "admin.events.specificTime")}</span>
+            </label>
+            <p className={deskHint}>{t(locale, "admin.events.timeOnlyHint")}</p>
           </div>
-          ) : null}
-          <LocaleBlock
-            label={t(locale, "admin.events.titleField")}
-            value={draft.title}
-            onChange={(v) => setDraft((d) => ({ ...d, title: v }))}
-            multiline={false}
-          />
-          <LocaleBlock
-            label={t(locale, "admin.events.excerpt")}
-            value={draft.excerpt}
-            onChange={(v) => setDraft((d) => ({ ...d, excerpt: v }))}
-            multiline
-          />
-          <LocaleBlock
-            label={t(locale, "admin.events.imageAlt")}
-            value={draft.imageAlt}
-            onChange={(v) => setDraft((d) => ({ ...d, imageAlt: v }))}
-            multiline={false}
-          />
 
-          <div className="flex flex-wrap items-center gap-3 border-t border-slate-200/80 pt-6">
-            <button
-              type="button"
-              className={[
-                isNew ? adminBtnGreen : adminBtnBlue,
-                isDirty
-                  ? "ring-2 ring-sky-400/55 ring-offset-2 ring-offset-paper"
-                  : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              onClick={onSave}
-              disabled={busy || !isDirty}
-              title={
-                isDirty
-                  ? isNew
-                    ? t(locale, "admin.events.saveNewTooltip")
-                    : t(locale, "admin.events.saveEditTooltip")
-                  : isNew
-                    ? t(locale, "admin.events.saveNewDisabledTooltip")
-                    : t(locale, "admin.events.saveEditDisabledTooltip")
-              }
-            >
-              <span className="inline-flex items-center gap-2">
-                {isNew ? <Plus className="size-4" aria-hidden /> : <Save className="size-4" aria-hidden />}
-                {isNew ? t(locale, "admin.events.create") : t(locale, "admin.events.saveChanges")}
-              </span>
-            </button>
-            {!isNew && editingId ? (
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-slate-900">
+              {t(locale, "admin.events.sectionPhoto")}
+            </h3>
+          <div className="grid items-start gap-6 lg:grid-cols-2">
+            <div>
+              <label className={deskLabel} htmlFor="ev-img">
+                {t(locale, "admin.events.imageUrl")}
+              </label>
+              <input
+                id="ev-img"
+                className={deskField}
+                value={pendingImageFile ? "" : draft.imageSrc}
+                onChange={(e) => {
+                  clearPendingImage();
+                  setDraft((d) => ({
+                    ...d,
+                    imageSrc: e.target.value,
+                    imageStoragePath: undefined,
+                  }));
+                }}
+                placeholder={pendingImageFile?.name || "https://…"}
+                inputMode="url"
+                autoComplete="off"
+              />
+              <p className={`mt-2 ${deskHint}`}>{t(locale, "admin.events.imageHint")}</p>
+              {draft.imageSrc || pendingImageFile ? (
+                <button
+                  type="button"
+                  className="mt-2 cursor-pointer text-sm font-medium text-slate-500 transition-colors hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  onClick={onRemoveImage}
+                  disabled={locked}
+                >
+                  {t(locale, "admin.events.removeImage")}
+                </button>
+              ) : null}
+            </div>
+            <div>
+              <label className={deskLabel} htmlFor="ev-alt">
+                {t(locale, "admin.events.imageAlt")} ({localeLabels[previewLocale]})
+              </label>
+              <input
+                id="ev-alt"
+                className={deskField}
+                value={draft.imageAlt[previewLocale] ?? ""}
+                onChange={(e) =>
+                  setDraft((d) => ({
+                    ...d,
+                    imageAlt: { ...d.imageAlt, [previewLocale]: e.target.value },
+                  }))
+                }
+              />
+              <p className={`mt-2 ${deskHint}`}>{t(locale, "admin.events.imageAltHint")}</p>
+            </div>
+          </div>
+          </div>
+
+          <div className="border-t border-slate-200 pt-5">
+            {isNew && storageLimit.showWarning ? (
+              <EventCreateFullNotice
+                title={t(locale, "admin.events.storageCreateTitle")}
+                body={t(locale, "admin.events.storageCreateBody")}
+              />
+            ) : null}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className={`min-w-0 flex-1 text-sm ${isDirty ? "font-medium text-amber-700" : "text-slate-500"}`}>
+              {isDirty
+                ? t(locale, isNew ? "admin.events.saveNewTooltip" : "admin.events.saveEditTooltip")
+                : t(locale, isNew ? "admin.events.saveNewDisabledTooltip" : "admin.events.saveEditDisabledTooltip")}
+            </p>
+            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+              {!isNew && editingId ? (
+                <button
+                  type="button"
+                  className={deskDanger}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    void onDelete();
+                  }}
+                  disabled={locked}
+                >
+                  <Trash2 className="size-3.5" aria-hidden />
+                  {t(locale, "admin.events.delete")}
+                </button>
+              ) : null}
               <button
                 type="button"
-                className={adminBtnDanger}
-                onClick={(e) => {
-                  e.preventDefault();
-                  void onDelete();
-                }}
-                disabled={busy}
+                className={isNew && storageLimit.showWarning ? deskPrimaryBlocked : deskPrimary}
+                onClick={onSave}
+                disabled={locked || !isDirty || (isNew && storageLimit.showWarning)}
+                title={
+                  isNew && storageLimit.showWarning
+                    ? storageFullMessage
+                    : isDirty
+                      ? isNew
+                        ? t(locale, "admin.events.saveNewTooltip")
+                        : t(locale, "admin.events.saveEditTooltip")
+                      : isNew
+                        ? t(locale, "admin.events.saveNewDisabledTooltip")
+                        : t(locale, "admin.events.saveEditDisabledTooltip")
+                }
               >
-                <span className="inline-flex items-center gap-2">
-                  <Trash2 className="size-4" aria-hidden />
-                  {t(locale, "admin.events.delete")}
-                </span>
+                {busy ? (
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                ) : isNew ? (
+                  <Plus className="size-3.5" aria-hidden />
+                ) : (
+                  <Save className="size-3.5" aria-hidden />
+                )}
+                {isNew ? t(locale, "admin.events.create") : t(locale, "admin.events.saveChanges")}
               </button>
-            ) : null}
+            </div>
+          </div>
           </div>
             </div>
           </div>
         </div>
+      </div>
       </div>
     </PageShell>
     {confirmDialog}
@@ -734,10 +1126,10 @@ export function EventsAdminPage() {
 }
 
 function isValidEventSlug(raw: string) {
-  const t = raw.trim();
-  if (!t || t.length > 64) return false;
-  if (t[0] === "-" || t.at(-1) === "-") return false;
-  for (const c of t) {
+  const trimmed = raw.trim();
+  if (!trimmed || trimmed.length > 64) return false;
+  if (trimmed[0] === "-" || trimmed.at(-1) === "-") return false;
+  for (const c of trimmed) {
     if (c === "-" || (c >= "0" && c <= "9") || (c >= "a" && c <= "z")) continue;
     return false;
   }

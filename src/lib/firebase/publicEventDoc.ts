@@ -1,3 +1,4 @@
+import { localeTrioFromPartial } from "@/i18n/localeMeta";
 import type { HomeEvent } from "@/lib/publicEventTypes";
 import { resolveEventDescriptionText } from "@/lib/eventDescriptionText";
 
@@ -32,12 +33,12 @@ export function normalizeSortDateFromFirestore(raw: unknown): string {
 
 /** Map a Firestore `publicEvents` document (client or REST/JSON) to `HomeEvent`. */
 export function homeEventFromFirestoreData(id: string, v: Record<string, unknown>): HomeEvent {
-  const weekdayDate = (v.weekdayDate ?? { en: "", es: "", sv: "" }) as HomeEvent["weekdayDate"];
-  const timeDetail = (v.timeDetail ?? { en: "", es: "", sv: "" }) as HomeEvent["timeDetail"];
-  const title = (v.title ?? { en: "", es: "", sv: "" }) as HomeEvent["title"];
-  const rawExcerpt = (v.excerpt ?? { en: "", es: "", sv: "" }) as HomeEvent["excerpt"];
+  const weekdayDate = localeTrioFromPartial(v.weekdayDate);
+  const timeDetail = localeTrioFromPartial(v.timeDetail);
+  const title = localeTrioFromPartial(v.title);
+  const rawExcerpt = localeTrioFromPartial(v.excerpt);
   const excerpt = resolveEventDescriptionText(rawExcerpt, v.excerptLines);
-  const imageAlt = (v.imageAlt ?? { en: "", es: "", sv: "" }) as HomeEvent["imageAlt"];
+  const imageAlt = localeTrioFromPartial(v.imageAlt);
   const sortDate = normalizeSortDateFromFirestore(v.sortDate) || String(v.sortDate ?? "").trim();
 
   const timeLine =
@@ -52,6 +53,7 @@ export function homeEventFromFirestoreData(id: string, v: Record<string, unknown
     id,
     sortDate,
     published: v.published !== false,
+    localOnly: v.localOnly === true,
     fullyBooked: Boolean(v.fullyBooked ?? false),
     hasSpecificTime,
     timeSlotStart: v.timeSlotStart != null ? String(v.timeSlotStart) : undefined,
@@ -67,5 +69,6 @@ export function homeEventFromFirestoreData(id: string, v: Record<string, unknown
         : undefined,
     imageSrc: String(v.imageSrc ?? ""),
     imageAlt,
+    imageStoragePath: v.imageStoragePath != null ? String(v.imageStoragePath) : undefined,
   };
 }

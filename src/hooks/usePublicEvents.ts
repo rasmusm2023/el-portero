@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { getFirebaseFirestore, isFirebaseConfigured } from "@/lib/firebase/client";
 import { subscribePublishedPublicEvents } from "@/lib/firebase/eventsStore";
 import { homeEventFromFirestoreData } from "@/lib/firebase/publicEventDoc";
+import { isEventPastForAdmin } from "@/lib/eventSchedule";
+import { isLocalDevHost, showEventOnSite } from "@/lib/localDevHost";
 import type { HomeEvent } from "@/lib/publicEventTypes";
 
 export type PublicEventsState = {
@@ -12,8 +14,20 @@ export type PublicEventsState = {
   ready: boolean;
 };
 
-function sortByDate(events: HomeEvent[]) {
-  return [...events].sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+function sortByDate(events: HomeEvent[], localDev: boolean) {
+  return [...events]
+    .filter((ev) => showEventOnSite(ev, localDev) && !isEventPastForAdmin(ev))
+    .sort((a, b) => a.sortDate.localeCompare(b.sortDate));
+}
+
+function combineEvents(live: HomeEvent[], api: HomeEvent[], localDev: boolean) {
+  if (!localDev) return sortByDate(live.length > 0 ? live : api, false);
+  const byId = new Map<string, HomeEvent>();
+  for (const ev of live) byId.set(ev.id, ev);
+  for (const ev of api) {
+    if (ev.localOnly || !byId.has(ev.id)) byId.set(ev.id, ev);
+  }
+  return sortByDate([...byId.values()], true);
 }
 
 const DEBUG_PUBLIC_EVENTS = process.env.NEXT_PUBLIC_DEBUG_PUBLIC_EVENTS === "1";
@@ -33,7 +47,7 @@ function isFirestorePermissionDenied(err: unknown): boolean {
   );
 }
 
-async function loadEventsViaApi(signal: AbortSignal): Promise<HomeEvent[] | null> {
+async function loadEventsViaApi(signal: AbortSignal, localDev: boolean): Promise<HomeEvent[] | null> {
   const res = await fetch("/api/public/events", { signal });
   if (!res.ok) return null;
   const raw = (await res.json()) as unknown;
@@ -43,6 +57,7 @@ async function loadEventsViaApi(signal: AbortSignal): Promise<HomeEvent[] | null
       const r = row as Record<string, unknown>;
       return homeEventFromFirestoreData(String(r.id ?? ""), r);
     }),
+    localDev,
   );
 }
 
@@ -78,6 +93,7 @@ export function usePublicEvents(): PublicEventsState {
   useEffect(() => {
     if (!isFirebaseConfigured()) return;
 
+    const localDev = isLocalDevHost(window.location.hostname);
     const ac = new AbortController();
     let unsub: (() => void) | undefined;
     let cancelled = false;
@@ -90,7 +106,7 @@ export function usePublicEvents(): PublicEventsState {
       if (cancelled || ac.signal.aborted) return;
       const live = listenerEventsRef.current;
       const api = apiEventsRef.current;
-      const next = live.length > 0 ? sortByDate([...live]) : sortByDate([...api]);
+      const next = combineEvents(live, api, localDev);
       debugEvents("flush", { listenerCount: live.length, apiCount: api.length, displayCount: next.length });
       setState({ ready: true, events: next });
     };
@@ -108,7 +124,7 @@ export function usePublicEvents(): PublicEventsState {
         emptyReconcileTimer = null;
         void (async () => {
           try {
-            const data = await loadEventsViaApi(ac.signal);
+            const data = await loadEventsViaApi(ac.signal, localDev);
             if (cancelled || ac.signal.aborted || data == null) return;
             apiEventsRef.current = data;
             flush();
@@ -122,7 +138,7 @@ export function usePublicEvents(): PublicEventsState {
 
     void (async () => {
       try {
-        const fromApi = await loadEventsViaApi(ac.signal);
+        const fromApi = await loadEventsViaApi(ac.signal, localDev);
         if (cancelled || ac.signal.aborted) return;
         if (fromApi != null) {
           debugEvents("initial API", { count: fromApi.length });
@@ -190,7 +206,7 @@ export function usePublicEvents(): PublicEventsState {
 
         void (async () => {
           try {
-            const fromApi = await loadEventsViaApi(ac.signal);
+            const fromApi = await loadEventsViaApi(ac.signal, localDev);
             if (cancelled || ac.signal.aborted) return;
             if (fromApi != null) {
               apiEventsRef.current = fromApi;

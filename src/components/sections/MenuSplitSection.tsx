@@ -248,7 +248,11 @@ export function MenuSplitSection({
           ? "Elegir tipo de carta"
           : locale === "sv"
             ? "Välj meny"
-            : "Choose a menu"
+            : locale === "de"
+              ? "Speisekarte wählen"
+              : locale === "fr"
+                ? "Choisir une carte"
+                : "Choose a menu"
       }
       className="scroll-mt-[calc(var(--header-h)+0.5rem)] bg-ink"
     >

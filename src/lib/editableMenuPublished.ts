@@ -21,7 +21,15 @@ export function isEditableMenuPublished(
 export function showGuestMenuTab(ready: boolean, remote: EditableMenuDoc | null): boolean {
   if (!isFirebaseConfigured()) return true;
   if (!ready) return true;
-  return isEditableMenuPublished(remote);
+  return isEditableMenuPublished(remote) && Boolean(remote?.title?.trim());
+}
+
+/** Label for the button at the top of a public menu. Falls back while the doc is still loading. */
+export function guestMenuTabLabel(
+  remote: EditableMenuDoc | null | undefined,
+  fallback: string,
+): string {
+  return remote?.title?.trim() || fallback;
 }
 
 /** @deprecated alias — use {@link showGuestMenuTab} */

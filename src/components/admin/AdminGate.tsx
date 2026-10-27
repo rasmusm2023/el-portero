@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
+import { AdminEntryScreen } from "@/components/admin/AdminEntryScreen";
 import { PageShell } from "@/components/layout/PageShell";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { getFirebaseWebConfig } from "@/lib/firebase/client";
@@ -26,7 +27,7 @@ export function AdminGate({ children }: { children: ReactNode }) {
 
   if (!firebaseConfigured) {
     return (
-      <PageShell title="Admin" intro="Firebase is not configured for this build.">
+      <PageShell tone="admin" title="Admin" intro="Firebase is not configured for this build.">
         <p className="max-w-xl text-sm text-ink-muted leading-relaxed">
           Add the <code className="font-mono text-xs">NEXT_PUBLIC_FIREBASE_*</code> variables from your
           Firebase project (see <code className="font-mono text-xs">.env.example</code>), restart the dev
@@ -36,22 +37,22 @@ export function AdminGate({ children }: { children: ReactNode }) {
     );
   }
 
-  if (!ready || !adminReady) {
-    return (
-      <PageShell title="Admin" intro="Loading…">
-        <p className="text-sm text-ink-muted">Checking sign-in…</p>
-      </PageShell>
-    );
+  if (!ready || (!user && !adminReady)) {
+    return <AdminEntryScreen phase="checking" />;
+  }
+
+  if (user && !adminReady) {
+    return <AdminEntryScreen phase="signed-in" email={user.email} />;
   }
 
   if (!isLoginRoute && !user) {
     const cfg = getFirebaseWebConfig();
     return (
-      <PageShell title="Admin" intro="Redirecting…">
-        <p className="text-sm text-ink-muted">
+      <PageShell tone="admin" title="Admin" intro="Redirecting…">
+        <p className="text-sm text-zinc-600">
           Taking you to sign-in.
         </p>
-        <div className="mt-4 max-w-xl rounded-none border border-border bg-paper px-4 py-3 text-xs text-ink-muted">
+        <div className="mt-4 max-w-xl rounded-md border border-zinc-200 bg-white px-4 py-3 text-xs text-zinc-600">
           <p>
             <span className="font-semibold text-ink">Project:</span>{" "}
             <span className="font-mono break-all">{cfg?.projectId ?? "unknown"}</span>
@@ -64,8 +65,8 @@ export function AdminGate({ children }: { children: ReactNode }) {
   if (!isLoginRoute && user && !isAdmin) {
     const cfg = getFirebaseWebConfig();
     return (
-      <PageShell title="Admin" intro="Access denied">
-        <p className="text-sm text-ink-muted">
+      <PageShell tone="admin" title="Admin" intro="Access denied">
+        <p className="text-sm text-zinc-600">
           This account is signed in, but it is not approved for admin access yet.
         </p>
         <div className="mt-4 max-w-xl rounded-none border border-amber-500/25 bg-amber-50 px-4 py-3 text-xs text-amber-950">
@@ -88,7 +89,7 @@ export function AdminGate({ children }: { children: ReactNode }) {
             </p>
           ) : null}
         </div>
-        <p className="mt-6 text-xs text-ink-muted">
+        <p className="mt-6 text-xs text-zinc-500">
           If you believe you should have access, add the allowlist document in Firestore, then refresh.
         </p>
       </PageShell>

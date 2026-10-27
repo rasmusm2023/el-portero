@@ -43,7 +43,7 @@ export function HeaderAdminSignOut({ variant, onAfterSignOut, className }: Props
 
   if (variant === "desktop") {
     const compactClass = [
-      "inline-flex h-10 shrink-0 items-center gap-1.5 rounded-md",
+      "inline-flex h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-md",
       "border border-red-300/15 bg-red-950/25 px-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-100 shadow-sm",
       "transition-colors hover:bg-red-950/40",
       "disabled:cursor-not-allowed disabled:opacity-50",

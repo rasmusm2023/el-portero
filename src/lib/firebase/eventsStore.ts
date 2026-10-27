@@ -1,6 +1,7 @@
 import {
   collection,
   deleteDoc,
+  deleteField,
   doc,
   onSnapshot,
   query,
@@ -93,6 +94,7 @@ export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
   const payload: Record<string, unknown> = {
     sortDate: ev.sortDate,
     published: ev.published !== false,
+    localOnly: ev.localOnly === true ? true : deleteField(),
     fullyBooked: Boolean(ev.fullyBooked ?? false),
     hasSpecificTime: ev.hasSpecificTime !== false,
     weekdayDate: ev.weekdayDate,
@@ -104,6 +106,7 @@ export async function upsertPublicEvent(db: Firestore, ev: HomeEvent) {
     imageAlt: ev.imageAlt,
     updatedAt: serverTimestamp(),
   };
+  payload.imageStoragePath = ev.imageStoragePath ? ev.imageStoragePath : deleteField();
   if (ev.hasSpecificTime !== false && ev.timeSlotStart != null && ev.timeSlotStart !== "") {
     payload.timeSlotStart = ev.timeSlotStart;
   }

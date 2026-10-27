@@ -1,6 +1,7 @@
 "use client";
 
 import type { MenuCategoryData } from "@/data/menuTypes";
+import { pickLocaleText } from "@/i18n/localeMeta";
 import type { Locale } from "@/i18n/strings";
 import { formatEur } from "@/lib/formatEur";
 import { MenuPriceDisclaimer } from "@/components/menu/MenuPriceDisclaimer";
@@ -17,7 +18,7 @@ export function MenuCategoryGrid({ categories, locale }: Props) {
       {categories.map((cat) => (
         <section key={cat.title.en}>
           <header className="pb-2">
-            <h2 className="font-display text-2xl text-paper">{cat.title[locale]}</h2>
+            <h2 className="font-display text-2xl text-paper">{pickLocaleText(cat.title, locale)}</h2>
           </header>
           <ul className="mt-6 flex flex-col gap-y-8">
             {cat.items.map((item) => (
@@ -26,9 +27,9 @@ export function MenuCategoryGrid({ categories, locale }: Props) {
                 className="flex justify-between gap-6"
               >
                 <div className="min-w-0">
-                  <p className="font-medium uppercase text-paper">{item.name[locale]}</p>
+                  <p className="font-medium uppercase text-paper">{pickLocaleText(item.name, locale)}</p>
                   <p className="mt-1 text-sm italic text-ink-muted leading-relaxed">
-                    {item.description[locale]}
+                    {pickLocaleText(item.description, locale)}
                   </p>
                 </div>
                 <p className="shrink-0 text-ink-muted tabular-nums">

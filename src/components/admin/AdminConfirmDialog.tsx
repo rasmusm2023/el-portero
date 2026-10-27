@@ -3,7 +3,6 @@
 import { AlertTriangle } from "lucide-react";
 import { useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
-import { adminBtnDanger, adminBtnNeutral } from "@/lib/adminUiStyles";
 
 type Props = {
   open: boolean;
@@ -46,10 +45,10 @@ export function AdminConfirmDialog({
   if (!open || typeof document === "undefined") return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[300] flex items-end justify-center p-4 sm:items-center sm:p-6">
       <button
         type="button"
-        className="absolute inset-0 bg-black/70 backdrop-blur-[2px]"
+        className="absolute inset-0 cursor-pointer bg-slate-900/40"
         aria-label={cancelLabel}
         onClick={onCancel}
       />
@@ -58,38 +57,32 @@ export function AdminConfirmDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descId}
-        className="relative w-full max-w-md border-2 border-red-400/45 bg-gradient-to-b from-red-950 to-[#1a0a0c] p-6 shadow-[0_24px_64px_-12px_rgba(0,0,0,0.75),0_0_0_1px_rgba(248,113,113,0.15)] ring-4 ring-red-600/25 sm:p-8"
+        className="relative w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl"
       >
-        <div className="flex gap-4">
-          <div
-            className="flex size-12 shrink-0 items-center justify-center rounded-full border border-red-400/35 bg-red-600/25 text-red-200"
-            aria-hidden
-          >
-            <AlertTriangle className="size-7 stroke-[2px]" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <h2
-              id={titleId}
-              className="font-display text-xl font-semibold tracking-tight text-red-50 sm:text-2xl"
-            >
-              {title}
-            </h2>
-            <p
-              id={descId}
-              className="mt-3 text-sm leading-relaxed text-red-100/90 whitespace-pre-line"
-            >
-              {message}
-            </p>
-          </div>
+        <div
+          className="flex size-10 items-center justify-center rounded-full bg-red-50 text-red-600"
+          aria-hidden
+        >
+          <AlertTriangle className="size-5" />
         </div>
-        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <button type="button" className={`w-full sm:w-auto ${adminBtnNeutral}`} onClick={onCancel}>
+        <h2 id={titleId} className="mt-4 text-lg font-semibold tracking-tight text-slate-900">
+          {title}
+        </h2>
+        <p id={descId} className="mt-2 text-sm leading-relaxed whitespace-pre-line text-slate-600">
+          {message}
+        </p>
+        <div className="mt-8 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            className="inline-flex h-9 cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+            onClick={onCancel}
+          >
             {cancelLabel}
           </button>
           <button
             ref={confirmRef}
             type="button"
-            className={`w-full sm:w-auto ${adminBtnDanger}`}
+            className="inline-flex h-9 cursor-pointer items-center justify-center rounded-lg bg-red-600 px-3.5 text-sm font-medium text-white transition-colors hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             onClick={onConfirm}
           >
             {confirmLabel}

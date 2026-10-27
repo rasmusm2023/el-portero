@@ -10,6 +10,7 @@ import {
   type TransitionEvent,
 } from "react";
 import { LocaleContext, type LocaleContextValue } from "./locale-context";
+import { htmlLang, isLocale } from "./localeMeta";
 import type { Locale } from "./strings";
 
 const STORAGE_KEY = "el-portero-locale";
@@ -17,8 +18,7 @@ const STORAGE_KEY = "el-portero-locale";
 function readStoredLocale(): Locale | null {
   if (typeof window === "undefined") return null;
   const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (raw === "en" || raw === "es" || raw === "sv") return raw;
-  return null;
+  return isLocale(raw) ? raw : null;
 }
 
 function persistLocale(next: Locale) {
@@ -27,8 +27,7 @@ function persistLocale(next: Locale) {
   } catch {
     /* ignore */
   }
-  document.documentElement.lang =
-    next === "en" ? "en" : next === "es" ? "es" : "sv";
+  document.documentElement.lang = htmlLang(next);
 }
 
 type FadePhase = "idle" | "exiting" | "entering";
@@ -51,8 +50,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     const stored = readStoredLocale();
     if (!stored) return;
     setLocaleState(stored);
-    document.documentElement.lang =
-      stored === "en" ? "en" : stored === "es" ? "es" : "sv";
+    document.documentElement.lang = htmlLang(stored);
   }, []);
 
   const setLocale = useCallback((next: Locale) => {

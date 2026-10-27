@@ -6,7 +6,7 @@ import { ChevronDown, ChevronRight, Eye, EyeOff, GripVertical } from "lucide-rea
 import type { ReactNode } from "react";
 
 const chromeBtnClass =
-  "inline-flex shrink-0 items-center justify-center rounded-none border border-paper/15 bg-paper/8 text-paper/80 transition-colors hover:bg-paper/12 hover:text-paper disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md border border-slate-300 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50";
 
 export function MenuEditorDragHandle({
   label,
@@ -22,13 +22,13 @@ export function MenuEditorDragHandle({
   return (
     <button
       type="button"
-      className={`${chromeBtnClass} size-9 cursor-grab touch-none active:cursor-grabbing`}
+      className={`${chromeBtnClass} size-8 cursor-grab touch-none active:cursor-grabbing`}
       aria-label={label}
       disabled={disabled}
       {...attributes}
       {...listeners}
     >
-      <GripVertical className="size-4" aria-hidden />
+      <GripVertical className="size-3.5" aria-hidden />
     </button>
   );
 }
@@ -55,10 +55,10 @@ export function MenuEditorVisibilityButton({
       type="button"
       className={[
         chromeBtnClass,
-        "h-9 min-w-9 gap-1 px-2 text-[10px] font-semibold leading-none tracking-[0.16em] uppercase",
+        "h-8 gap-1.5 px-2.5 text-xs font-medium",
         hidden
-          ? "border-emerald-400/45 bg-emerald-950/50 text-emerald-100 shadow-[inset_0_0_0_1px_rgba(52,211,153,0.12)] hover:border-emerald-400/60 hover:bg-emerald-950/65 hover:text-white"
-          : "text-paper/80",
+          ? "border-amber-300 bg-amber-50 text-amber-900 hover:border-amber-400 hover:bg-amber-100"
+          : "text-slate-600",
       ].join(" ")}
       disabled={disabled}
       title={disabled && disabledTitle ? disabledTitle : label}
@@ -91,7 +91,7 @@ export function MenuEditorExpandButton({
   return (
     <button
       type="button"
-      className={`${chromeBtnClass} size-9`}
+      className={`${chromeBtnClass} size-8`}
       aria-expanded={expanded}
       aria-label={expanded ? collapseLabel : expandLabel}
       disabled={disabled}
@@ -122,16 +122,16 @@ export function MenuEditorPanelHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-start gap-2 border-b border-paper/10 pb-3">
+    <div className="flex flex-wrap items-center gap-2">
       <div className="flex shrink-0 items-center gap-1">
         {dragHandle}
-        {visibilityButton}
         {expandButton}
       </div>
       <div className="min-w-0 flex-1">
         {title}
-        {meta ? <p className="mt-1 text-xs text-paper/55">{meta}</p> : null}
+        {meta ? <p className="mt-0.5 truncate text-xs text-slate-500">{meta}</p> : null}
       </div>
+      {visibilityButton}
       {actions ? <div className="flex shrink-0 flex-wrap gap-2">{actions}</div> : null}
     </div>
   );

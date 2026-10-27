@@ -40,6 +40,7 @@ function TikTokIcon() {
 export function SiteFooter() {
   const { locale } = useLocale();
   const pathname = usePathname();
+  if (pathname.startsWith("/admin")) return null;
   const showMap = pathname === "/" || pathname === "/contact";
 
   const mapsHref = googleMapsSearchUrl();

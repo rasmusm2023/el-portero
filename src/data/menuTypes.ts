@@ -1,6 +1,7 @@
 import type { Locale } from "@/i18n/strings";
 
-export type LocalizedString = Record<Locale, string>;
+/** Static menu copy. Missing locales fall back via `pickLocaleText` (usually English). */
+export type LocalizedString = Partial<Record<Locale, string>> & { en: string };
 
 export type MenuItemData = {
   name: LocalizedString;

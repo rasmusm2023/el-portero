@@ -1,4 +1,5 @@
 import type { Locale } from "@/i18n/strings";
+import { emptyLocaleTrio, localeTrioFromPartial } from "@/i18n/localeMeta";
 import {
   eventDescriptionLinesFromLocaleTrio,
   normalizeEventDescriptionLocaleTrio,
@@ -18,6 +19,11 @@ export type HomeEvent = {
   /** When false, hidden on the public site (draft). Missing in older Firestore docs = published. */
   published?: boolean;
   /**
+   * Published from localhost. Shown on the dev site only.
+   * The live site skips these even when `published` is true.
+   */
+  localOnly?: boolean;
+  /**
    * When false, the event has no specific time/place and the public UI should not display a time line.
    * Kept optional so older Firestore docs default to “true”.
    */
@@ -36,6 +42,8 @@ export type HomeEvent = {
   excerptLines?: Record<Locale, string[]>;
   imageSrc: string;
   imageAlt: LocaleTrio;
+  /** Firebase Storage object path when the photo was uploaded from admin (used to delete the file). */
+  imageStoragePath?: string;
 };
 
 export type PublicEventApiDto = {
@@ -43,34 +51,33 @@ export type PublicEventApiDto = {
   sortDate: string;
   fullyBooked: boolean;
   hasSpecificTime?: boolean;
-  weekdayDate: { en: string; es: string; sv: string };
-  timeDetail: { en: string; es: string; sv: string };
-  title: { en: string; es: string; sv: string };
-  excerpt: { en: string; es: string; sv: string };
-  excerptLines?: { en?: string[]; es?: string[]; sv?: string[] };
+  weekdayDate: LocaleTrio;
+  timeDetail: LocaleTrio;
+  title: LocaleTrio;
+  excerpt: LocaleTrio;
+  excerptLines?: Partial<Record<Locale, string[]>>;
   imageSrc: string;
-  imageAlt: { en: string; es: string; sv: string };
+  imageAlt: LocaleTrio;
+  imageStoragePath?: string;
   updatedAtUtc: string;
 };
 
 export function publicEventFromDto(d: PublicEventApiDto): HomeEvent {
+  const excerpt = localeTrioFromPartial(d.excerpt);
   return {
     id: d.id,
     sortDate: d.sortDate,
     published: true,
     fullyBooked: d.fullyBooked,
     hasSpecificTime: d.hasSpecificTime ?? true,
-    weekdayDate: { en: d.weekdayDate.en, es: d.weekdayDate.es, sv: d.weekdayDate.sv },
-    timeDetail: { en: d.timeDetail.en, es: d.timeDetail.es, sv: d.timeDetail.sv },
-    title: { en: d.title.en, es: d.title.es, sv: d.title.sv },
-    excerpt: { en: d.excerpt.en, es: d.excerpt.es, sv: d.excerpt.sv },
-    excerptLines: {
-      en: d.excerptLines?.en ?? [],
-      es: d.excerptLines?.es ?? [],
-      sv: d.excerptLines?.sv ?? [],
-    },
+    weekdayDate: localeTrioFromPartial(d.weekdayDate),
+    timeDetail: localeTrioFromPartial(d.timeDetail),
+    title: localeTrioFromPartial(d.title),
+    excerpt,
+    excerptLines: d.excerptLines as HomeEvent["excerptLines"],
     imageSrc: d.imageSrc,
-    imageAlt: { en: d.imageAlt.en, es: d.imageAlt.es, sv: d.imageAlt.sv },
+    imageAlt: localeTrioFromPartial(d.imageAlt),
+    imageStoragePath: d.imageStoragePath,
   };
 }
 
@@ -84,18 +91,19 @@ export function toUpsertBody(ev: HomeEvent) {
     timeSlotStart: ev.timeSlotStart ?? DEFAULT_EVENT_TIME_START,
     timeSlotEnd: ev.timeSlotEnd ?? DEFAULT_EVENT_TIME_END,
     fullyBooked: ev.fullyBooked ?? false,
-    weekdayDate: { en: ev.weekdayDate.en, es: ev.weekdayDate.es, sv: ev.weekdayDate.sv },
-    timeDetail: { en: ev.timeDetail.en, es: ev.timeDetail.es, sv: ev.timeDetail.sv },
-    title: { en: ev.title.en, es: ev.title.es, sv: ev.title.sv },
-    excerpt: { en: excerpt.en, es: excerpt.es, sv: excerpt.sv },
+    weekdayDate: ev.weekdayDate,
+    timeDetail: ev.timeDetail,
+    title: ev.title,
+    excerpt,
     excerptLines: eventDescriptionLinesFromLocaleTrio(excerpt),
     imageSrc: ev.imageSrc,
-    imageAlt: { en: ev.imageAlt.en, es: ev.imageAlt.es, sv: ev.imageAlt.sv },
+    imageAlt: ev.imageAlt,
+    imageStoragePath: ev.imageStoragePath,
   };
 }
 
 export function emptyHomeEvent(ymd: string): HomeEvent {
-  const empty = (v: string): LocaleTrio => ({ en: v, es: v, sv: v });
+  const empty = emptyLocaleTrio("");
   return syncDerivedEventFields({
     id: "",
     sortDate: ymd,
@@ -104,11 +112,11 @@ export function emptyHomeEvent(ymd: string): HomeEvent {
     timeSlotStart: DEFAULT_EVENT_TIME_START,
     timeSlotEnd: DEFAULT_EVENT_TIME_END,
     fullyBooked: false,
-    weekdayDate: empty(""),
-    timeDetail: empty(""),
-    title: empty(""),
-    excerpt: empty(""),
+    weekdayDate: empty,
+    timeDetail: empty,
+    title: empty,
+    excerpt: empty,
     imageSrc: "",
-    imageAlt: empty(""),
+    imageAlt: empty,
   });
 }

@@ -1,8 +1,10 @@
 import { BookTableWidgetButton } from "@/components/BookTableWidgetButton";
 import { EventDescription } from "@/components/events/EventDescription";
 import { EventImage } from "@/components/events/EventImage";
+import { pickLocaleText } from "@/i18n/localeMeta";
 import { t, type Locale } from "@/i18n/strings";
 import { eventCardDateLabel } from "@/lib/eventDisplayDate";
+import { formatTimeDetailLine, timesOnlyLine } from "@/lib/eventSchedule";
 import type { HomeEvent } from "@/lib/publicEventTypes";
 
 type EventCardProps = {
@@ -11,6 +13,12 @@ type EventCardProps = {
   variant: "home" | "listing";
   bookingMode?: "interactive" | "disabled";
   imageFallbackLabel?: string;
+  /**
+   * When false, the photo is not requested (draft / past / unused).
+   * Public cards omit this and only load when the event is published.
+   */
+  loadImage?: boolean;
+  imageLoading?: "lazy" | "eager";
 };
 
 export function EventCard({
@@ -19,12 +27,18 @@ export function EventCard({
   variant,
   bookingMode = "interactive",
   imageFallbackLabel,
+  loadImage,
+  imageLoading = "lazy",
 }: EventCardProps) {
-  const imageSrc = event.imageSrc.trim();
-  const title = event.title[locale].trim() || t(locale, "admin.events.titleField");
-  const excerpt = event.excerpt[locale] || t(locale, "admin.events.excerpt");
-  const imageAlt = event.imageAlt[locale].trim() || title;
-  const timeDetail = event.timeDetail[locale]?.trim();
+  const allowImage = loadImage ?? (event.published !== false || event.localOnly === true);
+  const imageSrc = allowImage ? event.imageSrc.trim() : "";
+  const title = pickLocaleText(event.title, locale) || t(locale, "admin.events.titleField");
+  const excerpt = pickLocaleText(event.excerpt, locale) || t(locale, "admin.events.excerpt");
+  const imageAlt = pickLocaleText(event.imageAlt, locale) || title;
+  const timeDetail =
+    event.timeSlotStart && event.timeSlotEnd
+      ? formatTimeDetailLine(event.timeSlotStart, event.timeSlotEnd)
+      : timesOnlyLine(pickLocaleText(event.timeDetail, locale));
   const showTime = event.hasSpecificTime !== false && Boolean(timeDetail);
   const fullyBooked = Boolean(event.fullyBooked);
 
@@ -33,7 +47,12 @@ export function EventCard({
       <article className="overflow-hidden rounded-2xl border border-border bg-paper-dark/35 ring-1 ring-border/60 sm:rounded-3xl">
         <div className="flex flex-col md:flex-row">
           <div className="relative aspect-16/10 w-full shrink-0 overflow-hidden bg-ink/5 md:aspect-auto md:w-1/2 md:min-h-[280px] md:min-w-0 md:max-w-none">
-            <EventCardImage src={imageSrc} alt={imageAlt} fallbackLabel={imageFallbackLabel} />
+            <EventCardImage
+              src={imageSrc}
+              alt={imageAlt}
+              fallbackLabel={imageFallbackLabel}
+              loading={imageLoading}
+            />
           </div>
           <div className="flex min-w-0 flex-1 flex-col justify-between px-6 py-8 sm:px-10 sm:py-10">
             <div>
@@ -79,7 +98,12 @@ export function EventCard({
   return (
     <article className="flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-paper-dark/35 shadow-sm ring-1 ring-border/60 transition-[box-shadow,ring-color] duration-300 hover:shadow-md hover:ring-border sm:rounded-3xl md:min-h-60 md:flex-row">
       <div className="relative aspect-16/10 w-full shrink-0 bg-ink/5 md:aspect-auto md:w-[46%] md:min-w-44 md:max-w-md xl:max-w-136 2xl:max-w-152">
-        <EventCardImage src={imageSrc} alt={imageAlt} fallbackLabel={imageFallbackLabel} />
+        <EventCardImage
+          src={imageSrc}
+          alt={imageAlt}
+          fallbackLabel={imageFallbackLabel}
+          loading={imageLoading}
+        />
       </div>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col justify-between gap-4 px-5 py-6 sm:gap-5 sm:px-6 sm:py-7">
         <div className="min-w-0">
@@ -119,10 +143,12 @@ function EventCardImage({
   src,
   alt,
   fallbackLabel,
+  loading,
 }: {
   src: string;
   alt: string;
   fallbackLabel?: string;
+  loading: "lazy" | "eager";
 }) {
   return (
     <>
@@ -133,6 +159,7 @@ function EventCardImage({
           fill
           className="object-cover"
           sizes="(max-width: 767px) 100vw, (max-width: 1024px) 90vw, (max-width: 1536px) 45vw, 640px"
+          loading={loading}
         />
       ) : (
         <div className="flex h-full min-h-48 items-center justify-center bg-paper/8 px-6 text-center text-sm text-paper/45">

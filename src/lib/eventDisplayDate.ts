@@ -1,11 +1,7 @@
 import type { Locale } from "@/i18n/strings";
+import { emptyLocaleTrio, intlLocaleTag } from "@/i18n/localeMeta";
+import { locales } from "@/i18n/strings";
 import type { HomeEvent, LocaleTrio } from "@/lib/publicEventTypes";
-
-function intlLocaleTag(locale: Locale): string {
-  if (locale === "sv") return "sv-SE";
-  if (locale === "es") return "es-ES";
-  return "en-GB";
-}
 
 /**
  * Format the admin "Calendar date" (`YYYY-MM-DD`) for public copy.
@@ -30,11 +26,11 @@ export function formatSortDateForEventDisplay(sortDate: string, locale: Locale):
 
 /** All locale strings for the public date line, derived from `sortDate` (Europe/Madrid). */
 export function weekdayDateFromSortDate(sortDate: string): LocaleTrio {
-  return {
-    en: formatSortDateForEventDisplay(sortDate, "en"),
-    es: formatSortDateForEventDisplay(sortDate, "es"),
-    sv: formatSortDateForEventDisplay(sortDate, "sv"),
-  };
+  const out = emptyLocaleTrio("");
+  for (const locale of locales) {
+    out[locale] = formatSortDateForEventDisplay(sortDate, locale);
+  }
+  return out;
 }
 
 /** Public date line from calendar date only (weekday, day, month, year per locale). */
