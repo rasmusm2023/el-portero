@@ -357,6 +357,8 @@ type AdminKey =
   | "admin.events.translateLanguageCorrectedSplit"
   | "admin.events.translateError"
   | "admin.events.translateSuccess"
+  | "admin.events.translateDoneTitle"
+  | "admin.events.translateDoneBody"
   | "admin.events.translateNeedText"
   | "admin.events.reviewTranslations"
   | "admin.events.uploadImage"
@@ -737,7 +739,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Weekly schedule and open/closed times shown on the home page. Save, then publish when guests should see updates.",
     "admin.dashboard.hoursLink": "Manage opening hours",
     "admin.dashboard.backToSite": "← Back to site",
-    "admin.dashboard.now": "Right now",
+    "admin.dashboard.now": "Status",
     "admin.dashboard.liveEvents": "Live on the website",
     "admin.dashboard.inactiveEvents": "Inactive or past",
     "admin.dashboard.nextEvent": "Next",
@@ -857,7 +859,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.saveError": "Could not save. Check your connection and try again.",
     "admin.events.deleteError": "Could not delete. Try again.",
     "admin.events.storageFullTitle": "The event list is full",
-    "admin.events.storageFullBody": "You can keep {max} events. Delete one before you add another.",
+    "admin.events.storageFullBody": "You can keep {max} events. Delete at least one before you add another.",
     "admin.events.storageCreateTitle": "You can’t save a new event yet",
     "admin.events.storageCreateBody": "The list is full. Delete an event on the left, then try again.",
     "admin.events.storageListWarning": "The list is full. Delete an event to add a new one.",
@@ -884,6 +886,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Could not translate. Firebase AI Logic needs to be enabled on the project, then try again.",
     "admin.events.translateSuccess":
       "Empty languages and photo descriptions were filled from {language}. Switch language on the preview to review, then save.",
+    "admin.events.translateDoneTitle": "Everything is translated",
+    "admin.events.translateDoneBody":
+      "Check each language in the menu at the top of this section.",
     "admin.events.translateNeedText": "Add a title or description before translating.",
     "admin.events.reviewTranslations": "Review translations",
     "admin.events.uploadImage": "Upload photo",
@@ -1288,7 +1293,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Horario semanal y horas de apertura/cierre en la página de inicio. Guardad y publicad cuando los clientes deban ver los cambios.",
     "admin.dashboard.hoursLink": "Gestionar horario",
     "admin.dashboard.backToSite": "← Volver al sitio",
-    "admin.dashboard.now": "Ahora",
+    "admin.dashboard.now": "Estado",
     "admin.dashboard.liveEvents": "En la web",
     "admin.dashboard.inactiveEvents": "Inactivos o pasados",
     "admin.dashboard.nextEvent": "Siguiente",
@@ -1407,7 +1412,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.saveError": "No se pudo guardar. Comprobad la conexión e intentad de nuevo.",
     "admin.events.deleteError": "No se pudo eliminar. Intentad de nuevo.",
     "admin.events.storageFullTitle": "La lista de eventos está llena",
-    "admin.events.storageFullBody": "Podéis guardar {max} eventos. Borrad uno antes de añadir otro.",
+    "admin.events.storageFullBody": "Podéis guardar {max} eventos. Borrad al menos uno antes de añadir otro.",
     "admin.events.storageCreateTitle": "Aún no podéis guardar un evento nuevo",
     "admin.events.storageCreateBody": "La lista está llena. Borrad un evento de la izquierda e intentadlo de nuevo.",
     "admin.events.storageListWarning": "La lista está llena. Borrad un evento para añadir uno nuevo.",
@@ -1435,6 +1440,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "No se pudo traducir. Hay que activar Firebase AI Logic en el proyecto e intentarlo de nuevo.",
     "admin.events.translateSuccess":
       "Los idiomas vacíos y las descripciones de la foto se rellenaron desde {language}. Cambiad el idioma en la vista previa para revisarlos y guardad.",
+    "admin.events.translateDoneTitle": "Todo está traducido",
+    "admin.events.translateDoneBody":
+      "Revisad cada idioma en el menú de arriba, en esta sección.",
     "admin.events.translateNeedText": "Añadid un título o una descripción antes de traducir.",
     "admin.events.reviewTranslations": "Revisar traducciones",
     "admin.events.uploadImage": "Subir foto",
@@ -1828,7 +1836,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Veckoschema och öppet/stängt på startsidan. Spara och publicera när gäster ska se uppdateringarna.",
     "admin.dashboard.hoursLink": "Hantera öppettider",
     "admin.dashboard.backToSite": "← Tillbaka till sajten",
-    "admin.dashboard.now": "Just nu",
+    "admin.dashboard.now": "Status",
     "admin.dashboard.liveEvents": "Synliga på sajten",
     "admin.dashboard.inactiveEvents": "Inaktiva eller passerade",
     "admin.dashboard.nextEvent": "Nästa",
@@ -1948,7 +1956,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     "admin.events.saveError": "Kunde inte spara. Kontrollera anslutningen och försök igen.",
     "admin.events.deleteError": "Kunde inte ta bort. Försök igen.",
     "admin.events.storageFullTitle": "Evenemangslistan är full",
-    "admin.events.storageFullBody": "Ni kan spara {max} evenemang. Ta bort ett innan ni lägger till ett nytt.",
+    "admin.events.storageFullBody": "Ni kan spara {max} evenemang. Ta bort minst ett innan ni lägger till ett nytt.",
     "admin.events.storageCreateTitle": "Ni kan inte spara ett nytt evenemang ännu",
     "admin.events.storageCreateBody": "Listan är full. Ta bort ett evenemang till vänster och försök igen.",
     "admin.events.storageListWarning": "Listan är full. Ta bort ett evenemang för att lägga till ett nytt.",
@@ -1976,6 +1984,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
       "Kunde inte översätta. Firebase AI Logic måste vara aktiverat i projektet. Försök sedan igen.",
     "admin.events.translateSuccess":
       "Tomma språk och bildbeskrivningar fylldes i från {language}. Byt språk i förhandsvisningen för att granska och spara sedan.",
+    "admin.events.translateDoneTitle": "Allt är översatt",
+    "admin.events.translateDoneBody":
+      "Kontrollera varje språk i menyn högst upp i det här avsnittet.",
     "admin.events.translateNeedText": "Lägg till en titel eller beskrivning innan ni översätter.",
     "admin.events.reviewTranslations": "Granska översättningar",
     "admin.events.uploadImage": "Ladda upp foto",

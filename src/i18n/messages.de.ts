@@ -235,7 +235,7 @@ export const deMessages = {
     "Wochenplan und Öffnungszeiten auf der Startseite. Speichern, dann veröffentlichen, wenn Gäste die Änderungen sehen sollen.",
   "admin.dashboard.hoursLink": "Öffnungszeiten verwalten",
   "admin.dashboard.backToSite": "← Zurück zur Website",
-  "admin.dashboard.now": "Gerade",
+  "admin.dashboard.now": "Status",
   "admin.dashboard.liveEvents": "Auf der Website",
   "admin.dashboard.inactiveEvents": "Inaktiv oder vorbei",
   "admin.dashboard.nextEvent": "Nächstes",
@@ -355,7 +355,7 @@ export const deMessages = {
   "admin.events.saveError": "Speichern fehlgeschlagen. Verbindung prüfen und erneut versuchen.",
   "admin.events.deleteError": "Löschen fehlgeschlagen. Erneut versuchen.",
   "admin.events.storageFullTitle": "Die Event-Liste ist voll",
-  "admin.events.storageFullBody": "Ihr könnt {max} Events speichern. Löscht eines, bevor ihr ein neues anlegt.",
+  "admin.events.storageFullBody": "Ihr könnt {max} Events speichern. Löscht mindestens eines, bevor ihr ein neues anlegt.",
   "admin.events.storageCreateTitle": "Ihr könnt das neue Event noch nicht speichern",
   "admin.events.storageCreateBody": "Die Liste ist voll. Löscht links ein Event und versucht es erneut.",
   "admin.events.storageListWarning": "Die Liste ist voll. Löscht ein Event, um ein neues hinzuzufügen.",
@@ -384,6 +384,9 @@ export const deMessages = {
     "Übersetzung fehlgeschlagen. Firebase AI Logic muss im Projekt aktiv sein. Dann erneut versuchen.",
   "admin.events.translateSuccess":
     "Leere Sprachen und Fotobeschreibungen wurden aus {language} gefüllt. Sprache in der Vorschau wechseln zum Prüfen, dann speichern.",
+  "admin.events.translateDoneTitle": "Alles ist übersetzt",
+  "admin.events.translateDoneBody":
+    "Prüft jede Sprache im Menü oben in diesem Abschnitt.",
   "admin.events.translateNeedText": "Titel oder Beschreibung eingeben, bevor ihr übersetzt.",
   "admin.events.reviewTranslations": "Übersetzungen prüfen",
   "admin.events.uploadImage": "Foto hochladen",

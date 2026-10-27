@@ -24,7 +24,7 @@ export const adminBtnCaution =
 
 /** Sign out */
 export const adminBtnSignOut =
-  "rounded-md border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold tracking-[0.18em] uppercase text-red-800 shadow-sm transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50";
+  "cursor-pointer rounded-md border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold tracking-[0.18em] uppercase text-red-800 shadow-sm transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50";
 
 /** Hide from guests (reversible; not delete) */
 export const adminBtnHide =

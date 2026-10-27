@@ -235,7 +235,7 @@ export const frMessages = {
     "Planning hebdomadaire et heures d’ouverture sur la page d’accueil. Enregistrez, puis publiez lorsque les hôtes doivent voir les mises à jour.",
   "admin.dashboard.hoursLink": "Gérer les horaires",
   "admin.dashboard.backToSite": "← Retour au site",
-  "admin.dashboard.now": "En ce moment",
+  "admin.dashboard.now": "Statut",
   "admin.dashboard.liveEvents": "Visibles sur le site",
   "admin.dashboard.inactiveEvents": "Inactifs ou passés",
   "admin.dashboard.nextEvent": "Prochain",
@@ -354,7 +354,7 @@ export const frMessages = {
   "admin.events.saveError": "Enregistrement impossible. Vérifiez la connexion et réessayez.",
   "admin.events.deleteError": "Suppression impossible. Réessayez.",
   "admin.events.storageFullTitle": "La liste d’événements est pleine",
-  "admin.events.storageFullBody": "Vous pouvez garder {max} événements. Supprimez-en un avant d’en ajouter un autre.",
+  "admin.events.storageFullBody": "Vous pouvez garder {max} événements. Supprimez-en au moins un avant d’en ajouter un autre.",
   "admin.events.storageCreateTitle": "Vous ne pouvez pas encore enregistrer un nouvel événement",
   "admin.events.storageCreateBody": "La liste est pleine. Supprimez un événement à gauche, puis réessayez.",
   "admin.events.storageListWarning": "La liste est pleine. Supprimez un événement pour en ajouter un nouveau.",
@@ -382,6 +382,9 @@ export const frMessages = {
     "Traduction impossible. Firebase AI Logic doit être activé sur le projet. Réessayez ensuite.",
   "admin.events.translateSuccess":
     "Les langues vides et les descriptions de photo ont été remplies à partir de {language}. Changez de langue sur l’aperçu pour relire, puis enregistrez.",
+  "admin.events.translateDoneTitle": "Tout est traduit",
+  "admin.events.translateDoneBody":
+    "Vérifiez chaque langue dans le menu en haut de cette section.",
   "admin.events.translateNeedText": "Ajoutez un titre ou une description avant de traduire.",
   "admin.events.reviewTranslations": "Relire les traductions",
   "admin.events.uploadImage": "Téléverser une photo",

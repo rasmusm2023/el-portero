@@ -1,20 +1,19 @@
-/** Each stored event keeps a photo. Eight is the maximum. */
-export const MAX_STORED_EVENTS = 8;
+/** Each stored event keeps a photo. Ten is the maximum. */
+export const MAX_STORED_EVENTS = 10;
 
 /**
- * Design preview. While this is true the full-list warning is always shown
- * and the New event button stays disabled with it. Saving or duplicating
- * an event still works until this is turned off.
- * Set to false after the design is accepted so the warning and the block follow
- * the real stored count. The eight slots in the list always follow the real count.
+ * Temporary design preview. While this is true the full-list warning is always
+ * shown, as if 10 events are stored. Set to false so the warning follows the
+ * real stored count.
  */
 export const PREVIEW_EVENT_STORAGE_WARNING = true;
 
 export type EventStorageLimitState = {
+  /** The list is at the maximum, so staff need to delete an event. */
   showWarning: boolean;
-  /** Refuse a new or duplicated event. Stays off during the design preview. */
+  /** Refuse a new or duplicated event. */
   blockNewEvents: boolean;
-  /** Count drawn in the warning. The preview always shows the full cap. */
+  /** Count drawn in the warning. */
   displayCount: number;
 };
 

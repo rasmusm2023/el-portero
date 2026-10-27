@@ -23,6 +23,7 @@ import {
   deskLabel,
   deskPanel,
   deskPrimary,
+  deskPrimaryBlocked,
   deskTimeSelect,
 } from "@/components/admin/events/EventsDesk";
 import { LocaleFlag } from "@/components/layout/LocaleFlag";
@@ -99,26 +100,11 @@ function formatTranslateElapsed(totalSeconds: number): string {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
-function translateResultMessage(
-  locale: Locale,
-  sourceLocale: Locale,
-  titleLanguage: Locale | null,
-  excerptLanguage: Locale | null,
-): string {
-  const source = localeLabels[sourceLocale];
-  if (titleLanguage && excerptLanguage && titleLanguage !== excerptLanguage) {
-    return t(locale, "admin.events.translateLanguageCorrectedSplit")
-      .replaceAll("{titleLanguage}", localeLabels[titleLanguage])
-      .replaceAll("{excerptLanguage}", localeLabels[excerptLanguage])
-      .replaceAll("{source}", source);
-  }
-  const detected = titleLanguage ?? excerptLanguage;
-  if (detected) {
-    return t(locale, "admin.events.translateLanguageCorrected")
-      .replaceAll("{detected}", localeLabels[detected])
-      .replaceAll("{source}", source);
-  }
-  return t(locale, "admin.events.translateSuccess").replaceAll("{language}", source);
+function translateBarColor(progress: number): string {
+  const start = 0.72;
+  const amount = progress <= start ? 0 : Math.min(1, (progress - start) / (1 - start));
+  const mix = (from: number, to: number) => Math.round(from + (to - from) * amount);
+  return `rgb(${mix(37, 5)} ${mix(99, 150)} ${mix(235, 105)})`;
 }
 
 export function EventsAdminPage() {
@@ -135,6 +121,10 @@ export function EventsAdminPage() {
   const [translating, setTranslating] = useState(false);
   const [translateSeconds, setTranslateSeconds] = useState(0);
   const [translateBeat, setTranslateBeat] = useState(0);
+  const [translateSuccess, setTranslateSuccess] = useState(false);
+  const [translatePhase, setTranslatePhase] = useState<"idle" | "running" | "finishing">("idle");
+  const [translateProgress, setTranslateProgress] = useState(0);
+  const translateProgressRef = useRef(0);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -240,6 +230,7 @@ export function EventsAdminPage() {
     clearPendingImage();
     setError(null);
     setMessage(null);
+    setTranslateSuccess(false);
   }, [clearPendingImage, rows.length]);
 
   const duplicateFrom = useCallback(
@@ -272,6 +263,7 @@ export function EventsAdminPage() {
       if (!options?.keepPendingImage) clearPendingImage();
       setError(null);
       setMessage(t(locale, "admin.events.duplicateLoaded"));
+      setTranslateSuccess(false);
     },
     [rows, locale, clearPendingImage],
   );
@@ -289,6 +281,7 @@ export function EventsAdminPage() {
     clearPendingImage();
     setError(null);
     setMessage(null);
+    setTranslateSuccess(false);
   };
 
   function onPickImage(file: File | undefined) {
@@ -309,7 +302,7 @@ export function EventsAdminPage() {
   }
 
   useEffect(() => {
-    if (!translating) return;
+    if (translatePhase !== "running") return;
     const started = Date.now();
     const timer = window.setInterval(() => {
       const elapsed = Date.now() - started;
@@ -317,7 +310,55 @@ export function EventsAdminPage() {
       setTranslateBeat(Math.floor(elapsed / 650));
     }, 200);
     return () => window.clearInterval(timer);
-  }, [translating]);
+  }, [translatePhase]);
+
+  useEffect(() => {
+    if (translatePhase !== "running") return;
+    const started = performance.now();
+    let frame = 0;
+    const tick = (now: number) => {
+      const elapsed = now - started;
+      const next = 0.82 * (1 - Math.exp(-elapsed / 9000));
+      translateProgressRef.current = next;
+      setTranslateProgress(next);
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [translatePhase]);
+
+  useEffect(() => {
+    if (translatePhase !== "finishing") return;
+    const from = translateProgressRef.current;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      translateProgressRef.current = 1;
+      setTranslateProgress(1);
+      setTranslatePhase("idle");
+      setTranslating(false);
+      setTranslateSuccess(true);
+      return;
+    }
+    const started = performance.now();
+    const duration = 1100;
+    let frame = 0;
+    const tick = (now: number) => {
+      const amount = Math.min(1, (now - started) / duration);
+      const eased = 1 - (1 - amount) ** 3;
+      const next = from + (1 - from) * eased;
+      translateProgressRef.current = next;
+      setTranslateProgress(next);
+      if (amount < 1) {
+        frame = requestAnimationFrame(tick);
+        return;
+      }
+      setTranslatePhase("idle");
+      setTranslating(false);
+      setTranslateSuccess(true);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [translatePhase]);
 
   async function onTranslate() {
     const sourceLocale = pickTranslateSourceLocale(draft.title, draft.excerpt, previewLocale);
@@ -327,8 +368,12 @@ export function EventsAdminPage() {
     }
     setError(null);
     setMessage(null);
+    setTranslateSuccess(false);
     setTranslateSeconds(0);
     setTranslateBeat(0);
+    translateProgressRef.current = 0;
+    setTranslateProgress(0);
+    setTranslatePhase("running");
     setTranslating(true);
     try {
       const sourceTitle = draft.title[sourceLocale] ?? "";
@@ -368,14 +413,14 @@ export function EventsAdminPage() {
         excerpt: excerptApplied.trio,
         imageAlt: altApplied.trio,
       }));
-      setMessage(
-        translateResultMessage(locale, sourceLocale, titleApplied.correctedTo, excerptApplied.correctedTo),
-      );
+      setTranslatePhase("finishing");
     } catch (err) {
       console.error(err);
-      setError(unknownErrorMessage(err, t(locale, "admin.events.translateError")));
-    } finally {
+      setTranslatePhase("idle");
+      translateProgressRef.current = 0;
+      setTranslateProgress(0);
       setTranslating(false);
+      setError(unknownErrorMessage(err, t(locale, "admin.events.translateError")));
     }
   }
 
@@ -389,7 +434,7 @@ export function EventsAdminPage() {
     if (!isDirty) {
       return;
     }
-    if (wasNew && eventStorageLimitState(rows.length).blockNewEvents) {
+    if (wasNew && eventStorageLimitState(rows.length).showWarning) {
       setError(fillEventStorageMessage(t(locale, "admin.events.storageFullSaveError"), rows.length));
       return;
     }
@@ -559,7 +604,7 @@ export function EventsAdminPage() {
               </div>
               <button
                 type="button"
-                className={deskPrimary}
+                className={storageLimit.showWarning ? deskPrimaryBlocked : deskPrimary}
                 onClick={startNew}
                 disabled={locked || storageLimit.showWarning}
                 title={storageLimit.showWarning ? storageFullMessage : undefined}
@@ -747,6 +792,19 @@ export function EventsAdminPage() {
                     ? t(locale, "admin.events.translating")
                     : t(locale, "admin.events.translateContent")}
                 </button>
+                {translateSuccess && translatePhase === "idle" ? (
+                  <div
+                    role="status"
+                    className="mt-3 rounded-lg border-2 border-emerald-400 bg-emerald-50 px-4 py-3.5"
+                  >
+                    <p className="text-sm font-semibold text-emerald-950">
+                      {t(locale, "admin.events.translateDoneTitle")}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-emerald-900">
+                      {t(locale, "admin.events.translateDoneBody")}
+                    </p>
+                  </div>
+                ) : null}
               </div>
               {translating ? (
                 <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-800">
@@ -762,15 +820,18 @@ export function EventsAdminPage() {
                       {formatTranslateElapsed(translateSeconds)}
                     </p>
                   </div>
-                  <div className="mt-3 flex gap-1" aria-hidden>
-                    {locales.map((code, index) => (
-                      <span
-                        key={code}
-                        className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-                          index === translateBeat % locales.length ? "bg-blue-600" : "bg-slate-200"
-                        }`}
-                      />
-                    ))}
+                  <div
+                    className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-200"
+                    role="progressbar"
+                    aria-label={t(locale, "admin.events.translating")}
+                  >
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${Math.min(100, translateProgress * 100)}%`,
+                        backgroundColor: translateBarColor(translateProgress),
+                      }}
+                    />
                   </div>
                   <ul className="mt-3 flex flex-wrap gap-2" aria-hidden>
                     {locales.map((code, index) => {
@@ -1026,11 +1087,11 @@ export function EventsAdminPage() {
               ) : null}
               <button
                 type="button"
-                className={deskPrimary}
+                className={isNew && storageLimit.showWarning ? deskPrimaryBlocked : deskPrimary}
                 onClick={onSave}
-                disabled={locked || !isDirty || (isNew && storageLimit.blockNewEvents)}
+                disabled={locked || !isDirty || (isNew && storageLimit.showWarning)}
                 title={
-                  isNew && storageLimit.blockNewEvents
+                  isNew && storageLimit.showWarning
                     ? storageFullMessage
                     : isDirty
                       ? isNew

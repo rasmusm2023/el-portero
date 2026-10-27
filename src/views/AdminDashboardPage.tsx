@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { type ReactNode } from "react";
 import { LogOut } from "lucide-react";
 import { DashboardBento } from "@/components/admin/DashboardBento";
-import { EventStorageWarning } from "@/components/admin/events/EventStorageWarning";
 import { PageShell } from "@/components/layout/PageShell";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { t } from "@/i18n/strings";
@@ -13,7 +12,7 @@ import { useLocale } from "@/i18n/useLocale";
 import { adminTextMuted } from "@/lib/adminUiStyles";
 
 const deskButton =
-  "inline-flex h-9 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50";
+  "inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50";
 
 function CardMotif({
   tilt,
@@ -212,8 +211,6 @@ export function AdminDashboardPage() {
           {t(locale, "admin.signOut")}
         </button>
       </div>
-
-      <EventStorageWarning locale={locale} className="mb-6" />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <DashboardCard

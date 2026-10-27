@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { EventStorageWarning } from "@/components/admin/events/EventStorageWarning";
 import { intlLocaleTag, pickLocaleText } from "@/i18n/localeMeta";
 import { t, type Locale, type MessageKey } from "@/i18n/strings";
 import { useLocale } from "@/i18n/useLocale";
 import { isEventPastForAdmin } from "@/lib/eventSchedule";
+import { eventStorageLimitState } from "@/lib/eventStorageLimit";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
 import { subscribeEditableMenu } from "@/lib/firebase/editableMenuStore";
 import { subscribeAdminPublicEvents } from "@/lib/firebase/eventsStore";
@@ -62,8 +64,8 @@ function TileLabel({ children }: { children: string }) {
   return <p className="text-sm font-medium text-slate-500">{children}</p>;
 }
 
-function TileLink({ children }: { children: string }) {
-  return <p className="mt-auto pt-5 text-sm font-medium text-blue-700 group-hover:text-blue-800">{children}</p>;
+function TileLink({ children, className = "mt-auto pt-5" }: { children: string; className?: string }) {
+  return <p className={`${className} text-sm font-medium text-blue-700 group-hover:text-blue-800`}>{children}</p>;
 }
 
 function StatusDot({ on }: { on: boolean }) {
@@ -160,6 +162,7 @@ export function DashboardBento() {
   const inactiveCount = events == null ? null : events.length - liveEvents.length;
   const fullyBooked = liveEvents.filter((event) => event.fullyBooked).length;
   const nextEvent = liveEvents[0];
+  const storageLimit = events == null ? null : eventStorageLimitState(events.length);
 
   const venue = useMemo(() => (hours ? getVenueStatus(locale, hours) : null), [hours, locale, clock]);
   const todayKey = currentOpeningDayKey();
@@ -246,7 +249,14 @@ export function DashboardBento() {
               </div>
             </>
           )}
-          <TileLink>{t(locale, "admin.dashboard.eventsLink")}</TileLink>
+          <div className={storageLimit?.showWarning ? "mt-auto flex flex-col" : "contents"}>
+            {storageLimit?.showWarning && events ? (
+              <EventStorageWarning locale={locale} storedCount={events.length} className="mt-4" />
+            ) : null}
+            <TileLink className={storageLimit?.showWarning ? "pt-4" : "mt-auto pt-5"}>
+              {t(locale, "admin.dashboard.eventsLink")}
+            </TileLink>
+          </div>
         </Link>
 
         <Link href="/admin/menus" className={`${tileClass} lg:col-span-3`}>

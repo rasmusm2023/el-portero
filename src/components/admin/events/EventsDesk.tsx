@@ -20,6 +20,10 @@ export const deskField =
 export const deskPrimary =
   "inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-3.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
+/** Full event list: not a faded blue button. Flat, grey, and clearly off. */
+export const deskPrimaryBlocked =
+  "inline-flex h-9 cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-slate-300 bg-slate-200 px-3.5 text-sm font-medium text-slate-400 shadow-none";
+
 export const deskGhost =
   "inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
